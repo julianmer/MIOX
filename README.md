@@ -9,7 +9,7 @@ Readers follow in milestone 1. See `PLAN.md` for scope, data model, layout, mile
 name shortlist. MIOX is the working name for now; alternatives are listed in PLAN.md.
 
 ```
-uv sync --group dev
+uv sync --extra dev
 uv run miox sniff path/to/file.dat
 uv run miox audit path/to/svs.nii.gz
 uv run pytest                        # synthetic tests, no data needed

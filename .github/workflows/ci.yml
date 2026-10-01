@@ -17,7 +17,7 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python }}
-      - run: uv sync --group dev
+      - run: uv sync --extra dev
       - run: uv run ruff check .
       - run: uv run pytest -m "not data"
 
@@ -28,7 +28,7 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.12"
-      - run: uv sync --group dev
+      - run: uv sync --extra dev
       - uses: actions/cache@v4
         id: data
         with:
