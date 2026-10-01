@@ -1,0 +1,6 @@
+nibabel>=5.2
+nifti-mrs>=1.4
+numpy>=1.26
+pydicom>=3.0
+pytest>=8.0.0
+ruff>=0.6

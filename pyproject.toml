@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "miox"
+# version is single-sourced from miox/__init__.py (__version__)
+dynamic = ["version"]
+description = "Open any MR file from any vendor into one object: data, geometry, all metadata."
+readme = "README.md"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [
+    { name = "J. P. Merkofer", email = "j.p.merkofer@tue.nl" },
+]
+keywords = ["MRS", "MRI", "spectroscopy", "NIfTI-MRS", "DICOM", "twix", "P-file", "Bruker"]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+    "nibabel>=5.2",
+    "nifti-mrs>=1.4",
+    "numpy>=1.26",
+    "pydicom>=3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+miox = "miox.cli:main"
+
+[project.urls]
+Repository = "https://github.com/julianmer/miox"
+
+[tool.setuptools.dynamic]
+version = {attr = "miox.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["miox*"]
+
+[tool.ruff]
+line-length = 100
+src = [".", "tests", "scripts"]
+extend-exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]

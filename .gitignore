@@ -1,0 +1,24 @@
+# local notes, never pushed
+CLAUDE.md
+CHANGELOG.md
+HANDOFF.md
+CONTINUATION.md
+
+# test data (fetched by scripts/fetch_test_data.py)
+tests/data/
+
+# python
+uv.lock
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# os / editors
+.DS_Store
+.vscode/
+.idea/

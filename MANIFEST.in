@@ -1,0 +1,4 @@
+# Source-distribution contents: the package, licence and README only.
+# Test data under tests/data is fetched by scripts/fetch_test_data.py and never shipped.
+include LICENSE
+include README.md

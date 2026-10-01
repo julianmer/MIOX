@@ -1,0 +1,5512 @@
+{
+ "nifti_mrs_examples/example_01.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_02.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_03.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_04.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_05.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_06.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_07.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_08.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_09.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "nifti_mrs_examples/example_10.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/.gitattributes": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/Siemens/HERCULES/Siemens_TIEMO_HERC.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/HERCULES/meas_MID02595_FID60346_HERC.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/csi_se_3D_C>S23.5>T20.3_10_8_1/(null).1.3.12.2.1107.5.2.34.18928.2019020115100956030201328": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/csi_se_3D_S>T23.5>C20.3_10_7_1/(null).1.3.12.2.1107.5.2.34.18928.2019020115071870675101323": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/csi_se_3D_T>C23.5>S20.3_10_6_1/(null).1.3.12.2.1107.5.2.34.18928.2019020115042784115101318": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/csi_se_C>S23.5>T20.3_10_5_1/(null).1.3.12.2.1107.5.2.34.18928.2019020114590095916901312": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/csi_se_S>T23.5>C20.3_10_4_1/(null).1.3.12.2.1107.5.2.34.18928.2019020114582035538501307": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/csi_se_T>C23.5>S20.3_10_3_1/(null).1.3.12.2.1107.5.2.34.18928.2019020114573168704201302": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/csi_se_Tra_sat_9_1/(null).1.3.12.2.1107.5.2.34.18928.2019020115103989432401332": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/svs_se_C>T15>S10_10_12_1/(null).1.3.12.2.1107.5.2.34.18928.2019020115123943076901354": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/svs_se_S>C10>S5_10_11_1/(null).1.3.12.2.1107.5.2.34.18928.2019020115115291141601347": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/svs_se_T>C15.0>S10.0_10_10_1/(null).1.3.12.2.1107.5.2.34.18928.2019020115111172437601340": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/svs_se_Tra_sat_13_1/(null).1.3.12.2.1107.5.2.34.18928.2019020115132781388001361": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471325827000719": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471347231900757": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471347440800759": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471347726800762": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471347745200764": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471347756000765": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471363899200771": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471366936500773": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471375550400777": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471380657500779": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471383639100781": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471384163600783": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471386166400787": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471389082200805": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471410833000833": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471416016200837": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471418324700839": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471420874700841": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471424161000845": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471432091600847": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471432161500849": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471433795400851": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471434523800853": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471438695900855": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471439258100857": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471448630400865": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471457186600879": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471462220400881": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471463125300883": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471466044100885": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471467293400887": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471468049700889": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471476465800891": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471477227000893": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471479655100895": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447148554100829": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471489369600913": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471490911300915": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471499801000923": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471510683600933": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471513594100935": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471515342800937": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447151778100925": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471523069400939": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471523189800941": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447152610000927": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471533627900965": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471536296500967": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471542291000969": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471543013300971": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471545621100973": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471546739400975": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471549045800977": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471555272600979": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471557525200981": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471560170300983": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471563972400991": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447156713700929": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471570260601005": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471579358301015": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471582020601019": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471584693001021": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471587043601023": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447158942700931": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471590052101025": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471595324501027": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471595833401029": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471598213701031": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471613612301043": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471621869001063": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.20190201144716391201033": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471640891901087": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471642992701089": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471644077901091": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471645030301093": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447164594401035": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471647378301095": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471650378701097": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471653247301099": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471656776401101": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471664318101103": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471664764301105": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471666186601107": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471667238301109": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471669452601111": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471671783001113": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471673780101115": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471679037701117": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471684965701119": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447168520301037": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471685614501121": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471689171001123": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447169908901039": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471699902801133": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447171076401135": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471714230601145": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447172592701137": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471736616801147": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471737586901150": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471737592201151": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471737669901153": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471737950801155": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471738165901157": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471741973301159": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447174626101139": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471750553001161": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471759399201163": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471759727801165": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471760519901167": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471761057301169": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471761257401171": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447176471701141": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471776373201173": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471776407601175": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447177806201143": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471785353701177": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471790707501179": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471791410101181": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471810501601189": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471813554001191": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471817089201193": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471817892801195": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471819413201197": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447182028401183": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471823055201199": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471835481901201": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471836104601203": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471836649101205": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471843037701207": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471844801401209": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471845748801211": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471849326501213": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471850439401215": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471856155201217": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471856863801219": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471859218401221": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471865570201223": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471866112101225": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471866319601227": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471870582201229": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471871133301231": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471876792401233": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471877422901235": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471881714501237": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447188384901185": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471886379301239": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471886467901241": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471888798501243": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447189175201187": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471892993401245": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471893056601247": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471897058801249": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471897820801251": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471912351601259": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471914397101261": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471914646601263": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471918038301265": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471918459401267": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471923208701269": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471929420801271": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471931461601273": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447193291801253": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471933221701275": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471934550801277": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471940983101279": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471941727301281": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471942464801283": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471944267901285": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471949533401287": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471952427201289": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471953011301291": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471954347101293": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471958824001295": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.2019020114471959445601297": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447199185201255": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/DICOM/t1_mprage_1.0iso_sag_PAT4_nonsel_2_1/MR.1.3.12.2.1107.5.2.34.18928.201902011447199508501257": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/T1.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID133_csi_se_T_C23_5_S20_3_10_FID108723.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID135_csi_se_S_T23_5_C20_3_10_FID108725.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID137_csi_se_C_S23_5_T20_3_10_FID108727.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID139_csi_se_3D_T_C23_5_S20_3_10_FID108729.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID141_csi_se_3D_S_T23_5_C20_3_10_FID108731.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID143_csi_se_3D_C_S23_5_T20_3_10_FID108733.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID145_csi_se_Tra_sat_FID108735.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID147_svs_se_T_C15_0_S10_0_10_FID108737.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID149_svs_se_S_C10_S5_10_FID108739.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID151_svs_se_C_T15_S10_10_FID108741.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/Twix/meas_MID153_svs_se_Tra_sat_FID108743.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VBData/tim_trio_sop_class_uid/timtrio_mr_vb19a.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VBData/tim_trio_sop_class_uid/timtrio_mrdcm_vb13a_2_0.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/csi_se_3D_c>s23.5>t20.3_R10_9_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709280860884578370": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/csi_se_3D_s>t23.5>c20.3_R10_8_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709254231931478130": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/csi_se_3D_t>c23.5>s20.3_R10_7_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709231597647977890": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/csi_se_c>s23.5>t20.3_R10_6_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709170378585077650": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/csi_se_iso_tra_sat_14_1/(null).1.3.12.2.1107.5.2.43.66050.201901170936148549678525": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/csi_se_s>t23.5>c20.3_R10_5_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709155580743277604": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/csi_se_t>c23.5>s20.3_R10_4_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709141770900877558": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/svs_se_c>t15>s10_R10_12_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709322897219378452": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/svs_se_iso_tra_sat_13_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709341760163278479": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/svs_se_s>c10>t5_R10_11_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709314216710478425": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/svs_se_t>c15>s10_R10_10_1/(null).1.3.12.2.1107.5.2.43.66050.2019011709295880295678397": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/3_t1_mpr_ax_2mm.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070910095577262": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070910229677265": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070910608277268": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070911156177271": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907091116877213": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070911443677274": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070911609177277": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070911748877280": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070911878877283": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070912059777286": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907091227577215": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907091245077217": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070912595177289": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070912719177292": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070913396677295": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070913456877297": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070913668477301": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070914920377304": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907091615677219": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070917008977307": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907091813977225": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907091851377227": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907091861577229": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070918661377310": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070918682577312": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070919273577316": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070919991077319": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070920274577322": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070920438277325": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070920705677328": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070921044477332": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070921053577333": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070921146177337": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070921625777340": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907092163277232": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070922298377343": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070922466877346": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070922800177349": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907092400877235": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070925275677352": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907092633277239": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070927058177355": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070927100677357": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907092756777242": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907092816977244": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070928224077361": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907092837477246": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070928768377365": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070928772577366": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907092940777249": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070929772277370": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070929877877373": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070930216677376": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070930322977379": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070930592977382": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070930640977384": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070930832077388": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070931086577391": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070933519477394": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070933811077397": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070935378477400": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070935499977403": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070935663877406": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070936804077409": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070937743577412": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070937988077415": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070938356277418": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070938640877421": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070938738677424": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070939438877427": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070939478577429": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070939539277432": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070939632977436": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070939732577439": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070942157277442": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070942322177445": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070944114677449": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070944119777450": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070945209877454": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907094594177256": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070946274277457": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070946752777460": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070946915777463": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070947042277466": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070947586177469": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070948059577472": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070948103177474": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070948312677478": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070948329677480": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070948507477484": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070949888577487": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070950677877490": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070950798677493": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070952597677496": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.2019011709070953510677499": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/DICOM/t1_mpr_ax_2mm_3_1/MR.1.3.12.2.1107.5.2.43.66050.201901170907095534177259": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/T1.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00223_FID62728_csi_se_t_c23_5_s20_3_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00225_FID62730_csi_se_s_t23_5_c20_3_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00227_FID62732_csi_se_c_s23_5_t20_3_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00229_FID62734_csi_se_3D_t_c23_5_s20_3_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00231_FID62736_csi_se_3D_s_t23_5_c20_3_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00233_FID62738_csi_se_3D_c_s23_5_t20_3_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00235_FID62740_svs_se_t_c15_s10_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00238_FID62743_svs_se_s_c10_t5_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00240_FID62745_svs_se_c_t15_s10_R10.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00242_FID62747_svs_se_iso_tra_sat.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/Twix/meas_MID00244_FID62749_csi_se_iso_tra_sat.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/csi_se_3d_c_s235_t203_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/csi_se_3d_s_t235_c203_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/csi_se_3d_t_c235_s203_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/csi_se_c_s235_t203_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/csi_se_iso_tra_sat.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/csi_se_s_t235_c203_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/csi_se_t_c235_s203_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/svs_se_c_t15_s10_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/svs_se_iso_tra_sat.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/svs_se_s_c10_t5_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/VEData/rda/svs_se_t_c15_s10_r10.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA20/DICOM/26516628.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA20/rda/spct_002.MR.MRI-LAB Test_Dir.5.1.114540.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA20/rda/spct_002.MR.MRI-LAB Test_Dir.7.1.114540.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA20/twix/meas_MID00027_FID07653_svs_se_30_WS_on.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA20/twix/meas_MID00033_FID07659_svs_se_30_WS_off.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA30/meas_MID00479_FID106847_svs_se_135sws.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA30/meas_MID00479_FID106847_svs_se_135sws.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA31/rda/locale_XA31.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA50/Phantom_20240129.MR.10.1.155227.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/XAData/XA50/smm_svs_herc_v2_hermes.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/anon/anon_dcm.IMA": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/enhanced_dcm_csi/rk_enhanced/1.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/enhanced_dcm_csi/sm_classic/PHANTOM.MR.PSYCHIATRIE_STUDIEN_ASLAC.0027.0001.2023.10.06.08.40.21.250955.407258759.IMA": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/enhanced_dcm_csi/sm_enhanced/Phantom.Psychiatrie^Studien^aslac.Sr27.I1.20231006084036808.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/fid/meas_MID00070_FID27084_fid_13C_360dyn_hyper_TR1000.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/hyper_isthmus/meas_MID00034_FID65022_smm_svs_isthmus_gls_scnh.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/rda/latin1.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special/sub-brainphan_nuc-1H_loc-phan_spec_rm-special.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsoff_19_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811453493893202435": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsoff_19_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811453493975302436": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsoff_19_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811453494023202437": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsoff_19_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811453494069402438": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_1_21_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811463736480502452": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_1_21_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811463736564202453": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_1_21_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811463736621902454": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_1_21_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811463736676702455": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_1_21_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811463736730402456": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_1_21_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811463736789702457": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_1_21_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811463736841202458": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_1_21_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811463736899202459": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066329702477": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066414502478": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066471302479": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066524602480": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066577902481": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066633502482": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066688702483": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066743902484": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066799602485": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066852202486": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066906002487": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw1pw3_2_23_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811475066959602488": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_1_25_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811483195413002500": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_1_25_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811483195490202501": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_1_25_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811483195547402502": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_1_25_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811483195599602503": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_1_25_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811483195654602504": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_1_25_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811483195709002505": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_2_27_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811492315724502519": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_2_27_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811492315805602520": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_2_27_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811492315856902521": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_2_27_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811492315914102522": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_2_27_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811492315971702523": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_2_27_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811492316023702524": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_2_27_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811492316078202525": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaserVOI_dkd2_von_wrsw4_2_27_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811492316133002526": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs1_15_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811430686117602389": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs1_15_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811430686204502390": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs1_15_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811430686259202391": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs1_15_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811430686314402392": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs1_15_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811430686370102393": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs1_15_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811430686425402394": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs1_15_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811430686481102395": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs1_15_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811430686536202396": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441797972202414": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798059802415": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798114802416": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798168602417": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798221902418": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798283502419": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798337602420": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798388002421": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798440902422": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798493202423": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798549802424": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrs2_17_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811441798604702425": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrsoff_13_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811413712004002372": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrsoff_13_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811413712085902373": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrsoff_13_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811413712142002374": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/DICOM/svs_slaser_dkd_von_wrsoff_13_None/UNKNOWN.1.3.12.2.1107.5.2.43.66050.2024041811413712197102375": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/twix/meas_MID00053_FID16506_svs_slaser_dkd_von_wrsoff.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/twix/meas_MID00054_FID16507_svs_slaser_dkd_von_wrs1.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/twix/meas_MID00055_FID16508_svs_slaser_dkd_von_wrs2.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/twix/meas_MID00056_FID16509_svs_slaserVOI_dkd2_von_wrsoff.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/twix/meas_MID00057_FID16510_svs_slaserVOI_dkd2_von_wrsw1pw3_1.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/twix/meas_MID00058_FID16511_svs_slaserVOI_dkd2_von_wrsw1pw3_2.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/twix/meas_MID00059_FID16512_svs_slaserVOI_dkd2_von_wrsw4_1.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/special_cases_slaser_dkd/twix/meas_MID00060_FID16513_svs_slaserVOI_dkd2_von_wrsw4_2.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/Siemens/voi_in_mrsi/3_t1_mpr_ax_1mm_iso_withNose_32ch_v2.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/Siemens/voi_in_mrsi/F3T_2021_PH_016.MR.FMRIB_DEVELOPER_WILL.0004.0001.2021.07.01.16.43.12.374485.667204044.IMA": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/3d_cor.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/3d_tra.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/UID_191716063827984_csi_hise_3d_te144.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/csi_hise_3d_te144_CSI_1301/00000000.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "uih",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_101/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_101/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_101/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_201/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_201/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_201/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_301/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_301/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/gre_scout_301/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000004.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000005.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000006.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000007.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000008.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000009.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000010.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000011.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000012.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000013.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000014.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000015.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000016.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000017.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000018.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000019.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000020.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000021.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000022.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000023.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000024.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000025.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000026.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_cor_501/00000027.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000004.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000005.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000006.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000007.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000008.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000009.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000010.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000011.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000012.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000013.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000014.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000015.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000016.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000017.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000018.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_3d/dicom/t2_fse_tra_401/00000019.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/2D_cor.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/2D_tra.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/UID_191716063826303_svs_press_te144.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "spec2nii_test_data/UIH/mrs_data/UID_191716063827322_csi_hise_te144.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/csi_hise_te144_CSI_1201/00000000.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "uih",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_101/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_101/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_101/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_201/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_201/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_201/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_301/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_301/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/gre_scout_301/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/svs_press_te144_SVS_801/00000001.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "uih",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000004.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000005.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000006.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000007.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000008.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000009.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000010.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000011.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000012.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000013.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000014.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000015.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000016.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000017.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000018.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000019.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000020.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000021.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000022.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000023.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000024.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000025.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000026.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_cor_501/00000027.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000002.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000003.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000004.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000005.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000006.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000007.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000008.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000009.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000010.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000011.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000012.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000013.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000014.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000015.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000016.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000017.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000018.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/UIH/mrs_data/dicom/t2_fse_tra_401/00000019.dcm": {
+  "format": "dicom_image",
+  "vendor": "uih",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/FreqAdjustment/1/Results": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/acqu": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/acqu2": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/acqu2s": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/acqus": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/outd": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/proc": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/proc2": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/proc2s": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/rawdata.Navigator": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/rawdata_nifti.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/ser": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/spnam4": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/spnam50": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/spnam51": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/spnam53": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/12/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/MapShim": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/fid.refscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/rawdata.Navigator": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/spnam1": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/spnam53": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/15/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/FreqAdjustment/1/Results": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/PowAdjustment/1/Results": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/SetupPulsePower/1/Profiles": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/spnam40": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/2/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/MapShim": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/fid.refscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/rawdata.Navigator": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/spnam1": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/spnam53": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/7/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/AdjStatePerStudy": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/ResultState": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/ScanProgram.scanProgram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/study.MR": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.1.1/subject": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/acqp.out": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/lists/pp/cl_STELASER_PA_35.ppg": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/fid_proc.64": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/reco.out": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/pulseprogram.precomp": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/rawdata.Navigator": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/19/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/acqp.out": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/lists/pp/FLASH.ppg": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/pdata/1/reco.out": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/pulseprogram.precomp": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/28/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/acqp.out": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/lists/pp/FLASH.ppg": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/pdata/1/reco.out": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/pulseprogram.precomp": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/3/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/FreqAdjustment/1/Results": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/LocalFrequencyAdjustment/1/Results": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/LocalShimAdjustment/1/Results": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/MapShim": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/acqp.out": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/lists/pp/AdjSf.ppg": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/lists/pp/AdjShim.ppg": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/lists/pp/cl_STELASER_PA_35.ppg": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/fid_proc.64": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/reco.out": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/pulseprogram.precomp": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/rawdata.Navigator": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/7/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/AdjStatePerStudy": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/ResultState": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/ScanProgram.scanProgram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/study.MR": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-360.3.5/subject": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/AdjRefgProfiles.dat": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm1.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm2.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm3.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm4.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm5.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm6.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm7.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm8.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/dicom/MRIm9.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/roi": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/spnam40": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/fid.refscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/2/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/2/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/2/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/2/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pdata/2/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/rawdata.job1": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/spnam50": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/spnam51": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/spnam53": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/10/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/b0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/dicom/MRIm1.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/dicom/MRIm2.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/dicom/MRIm3.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/roi": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/traj": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/11/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm1.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm2.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm3.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm4.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm5.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm6.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm7.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm8.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/dicom/MRIm9.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/roi": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/spnam40": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/2/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm01.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm02.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm03.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm04.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm05.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm06.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm07.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm08.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm09.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/dicom/MRIm10.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/roi": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/spnam40": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/3/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm01.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm02.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm03.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm04.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm05.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm06.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm07.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm08.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm09.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/dicom/MRIm10.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/roi": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/spnam40": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/4/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/1/roi": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/2/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/2/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/2/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/2/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/2/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pdata/2/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/spnam50": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/spnam51": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/spnam53": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/5/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/2/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/2/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/2/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/2/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/2/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pdata/2/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/spnam50": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/spnam51": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/spnam53": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/6/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/7/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/b0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/dicom/MRIm1.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/dicom/MRIm2.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/dicom/MRIm3.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/roi": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/traj": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/8/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/configscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/fid": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/fid.refscan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/1/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/2/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/2/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/2/methreco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/2/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pdata/2/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/rawdata.job0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/rawdata.job1": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/specpar": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/spnam0": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/spnam50": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/spnam51": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/spnam53": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/uxnmr.info": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/9/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.10402.1607423504.11/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.11315.1607423575.11/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.31775.1607421142.8/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjStatePerStudy": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/ResultState": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/ScanProgram.scanProgram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/subject": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/ge/README.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/ge/from_dicom/10_PROBE_3D_CSI-rotation_1_cNova32ch_i00001.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/ge/from_dicom/11_PROBE_3D_CSI-rotation_2_cNova32ch_i00001.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/ge/from_dicom/12_PROBE_3D_CSI-rotation_3_cNova32ch_i00001.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/ge/from_dicom/9_PROBE_3D_CSI-no_rotation_cNova32ch_i00001.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/ge/from_dicom/t1.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/ge/pFiles/HERCULES/sub-01_ses-01_acq-herculespress_svs_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/HERCULES/sub-01_ses-01_acq-herculesslaser_svs_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/HERMES/sub-01_ses-01_acq-hermespress_svs_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/HERMES/sub-01_ses-01_acq-hermesslaser_svs_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MEGA/Big_GABA/G1/S01_GABA_68_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MEGA/Big_GABA/G4/S01_GABA_68_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MEGA/Big_GABA/G5/S01_GABA_68_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MEGA/Big_GABA/G6/S01_GABA_68_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MEGA/Big_GABA/G7/S01_GABA_68_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MEGA/Big_GABA/G8/S01_GABA_68_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MRSI/P13824.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MRSI/P15360.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MRSI/P16896.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/MRSI/P18432.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/Big_GABA/G1/S01_PRESS_35_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/Big_GABA/G4/S01_PRESS_35_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/Big_GABA/G5/S01_PRESS_35_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/Big_GABA/G6/S01_PRESS_35_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/Big_GABA/G7/S01_PRESS_35_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/Big_GABA/G8/S01_PRESS_35_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/MR30.1/P30101.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/MR30.1/P30102.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/MR30.1/P30103.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/MR30.1/P30104.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/PRESS/sub-01_ses-01_acq-press_svs_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/big_gaba/S01_GABA_68.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/hbcd/P31744.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/sLASER/sub-01_ses-01_acq-slaser_svs_noID.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/svMRS/P03072.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/svMRS/P06656.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/svMRS/P08704.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/ge/pFiles/svMRS/P10240.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/jmrui/ALLSIG.mrui": {
+  "format": "jmrui_binary",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/jmrui/P31rest_proc_jmrui.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/jmrui/basis_woTMS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/jmrui/metab_jmrui.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/jmrui/press2.mrui": {
+  "format": "jmrui_binary",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/other/file_to_clean.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/other/metab.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/other/metab.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/other/metab.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/other/metab_nohdr.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/DICOM/SV_phantom_45deg_AP/IM-0021-0002-0001.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/DICOM/SV_phantom_45deg_RL/IM-0022-0002-0001.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/DICOM/SV_phantom_H15mm/IM-0020-0002-0001.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/DICOM/SV_phantom_R15mm/IM-0019-0002-0001.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/DICOM/SV_phantom_center/IM-0018-0002-0001.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/DICOM/SV_phantom_center_no_Water_Suppression/IM-0023-0002-0001.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/DICOM/structural/1001_SmartBrain.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/DICOM/structural/IM-0018-0100-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/DICOM_enhanced_multi_dynamic/svsWSAntCing_S002/XX_0004": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/HERCULES_spar_sdat/HERCULES_Example_noID.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/HERCULES_spar_sdat/HERCULES_Example_noID.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P1/SV_PRESS_sh_6_2_raw_act.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P1/SV_PRESS_sh_6_2_raw_act.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P1/SV_PRESS_sh_6_2_raw_act.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P1/SV_PRESS_sh_6_2_raw_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P1/SV_PRESS_sh_6_2_raw_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P1/T1.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/P2/SV_PRESS_sh_14_2_raw_act.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P2/SV_PRESS_sh_14_2_raw_act.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P2/SV_PRESS_sh_14_2_raw_act.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P2/SV_PRESS_sh_14_2_raw_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P2/SV_PRESS_sh_14_2_raw_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P2/T1.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/P3/SV_PRESS_sh_4_2_raw_act.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P3/SV_PRESS_sh_4_2_raw_act.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P3/SV_PRESS_sh_4_2_raw_act.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P3/SV_PRESS_sh_4_2_raw_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P3/SV_PRESS_sh_4_2_raw_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P3/T1.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/P4/SV_PRESS_sh_11_2_raw_act.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P4/SV_PRESS_sh_11_2_raw_act.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P4/SV_PRESS_sh_11_2_raw_act.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P4/SV_PRESS_sh_11_2_raw_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P4/SV_PRESS_sh_11_2_raw_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/P4/T1.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/hyper/HBCD_HYPER_r5712_Export_WIP_HYPER_5_2_raw_act.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/hyper/HBCD_HYPER_r5712_Export_WIP_HYPER_5_2_raw_act.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/hyper/HBCD_HYPER_r5712_Export_WIP_HYPER_5_2_raw_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/hyper/HBCD_HYPER_r5712_Export_WIP_HYPER_5_2_raw_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/hyper/XX_0002_ClassicDICOM_dcmdump.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/hyper/converted_dcm.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/hyper/raw_226.data": {
+  "format": "philips_data_list",
+  "vendor": "philips",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/philips/hyper/raw_226.list": {
+  "format": "philips_data_list",
+  "vendor": "philips",
+  "kind": "raw"
+ }
+}
