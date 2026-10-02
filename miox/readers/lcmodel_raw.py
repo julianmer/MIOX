@@ -55,8 +55,12 @@ class LcmodelRawReader(Reader):
     DWELL = (("dwelltime", 1.0), ("deltat", 1.0), ("badelt", 1.0))  # header keys, factor to s
     SIDE_LIMIT = 50_000_000  # bytes; control, MakeBasis and basis files
     SIDE_MARKERS = ("$LCMODL", "&LCMODL", "$SEQPAR", "&SEQPAR")  # namelists stating HZPPPM
+    HZPPPM_GROUPS = ("LCMODL", "SEQPAR")
     GROUP = re.compile(r"\$(\w+)(.*?)\$END", re.S | re.I)  # one namelist, data lines skipped
 
+
+    def __init__(self):
+        self._side_cache: dict = {}
     def read(self, sniff: Sniff) -> list[MRSData]:
         notes = [f"nucleus not stored in LCModel .RAW files; {self.NUCLEUS} assumed"]
         text = sniff.path.read_text(errors="replace")
@@ -70,7 +74,7 @@ class LcmodelRawReader(Reader):
         side = self._side_file(sniff.path)
         if side is not None:
             header["side_file"] = side.name
-            header["side_namelists"] = self._namelists(side.read_text(errors="replace"))
+            header["side_namelists"] = self._side_namelists(side)
             notes.append(f"frequency and dwell time looked up in {side.name}")
         frequency, frequency_field = self._find(header, "hzpppm")
         dwell, dwell_field = self._dwell(header)
@@ -125,13 +129,24 @@ class LcmodelRawReader(Reader):
                 continue
             namelists = {}
             for group in self.GROUP.finditer(text):
+                if group[1].upper() not in self.HZPPPM_GROUPS:
+                    continue
                 try:
-                    namelists.update(self._namelists(f"${group[1]}{group[2]}$END"))
+                    namelists.update(self._namelists(group[0]))
                 except Exception:  # not a namelist after all
                     continue
             if self._find({"namelists": namelists}, "hzpppm")[0] is not None:
                 return candidate
         return None
+
+    def _side_namelists(self, path: Path) -> dict:
+        """Every namelist of a side file, parsed once per file version (data lines skipped)."""
+        key = (path, path.stat().st_mtime_ns)
+        if key not in self._side_cache:
+            text = path.read_text(errors="replace")
+            groups = "\n".join(group[0] for group in self.GROUP.finditer(text))
+            self._side_cache[key] = self._namelists(groups)
+        return self._side_cache[key]
 
     def _raw(self, path: Path) -> dict:
         text = path.read_text(errors="replace")
