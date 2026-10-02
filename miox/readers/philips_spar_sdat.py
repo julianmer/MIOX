@@ -38,6 +38,8 @@ from miox.sniff import Format, Sniff
 class PhilipsSparSdatReader(Spec2niiReader):
     FORMATS = (Format.PHILIPS_SPAR_SDAT,)
     CONVERTER = "philips"
+    HYPER_SHORT_TE = 0.035  # s; HYPER acquires its short-TE block at 35 ms, the edited one at 80 ms
+    HYPER_EDITED_TE = 0.08
     SOURCES = {
         "SpectrometerFrequency": "synthesizer_frequency",
         "ResonantNucleus": "nucleus",
@@ -60,10 +62,12 @@ class PhilipsSparSdatReader(Spec2niiReader):
         return list(images), list(names), header
 
     def correct(self, d: MRSData) -> None:
-        """spec2nii stores the SPAR inversion time unscaled (ms)."""
+        """The SPAR inversion time unscaled (ms) and the HYPER short-TE reference set to 80 ms."""
         super().correct(d)
         if d.meta.fields.get("InversionTime") == "spectrum_inversion_time":
             self.fix(d, "InversionTime", d.meta["InversionTime"] * 1e-3, "SPAR value in ms")
+        if d.name.endswith("_hyper_ref_short_te"):
+            self.fix(d, "EchoTime", self.HYPER_SHORT_TE, "HYPER short-TE reference is 35 ms")
 
     def _pair(self, sniff: Sniff) -> tuple[Path, Path]:
         files = (sniff.path,) + sniff.companions

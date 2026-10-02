@@ -148,7 +148,7 @@ class DicomMrsReader(Spec2niiReader):
         files = self._files(sniff)
         function = {"dicom": siemens_dicom, "philips_dicom": philips_dicom, "uih": uih_dicom}
         images, names = function[converter](files, None, self.TAGS[converter], False)
-        return list(images), list(names), self._header(files[0])
+        return list(images), list(names), self.header(files[0])
 
     def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
         manufacturer = str(vendor["dicom"].get("Manufacturer", "")).lower()
@@ -188,7 +188,8 @@ class DicomMrsReader(Spec2niiReader):
                     files.append(path)
         return sorted(files)
 
-    def _header(self, path: Path) -> dict:
+    def header(self, path: Path) -> dict:
+        """Complete header of one DICOM file: elements, CSA headers and Siemens protocol."""
         ds = pydicom.dcmread(path)
         header = {"file_meta": self._dataset(ds.file_meta), "dicom": self._dataset(ds)}
         for kind in ("image", "series"):

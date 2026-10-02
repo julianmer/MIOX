@@ -25,7 +25,13 @@ from nifti_mrs.create_nmrs import gen_nifti_mrs
 import miox as gu
 from miox.data import MRSData, Provenance
 from miox.meta import Meta
-from miox.readers import DicomMrsReader, PhilipsSparSdatReader, SiemensTwixReader
+from miox.readers import (
+    DicomMrsReader,
+    PhilipsDataListReader,
+    PhilipsSparSdatReader,
+    SiemensTwixReader,
+    VarianReader,
+)
 
 
 def _dataset(vendor: dict, values: dict[str, tuple]) -> MRSData:
@@ -97,3 +103,25 @@ def test_spar_inversion_time_in_ms():
     d = _dataset({}, {"InversionTime": (150.0, "spectrum_inversion_time")})
     PhilipsSparSdatReader().correct(d)
     assert d.meta["InversionTime"] == pytest.approx(0.15)
+
+
+def test_varian_echo_time_from_te_or_pulse_delay():
+    procpar = {"te": ["0.03"], "p1": ["0"], "alfa": ["20"]}
+    d = _dataset({"procpar": procpar}, {"EchoTime": (20.0, "x")})
+    VarianReader().correct(d)
+    assert d.meta["EchoTime"] == pytest.approx(0.03)
+    d = _dataset({"procpar": {"p1": ["0"], "alfa": ["20"]}}, {"EchoTime": (20.0, "x")})
+    VarianReader().correct(d)
+    assert d.meta["EchoTime"] == pytest.approx(20e-6)
+
+
+def test_hyper_echo_times():
+    d = _dataset({}, {"EchoTime": (0.08, "echo_time")})
+    d.name = "raw_226_hyper_short_te"
+    PhilipsDataListReader().correct(d)
+    assert d.meta["EchoTime"] == pytest.approx(0.035)
+    d = _dataset({}, {"EchoTime": (0.08, "echo_time")})
+    d.name, d.data = "raw_226_hyper_water_ref", np.zeros((1, 1, 1, 8, 2, 4), complex)
+    PhilipsDataListReader().correct(d)
+    assert "EchoTime" not in d.meta
+    assert d.dim_info[6]["header"]["EchoTime"] == [0.08, 0.035, 0.08, 0.035]

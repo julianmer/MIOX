@@ -24,9 +24,11 @@ from miox.readers.jmrui import JmruiReader
 from miox.readers.lcmodel_raw import LcmodelRawReader
 from miox.readers.loader import Loader, load
 from miox.readers.nifti_mrs import NiftiMrsReader
+from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
+from miox.readers.varian import VarianReader
 
 __all__ = [
     "BrukerReader",
@@ -36,11 +38,13 @@ __all__ = [
     "LcmodelRawReader",
     "Loader",
     "NiftiMrsReader",
+    "PhilipsDataListReader",
     "PhilipsSparSdatReader",
     "Reader",
     "ReaderError",
     "SiemensRdaReader",
     "SiemensTwixReader",
     "Spec2niiReader",
+    "VarianReader",
     "load",
 ]
