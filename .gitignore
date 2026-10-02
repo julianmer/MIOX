@@ -3,6 +3,7 @@ CLAUDE.md
 CHANGELOG.md
 HANDOFF.md
 CONTINUATION.md
+PLAN.md
 
 # test data (fetched by scripts/fetch_test_data.py)
 tests/data/
