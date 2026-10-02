@@ -71,6 +71,8 @@ class ReadRecords:
                 continue
             if fmt == Format.BRUKER and path.name not in self.BRUKER_DATA:
                 continue
+            if fmt == Format.DICOM_IMAGE:  # single slices; series are checked against dcm2niix
+                continue
             yield path
 
     def differences(self, expected: Any, got: Any, where: str = "") -> list[str]:

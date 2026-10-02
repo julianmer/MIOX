@@ -160,6 +160,7 @@ class Sniff:
 class Sniffer:
     HEAD_BYTES = 4096  # bytes read from the start of a file
     DIR_PROBE_LIMIT = 50  # files probed for DICOM in a directory
+    STUDY_LIMIT = 100_000  # DICOM files gathered from a study folder
 
     DICOM_SOP_MRS = {
         "1.2.840.10008.5.1.4.1.1.4.2": "MR Spectroscopy Storage",
@@ -293,8 +294,8 @@ class Sniffer:
         return Sniff(path, Format.UNKNOWN)
 
     def directory(self, path: Path) -> Sniff:
-        """A Bruker scan, a Varian .fid folder, a basis set of one file per metabolite, or a
-        DICOM series."""
+        """A Bruker scan, a Varian .fid folder, a basis set of one file per metabolite, a DICOM
+        series, or a study folder of DICOM series folders."""
         names = {p.name for p in path.iterdir()}
         if names & set(self.BRUKER_PARAM_FILES):
             return self._bruker_scan(path, path, "directory with Bruker parameter files")
@@ -323,7 +324,27 @@ class Sniffer:
                 evidence=("directory; first DICOM file decides",) + first.evidence,
                 companions=(child,) + tuple(c for c in files if c != child),
             )
+        if any(c.is_dir() for c in path.iterdir()) and (study := self._study(path)):
+            first = self._read_dicom(study[0])
+            return dataclasses.replace(
+                first,
+                path=path,
+                evidence=("study folder; first DICOM file decides",) + first.evidence,
+                companions=tuple(study),
+            )
         return Sniff(path, Format.UNKNOWN, evidence=("directory with no recognised content",))
+
+    def _study(self, path: Path) -> list[Path]:
+        """DICOM files in the subfolders of a folder without DICOM files of its own (a study)."""
+        found = []
+        for child in sorted(path.rglob("*")):
+            if len(found) >= self.STUDY_LIMIT:
+                break
+            if child.is_file() and not child.name.startswith("."):
+                with open(child, "rb") as fh:
+                    if fh.read(132)[128:] == b"DICM":
+                        found.append(child)
+        return found
 
     # --- file rules ------------------------------------------------------------------------------
 

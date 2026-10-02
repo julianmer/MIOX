@@ -23,6 +23,7 @@ from miox.data import FitResult, MRImage, MRSData, PriorSet
 from miox.readers.base import Reader, ReaderError
 from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.bruker import BrukerReader
+from miox.readers.dicom_image import DicomImageReader
 from miox.readers.dicom_mrs import DicomMrsReader
 from miox.readers.fida_mat import FidaReader
 from miox.readers.fsl_mrs_basis import FslMrsBasisReader
@@ -71,6 +72,7 @@ class Loader:
         for reader in (
             BasisFolderReader(self),
             BrukerReader(),
+            DicomImageReader(),
             DicomMrsReader(),
             FidaReader(),
             FslMrsBasisReader(),

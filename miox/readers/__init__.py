@@ -19,6 +19,7 @@
 from miox.readers.base import Reader, ReaderError, Spec2niiReader
 from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.bruker import BrukerReader
+from miox.readers.dicom_image import DicomImageReader
 from miox.readers.dicom_mrs import DicomMrsReader
 from miox.readers.fida_mat import FidaReader
 from miox.readers.fsl_mrs_basis import FslMrsBasisReader
@@ -55,6 +56,7 @@ from miox.readers.vespa_viff import VespaViffReader
 __all__ = [
     "BasisFolderReader",
     "BrukerReader",
+    "DicomImageReader",
     "DicomMrsReader",
     "FidaReader",
     "FslMrsBasisReader",
