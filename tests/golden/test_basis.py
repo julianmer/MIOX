@@ -38,6 +38,7 @@ NAA_SETS = [
     (CHALLENGE + "basisset_LCModel/press3T_30ms.BASIS", 4.65),
     (CHALLENGE + "basisset_LCModel", 4.65),
     (CHALLENGE + "basisset_JMRUI", 4.65),
+    ("spec2nii_test_data/jmrui/basis_woTMS.txt", 4.65),
     (OSPREY + "3T/siemens/unedited/special/8_5/basis_siemens_special8_5.basis", 4.65),
     (OSPREY + "7T/siemens/unedited/special/9/basis_siemens_special9.basis", 4.65),
     (OSPREY + "7T/siemens/unedited/steam/5/basis_siemens_steam5.BASIS", 4.65),
@@ -81,6 +82,9 @@ SAME_SPECTRA = [
     (CHALLENGE + "basisset_LCModel/press3T_30ms.BASIS", CHALLENGE + "basisset_LCModel", False, ()),
     (CHALLENGE + "basisset_LCModel", CHALLENGE + "basisset_JMRUI", False, ()),
 ]
+
+# the same prior exported by Vespa-Simulation in its three formats
+PRIORS = ["VESPA/vespa_priors.xml", "GAVA/gava_priors.txt", "MIDAS/midas_priors.xml"]
 
 
 def basis(relpath: str) -> BasisSet:
@@ -130,3 +134,13 @@ def test_mrscloud_single_spectrum_is_its_basis_column():
     assert single.spectrometer_frequency == pytest.approx(b.spectrometer_frequency)
     x, y = b.fid("NAA"), single.data.ravel()
     assert abs(np.vdot(x, y)) / np.linalg.norm(x) / np.linalg.norm(y) > 0.999
+
+
+@pytest.mark.data
+def test_same_prior_in_three_formats():
+    paths = [PUBLIC_DATA / TOOLBOX / p for p in PRIORS]
+    if not all(p.exists() for p in paths):
+        pytest.skip("file not fetched")
+    keys = ("metabolite", "line", "ppm", "area", "phase", "dims")
+    tables = [[tuple(str(line[k]) for k in keys) for line in load(p)[0].lines] for p in paths]
+    assert len(tables[0]) > 100 and tables[0] == tables[1] == tables[2]

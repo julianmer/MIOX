@@ -49,7 +49,7 @@ class VespaViffReader(Reader):
     RAW = "blocks/block_raw"
 
     def read(self, sniff: Sniff) -> list[MRSData]:
-        root = ET.fromstring(self._text(sniff.path))
+        root = ET.fromstring(self.text(sniff.path))
         datasets = root.findall("dataset")
         if not datasets:
             kinds = sorted({child.tag for child in root} - {"timestamp", "comment"})
@@ -85,7 +85,7 @@ class VespaViffReader(Reader):
         return d
 
     @staticmethod
-    def _text(path: Path) -> bytes:
+    def text(path: Path) -> bytes:
         raw = path.read_bytes()
         return gzip.decompress(raw) if raw[:2] == b"\x1f\x8b" else raw
 

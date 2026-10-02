@@ -35,7 +35,7 @@ from spec2nii.spec2nii import remove_zero_higher_dim_indices
 from spec2nii.spec2nii import spec2nii as Spec2niiCommand
 
 # own
-from miox.data import BasisSet, MRSData, Provenance
+from miox.data import BasisSet, MRSData, PriorSet, Provenance
 from miox.meta.meta import Meta
 from miox.sniff import Format, Sniff
 
@@ -151,6 +151,22 @@ class Reader:
         )
         d.dim_info.setdefault(5, {})["header"] = {"Metabolite": list(metabolites)}
         return d
+
+    def prior_set(
+        self,
+        sniff: Sniff,
+        lines: list[dict],
+        values: dict[str, tuple[Any, str | None]],
+        vendor: dict,
+        name: str,
+        notes: list[str],
+        source: str,
+    ) -> PriorSet:
+        """PriorSet from parsed lines; ``values`` maps standard keys to (value, vendor field)."""
+        meta = Meta(vendor)
+        for key, (value, field) in values.items():
+            meta.set(key, value, f"{source}: {field}" if field else source, field)
+        return PriorSet(lines, meta, self.provenance(sniff, tuple(notes)), name)
 
     def _frequency_in_mhz(self, images: list[NIFTI_MRS], notes: list[str]) -> bool:
         """Some converters store the frequency in Hz; no spectrometer runs above 100 GHz."""

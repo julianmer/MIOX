@@ -204,3 +204,50 @@ class BasisSet(MRSData):
             f"dwell {self.dwelltime * 1e3:.4g} ms>"
         )
 
+
+
+#**************************************************************************************************#
+#                                             PriorSet                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# Prior knowledge for fitting, as peak lists instead of sampled signals: one dict per line, with   #
+# at least "metabolite" and "ppm", and what the format adds ("area" or "amplitude", "phase" in     #
+# degrees, "linewidth" in Hz, bounds, loop indices). Values a format gives as expressions linking  #
+# lines (e.g. "BATP/2") stay strings.                                                              #
+#                                                                                                  #
+#**************************************************************************************************#
+class PriorSet:
+    def __init__(self, lines: list[dict], meta: Meta, provenance: Provenance, name: str = ""):
+        self.lines = lines
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    @property
+    def metabolites(self) -> list[str]:
+        return list(dict.fromkeys(line["metabolite"] for line in self.lines))
+
+    def lines_of(self, metabolite: str) -> list[dict]:
+        return [line for line in self.lines if line["metabolite"] == metabolite]
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "metabolites": self.metabolites,
+            "lines": self.lines,
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "vendor_fields": len(self.meta.vendor_fields()),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        return (
+            f"<PriorSet {self.name} {self.provenance.format}: {len(self.metabolites)} metabolites, "
+            f"{len(self.lines)} lines>"
+        )

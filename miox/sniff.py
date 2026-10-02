@@ -78,6 +78,10 @@ class Format(StrEnum):
     MARSS_BASIS = "marss_basis"
     PROFIT_BASIS = "profit_basis"
     FIDA_MAT = "fida_mat"
+    VESPA_PRIOR = "vespa_prior"
+    GAVA_PRIOR = "gava_prior"
+    MIDAS_PRIOR = "midas_prior"
+    PYAMARES_PRIOR = "pyamares_prior"
     BASIS_FOLDER = "basis_folder"
     JMRUI_TEXT = "jmrui_text"
     JMRUI_BINARY = "jmrui_binary"
@@ -192,7 +196,9 @@ class Sniffer:
         ((b"$LCMODL", b"&LCMODL"), Format.LCMODEL_CONTROL, Kind.PROTOCOL, "LCModel $LCMODL"),
         ((b"$NMALL", b"$NMEACH"), Format.LCMODEL_CONTROL, Kind.PROTOCOL, "MakeBasis $NMALL"),
         ((b"$NMID", b"$SEQPAR"), Format.LCMODEL_RAW, Kind.SPECTROSCOPY, "LCModel $NMID/$SEQPAR"),
+        ((b";SIMULATION SPECTRAL RESULTS",), Format.GAVA_PRIOR, Kind.BASIS_SET, "GAVA prior"),
     )
+    PYAMARES = re.compile(rb"^Index,[^\r\n]*\r?\nInitial Values,", re.M)  # prior table rows
     TEXT_STARTS = (  # (start of the file, format, kind, evidence)
         (b"Dangerplot_version", Format.TARQUIN_DPT, Kind.SPECTROSCOPY, "TARQUIN dangerplot"),
         (b"Signal     Conc (au)", Format.TARQUIN_RESULTS, Kind.FIT_RESULT, "TARQUIN results"),
@@ -533,6 +539,14 @@ class Sniffer:
             evidence = ("FSL-MRS basis JSON",)
             fmt = Format.FSL_MRS_BASIS
             return Sniff(path, fmt, Kind.BASIS_SET, confidence=1.0, evidence=evidence)
+        if b"<FITT_Generic_XML" in head and b"PRIOR_METABOLITE_INFORMATION" in path.read_bytes():
+            evidence = ("MIDAS FITT_Generic_XML prior",)
+            fmt = Format.MIDAS_PRIOR
+            return Sniff(path, fmt, Kind.BASIS_SET, confidence=1.0, evidence=evidence)
+        if self.PYAMARES.search(head):
+            evidence = ("PyAMARES prior table (Index, Initial Values)",)
+            fmt = Format.PYAMARES_PRIOR
+            return Sniff(path, fmt, Kind.BASIS_SET, confidence=0.9, evidence=evidence)
         if stripped.startswith(b"%!PS") and b"Creator: LCModel" in head:
             evidence = ("LCModel PostScript",)
             return Sniff(path, Format.LCMODEL_PS, Kind.REPORT, confidence=1.0, evidence=evidence)
@@ -569,6 +583,10 @@ class Sniffer:
         kind = Kind.UNKNOWN
         if b"<dataset" in head:
             kind = Kind.SPECTROSCOPY
+        elif b"<prior" in head:
+            evidence = ("<vespa_export> with <prior>",)
+            fmt = Format.VESPA_PRIOR
+            return Sniff(path, fmt, Kind.BASIS_SET, confidence=1.0, evidence=evidence)
         elif b"<experiment" in head or b"<metabolite" in head:
             kind = Kind.BASIS_SET
         return Sniff(path, Format.VESPA_VIFF, kind, confidence=1.0, evidence=("<vespa_export>",))

@@ -1,8 +1,8 @@
 {
  "basis_toolbox/sample_basis_sets/GAVA/gava_priors.txt": {
-  "format": "unknown",
+  "format": "gava_prior",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "basis_set"
  },
  "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Asc": {
   "format": "unknown",
@@ -760,9 +760,9 @@
   "kind": "spectroscopy"
  },
  "basis_toolbox/sample_basis_sets/MIDAS/midas_priors.xml": {
-  "format": "unknown",
+  "format": "midas_prior",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "basis_set"
  },
  "basis_toolbox/sample_basis_sets/NIFTI-MRS/Asc.nii.gz": {
   "format": "nifti_mrs",
@@ -1130,9 +1130,9 @@
   "kind": "unknown"
  },
  "basis_toolbox/sample_basis_sets/VESPA/vespa_priors.xml": {
-  "format": "vespa_viff",
+  "format": "vespa_prior",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "basis_set"
  },
  "dcm_qa_spec/.gitignore": {
   "format": "unknown",
@@ -9970,9 +9970,9 @@
   "kind": "spectroscopy"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_06_fitting_press_te24/_prior_for_press24_forCP0.xml": {
-  "format": "vespa_viff",
+  "format": "vespa_prior",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "basis_set"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_06_fitting_press_te24/press_cp0.xml": {
   "format": "vespa_viff",

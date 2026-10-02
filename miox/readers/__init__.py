@@ -22,6 +22,7 @@ from miox.readers.bruker import BrukerReader
 from miox.readers.dicom_mrs import DicomMrsReader
 from miox.readers.fida_mat import FidaReader
 from miox.readers.fsl_mrs_basis import FslMrsBasisReader
+from miox.readers.gava_midas_prior import GavaMidasPriorReader
 from miox.readers.ge_pfile import GePfileReader
 from miox.readers.inspector_basis import InspectorBasisReader
 from miox.readers.jmrui import JmruiReader
@@ -34,6 +35,7 @@ from miox.readers.osprey_basis import OspreyBasisReader
 from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.readers.profit_basis import ProfitBasisReader
+from miox.readers.pyamares_prior import PyamaresPriorReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
 from miox.readers.sivic_ddf import SivicDdfReader
@@ -41,6 +43,7 @@ from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.varian import VarianReader
 from miox.readers.vasf import VasfReader
+from miox.readers.vespa_prior import VespaPriorReader
 from miox.readers.vespa_viff import VespaViffReader
 
 __all__ = [
@@ -49,6 +52,7 @@ __all__ = [
     "DicomMrsReader",
     "FidaReader",
     "FslMrsBasisReader",
+    "GavaMidasPriorReader",
     "GePfileReader",
     "InspectorBasisReader",
     "JmruiReader",
@@ -61,6 +65,7 @@ __all__ = [
     "PhilipsDataListReader",
     "PhilipsSparSdatReader",
     "ProfitBasisReader",
+    "PyamaresPriorReader",
     "Reader",
     "ReaderError",
     "SiemensRdaReader",
@@ -71,6 +76,7 @@ __all__ = [
     "TarquinDptReader",
     "VarianReader",
     "VasfReader",
+    "VespaPriorReader",
     "VespaViffReader",
     "load",
 ]

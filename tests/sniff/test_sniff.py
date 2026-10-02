@@ -243,6 +243,20 @@ def test_empty_dir(tmp_path):
             "spectroscopy",
         ),
         ("x.ddf", "DATA DESCRIPTOR FILE\nversion: 6.1\n", "sivic_ddf", "spectroscopy"),
+        (
+            "p.xml",
+            '<vespa_export version="1.0.0">\n<prior version="1.0.0">\n',
+            "vespa_prior",
+            "basis_set",
+        ),
+        ("p.txt", ";x\n;Simulation Spectral Results\n;---\n", "gava_prior", "basis_set"),
+        (
+            "p.xml",
+            "<FITT_Generic_XML>\n<PRIOR_METABOLITE_INFORMATION>\n",
+            "midas_prior",
+            "basis_set",
+        ),
+        ("p.csv", "#  x,,\nIndex,A,B\nInitial Values,,\n", "pyamares_prior", "basis_set"),
     ],
 )
 def test_analysis_text_formats(tmp_path, name, text, fmt, kind):

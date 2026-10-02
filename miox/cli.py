@@ -26,7 +26,7 @@ from pathlib import Path
 # own
 from miox import __version__
 from miox.audit import Auditor
-from miox.data import MRSData
+from miox.data import MRSData, PriorSet
 from miox.readers import Loader, ReaderError
 from miox.sniff import Format, Sniffer
 
@@ -77,15 +77,18 @@ class CLI:
                 print(json.dumps(d.to_dict(), default=str) if args.json else self._describe(d))
         return status
 
-    def _describe(self, d: MRSData) -> str:
-        dims = " ".join(f"{name}={n}" for name, n in zip(d.dims, d.shape, strict=True))
-        lines = [
-            f"{d.provenance.paths[0]}: {d.provenance.format} ({d.provenance.reader})",
-            f"  {d.name}: {dims}",
-            f"    {d.nucleus}, {d.spectrometer_frequency:.4f} MHz, "
-            f"dwell {d.dwelltime * 1e3:.4g} ms ({d.spectral_width:.6g} Hz), {d.n_points} points",
-        ]
-        width = max(len(key) for key in d.meta)
+    def _describe(self, d: MRSData | PriorSet) -> str:
+        lines = [f"{d.provenance.paths[0]}: {d.provenance.format} ({d.provenance.reader})"]
+        if isinstance(d, PriorSet):
+            lines.append(f"  {d.name}: {len(d.metabolites)} metabolites, {len(d.lines)} lines")
+        else:
+            dims = " ".join(f"{name}={n}" for name, n in zip(d.dims, d.shape, strict=True))
+            lines += [
+                f"  {d.name}: {dims}",
+                f"    {d.nucleus}, {d.spectrometer_frequency:.4f} MHz, dwell "
+                f"{d.dwelltime * 1e3:.4g} ms ({d.spectral_width:.6g} Hz), {d.n_points} points",
+            ]
+        width = max((len(key) for key in d.meta), default=0)
         for key, value in d.meta.items():
             text = json.dumps(value, default=str)
             if len(text) > 50:

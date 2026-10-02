@@ -6,9 +6,10 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Basis-set readers on synthetic files: LCModel .BASIS, FSL-MRS JSON, SpinWizard folders, #
-#          MATLAB structs (Osprey, INSPECTOR, MARSS, ProFit, FID-A) and folders of one file per    #
-#          metabolite. No test data needed.                                                        #
+# Purpose: Basis-set and prior readers on synthetic files: LCModel .BASIS, FSL-MRS JSON,           #
+#          SpinWizard folders, MATLAB structs (Osprey, INSPECTOR, MARSS, ProFit, FID-A), folders   #
+#          of one file per metabolite, jMRUI multi-signal files and Vespa, GAVA, MIDAS and         #
+#          PyAMARES priors. No test data needed.                                                   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -160,3 +161,79 @@ def test_fida_struct_dimensions(tmp_path):
     assert d.dims == ("x", "y", "z", "t", "DIM_COIL", "DIM_DYN") and d.shape == (1, 1, 1, 64, 4, 3)
     assert d.meta["EchoTime"] == pytest.approx(0.03) and d.meta["RepetitionTime"] == 2.0
     assert np.allclose(d.data[0, 0, 0, :, 2, 1], _fid(121))
+
+
+def _jmrui(path, names: str, fids: list[np.ndarray]) -> None:
+    lines = ["jMRUI Data Textfile", "", f"Filename: {path.name}", "", "PointsInDataset: 64",
+             f"DatasetsInFile: {len(fids)}", "SamplingInterval: 2.5E-1", "ZeroOrderPhase: 0E0",
+             "BeginTime: 0E0", "TransmitterFrequency: 1.232E8", "MagneticField: 0E0",
+             "TypeOfNucleus: 0E0", "NameOfPatient: ", "DateOfExperiment: ", "Spectrometer: ",
+             "AdditionalInfo: ", f"SignalNames: {names}", "", "", "Signal and FFT",
+             "sig(real)\tsig(imag)\tfft(real)\tfft(imag)"]
+    for i, fid in enumerate(fids):
+        lines.append(f"Signal {i + 1} out of {len(fids)} in file")
+        lines += [f"{z.real:.6E}\t{-z.imag:.6E}\t0\t0" for z in fid]  # jMRUI: conjugate
+    path.write_text("\n".join(lines) + "\n")
+
+
+def test_jmrui_signals_named_after_metabolites(tmp_path):
+    _jmrui(tmp_path / "basis.txt", "NAA.txt;Cr.txt;GABA.txt;", [_fid(100), _fid(-50), _fid(20)])
+    [b] = gu.load(tmp_path / "basis.txt")
+    assert isinstance(b, gu.BasisSet) and b.metabolites == ["NAA", "Cr", "GABA"]
+    assert np.allclose(b.fid("Cr"), _fid(-50), atol=1e-5)
+    _jmrui(tmp_path / "dynamics.txt", "scan.txt;", [_fid(100), _fid(100)])
+    [d] = gu.load(tmp_path / "dynamics.txt")
+    assert not isinstance(d, gu.BasisSet)
+
+
+def test_vespa_prior(tmp_path):
+    f = tmp_path / "prior.xml"
+    f.write_text(
+        '<?xml version="1.0"?><vespa_export version="1.0.0"><prior version="1.0.0">'
+        "<source>experiment</source><nucleus>1H</nucleus><seqte>30.0</seqte>"
+        "<prior_metabolite><name>NAA</name><dim>0</dim><dim>1</dim><dim>0</dim><spins>3</spins>"
+        "<line><group/><ppm>2.008</ppm><area>3.0</area><phase>0.5</phase></line>"
+        "</prior_metabolite></prior></vespa_export>"
+    )
+    [p] = gu.load(f)
+    assert isinstance(p, gu.PriorSet) and p.metabolites == ["NAA"]
+    assert p.lines[0] == {"metabolite": "NAA", "line": 0, "ppm": 2.008, "area": 3.0,
+                          "phase": 0.5, "group": "", "dims": [0, 1, 0], "spins": 3}
+    assert p.meta["EchoTime"] == pytest.approx(0.03) and p.meta["ResonantNucleus"] == ["1H"]
+
+
+def test_gava_and_midas_priors(tmp_path):
+    rows = [("NAA", 0, 0, 0, 0, 2.008, 3.0, 0.5), ("NAA", 0, 0, 0, 1, 2.49, 0.1, -10.0)]
+    gava = tmp_path / "prior.txt"
+    gava.write_text(";comment\n;TE: 30.0 ms\n;\n;Simulation Spectral Results\n;" + "-" * 75
+                    + "\n" + "\n".join("\t".join(map(str, r)) for r in rows) + "\n")
+    midas = tmp_path / "prior.xml"
+    params = "".join(f'<param name="fitt_PriorLine{i:05d}" value="{"++".join(map(str, r))}"/>'
+                     for i, r in enumerate(rows, 1))
+    midas.write_text(
+        '<FITT_Generic_XML Creation_date="2026-10-02" Creation_time="10:00:00">'
+        '<VESPA_SIMULATION_MIDAS_EXPORT><comment line="line0000" value="TE: 30.0 ms"/>'
+        f"</VESPA_SIMULATION_MIDAS_EXPORT><PRIOR_METABOLITE_INFORMATION>{params}"
+        "</PRIOR_METABOLITE_INFORMATION></FITT_Generic_XML>"
+    )
+    [g], [m] = gu.load(gava), gu.load(midas)
+    assert g.lines == m.lines and len(g.lines) == 2 and g.lines[1]["phase"] == -10.0
+    assert g.meta["EchoTime"] == m.meta["EchoTime"] == pytest.approx(0.03)
+
+
+def test_pyamares_prior(tmp_path):
+    f = tmp_path / "prior.csv"
+    f.write_text(
+        "#  a comment,,\nIndex,PCr,ATP,ATP2\nInitial Values,,,\namplitude,4.4,1.5,ATP/2\n"
+        "chemicalshift,0,-2.46,ATP-16Hz\nlinewidth,15,39,ATP\nphase,0,0,ATP\ng,0,0,0\n"
+        'Bounds,,,\namplitude,"(0, ","(0, ","(0, "\nchemicalshift,,"(-2.6,-2.4)",\n'
+        'linewidth,"(1,80)","(1,80)","(1,80)"\nphase,"(-180, 180)","(-180, 180)","(-180, 180)"\n'
+        'g,"(0,1)","(0,1)","(0,1)"\n'
+    )
+    [p] = gu.load(f)
+    assert p.metabolites == ["PCr", "ATP", "ATP2"]
+    atp2 = p.lines_of("ATP2")[0]
+    assert atp2["amplitude"] == "ATP/2" and atp2["ppm"] == "ATP-16Hz" and atp2["g"] == 0.0
+    assert p.lines[1]["bounds"]["ppm"] == [-2.6, -2.4] and p.lines[0]["bounds"]["ppm"] is None
+    assert p.lines[0]["bounds"]["amplitude"] == [0.0, None]
+    assert p.meta.vendor["comments"] == ["#  a comment"]
