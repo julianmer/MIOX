@@ -30,7 +30,7 @@ from miox.sniff import Format, Sniff
 
 
 #**************************************************************************************************#
-#                                       LcmodelBasisReader                                         #
+#                                        LcmodelBasisReader                                        #
 #**************************************************************************************************#
 #                                                                                                  #
 # Each metabolite block holds fft(FID zero-filled to NDATAB points), checked against the .RAW      #

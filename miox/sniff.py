@@ -32,6 +32,9 @@ from pathlib import Path
 import nibabel as nib
 import pydicom
 
+# own
+from miox.matfile import MatFile
+
 
 #**************************************************************************************************#
 #                                              Format                                              #
@@ -70,6 +73,11 @@ class Format(StrEnum):
     SIVIC_IDF = "sivic_idf"
     FSL_MRS_BASIS = "fsl_mrs_basis"
     SPINWIZARD_BASIS = "spinwizard_basis"
+    OSPREY_BASIS = "osprey_basis"
+    INSPECTOR_BASIS = "inspector_basis"
+    MARSS_BASIS = "marss_basis"
+    PROFIT_BASIS = "profit_basis"
+    FIDA_MAT = "fida_mat"
     BASIS_FOLDER = "basis_folder"
     JMRUI_TEXT = "jmrui_text"
     JMRUI_BINARY = "jmrui_binary"
@@ -194,7 +202,21 @@ class Sniffer:
         (b"DATA DESCRIPTOR FILE", Format.SIVIC_DDF, Kind.SPECTROSCOPY, "UCSF DDF header"),
         (b"IMAGE DESCRIPTOR FILE", Format.SIVIC_IDF, Kind.IMAGING, "UCSF IDF header"),
     )
-    BASIS_MEMBERS = (Format.LCMODEL_RAW, Format.JMRUI_TEXT, Format.FSL_MRS_BASIS, Format.NIFTI_MRS)
+    MATLAB_VARIABLES = (  # (variable name, format, kind); first match wins
+        (re.compile(r"^BASIS$"), Format.OSPREY_BASIS, Kind.BASIS_SET),
+        (re.compile(r"^lcmBasis$"), Format.INSPECTOR_BASIS, Kind.BASIS_SET),
+        (re.compile(r"^exptDat$"), Format.MARSS_BASIS, Kind.BASIS_SET),
+        (re.compile(r"^basis$"), Format.PROFIT_BASIS, Kind.BASIS_SET),
+        (re.compile(r"^out"), Format.FIDA_MAT, Kind.SPECTROSCOPY),  # out, outw, outA, ...
+    )
+    BASIS_MEMBERS = (
+        Format.LCMODEL_RAW,
+        Format.JMRUI_TEXT,
+        Format.FSL_MRS_BASIS,
+        Format.NIFTI_MRS,
+        Format.FIDA_MAT,
+        Format.MARSS_BASIS,
+    )
     METABOLITES = (  # lower-case abbreviations and names used for basis-set files
         "naa", "naag", "cr", "pcr", "tcr", "cre", "creatine", "cho", "choline", "gpc", "pch",
         "pcho", "tcho", "ins", "mi", "mins", "myo", "si", "sins", "scyllo", "glu", "glutamate",
@@ -218,6 +240,7 @@ class Sniffer:
             self.dicom,
             self.nifti,
             self.rda,
+            self.matlab,
             self.companion_binary,
             self.analysis_text,
             self.vespa,
@@ -592,6 +615,27 @@ class Sniffer:
                 data = self._sibling(path, suffix)
                 return (data,) if data else ()
         return ()
+
+    def matlab(self, path: Path, head: bytes) -> Sniff | None:
+        """MATLAB files, by the variable names the tools save."""
+        if not MatFile.is_mat(head):
+            return None
+        try:
+            variables = MatFile.variables(path)
+        except Exception as e:
+            return Sniff(path, Format.UNKNOWN, evidence=(f"MATLAB file, unreadable: {e}",))
+        for pattern, fmt, kind in self.MATLAB_VARIABLES:
+            names = [name for name in variables if pattern.match(name)]
+            if names:
+                return Sniff(
+                    path,
+                    fmt,
+                    kind,
+                    confidence=0.8,
+                    evidence=(f"MATLAB variable {names[0]}",),
+                    detail={"variables": variables},
+                )
+        return Sniff(path, Format.UNKNOWN, evidence=(f"MATLAB file with {sorted(variables)}",))
 
     def hdf5(self, path: Path, head: bytes) -> Sniff | None:
         if head[:8] != b"\x89HDF\r\n\x1a\n":

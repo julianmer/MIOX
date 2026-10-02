@@ -20,6 +20,7 @@ from __future__ import annotations
 import struct
 
 import pytest
+import scipy.io
 
 # own
 from miox import sniff
@@ -283,3 +284,20 @@ def test_spinwizard_folder(tmp_path):
     (tmp_path / "NAA.txt").write_text("1.0 0.0\n")
     s = sniff(tmp_path)
     assert (s.format, s.kind, s.vendor) == (Format.SPINWIZARD_BASIS, Kind.BASIS_SET, None)
+
+
+@pytest.mark.parametrize(
+    "variable,fmt",
+    [
+        ("BASIS", Format.OSPREY_BASIS),
+        ("lcmBasis", Format.INSPECTOR_BASIS),
+        ("exptDat", Format.MARSS_BASIS),
+        ("basis", Format.PROFIT_BASIS),
+        ("outw", Format.FIDA_MAT),
+        ("results", Format.UNKNOWN),
+    ],
+)
+def test_matlab_by_variable(tmp_path, variable, fmt):
+    f = tmp_path / "x.mat"
+    scipy.io.savemat(f, {variable: {"a": 1.0}})
+    assert sniff(f).format == fmt

@@ -29,7 +29,8 @@ CHALLENGE = "mrs_fitting_challenge/"
 OSPREY = "osprey/fit/basissets/"
 SLASER = TOOLBOX + "LCModel/BASIS_file/SLASER_Siemens26.basis"
 
-# (basis set, ppm at 0 Hz): the basis formats store no reference, each tool picks its own
+# (basis set, ppm at 0 Hz): most basis formats store no reference, each tool picks its own; None:
+# the set's BASIS/centerFreq
 NAA_SETS = [
     (SLASER, 4.65),
     ("lcmodel/test_lcm/3t.basis", 4.65),
@@ -48,21 +49,36 @@ NAA_SETS = [
     (TOOLBOX + "FSL-MRS", 4.65),
     (TOOLBOX + "FSL-MRS/NAA.json", 4.65),
     (TOOLBOX + "JMRUI", 4.65),
-    # converted from SLASER: BasisRFOffset.txt states 4.675, the data keep SLASER's 4.65
+    # the same spectra as SLASER; these state 4.675 (BasisRFOffset.txt, ppmCalib, centerFreq) but
+    # the data keep SLASER's 4.65
     (TOOLBOX + "SPINWIZARD", 4.65),
     (TOOLBOX + "JET/from_marss_converted", 4.65),
+    (TOOLBOX + "INSPECTOR/Basis_sLASER_26.mat", 4.65),
+    (TOOLBOX + "MARSS/basis_functions_metab_mm_mat", 4.65),
+    (TOOLBOX + "OSPREY/ospreybasis_marss_to_cows_26.mat", 4.65),
+    (TOOLBOX + "FIDA", 4.65),
+    (TOOLBOX + "PROFIT/profit_struct.mat", 4.65),
     (TOOLBOX + "JET/from_spinwizard_mouse", 4.79),  # as its BasisRFOffset.txt states
+    (TOOLBOX + "MRSCLOUD/BASIS_Siemens_UnEdited_sLASER_105_wMM.mat", None),
+] + [
+    (path.relative_to(PUBLIC_DATA).as_posix(), None)
+    for path in sorted((PUBLIC_DATA / OSPREY).rglob("*.mat"))
 ]
 
-# (basis set, basis set, conjugate): sets holding the same spectra in different formats
+# (basis set, basis set, conjugate, names to skip): the same spectra in different formats
 SAME_SPECTRA = [
-    (SLASER, TOOLBOX + "FSL-MRS", False),
-    (SLASER, TOOLBOX + "JMRUI", False),
-    (SLASER, TOOLBOX + "SPINWIZARD", False),
-    (SLASER, TOOLBOX + "JET/from_marss_converted", False),
-    (SLASER, TOOLBOX + "NIFTI-MRS", True),  # spec2nii 0.8.7 conjugated the .RAW data it converted
-    (CHALLENGE + "basisset_LCModel/press3T_30ms.BASIS", CHALLENGE + "basisset_LCModel", False),
-    (CHALLENGE + "basisset_LCModel", CHALLENGE + "basisset_JMRUI", False),
+    (SLASER, TOOLBOX + "FSL-MRS", False, ()),
+    (SLASER, TOOLBOX + "JMRUI", False, ()),
+    (SLASER, TOOLBOX + "SPINWIZARD", False, ()),
+    (SLASER, TOOLBOX + "JET/from_marss_converted", False, ()),
+    (SLASER, TOOLBOX + "NIFTI-MRS", True, ()),  # spec2nii 0.8.7 conjugated the .RAW it converted
+    (SLASER, TOOLBOX + "INSPECTOR/Basis_sLASER_26.mat", False, ()),
+    (SLASER, TOOLBOX + "MARSS/basis_functions_metab_mm_mat", False, ()),
+    (SLASER, TOOLBOX + "OSPREY/ospreybasis_marss_to_cows_26.mat", False, ("MM09",)),  # Osprey-made
+    (SLASER, TOOLBOX + "FIDA", False, ()),
+    (SLASER, TOOLBOX + "PROFIT/profit_struct.mat", False, ()),
+    (CHALLENGE + "basisset_LCModel/press3T_30ms.BASIS", CHALLENGE + "basisset_LCModel", False, ()),
+    (CHALLENGE + "basisset_LCModel", CHALLENGE + "basisset_JMRUI", False, ()),
 ]
 
 
@@ -76,8 +92,9 @@ def basis(relpath: str) -> BasisSet:
 
 
 def naa_ppm(b: BasisSet, centre: float) -> float:
-    """Position of the largest NAA peak between 1 and 3 ppm."""
+    """Position of the largest NAA peak between 1 and 3 ppm (first sub-spectrum if edited)."""
     fid = b.fid(next(m for m in b.metabolites if m.upper() == "NAA"))
+    fid = fid.reshape(fid.shape[0], -1)[:, 0]
     spectrum = np.abs(np.fft.fftshift(np.fft.fft(fid)))
     ppm = centre - np.fft.fftshift(np.fft.fftfreq(fid.size, b.dwelltime)) / b.spectrometer_frequency
     window = (ppm > 1) & (ppm < 3)
@@ -85,19 +102,30 @@ def naa_ppm(b: BasisSet, centre: float) -> float:
 
 
 @pytest.mark.data
-@pytest.mark.parametrize("relpath,centre", NAA_SETS, ids=[r[0].split("/")[-1] for r in NAA_SETS])
+@pytest.mark.parametrize("relpath,centre", NAA_SETS, ids=[r[0] for r in NAA_SETS])
 def test_naa_at_2_008_ppm(relpath, centre):
-    assert naa_ppm(basis(relpath), centre) == pytest.approx(2.008, abs=0.015)
+    b = basis(relpath)
+    centre = b.meta.vendor["BASIS"]["centerFreq"] if centre is None else centre
+    assert naa_ppm(b, centre) == pytest.approx(2.008, abs=0.015)
 
 
 @pytest.mark.data
-@pytest.mark.parametrize("first,second,conjugate", SAME_SPECTRA)
-def test_same_spectra_in_different_formats(first, second, conjugate):
+@pytest.mark.parametrize("first,second,conjugate,skip", SAME_SPECTRA)
+def test_same_spectra_in_different_formats(first, second, conjugate, skip):
     a, b = basis(first), basis(second)
-    shared = [m for m in a.metabolites if m in b.metabolites]
+    shared = [m for m in a.metabolites if m in b.metabolites and m not in skip]
     assert len(shared) >= 10
     for m in shared:
         x, y = a.fid(m), b.fid(m)
         n = min(x.size, y.size)
         x, y = x[:n], np.conj(y[:n]) if conjugate else y[:n]
         assert abs(np.vdot(x, y)) / np.linalg.norm(x) / np.linalg.norm(y) > 0.999, m
+
+
+@pytest.mark.data
+def test_mrscloud_single_spectrum_is_its_basis_column():
+    [single] = load(PUBLIC_DATA / TOOLBOX / "MRSCLOUD/Siemens_UnEdited_sLASER_TE105_NAA.mat")
+    b = basis(TOOLBOX + "MRSCLOUD/BASIS_Siemens_UnEdited_sLASER_105_wMM.mat")
+    assert single.spectrometer_frequency == pytest.approx(b.spectrometer_frequency)
+    x, y = b.fid("NAA"), single.data.ravel()
+    assert abs(np.vdot(x, y)) / np.linalg.norm(x) / np.linalg.norm(y) > 0.999

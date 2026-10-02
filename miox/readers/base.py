@@ -132,8 +132,10 @@ class Reader:
         name: str,
         notes: list[str],
         source: str,
+        dim_tags: tuple[tuple[str, str | None, dict | None], ...] = (),
     ) -> BasisSet:
-        """BasisSet from ``fids`` (points, metabolites), one column per name in ``metabolites``."""
+        """BasisSet from ``fids`` (points, metabolites, ...), one column per name in
+        ``metabolites``; ``dim_tags`` names the dimensions after the metabolites."""
         data = fids.reshape(1, 1, 1, *fids.shape)
         d = self.dataset(
             sniff,
@@ -144,7 +146,7 @@ class Reader:
             name,
             notes,
             source,
-            dim_tags=(self.BASIS_TAG,),
+            dim_tags=(self.BASIS_TAG,) + dim_tags,
             kind=BasisSet,
         )
         d.dim_info.setdefault(5, {})["header"] = {"Metabolite": list(metabolites)}

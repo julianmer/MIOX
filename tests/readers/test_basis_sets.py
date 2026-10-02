@@ -6,8 +6,9 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Basis-set readers on synthetic files: LCModel .BASIS, FSL-MRS JSON, SpinWizard folders  #
-#          and folders of one file per metabolite. No test data needed.                            #
+# Purpose: Basis-set readers on synthetic files: LCModel .BASIS, FSL-MRS JSON, SpinWizard folders, #
+#          MATLAB structs (Osprey, INSPECTOR, MARSS, ProFit, FID-A) and folders of one file per    #
+#          metabolite. No test data needed.                                                        #
 #                                                                                                  #
 ####################################################################################################
 
@@ -21,6 +22,7 @@ import json
 
 import numpy as np
 import pytest
+import scipy.io
 
 # own
 import miox as gu
@@ -95,3 +97,65 @@ def test_spinwizard_folder(tmp_path):
     assert b.spectrometer_frequency == pytest.approx(123.2) and b.dwelltime == pytest.approx(2.5e-4)
     assert np.allclose(b.fid("NAA"), _fid(100))
     assert b.meta.vendor["BasisRFOffset.txt"] == {"1": "4.6500"}
+
+
+def _cell(*items) -> np.ndarray:
+    cell = np.empty((1, len(items)), dtype=object)
+    for i, item in enumerate(items):
+        cell[0, i] = item
+    return cell
+
+
+def test_osprey_basis_with_sub_spectra(tmp_path):
+    fids = np.stack([np.stack([_fid(100), _fid(110)], -1), np.stack([_fid(-50), _fid(-40)], -1)], 1)
+    basis = {"fids": np.conj(fids), "name": _cell("NAA", "Cr"), "Bo": 2.89, "te": 30.0,
+             "dwelltime": 2.5e-4, "centerFreq": 3.0}
+    scipy.io.savemat(tmp_path / "basis.mat", {"BASIS": basis})
+    [b] = gu.load(tmp_path / "basis.mat")
+    assert b.metabolites == ["NAA", "Cr"] and b.shape == (1, 1, 1, 64, 2, 2)
+    assert b.spectrometer_frequency == pytest.approx(2.89 * 42.577)
+    assert b.meta["EchoTime"] == pytest.approx(0.03)
+    assert np.allclose(b.fid("Cr")[:, 1], _fid(-40))
+
+
+def test_inspector_basis(tmp_path):
+    data = _cell(*(_cell(name, 1.5, 0.025, np.conj(_fid(f))[:, None], "") for name, f in
+                   (("NAA", 100), ("Cr", -50))))
+    lcm = {"data": data, "sw_h": 4000, "sf": 123.2, "ppmCalib": 4.65}
+    scipy.io.savemat(tmp_path / "inspector.mat", {"lcmBasis": lcm})
+    [b] = gu.load(tmp_path / "inspector.mat")
+    assert b.metabolites == ["NAA", "Cr"] and b.dwelltime == pytest.approx(2.5e-4)
+    assert b.spectrometer_frequency == pytest.approx(123.2)
+    assert np.allclose(b.fid("NAA"), _fid(100))
+
+
+def test_folder_of_marss_files(tmp_path):
+    for name, frequency in (("NAA", 100), ("Cr", -50), ("GABA", 20)):
+        expt = {"sw_h": 4000, "sf": 123.2, "nspecC": 64, "ppmCalib": 4.65,
+                "fid": np.conj(_fid(frequency))[:, None]}
+        scipy.io.savemat(tmp_path / f"{name}.mat", {"exptDat": expt})
+    [b] = gu.load(tmp_path)
+    assert b.metabolites == ["Cr", "GABA", "NAA"] and b.provenance.format == "basis_folder"
+    assert np.allclose(b.fid("Cr"), _fid(-50))
+
+
+def test_profit_struct(tmp_path):
+    fids = _cell(np.conj(_fid(100))[None, :], np.conj(_fid(-50))[None, :])
+    basis = {"fid": fids, "met": _cell("NAA", "Cr"), "bw": 4000, "dt": 2.5e-4, "f0": 123.2e6,
+             "pts": 64, "Bo": 2.89}
+    scipy.io.savemat(tmp_path / "profit.mat", {"basis": basis})
+    [b] = gu.load(tmp_path / "profit.mat")
+    assert b.metabolites == ["NAA", "Cr"] and b.spectrometer_frequency == pytest.approx(123.2)
+    assert np.allclose(b.fid("Cr"), _fid(-50))
+
+
+def test_fida_struct_dimensions(tmp_path):
+    fids = np.stack([np.stack([_fid(100 + 10 * c + a) for a in range(3)], -1) for c in range(4)], 1)
+    out = {"fids": np.conj(fids), "sz": np.array([64, 4, 3]), "txfrq": 123.2e6,
+           "dwelltime": 2.5e-4, "te": 30.0, "tr": 2000.0, "nucleus": "1H",
+           "dims": {"t": 1, "coils": 2, "averages": 3, "subSpecs": 0, "extras": 0}}
+    scipy.io.savemat(tmp_path / "scan.mat", {"out": out})
+    [d] = gu.load(tmp_path / "scan.mat")
+    assert d.dims == ("x", "y", "z", "t", "DIM_COIL", "DIM_DYN") and d.shape == (1, 1, 1, 64, 4, 3)
+    assert d.meta["EchoTime"] == pytest.approx(0.03) and d.meta["RepetitionTime"] == 2.0
+    assert np.allclose(d.data[0, 0, 0, :, 2, 1], _fid(121))
