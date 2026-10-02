@@ -40,7 +40,7 @@ from miox.sniff import Format, Sniff
 #**************************************************************************************************#
 class FidaReader(Reader):
     FORMATS = (Format.FIDA_MAT,)
-    PACKAGES = Reader.PACKAGES + ("scipy", "h5py")
+    PACKAGES = Reader.PACKAGES + ("mat-io",)
     SOURCE = "FID-A struct"
     NUCLEUS = "1H"
     GAMMA = 42.577e6  # Hz/T

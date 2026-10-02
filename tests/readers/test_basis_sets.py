@@ -96,7 +96,7 @@ def test_spinwizard_folder(tmp_path):
     assert b.metabolites == ["Cr", "NAA"]
     assert b.spectrometer_frequency == pytest.approx(123.2) and b.dwelltime == pytest.approx(2.5e-4)
     assert np.allclose(b.fid("NAA"), _fid(100))
-    assert b.meta.vendor["BasisRFOffset.txt"] == {"1": "4.6500"}
+    assert b.meta.vendor["BasisRFOffset.txt"] == {"1": "4.6500"} and b.meta["ReferencePPM"] == 4.65
 
 
 def _cell(*items) -> np.ndarray:
@@ -114,7 +114,7 @@ def test_osprey_basis_with_sub_spectra(tmp_path):
     [b] = gu.load(tmp_path / "basis.mat")
     assert b.metabolites == ["NAA", "Cr"] and b.shape == (1, 1, 1, 64, 2, 2)
     assert b.spectrometer_frequency == pytest.approx(2.89 * 42.577)
-    assert b.meta["EchoTime"] == pytest.approx(0.03)
+    assert b.meta["EchoTime"] == pytest.approx(0.03) and b.meta["ReferencePPM"] == 3.0
     assert np.allclose(b.fid("Cr")[:, 1], _fid(-40))
 
 
@@ -125,7 +125,7 @@ def test_inspector_basis(tmp_path):
     scipy.io.savemat(tmp_path / "inspector.mat", {"lcmBasis": lcm})
     [b] = gu.load(tmp_path / "inspector.mat")
     assert b.metabolites == ["NAA", "Cr"] and b.dwelltime == pytest.approx(2.5e-4)
-    assert b.spectrometer_frequency == pytest.approx(123.2)
+    assert b.spectrometer_frequency == pytest.approx(123.2) and b.meta["ReferencePPM"] == 4.65
     assert np.allclose(b.fid("NAA"), _fid(100))
 
 
@@ -136,6 +136,7 @@ def test_folder_of_marss_files(tmp_path):
         scipy.io.savemat(tmp_path / f"{name}.mat", {"exptDat": expt})
     [b] = gu.load(tmp_path)
     assert b.metabolites == ["Cr", "GABA", "NAA"] and b.provenance.format == "basis_folder"
+    assert b.meta["ReferencePPM"] == 4.65 and b.meta.fields["ReferencePPM"] == "Cr/exptDat/ppmCalib"
     assert np.allclose(b.fid("Cr"), _fid(-50))
 
 

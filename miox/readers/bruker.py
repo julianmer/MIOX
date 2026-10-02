@@ -35,12 +35,14 @@ from miox.sniff import Format, Sniff
 #**************************************************************************************************#
 #                                                                                                  #
 # A data file is read in its own mode; a scan folder or a parameter file reads the scan's fid,     #
-# else the 2dseq or rawdata next to it. spec2nii only accepts spectroscopy scans.                  #
+# else the 2dseq or rawdata next to it. spec2nii only accepts spectroscopy scans. The frequency is #
+# the working frequency (PVM_FrqWork, SFO1); its chemical shift, PVM_FrqWorkPpm, is ReferencePPM.  #
 #                                                                                                  #
 #**************************************************************************************************#
 class BrukerReader(Spec2niiReader):
     FORMATS = (Format.BRUKER,)
     CONVERTER = "bruker"
+    REFERENCE = "method/PVM_FrqWorkPpm"
     MODES = {"fid": "FID", "fid_proc.64": "FID", "2dseq": "2DSEQ", "rawdata.job0": "RAWDATA"}
     PROCESSED = ("2dseq", "fid_proc.64")  # stored in <study>/<scan>/pdata/<n>/
     PARAMETER_FILES = ("acqp", "method", "visu_pars", "reco", "subject")

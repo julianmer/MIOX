@@ -125,6 +125,14 @@ class KeyTable(dict):
             sheet_factor=1.0,
         ),
         Key(
+            "ReferencePPM",
+            "ppm",
+            (float,),
+            "Chemical shift the file assigns to 0 Hz in the data (SpectrometerFrequency): a signal "
+            "at f Hz lies at ReferencePPM - f / SpectrometerFrequency.",
+            "miox",
+        ),
+        Key(
             "NumberOfAverages",
             None,
             (int,),

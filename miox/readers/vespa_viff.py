@@ -71,6 +71,8 @@ class VespaViffReader(Reader):
             "SpectrometerFrequency": ([float(text["frequency"])], field + "frequency"),
             "ResonantNucleus": ([text["nucleus"]], field + "nucleus"),
         }
+        if text.get("resppm"):
+            values["ReferencePPM"] = (float(text["resppm"]), field + "resppm")
         if text.get("seqte"):
             values["EchoTime"] = (float(text["seqte"]) * 1e-3, field + "seqte")
         if text.get("flip_angle"):

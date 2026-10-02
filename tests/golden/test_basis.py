@@ -30,7 +30,7 @@ OSPREY = "osprey/fit/basissets/"
 SLASER = TOOLBOX + "LCModel/BASIS_file/SLASER_Siemens26.basis"
 
 # (basis set, ppm at 0 Hz): most basis formats store no reference, each tool picks its own; None:
-# the set's BASIS/centerFreq
+# the ReferencePPM the set states
 NAA_SETS = [
     (SLASER, 4.65),
     ("lcmodel/test_lcm/3t.basis", 4.65),
@@ -58,8 +58,9 @@ NAA_SETS = [
     (TOOLBOX + "OSPREY/ospreybasis_marss_to_cows_26.mat", 4.65),
     (TOOLBOX + "FIDA", 4.65),
     (TOOLBOX + "PROFIT/profit_struct.mat", 4.65),
-    (TOOLBOX + "JET/from_spinwizard_mouse", 4.79),  # as its BasisRFOffset.txt states
+    (TOOLBOX + "JET/from_spinwizard_mouse", None),
     (TOOLBOX + "MRSCLOUD/BASIS_Siemens_UnEdited_sLASER_105_wMM.mat", None),
+    ("profit/sampleBasisSet/sLASER_7ppm_moiety_UF_basis_TE24.mat", 4.70),  # not stored; ProFit's
 ] + [
     (path.relative_to(PUBLIC_DATA).as_posix(), None)
     for path in sorted((PUBLIC_DATA / OSPREY).rglob("*.mat"))
@@ -93,7 +94,7 @@ def basis(relpath: str) -> BasisSet:
 
 def naa_ppm(b: BasisSet, centre: float) -> float:
     """Position of the largest NAA peak between 1 and 3 ppm (first sub-spectrum if edited)."""
-    fid = b.fid(next(m for m in b.metabolites if m.upper() == "NAA"))
+    fid = b.fid(next(m for m in b.metabolites if m.upper() in ("NAA", "NAA_AC")))  # ProFit: acetyl
     fid = fid.reshape(fid.shape[0], -1)[:, 0]
     spectrum = np.abs(np.fft.fftshift(np.fft.fft(fid)))
     ppm = centre - np.fft.fftshift(np.fft.fftfreq(fid.size, b.dwelltime)) / b.spectrometer_frequency
@@ -105,7 +106,7 @@ def naa_ppm(b: BasisSet, centre: float) -> float:
 @pytest.mark.parametrize("relpath,centre", NAA_SETS, ids=[r[0] for r in NAA_SETS])
 def test_naa_at_2_008_ppm(relpath, centre):
     b = basis(relpath)
-    centre = b.meta.vendor["BASIS"]["centerFreq"] if centre is None else centre
+    centre = b.meta["ReferencePPM"] if centre is None else centre
     assert naa_ppm(b, centre) == pytest.approx(2.008, abs=0.015)
 
 

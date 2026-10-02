@@ -33,13 +33,13 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # Osprey stores FIDs as the conjugate of NIfTI-MRS and no frequency: it is Bo times Osprey's       #
 # gyromagnetic ratio (42.577 MHz/T), which equals the txfrq of MRSCloud's single-metabolite files. #
-# 0 Hz sits at centerFreq ppm (kept in the vendor header): with both, NAA is at 2.008 ppm in every #
-# Osprey set tested. The files do not name edited sub-spectra; they stay a dimension as stored.    #
+# 0 Hz sits at centerFreq ppm (ReferencePPM): with both, NAA is at 2.008 ppm in every Osprey set   #
+# tested. The files do not name edited sub-spectra; they stay a dimension as stored.               #
 #                                                                                                  #
 #**************************************************************************************************#
 class OspreyBasisReader(Reader):
     FORMATS = (Format.OSPREY_BASIS,)
-    PACKAGES = Reader.PACKAGES + ("scipy", "h5py")
+    PACKAGES = Reader.PACKAGES + ("mat-io",)
     SOURCE = "Osprey BASIS struct"
     GAMMA = 42.577  # MHz/T
     NUCLEUS = "1H"
@@ -61,10 +61,11 @@ class OspreyBasisReader(Reader):
         }
         if float(basis.get("te", 0) or 0) > 0:
             keys["EchoTime"] = (float(basis["te"]) * 1e-3, "BASIS/te")
+        if "centerFreq" in basis:
+            keys["ReferencePPM"] = (float(basis["centerFreq"]), "BASIS/centerFreq")
         notes = [
             f"nucleus not stored in Osprey basis sets; {self.NUCLEUS} assumed",
             "stored as the conjugate; conjugated",
-            f"0 Hz is at {float(basis.get('centerFreq', np.nan))} ppm (BASIS/centerFreq)",
         ]
         dwelltime = float(basis["dwelltime"])
         vendor = MatFile.header(values)

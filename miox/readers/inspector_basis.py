@@ -32,12 +32,13 @@ from miox.sniff import Format, Sniff
 #**************************************************************************************************#
 #                                                                                                  #
 # INSPECTOR stores FIDs as the conjugate of NIfTI-MRS: checked against the LCModel basis holding   #
-# the same spectra. The format stores no nucleus, so 1H is assumed and noted.                      #
+# the same spectra. ppmCalib, the ppm at 0 Hz, is ReferencePPM. The format stores no nucleus, so   #
+# 1H is assumed and noted.                                                                         #
 #                                                                                                  #
 #**************************************************************************************************#
 class InspectorBasisReader(Reader):
     FORMATS = (Format.INSPECTOR_BASIS,)
-    PACKAGES = Reader.PACKAGES + ("scipy", "h5py")
+    PACKAGES = Reader.PACKAGES + ("mat-io",)
     SOURCE = "INSPECTOR lcmBasis struct"
     NUCLEUS = "1H"
     NAME, FID = 0, 3  # positions in a metabolite's cell
@@ -55,6 +56,8 @@ class InspectorBasisReader(Reader):
             "SpectrometerFrequency": ([float(basis["sf"])], "lcmBasis/sf"),
             "ResonantNucleus": ([self.NUCLEUS], None),
         }
+        if "ppmCalib" in basis:
+            keys["ReferencePPM"] = (float(basis["ppmCalib"]), "lcmBasis/ppmCalib")
         notes = [
             f"nucleus not stored in INSPECTOR basis sets; {self.NUCLEUS} assumed",
             "stored as the conjugate; conjugated",

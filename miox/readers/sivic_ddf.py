@@ -35,7 +35,8 @@ from miox.sniff import Format, Sniff
 # Data are stored point fastest, then x, y, z (and frames). Spectra (first dimension of type       #
 # frequency) are turned into FIDs: SIVIC orders points from the highest frequency down, which is   #
 # the order of fftshift(fft(fid)) in the NIfTI-MRS convention: fid = ifft(ifftshift(spectrum)).    #
-# The geometry is LPS (toplc is the centre of the first voxel) and becomes a RAS affine.           #
+# The geometry is LPS (toplc is the centre of the first voxel) and becomes a RAS affine. "ppm      #
+# reference" is ReferencePPM: SIVIC reads and writes it as the DICOM Chemical Shift Reference.     #
 #                                                                                                  #
 #**************************************************************************************************#
 class SivicDdfReader(Reader):
@@ -79,6 +80,9 @@ class SivicDdfReader(Reader):
         ):
             if mr.get(name):
                 keys[key] = (float(mr[name]) * factor, f"MR Parameters/{name}")
+        if spec.get("ppm reference"):
+            reference = "Spectroscopy Parameters/ppm reference"
+            keys["ReferencePPM"] = (float(spec["ppm reference"]), reference)
         dwelltime = float(spec["dwelltime(ms)"]) * 1e-3
         tags = ("DIM_DYN",) if frames > 1 else ()
         d = self.dataset(

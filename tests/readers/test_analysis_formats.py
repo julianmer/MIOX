@@ -48,7 +48,7 @@ def test_tarquin_dpt(tmp_path):
     f.write_text("\n".join(lines) + "\n")
     [d] = gu.load(f)
     assert d.spectrometer_frequency == pytest.approx(123.2) and d.dwelltime == pytest.approx(2.5e-4)
-    assert d.meta["EchoTime"] == pytest.approx(0.03)
+    assert d.meta["EchoTime"] == pytest.approx(0.03) and d.meta["ReferencePPM"] == 4.65
     assert np.allclose(d.data[0, 0, 0], _fid())  # written in the NIfTI-MRS convention
 
 

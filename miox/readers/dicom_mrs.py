@@ -46,12 +46,15 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # A folder is read as one series set: all its DICOM files go to the converter together, which      #
 # groups them by series. The source tables follow spec2nii's extraction per vendor and variant     #
-# (Siemens VB-VE with CSA headers or XA enhanced; Philips enhanced or classic; UIH).               #
+# (Siemens VB-VE with CSA headers or XA enhanced; Philips enhanced or classic; UIH). The MR        #
+# Spectroscopy module's Chemical Shift Reference (ppm at the transmitter frequency) is             #
+# ReferencePPM.                                                                                    #
 #                                                                                                  #
 #**************************************************************************************************#
 class DicomMrsReader(Spec2niiReader):
     FORMATS = (Format.DICOM_MRS,)
     CONVERTERS = {"siemens": "dicom", "philips": "philips_dicom", "uih": "uih"}
+    REFERENCE = "dicom/ChemicalShiftReference"
     TAGS = {"dicom": "DIM_DYN", "philips_dicom": "DIM_DYN", "uih": None}  # spec2nii defaults
     BINARY_VRS = {"OB", "OW", "OF", "OD", "OL", "OV", "UN"}
     BULK = 1024  # binary values longer than this are summarised by their size

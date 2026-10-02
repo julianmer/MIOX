@@ -234,6 +234,7 @@ class Spec2niiReader(Reader):
     PACKAGES = Reader.PACKAGES + ("spec2nii",)
     CONVERTER = ""  # spec2nii subcommand
     SOURCES: dict[str, str | tuple[str, ...]] = {}  # standard key -> vendor field(s), first found
+    REFERENCE: str | None = None  # vendor field stating ReferencePPM (a list: its first value)
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         """The converted images, their names and the complete vendor header."""
@@ -262,9 +263,18 @@ class Spec2niiReader(Reader):
             for key, field in fields.items():
                 if d.meta.source.get(key) == source:
                     d.meta.set(key, d.meta[key], f"{source}: {field}", field)
+            self._reference(d)
             self.correct(d)
             datasets.append(d)
         return datasets
+
+    def _reference(self, d: MRSData) -> None:
+        """ReferencePPM from the vendor header, which spec2nii does not read."""
+        value = d.meta.vendor_fields().get(self.REFERENCE) if self.REFERENCE else None
+        value = value[0] if isinstance(value, list) and value else value
+        if isinstance(value, (int, float)):
+            source = f"vendor header: {self.REFERENCE}"
+            d.meta.set("ReferencePPM", float(value), source, self.REFERENCE)
 
     def _fields(self, vendor: dict) -> dict[str, str]:
         """The source field of every key: the first alternative present in the header."""

@@ -34,9 +34,9 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # Metabolite files are the files without an extension, named after their metabolite. Their FIDs    #
 # are stored as the conjugate of NIfTI-MRS: checked against the LCModel basis the same spectra     #
-# were converted from, and by peak positions. BasisRFOffset.txt (the ppm at the centre) and        #
-# LCMBasisSet.txt (a selection for LCModel) stay in the vendor header. The format stores no        #
-# nucleus, so 1H is assumed and noted.                                                             #
+# were converted from, and by peak positions. BasisRFOffset.txt holds the ppm at 0 Hz              #
+# (ReferencePPM); LCMBasisSet.txt (a selection for LCModel) stays in the vendor header. The format #
+# stores no nucleus, so 1H is assumed and noted.                                                   #
 #                                                                                                  #
 #**************************************************************************************************#
 class SpinwizardBasisReader(Reader):
@@ -63,6 +63,9 @@ class SpinwizardBasisReader(Reader):
             "SpectrometerFrequency": ([float(parameters["1"])], f"{self.PARAMETERS}/1"),
             "ResonantNucleus": ([self.NUCLEUS], None),
         }
+        offset = vendor.get("BasisRFOffset.txt", {}).get("1")
+        if offset:
+            keys["ReferencePPM"] = (float(offset), "BasisRFOffset.txt/1")
         notes = [
             f"nucleus not stored in SpinWizard basis sets; {self.NUCLEUS} assumed",
             "stored as the conjugate; conjugated",

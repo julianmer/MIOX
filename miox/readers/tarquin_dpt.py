@@ -61,6 +61,10 @@ class TarquinDptReader(Reader):
         if "Echo_time" in header:
             values["EchoTime"] = (header["Echo_time"], "Echo_time")
         notes = [f"nucleus not stored in .dpt files; {self.NUCLEUS} assumed"]
+        if header.get("PPM_reference"):
+            values["ReferencePPM"] = (float(header["PPM_reference"]), "PPM_reference")
+        else:
+            notes.append("PPM_reference 0: not referenced")
         dwelltime = 1 / header["Sampling_frequency"]
         d = self.dataset(
             sniff, fid, dwelltime, values, header, sniff.path.stem, notes, self.SOURCE

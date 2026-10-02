@@ -33,12 +33,13 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # MARSS stores the FID as the conjugate of NIfTI-MRS: checked against the LCModel basis holding    #
 # the same spectra. One file is a BasisSet of one metabolite, named after the file; a folder of    #
-# them is read by the basis-folder reader. The format stores no nucleus, so 1H is assumed.         #
+# them is read by the basis-folder reader. ppmCalib, the ppm at 0 Hz, is ReferencePPM. The format  #
+# stores no nucleus, so 1H is assumed.                                                             #
 #                                                                                                  #
 #**************************************************************************************************#
 class MarssBasisReader(Reader):
     FORMATS = (Format.MARSS_BASIS,)
-    PACKAGES = Reader.PACKAGES + ("scipy", "h5py")
+    PACKAGES = Reader.PACKAGES + ("mat-io",)
     SOURCE = "MARSS exptDat struct"
     NUCLEUS = "1H"
 
@@ -52,6 +53,8 @@ class MarssBasisReader(Reader):
             "SpectrometerFrequency": ([float(expt["sf"])], "exptDat/sf"),
             "ResonantNucleus": ([self.NUCLEUS], None),
         }
+        if "ppmCalib" in expt:
+            keys["ReferencePPM"] = (float(expt["ppmCalib"]), "exptDat/ppmCalib")
         notes = [
             f"nucleus not stored in MARSS basis spectra; {self.NUCLEUS} assumed",
             "stored as the conjugate; conjugated",
