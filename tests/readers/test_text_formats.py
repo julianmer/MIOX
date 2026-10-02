@@ -54,7 +54,7 @@ def test_lcmodel_raw(tmp_path):
     assert d.shape == (1, 1, 1, 64) and d.dwelltime == pytest.approx(2.5e-4)
     assert d.spectrometer_frequency == pytest.approx(123.25)
     assert d.meta["EchoTime"] == pytest.approx(0.03)
-    assert np.allclose(d.data[0, 0, 0], _fid().conj(), atol=1e-6)  # LCModel to NIfTI-MRS
+    assert np.allclose(d.data[0, 0, 0], _fid(), atol=1e-6)  # same convention as NIfTI-MRS
     assert d.meta.vendor["namelists"]["nmid"]["id"] == "test"
     assert d.meta.fields["SpectrometerFrequency"] == "namelists/seqpar/hzpppm"
     assert any("1H assumed" in note for note in d.provenance.notes)
@@ -68,10 +68,10 @@ def test_lcmodel_raw_text_tight_format_bruker_and_control(tmp_path):
     ]
     fid = -_fid()  # negative numbers run together at width 13
     _raw(f, header, fid, width=13)
-    (tmp_path / "test.CONTROL").write_text(" $LCMODL\n HZPPPM=84.47\n DELTAT=5E-04\n $END\n")
+    (tmp_path / "control.file").write_text(" $LCMODL\n HZPPPM=84.47\n DELTAT=5E-04\n $END\n")
     [d] = gu.load(f)
     assert d.spectrometer_frequency == pytest.approx(84.47) and d.dwelltime == pytest.approx(5e-4)
-    assert np.allclose(d.data[0, 0, 0], fid, atol=1e-5)  # BRUKER=T: already conjugated
+    assert np.allclose(d.data[0, 0, 0], fid.conj(), atol=1e-5)  # BRUKER=T: conjugated
     assert d.meta.vendor["text"] == ["Free text written by some exporter"]
     assert d.meta.fields["DwellTime"] == "side_namelists/lcmodl/deltat"
 

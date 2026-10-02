@@ -8,7 +8,8 @@
 #                                                                                                  #
 # Purpose: Fetches the public test data into tests/data (gitignored): the spec2nii test set (git   #
 #          LFS, a small per-format subset by default, --all for everything, retried on the         #
-#          server's rate limit) and the NIfTI-MRS example data from Zenodo record 5085449.         #
+#          server's rate limit), the NIfTI-MRS example data from Zenodo record 5085449, the test   #
+#          folders of further public repositories, and NEMA's spectroscopy DICOM examples.         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -21,9 +22,11 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -77,6 +80,28 @@ class DataFetcher:
         "varian/**",
     ]
 
+    # further public sets: folder -> (git URL, paths to check out, or None for the whole repo)
+    REPOSITORIES = {
+        "mrs_fitting_challenge": ("https://github.com/wtclarke/mrs_fitting_challenge.git", None),
+        "suspect": ("https://github.com/openmrslab/suspect.git", ["tests/test_data"]),
+        "tarquin": ("https://github.com/martin3141/tarquin.git", ["data"]),
+        "dcm_qa_spec": ("https://github.com/neurolabusc/dcm_qa_spec.git", None),
+        "lcmodel": ("https://github.com/schorschinho/LCModel.git", ["test_lcm"]),
+        "vespa_io": (
+            "https://github.com/vespa-mrs/vespa.io.git",
+            ["docs/user_manuals/files/tutorial_data_analysis.zip"],
+        ),
+        "hyperpolarized_toolbox": (
+            "https://github.com/LarsonLab/hyperpolarized-mri-toolbox.git",
+            ["reconstruction/EPSI demo/dummy_ddf"],
+        ),
+    }
+    NEMA = "ftp://medical.nema.org/medical/dicom/DataSets/WG16"
+    NEMA_FILES = {  # spectroscopy DICOM examples of the DICOM working group 16
+        "Siemens/Siemens_spectroEnhDICOM": None,  # None: every file in the folder
+        "Philips/Philips%20MR%20Spectroscopy/DICOM": "XX_",  # only files starting with this
+    }
+
     def __init__(self, dest: Path, everything: bool, retries: int):
         self.dest = dest
         self.everything = everything
@@ -86,6 +111,40 @@ class DataFetcher:
         self.dest.mkdir(parents=True, exist_ok=True)
         self.spec2nii(self.dest / "spec2nii_test_data")
         self.zenodo(self.dest / "nifti_mrs_examples")
+        for name, (url, paths) in self.REPOSITORIES.items():
+            self.repository(self.dest / name, url, paths)
+        self.nema(self.dest / "nema_wg16")
+
+    def repository(self, dest: Path, url: str, paths: list[str] | None) -> None:
+        """Shallow clone; with ``paths`` only those are checked out."""
+        if (dest / ".git").is_dir():
+            print(f"{dest.name} already present")
+            return
+        if paths is None:
+            subprocess.run(["git", "clone", "--depth", "1", url, str(dest)], check=True)
+            return
+        subprocess.run(
+            ["git", "clone", "--depth", "1", "--filter=blob:none", "--no-checkout", url, str(dest)],
+            check=True,
+        )
+        subprocess.run(["git", "sparse-checkout", "set", "--no-cone", *paths], cwd=dest, check=True)
+        subprocess.run(["git", "checkout"], cwd=dest, check=True)
+        for archive in dest.rglob("*.zip"):
+            shutil.unpack_archive(archive, archive.with_suffix(""))
+
+    def nema(self, dest: Path) -> None:
+        """Download the selected files of the NEMA FTP folders, skipping those already present."""
+        for folder, prefix in self.NEMA_FILES.items():
+            target = dest / urllib.parse.unquote(folder)
+            target.mkdir(parents=True, exist_ok=True)
+            with urllib.request.urlopen(f"{self.NEMA}/{folder}/") as resp:
+                names = [line.split()[-1] for line in resp.read().decode().splitlines() if line]
+            for name in names:
+                if (prefix and not name.startswith(prefix)) or (target / name).is_file():
+                    continue
+                print(f"downloading {folder}/{name}")
+                urllib.request.urlretrieve(f"{self.NEMA}/{folder}/{name}", target / name)
+        print(f"NEMA spectroscopy DICOM in {dest}")
 
     def spec2nii(self, dest: Path) -> None:
         """Clone the LFS pointers once, then pull the objects, waiting out the rate limit."""

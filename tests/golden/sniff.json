@@ -1,4 +1,1629 @@
 {
+ "dcm_qa_spec/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_spec/In/30_svs_se/30001_1.3.12.2.1107.5.2.61.237021.2026060513334667167608226.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30002_1.3.12.2.1107.5.2.61.237021.2026060513334667645408229.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30003_1.3.12.2.1107.5.2.61.237021.2026060513334667764808231.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30004_1.3.12.2.1107.5.2.61.237021.2026060513334667879408233.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30005_1.3.12.2.1107.5.2.61.237021.2026060513334667992408235.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30006_1.3.12.2.1107.5.2.61.237021.2026060513334668105108237.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30007_1.3.12.2.1107.5.2.61.237021.2026060513334668216808239.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30008_1.3.12.2.1107.5.2.61.237021.2026060513334668328608241.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30009_1.3.12.2.1107.5.2.61.237021.2026060513334668440508243.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30010_1.3.12.2.1107.5.2.61.237021.2026060513334668553608245.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30011_1.3.12.2.1107.5.2.61.237021.2026060513334668666108247.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30012_1.3.12.2.1107.5.2.61.237021.2026060513334668778308249.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30013_1.3.12.2.1107.5.2.61.237021.2026060513334668890508251.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30014_1.3.12.2.1107.5.2.61.237021.2026060513334669000808253.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30015_1.3.12.2.1107.5.2.61.237021.2026060513334669113708255.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30016_1.3.12.2.1107.5.2.61.237021.2026060513334669226208257.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30017_1.3.12.2.1107.5.2.61.237021.2026060513334669338508259.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30018_1.3.12.2.1107.5.2.61.237021.2026060513334669450408261.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30019_1.3.12.2.1107.5.2.61.237021.2026060513334669561908263.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30020_1.3.12.2.1107.5.2.61.237021.2026060513334669672708265.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30021_1.3.12.2.1107.5.2.61.237021.2026060513334669784508267.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30022_1.3.12.2.1107.5.2.61.237021.2026060513334669896208269.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30023_1.3.12.2.1107.5.2.61.237021.2026060513334670006208271.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30024_1.3.12.2.1107.5.2.61.237021.2026060513334670118108273.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30025_1.3.12.2.1107.5.2.61.237021.2026060513334670229108275.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30026_1.3.12.2.1107.5.2.61.237021.2026060513334670339208277.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30027_1.3.12.2.1107.5.2.61.237021.2026060513334670449808279.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30028_1.3.12.2.1107.5.2.61.237021.2026060513334670563408281.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30029_1.3.12.2.1107.5.2.61.237021.2026060513334670674408283.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30030_1.3.12.2.1107.5.2.61.237021.2026060513334670785708285.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30031_1.3.12.2.1107.5.2.61.237021.2026060513334670895408286.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30032_1.3.12.2.1107.5.2.61.237021.2026060513334671004008287.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30033_1.3.12.2.1107.5.2.61.237021.2026060513334671111808288.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30034_1.3.12.2.1107.5.2.61.237021.2026060513334671220608289.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30035_1.3.12.2.1107.5.2.61.237021.2026060513334671329808290.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30036_1.3.12.2.1107.5.2.61.237021.2026060513334671438508291.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30037_1.3.12.2.1107.5.2.61.237021.2026060513334671547108292.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30038_1.3.12.2.1107.5.2.61.237021.2026060513334671654408293.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30039_1.3.12.2.1107.5.2.61.237021.2026060513334671764708294.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30040_1.3.12.2.1107.5.2.61.237021.2026060513334671873708295.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30041_1.3.12.2.1107.5.2.61.237021.2026060513334671982108296.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30042_1.3.12.2.1107.5.2.61.237021.2026060513334672091108297.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30043_1.3.12.2.1107.5.2.61.237021.2026060513334672199708298.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30044_1.3.12.2.1107.5.2.61.237021.2026060513334672308508299.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30045_1.3.12.2.1107.5.2.61.237021.2026060513334672417208300.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30046_1.3.12.2.1107.5.2.61.237021.2026060513334672525608301.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30047_1.3.12.2.1107.5.2.61.237021.2026060513334672634908302.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30048_1.3.12.2.1107.5.2.61.237021.2026060513334672743708303.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30049_1.3.12.2.1107.5.2.61.237021.2026060513334672852608304.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30050_1.3.12.2.1107.5.2.61.237021.2026060513334672962408305.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30051_1.3.12.2.1107.5.2.61.237021.2026060513334673070508306.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30052_1.3.12.2.1107.5.2.61.237021.2026060513334673178208307.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30053_1.3.12.2.1107.5.2.61.237021.2026060513334673286108308.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30054_1.3.12.2.1107.5.2.61.237021.2026060513334673394708309.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30055_1.3.12.2.1107.5.2.61.237021.2026060513334673501708310.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30056_1.3.12.2.1107.5.2.61.237021.2026060513334673609808311.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30057_1.3.12.2.1107.5.2.61.237021.2026060513334673718408312.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30058_1.3.12.2.1107.5.2.61.237021.2026060513334673825708313.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30059_1.3.12.2.1107.5.2.61.237021.2026060513334673933408314.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30060_1.3.12.2.1107.5.2.61.237021.2026060513334674041608315.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30061_1.3.12.2.1107.5.2.61.237021.2026060513334674150808316.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30062_1.3.12.2.1107.5.2.61.237021.2026060513334674258308317.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30063_1.3.12.2.1107.5.2.61.237021.2026060513334674365808318.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/30_svs_se/30064_1.3.12.2.1107.5.2.61.237021.2026060513334674473108319.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/In/31_svs_se/31001_1.3.12.2.1107.5.2.61.237021.2026060513334674585008321.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_spec/Ref/svs_se_30.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_spec/Ref/svs_se_31.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_spec/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "hyperpolarized_toolbox/reconstruction/EPSI demo/dummy_ddf/dynth01_phased.cmplx": {
+  "format": "sivic_ddf",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "hyperpolarized_toolbox/reconstruction/EPSI demo/dummy_ddf/dynth01_phased.ddf": {
+  "format": "sivic_ddf",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "lcmodel/test_lcm/3t.basis": {
+  "format": "lcmodel_basis",
+  "vendor": 1.0,
+  "kind": "basis_set"
+ },
+ "lcmodel/test_lcm/control.file": {
+  "format": "lcmodel_control",
+  "vendor": 1.0,
+  "kind": "protocol"
+ },
+ "lcmodel/test_lcm/data.raw": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "lcmodel/test_lcm/out_ref_build.ps": {
+  "format": "lcmodel_ps",
+  "vendor": 1.0,
+  "kind": "report"
+ },
+ "mrs_fitting_challenge/Cr_water_scaling_JMRUI/Cr_10mM_test_water_scaling_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/Cr_water_scaling_JMRUI/Cr_10mM_test_water_scaling_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/Cr_water_scaling_LCModel/Cr_10mM_test_water_scaling.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/Cr_water_scaling_LCModel/Cr_10mM_test_water_scaling.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/Cr_water_scaling_text/Cr_10mM_test_water_scaling.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/Licence.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Ace.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Ala.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Asc.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Asp.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Cr.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/GABA.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/GPC.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/GSH.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Glc.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Gln.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Glu.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Gly.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Ins.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Lac.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Mac.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/NAA.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/NAAG.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/PCho.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/PCr.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/PE.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/Tau.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_JMRUI/sIns.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Ace.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Ala.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Asc.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Asp.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Cr.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/GABA.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/GPC.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/GSH.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Glc.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Gln.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Glu.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Gly.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Ins.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Lac.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Mac.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/NAA.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/NAAG.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/PCho.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/PCr.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/PE.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/Tau.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/press3T_30ms.BASIS": {
+  "format": "lcmodel_basis",
+  "vendor": 1.0,
+  "kind": "basis_set"
+ },
+ "mrs_fitting_challenge/basisset_LCModel/sIns.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/basisset_text/Ace.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Ala.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Asc.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Asp.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Cr.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/GABA.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/GPC.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/GSH.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Glc.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Gln.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Glu.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Gly.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Ins.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Lac.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Mac.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/NAA.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/NAAG.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/PCho.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/PCr.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/PE.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/Tau.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text/sIns.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Ace.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Ala.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Asc.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Asp.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Cr.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/GABA.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/GPC.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/GSH.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Glc.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Gln.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Glu.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Gly.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Ins.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Lac.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Mac.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/NAA.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/NAAG.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/PCho.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/PCr.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/PE.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/Tau.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/basisset_text_noTMS/sIns.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset10_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset10_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset11_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset11_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset12_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset12_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset13_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset13_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset14_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset14_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset15_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset15_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset16_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset16_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset17_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset17_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset18_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset18_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset19_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset19_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset1_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset1_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset20_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset20_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset21_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset21_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset22_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset22_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset23_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset23_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset24_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset24_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset25_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset25_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset26_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset26_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset27_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset27_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset28_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset28_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset2_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset2_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset3_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset3_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset4_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset4_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset5_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset5_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset6_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset6_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset7_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset7_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset8_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset8_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset9_WS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_JMRUI/dataset9_nWS.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset1.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset1.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset10.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset10.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset11.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset11.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset12.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset12.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset13.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset13.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset14.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset14.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset15.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset15.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset16.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset16.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset17.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset17.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset18.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset18.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset19.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset19.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset2.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset2.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset20.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset20.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset21.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset21.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset22.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset22.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset23.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset23.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset24.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset24.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset25.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset25.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset26.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset26.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset27.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset27.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset28.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset28.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset3.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset3.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset4.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset4.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset5.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset5.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset6.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset6.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset7.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset7.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset8.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset8.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset9.H2O": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_LCModel/dataset9.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset1.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset10.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset11.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset12.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset13.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset14.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset15.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset16.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset17.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset18.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset19.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset2.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset20.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset21.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset22.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset23.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset24.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset25.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset26.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset27.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset28.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset3.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset4.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset5.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset6.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset7.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset8.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrs_fitting_challenge/datasets_text/dataset9.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0003": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0006": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0009": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0016": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0019": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0020": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0021": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0022": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "nema_wg16/Siemens/Siemens_spectroEnhDICOM/Anonymous.MR._.12.1.2017.06.28.09.41.02.294.59320505.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nema_wg16/Siemens/Siemens_spectroEnhDICOM/Anonymous.MR._.13.1.2017.06.28.09.41.02.294.59320516.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nema_wg16/Siemens/Siemens_spectroEnhDICOM/Anonymous.MR._.14.1.2017.06.28.09.41.02.294.59320527.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nema_wg16/Siemens/Siemens_spectroEnhDICOM/Anonymous.MR._.15.1.2017.06.28.09.41.02.294.59320538.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "nema_wg16/Siemens/Siemens_spectroEnhDICOM/Anonymous.MR._.22.1.2017.06.28.09.41.02.294.59320549.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "nema_wg16/Siemens/Siemens_spectroEnhDICOM/Anonymous.MR._.23.1.2017.06.28.09.41.02.294.59320560.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
  "nifti_mrs_examples/example_01.nii.gz": {
   "format": "nifti_mrs",
   "vendor": null,
@@ -5341,7 +6966,7 @@
  },
  "spec2nii_test_data/other/metab.RAW": {
   "format": "lcmodel_raw",
-  "vendor": null,
+  "vendor": 1.0,
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/other/metab.nii": {
@@ -5356,7 +6981,7 @@
  },
  "spec2nii_test_data/other/metab_nohdr.RAW": {
   "format": "lcmodel_raw",
-  "vendor": null,
+  "vendor": 1.0,
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/philips/DICOM/SV_phantom_45deg_AP/IM-0021-0002-0001.dcm": {
@@ -6003,5 +7628,1130 @@
   "format": "unknown",
   "vendor": null,
   "kind": "unknown"
+ },
+ "suspect/tests/test_data/dicom/No_Name/Mrs_Dti_Qa/MRSshortTELN_401/IM-0001-0002.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "suspect/tests/test_data/lcmodel/liver.COORD": {
+  "format": "lcmodel_coord",
+  "vendor": 0.9,
+  "kind": "fit_result"
+ },
+ "suspect/tests/test_data/lcmodel/press_30ms_3T.basis": {
+  "format": "lcmodel_basis",
+  "vendor": 1.0,
+  "kind": "basis_set"
+ },
+ "suspect/tests/test_data/lcmodel/svs_97.COORD": {
+  "format": "lcmodel_coord",
+  "vendor": 0.9,
+  "kind": "fit_result"
+ },
+ "suspect/tests/test_data/lcmodel/svs_97.TABLE": {
+  "format": "lcmodel_table",
+  "vendor": 0.9,
+  "kind": "fit_result"
+ },
+ "suspect/tests/test_data/siemens/SVS_30.IMA": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "suspect/tests/test_data/siemens/SVS_30.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "suspect/tests/test_data/siemens/SVS_XA60.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "suspect/tests/test_data/siemens/example_frequency_correction.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "suspect/tests/test_data/siemens/example_frequency_correction_wref.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0001.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0002.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0003.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0004.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0005.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0006.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0007.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0008.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0009.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0010.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0011.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0012.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0013.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0014.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0015.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0016.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0017.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0018.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0019.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0020.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0021.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0022.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0023.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0024.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0025.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0026.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0027.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0028.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0029.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/mri/T1.0030.IMA": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "suspect/tests/test_data/siemens/twix_vb.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "suspect/tests/test_data/siemens/twix_vd.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "suspect/tests/test_data/tarquin/tarquin_megapress_fit.txt": {
+  "format": "tarquin_fit",
+  "vendor": 0.9,
+  "kind": "fit_result"
+ },
+ "suspect/tests/test_data/tarquin/tarquin_results.txt": {
+  "format": "tarquin_results",
+  "vendor": 0.9,
+  "kind": "fit_result"
+ },
+ "tarquin/data/7T_smo_mouse.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/LCM/W/RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/LCM/WS/RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/SIEMENSTEST": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/SKNAS.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/aligned_batch_processed.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/broken.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/broken2.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/examples/Siemens_1000/RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/examples/Siemens_2000/RAW": {
+  "format": "lcmodel_raw",
+  "vendor": 1.0,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/ge/P1751_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1751_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1802_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1802_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1806_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1806_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1809_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1809_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1813_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1813_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1817_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1817_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1820_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1820_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1823_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1823_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1827_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1827_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1830_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1830_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1834_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1834_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1837_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1837_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1840_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1840_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1844_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1844_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1847_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1847_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1851_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1851_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1854_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1854_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1859_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1859_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1904_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1904_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/ge/P1907_1.5T_030_2000.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "tarquin/data/ge/P1907_1.5T_030_2000.7.shf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/phillips/svs_135_WS.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_135_WS.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_135_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_135_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_135_w.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_135_ws.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_30_WS.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_30_WS.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_30_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_30_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_30_w.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/phillips/svs_30_ws.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/processed.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/real_mb.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/real_mb_proc.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/risto_mrs/DBIEX_10_1_raw_act.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/risto_mrs/DBIEX_10_1_raw_act.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/risto_mrs/DBIEX_10_1_raw_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/risto_mrs/DBIEX_10_1_raw_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/siemens/SIEMENSTEST": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/siemens/example.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/simulated/generate_summary": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/svs_135_WS.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_135_WS.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_135_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_135_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_135_w.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_135_ws.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_30_WS.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_30_WS.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_30_ref.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_30_ref.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_30_w.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/svs_30_ws.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/testing_data/1.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/data/testing_data/1.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/data/unknown.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/CMakeLists.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/action_settings.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/gnuplot_common_settings.hh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/go_mean": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/mean.cxx": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/mk_gnuplot_script.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/mk_mean_script.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/mk_new_gnuplot.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/perlib_plot_settings.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/regularize.cxx": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/smooth.cxx": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/smooth_all.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/CMakeLists.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/action_settings.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/gnuplot_common_settings.hh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/go_mean": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/mean.cxx": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/mk_gnuplot_script.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/mk_mean_script.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/mk_new_gnuplot.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/perlib_plot_settings.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/regularize.cxx": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/smooth.cxx": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/fast_sim/eigen3_3_7/bench/btl/data/smooth_all.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/-CrCH2.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/3t_basis.xml": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Ala.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Asp.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Cr.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/GABA.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/GPC.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Glc.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Gln.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Glu.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Gua.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Ins.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Lac.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Lip09.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Lip13a.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Lip13b.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Lip20.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/MM09.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/MM12.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/MM14.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/MM17.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/MM20.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/NAA.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/NAAG.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/PCh.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/SVS.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/unit_tests/data/Scyllo.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/Tau.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/dpt_test_input.dpt": {
+  "format": "tarquin_dpt",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/unit_tests/data/fast_sim_H.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/fast_sim_delay_a_state.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/fast_sim_delay_b_state.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/fast_sim_eig_vecs.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/fast_sim_init_state.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/fast_sim_post_d1_state.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/fast_sim_pre_acq_state.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/fast_sim_time_sig.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/phase.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/philips_spar_sdat_W.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/unit_tests/data/philips_spar_sdat_W.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/unit_tests/data/philips_spar_sdat_W.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/philips_spar_sdat_WS.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/unit_tests/data/philips_spar_sdat_WS.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/unit_tests/data/philips_spar_sdat_WS.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/proc.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/siemens_ima_WS.ima": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/unit_tests/data/siemens_ima_WS.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/siemens_rda_WS.rda": {
+  "format": "siemens_rda",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "tarquin/src/unit_tests/data/siemens_rda_WS.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tarquin/src/unit_tests/data/simulation.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis.zip": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_01_import-file/press_cp0.rsd": {
+  "format": "vasf",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_01_import-file/press_cp0.rsp": {
+  "format": "vasf",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp0.rsd": {
+  "format": "vasf",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp0.rsp": {
+  "format": "vasf",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp4.rsd": {
+  "format": "vasf",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp4.rsp": {
+  "format": "vasf",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp7.rsd": {
+  "format": "vasf",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp7.rsp": {
+  "format": "vasf",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_03_open-multiple-datasets/press_cp0.xml": {
+  "format": "vespa_viff",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_03_open-multiple-datasets/press_cp4.xml": {
+  "format": "vespa_viff",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_04_eddy-current-correction/press_cp4.rsd": {
+  "format": "vasf",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_04_eddy-current-correction/press_cp4.rsp": {
+  "format": "vasf",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_04_eddy-current-correction/press_cp4_with_ecc.xml": {
+  "format": "vespa_viff",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_04_eddy-current-correction/press_cp4_wref.rsd": {
+  "format": "vasf",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_04_eddy-current-correction/press_cp4_wref.rsp": {
+  "format": "vasf",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_05_interactive_svd_filtering/press_cp0.rsd": {
+  "format": "vasf",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_05_interactive_svd_filtering/press_cp0.rsp": {
+  "format": "vasf",
+  "vendor": 0.9,
+  "kind": "spectroscopy"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_06_fitting_press_te24/_prior_for_press24_forCP0.xml": {
+  "format": "vespa_viff",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_06_fitting_press_te24/press_cp0.xml": {
+  "format": "vespa_viff",
+  "vendor": null,
+  "kind": "spectroscopy"
  }
 }

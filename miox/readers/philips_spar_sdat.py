@@ -17,9 +17,13 @@
 #*************#
 from __future__ import annotations
 
+import contextlib
+import warnings
+from collections.abc import Iterator
 from pathlib import Path
 
 from nifti_mrs.nifti_mrs import NIFTI_MRS
+from spec2nii.Philips import philips
 from spec2nii.Philips.philips import read_sdat_spar_pair, read_spar
 
 # own
@@ -38,6 +42,7 @@ from miox.sniff import Format, Sniff
 class PhilipsSparSdatReader(Spec2niiReader):
     FORMATS = (Format.PHILIPS_SPAR_SDAT,)
     CONVERTER = "philips"
+    REQUIRED_BY_SPEC2NII = {"spectrum_inversion_time": 0}  # 0: no inversion (spec2nii skips it)
     HYPER_SHORT_TE = 0.035  # s; HYPER acquires its short-TE block at 35 ms, the edited one at 80 ms
     HYPER_EDITED_TE = 0.08
     SOURCES = {
@@ -57,9 +62,23 @@ class PhilipsSparSdatReader(Spec2niiReader):
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         spar, sdat = self._pair(sniff)
-        images, names = read_sdat_spar_pair(sdat, spar, None, [None, None, None], None, None)
-        header = {key: self.plain(value) for key, value in read_spar(spar).items()}
-        return list(images), list(names), header
+        header = read_spar(spar)
+        with self.defaults(header):
+            images, names = read_sdat_spar_pair(sdat, spar, None, [None, None, None], None, None)
+        return list(images), list(names), {key: self.plain(v) for key, v in header.items()}
+
+    @contextlib.contextmanager
+    def defaults(self, header: dict) -> Iterator[None]:
+        """Let spec2nii see the keys it reads unconditionally, if this SPAR lacks them."""
+        missing = {k: v for k, v in self.REQUIRED_BY_SPEC2NII.items() if k not in header}
+        for key in missing:
+            warnings.warn(f"SPAR has no {key}; read as {missing[key]!r}", stacklevel=2)
+        original = philips.read_spar
+        philips.read_spar = lambda path: {**missing, **original(path)}
+        try:
+            yield
+        finally:
+            philips.read_spar = original
 
     def correct(self, d: MRSData) -> None:
         """The SPAR inversion time unscaled (ms) and the HYPER short-TE reference set to 80 ms."""

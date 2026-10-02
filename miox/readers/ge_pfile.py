@@ -22,7 +22,7 @@ import ctypes
 from pathlib import Path
 
 from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.GE.ge_pfile import read_pfile
+from spec2nii.GE.ge_pfile import _process_mrsi_pfile, _process_svs_pfile
 from spec2nii.GE.ge_read_pfile import Pfile
 
 # own
@@ -31,13 +31,44 @@ from miox.sniff import Format, Sniff
 
 
 #**************************************************************************************************#
+#                                             GePfile                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# spec2nii's Pfile with the check for revisions below 12 fixed: the logo field is bytes, and       #
+# spec2nii looks for the text "GE" in it, which raises.                                            #
+#                                                                                                  #
+#**************************************************************************************************#
+class GePfile(Pfile):
+    @property
+    def is_ge_file(self) -> bool:
+        if self.version < 12:
+            return b"GE" in bytes(self.hdr.rhr_rh_logo)
+        return Pfile.is_ge_file.fget(self)
+
+    def map_data(self) -> None:
+        """spec2nii's map_data; revisions before 11 have no data-offset field, so it is derived."""
+        self.map = self.get_mapper(self.file_name, self.hdr, self.version, self.endian)
+        if not hasattr(self.hdr, "rhr_rdb_hdr_off_data"):
+            self.hdr.rhr_rdb_hdr_off_data = self._data_offset()
+        self.map.read_data()
+
+    def _data_offset(self) -> int:
+        """The data fill the end of the file; same byte count as spec2nii's read_data."""
+        m, hdr = self.map, self.hdr
+        spectrum = hdr.rhr_rh_frame_size * 2 * hdr.rhr_rh_point_size
+        per_coil = m.get_num_kspace_points * spectrum * m.get_num_time_points
+        per_coil += int(m.get_num_dummy_scans * spectrum / m.get_num_coils)
+        return Path(self.file_name).stat().st_size - per_coil * m.get_num_coils
+
+
+#**************************************************************************************************#
 #                                           PfileHeader                                            #
 #**************************************************************************************************#
 #                                                                                                  #
-# spec2nii's Pfile without the data: its constructor would also map the whole file.                #
+# GePfile without the data: the constructor would also map the whole file.                         #
 #                                                                                                  #
 #**************************************************************************************************#
-class PfileHeader(Pfile):
+class PfileHeader(GePfile):
     def __init__(self, fname: str):
         self.file_name = fname
         self.version = 0
@@ -79,8 +110,12 @@ class GePfileReader(Spec2niiReader):
     }
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
-        images, names = read_pfile(sniff.path, None)
-        return list(images), list(names), self._header(sniff.path)
+        """spec2nii's read_pfile, with GePfile in place of its Pfile."""
+        pfile = GePfile(str(sniff.path))
+        process = _process_svs_pfile if pfile.is_svs else _process_mrsi_pfile
+        images, suffixes = process(pfile)
+        names = [sniff.path.stem + suffix for suffix in suffixes]
+        return list(images), names, self._header(sniff.path)
 
     def _header(self, path: Path) -> dict:
         pfile = PfileHeader(str(path))

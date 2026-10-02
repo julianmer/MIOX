@@ -31,7 +31,11 @@ from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
+from miox.readers.sivic_ddf import SivicDdfReader
+from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.varian import VarianReader
+from miox.readers.vasf import VasfReader
+from miox.readers.vespa_viff import VespaViffReader
 from miox.sniff import Format, Sniffer
 
 
@@ -57,7 +61,11 @@ class Loader:
             PhilipsSparSdatReader(),
             SiemensRdaReader(),
             SiemensTwixReader(),
+            SivicDdfReader(),
+            TarquinDptReader(),
             VarianReader(),
+            VasfReader(),
+            VespaViffReader(),
         ):
             for fmt in reader.FORMATS:
                 self.readers[fmt] = reader

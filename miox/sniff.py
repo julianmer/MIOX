@@ -54,6 +54,20 @@ class Format(StrEnum):
     BRUKER = "bruker"
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
+    LCMODEL_BASIS = "lcmodel_basis"
+    LCMODEL_CONTROL = "lcmodel_control"
+    LCMODEL_COORD = "lcmodel_coord"
+    LCMODEL_TABLE = "lcmodel_table"
+    LCMODEL_CSV = "lcmodel_csv"
+    LCMODEL_PRINT = "lcmodel_print"
+    LCMODEL_PS = "lcmodel_ps"
+    TARQUIN_DPT = "tarquin_dpt"
+    TARQUIN_RESULTS = "tarquin_results"
+    TARQUIN_FIT = "tarquin_fit"
+    VASF = "vasf"
+    VESPA_VIFF = "vespa_viff"
+    SIVIC_DDF = "sivic_ddf"
+    SIVIC_IDF = "sivic_idf"
     JMRUI_TEXT = "jmrui_text"
     JMRUI_BINARY = "jmrui_binary"
     ISMRMRD = "ismrmrd"
@@ -71,6 +85,10 @@ class Kind(StrEnum):
     SPECTROSCOPY = "spectroscopy"
     IMAGING = "imaging"
     RAW = "raw"  # k-space / unprocessed ADC lines (twix, P-file, Bruker fid)
+    BASIS_SET = "basis_set"  # one signal per metabolite, for fitting
+    FIT_RESULT = "fit_result"  # concentrations, fitted curves
+    PROTOCOL = "protocol"  # acquisition or analysis settings
+    REPORT = "report"  # graphics for reading, no data
     UNKNOWN = "unknown"
 
 
@@ -157,6 +175,28 @@ class Sniffer:
         "scan_name": "ACQ_scan_name",
         "method": "ACQ_method",
     }
+    TEXT_MARKERS = (  # (markers, format, kind, evidence); first match wins, upper-case markers
+        ((b"$BASIS", b"&BASIS"), Format.LCMODEL_BASIS, Kind.BASIS_SET, "LCModel $BASIS namelist"),
+        ((b"$LCMODL", b"&LCMODL"), Format.LCMODEL_CONTROL, Kind.PROTOCOL, "LCModel $LCMODL"),
+        ((b"$NMALL", b"$NMEACH"), Format.LCMODEL_CONTROL, Kind.PROTOCOL, "MakeBasis $NMALL"),
+        ((b"$NMID", b"$SEQPAR"), Format.LCMODEL_RAW, Kind.SPECTROSCOPY, "LCModel $NMID/$SEQPAR"),
+    )
+    TEXT_STARTS = (  # (start of the file, format, kind, evidence)
+        (b"Dangerplot_version", Format.TARQUIN_DPT, Kind.SPECTROSCOPY, "TARQUIN dangerplot"),
+        (b"Signal     Conc (au)", Format.TARQUIN_RESULTS, Kind.FIT_RESULT, "TARQUIN results"),
+        (b"Row : ", Format.TARQUIN_FIT, Kind.FIT_RESULT, "TARQUIN fit"),
+        (b"Row, Col,", Format.LCMODEL_CSV, Kind.FIT_RESULT, "LCModel CSV"),
+        (b"[FILE INFORMATION]", Format.VASF, Kind.SPECTROSCOPY, "VASF header"),
+        (b"DATA DESCRIPTOR FILE", Format.SIVIC_DDF, Kind.SPECTROSCOPY, "UCSF DDF header"),
+        (b"IMAGE DESCRIPTOR FILE", Format.SIVIC_IDF, Kind.IMAGING, "UCSF IDF header"),
+    )
+    COMPANIONS = (  # (data suffix, header suffix, format)
+        (".rsd", ".rsp", Format.VASF),
+        (".cmplx", ".ddf", Format.SIVIC_DDF),
+        (".real", ".idf", Format.SIVIC_IDF),
+        (".int2", ".idf", Format.SIVIC_IDF),
+        (".byt", ".idf", Format.SIVIC_IDF),
+    )
     BRUKER_MRS_METHODS = (
         "press", "steam", "csi", "svs", "slaser", "laser", "isis", "fid", "nspect"
     )
@@ -166,6 +206,9 @@ class Sniffer:
             self.dicom,
             self.nifti,
             self.rda,
+            self.companion_binary,
+            self.analysis_text,
+            self.vespa,
             self.spar_sdat,
             self.data_list,
             self.twix,
@@ -368,10 +411,13 @@ class Sniffer:
     def pfile(self, path: Path, head: bytes) -> Sniff | None:
         if len(head) < 4:
             return None
+        if self._is_text(head):
+            return None
         (revision,) = struct.unpack_from("<f", head, 0)
         named = path.suffix == ".7" or self.PFILE_NAME.match(path.name) is not None
         known = any(abs(revision - r) < 0.01 for r in self.PFILE_REVISIONS)
-        if not (known or (named and 5.0 <= revision <= 40.0)):
+        exact = abs(revision - round(revision, 3)) < 1e-5  # revisions are like 20.006
+        if not exact or not (known or (named and 5.0 <= revision <= 40.0)):
             return None
         return Sniff(
             path,
@@ -415,15 +461,68 @@ class Sniffer:
                 confidence=1.0,
                 evidence=("jMRUI text marker",),
             )
-        if b"$NMID" in head or b"$SEQPAR" in head:
-            return Sniff(
-                path,
-                Format.LCMODEL_RAW,
-                Kind.SPECTROSCOPY,
-                confidence=1.0,
-                evidence=("LCModel $NMID/$SEQPAR namelist",),
-            )
         return None
+
+    def companion_binary(self, path: Path, head: bytes) -> Sniff | None:
+        """Headerless binary data next to the text header that describes it."""
+        for suffix, header, fmt in self.COMPANIONS:
+            if path.suffix.lower() == suffix and (text := self._sibling(path, header)):
+                return Sniff(
+                    path,
+                    fmt,
+                    Kind.SPECTROSCOPY if fmt != Format.SIVIC_IDF else Kind.IMAGING,
+                    confidence=0.9,
+                    evidence=(f"{suffix} data with {text.name}",),
+                    companions=(text,),
+                )
+        return None
+
+    def analysis_text(self, path: Path, head: bytes) -> Sniff | None:
+        """Text formats of LCModel, TARQUIN, VASF and SIVIC, recognised by their own markers."""
+        upper = head.upper()
+        stripped = head.lstrip()
+        if stripped.startswith(b"%!PS") and b"Creator: LCModel" in head:
+            evidence = ("LCModel PostScript",)
+            return Sniff(path, Format.LCMODEL_PS, Kind.REPORT, 1.0, evidence=evidence)
+        for markers, fmt, kind, evidence in self.TEXT_MARKERS:
+            if any(m in upper for m in markers):
+                companions = self._text_companions(path, fmt)
+                return Sniff(path, fmt, kind, 1.0, evidence=(evidence,), companions=companions)
+        if stripped.startswith(b"LCModel (Version"):
+            if b"$$CONC" in head:
+                fmt = Format.LCMODEL_TABLE
+            elif b"lines in following" in head:
+                fmt = Format.LCMODEL_COORD
+            else:
+                fmt = Format.LCMODEL_PRINT
+            return Sniff(path, fmt, Kind.FIT_RESULT, 0.9, evidence=("LCModel banner",))
+        for start, fmt, kind, evidence in self.TEXT_STARTS:
+            if stripped.startswith(start):
+                companions = self._text_companions(path, fmt)
+                return Sniff(path, fmt, kind, 0.9, evidence=(evidence,), companions=companions)
+        return None
+
+    def vespa(self, path: Path, head: bytes) -> Sniff | None:
+        if head[:2] == b"\x1f\x8b":
+            try:
+                head = zlib.decompressobj(31).decompress(head, 4096)
+            except zlib.error:
+                return None
+        if b"<vespa_export" not in head:
+            return None
+        kind = Kind.UNKNOWN
+        if b"<dataset" in head:
+            kind = Kind.SPECTROSCOPY
+        elif b"<experiment" in head or b"<metabolite" in head:
+            kind = Kind.BASIS_SET
+        return Sniff(path, Format.VESPA_VIFF, kind, confidence=1.0, evidence=("<vespa_export>",))
+
+    def _text_companions(self, path: Path, fmt: Format) -> tuple[Path, ...]:
+        for suffix, header, companion_fmt in self.COMPANIONS:
+            if companion_fmt == fmt and path.suffix.lower() == header:
+                data = self._sibling(path, suffix)
+                return (data,) if data else ()
+        return ()
 
     def hdf5(self, path: Path, head: bytes) -> Sniff | None:
         if head[:8] != b"\x89HDF\r\n\x1a\n":
@@ -465,6 +564,12 @@ class Sniffer:
     def _head(self, path: Path) -> bytes:
         with open(path, "rb") as fh:
             return fh.read(self.HEAD_BYTES)
+
+    @staticmethod
+    def _is_text(head: bytes) -> bool:
+        """Printable ASCII and whitespace only, as in a text header or document."""
+        sample = head[:1024]
+        return bool(sample) and all(32 <= b < 127 or b in (9, 10, 13) for b in sample)
 
     @staticmethod
     def _is_dicom(head: bytes) -> bool:

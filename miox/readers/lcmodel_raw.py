@@ -40,8 +40,8 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # Reads one .RAW file into one MRSData (several FIDs in one file, as LCModel writes for MRSI, go   #
 # along DIM_USER_0 when the header states the number of points). The format stores no nucleus and  #
-# no voxel, so 1H is assumed and the geometry is a 10 m voxel, both noted. Data are conjugated to  #
-# the NIfTI-MRS convention unless the file says BRUKER=T (already conjugated).                     #
+# no voxel, so 1H is assumed and the geometry is a 10 m voxel, both noted. LCModel's sign          #
+# convention is NIfTI-MRS's, so the data stay as written unless the file says BRUKER=T.            #
 #                                                                                                  #
 #**************************************************************************************************#
 class LcmodelRawReader(Reader):
@@ -53,7 +53,8 @@ class LcmodelRawReader(Reader):
     FIELD = re.compile(r"\(\s*(\d*)\s*[EFGD](\d+)", re.I)  # FMTDAT repeat count and field width
     NUMBER = re.compile(r"[-+]?(?:\d+\.?\d*|\.\d+)(?:[EeDd][-+]?\d+)?")
     DWELL = (("dwelltime", 1.0), ("deltat", 1.0), ("badelt", 1.0))  # header keys, factor to s
-    SIDE_FILES = (".control", ".in")
+    SIDE_LIMIT = 1_000_000  # bytes; control files are small text files
+    SIDE_MARKERS = ("$LCMODL", "&LCMODL", "$SEQPAR", "&SEQPAR")  # namelists stating HZPPPM
 
     def read(self, sniff: Sniff) -> list[MRSData]:
         notes = [f"nucleus not stored in LCModel .RAW files; {self.NUCLEUS} assumed"]
@@ -77,12 +78,12 @@ class LcmodelRawReader(Reader):
                 name for name, v in (("HZPPPM", frequency), ("dwell time", dwell)) if v is None
             )
             raise ReaderError(
-                f"{sniff.path.name} states no {missing}, and neither does a .CONTROL or .IN file "
-                "next to it"
+                f"{sniff.path.name} states no {missing}, and neither does a control file "
+                "($LCMODL or $SEQPAR namelist) next to it"
             )
         nmid = header["namelists"].get("nmid", {})
         fid = self._fid(text[end + 4 :], nmid.get("fmtdat"))
-        if not nmid.get("bruker", False):
+        if nmid.get("bruker", False):  # Bruker sign convention: LCModel conjugates these
             fid = fid.conj()
         points = header["namelists"].get("seqpar", {}).get("numberofpoints")
         data = self._shape(fid, points, notes)
@@ -114,10 +115,20 @@ class LcmodelRawReader(Reader):
         if self._find({"namelists": self._raw(path)}, "hzpppm")[0] is not None:
             return None
         for candidate in sorted(path.parent.iterdir()):
-            if candidate.suffix.lower() in self.SIDE_FILES and candidate.is_file():
-                namelists = self._namelists(candidate.read_text(errors="replace"))
-                if self._find({"namelists": namelists}, "hzpppm")[0] is not None:
-                    return candidate
+            if candidate == path or not candidate.is_file():
+                continue
+            if candidate.stat().st_size > self.SIDE_LIMIT:
+                continue
+            text = candidate.read_text(errors="replace")
+            if not any(marker in text.upper() for marker in self.SIDE_MARKERS):
+                continue
+            end = text.upper().rfind("$END")
+            try:
+                namelists = self._namelists(text[: end + 4] if end >= 0 else text)
+            except Exception:  # not a namelist file after all
+                continue
+            if self._find({"namelists": namelists}, "hzpppm")[0] is not None:
+                return candidate
         return None
 
     def _raw(self, path: Path) -> dict:

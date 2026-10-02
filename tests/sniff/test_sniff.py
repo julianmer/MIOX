@@ -99,6 +99,12 @@ def test_pfile_unknown_revision_needs_name(tmp_path):
     assert sniff(g).confidence == 1.0
 
 
+def test_text_is_not_a_pfile(tmp_path):
+    f = tmp_path / "README.md"
+    f.write_text("## About\n\nThis repository holds test data.\n")  # "## A" reads as 10.0086
+    assert sniff(f).format == Format.UNKNOWN
+
+
 def test_bruker_scan_dir(tmp_path):
     scan = tmp_path / "5"
     scan.mkdir()
@@ -199,3 +205,57 @@ def test_unknown_and_missing(tmp_path):
 
 def test_empty_dir(tmp_path):
     assert sniff(tmp_path).format == Format.UNKNOWN
+
+
+@pytest.mark.parametrize(
+    "name,text,fmt,kind",
+    [
+        (
+            "x.BASIS",
+            " $SEQPAR\n HZPPPM=123.2\n $END\n $BASIS1\n ID='NAA'\n $END\n",
+            "lcmodel_basis",
+            "basis_set",
+        ),
+        ("control.file", " $LCMODL\n HZPPPM=123.2\n $END\n", "lcmodel_control", "protocol"),
+        ("makebasis.in", " $SEQPAR\n $END\n $NMALL\n $END\n", "lcmodel_control", "protocol"),
+        (
+            "x.COORD",
+            " LCModel (Version 6.3-1B)\n 38 lines in following concentration table\n",
+            "lcmodel_coord",
+            "fit_result",
+        ),
+        (
+            "x.TABLE",
+            " LCModel (Version 6.3-1B)\n x\n$$CONC 38 lines in following\n",
+            "lcmodel_table",
+            "fit_result",
+        ),
+        ("x.CSV", "Row, Col, NAA, NAA %SD\n 1, 1, 1.0, 3\n", "lcmodel_csv", "fit_result"),
+        ("x.ps", "%!PS-Adobe-2.0\n%%Creator: LCModel\n", "lcmodel_ps", "report"),
+        ("x.dpt", "Dangerplot_version\t1.0\nNumber_of_points\t2\n", "tarquin_dpt", "spectroscopy"),
+        ("r.txt", "Signal     Conc (au)       %SD   SD (au)\n", "tarquin_results", "fit_result"),
+        ("f.txt", "Row : 1, Col : 1, Slice : 1\nPPMScale,Data,Fit\n", "tarquin_fit", "fit_result"),
+        (
+            "x.xml",
+            '<vespa_export version="1.0.0">\n<dataset id="a">\n',
+            "vespa_viff",
+            "spectroscopy",
+        ),
+        ("x.ddf", "DATA DESCRIPTOR FILE\nversion: 6.1\n", "sivic_ddf", "spectroscopy"),
+    ],
+)
+def test_analysis_text_formats(tmp_path, name, text, fmt, kind):
+    f = tmp_path / name
+    f.write_text(text)
+    s = sniff(f)
+    assert (s.format, s.kind) == (fmt, kind)
+
+
+def test_header_and_binary_pairs(tmp_path):
+    (tmp_path / "press.rsp").write_text("[FILE INFORMATION]\ndata_format= xdr\n")
+    (tmp_path / "press.rsd").write_bytes(b"\x3f\x80\x00\x00" * 16)
+    (tmp_path / "csi.ddf").write_text("DATA DESCRIPTOR FILE\nversion: 6.1\n")
+    (tmp_path / "csi.cmplx").write_bytes(b"\x00" * 64)
+    assert sniff(tmp_path / "press.rsp").companions == (tmp_path / "press.rsd",)
+    assert sniff(tmp_path / "press.rsd").format == Format.VASF
+    assert sniff(tmp_path / "csi.cmplx").format == Format.SIVIC_DDF

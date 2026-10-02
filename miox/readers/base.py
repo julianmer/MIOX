@@ -28,6 +28,8 @@ from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
+from nifti_mrs.create_nmrs import gen_nifti_mrs_hdr_ext
+from nifti_mrs.hdr_ext import Hdr_Ext
 from nifti_mrs.nifti_mrs import NIFTI_MRS
 from spec2nii.spec2nii import remove_zero_higher_dim_indices
 from spec2nii.spec2nii import spec2nii as Spec2niiCommand
@@ -64,6 +66,7 @@ class Reader:
     PROGRESS = re.compile(r"\d+%\|")  # progress-bar lines
     LIBRARY_WARNINGS = (DeprecationWarning, PendingDeprecationWarning, FutureWarning)
     INTEGER_TEXT = re.compile(r"-?\d+\.0")  # an integer written as float text
+    NO_GEOMETRY = np.diag([1e4, 1e4, 1e4, 1.0])  # a 10 m voxel: the file stores no geometry
     INTEGER_KEYS = ("DeviceSerialNumber", "PatientDoB")
     QUOTED_KEYS = ("RxCoil", "TxCoil")
 
@@ -80,6 +83,38 @@ class Reader:
             value = d.meta.get(key)
             if isinstance(value, str) and len(value) > 1 and value[0] == value[-1] == '"':
                 self.fix(d, key, value[1:-1], "surrounding quotes removed")
+
+    def dataset(
+        self,
+        sniff: Sniff,
+        data: np.ndarray,
+        dwelltime: float,
+        values: dict[str, tuple[Any, str | None]],
+        vendor: dict,
+        name: str,
+        notes: list[str],
+        source: str,
+        affine: np.ndarray | None = None,
+        dim_tags: tuple[str, ...] = (),
+    ) -> MRSData:
+        """MRSData from data and header values a reader parsed itself.
+
+        ``data`` is in NIfTI-MRS order and convention; ``values`` maps standard keys to
+        (value, vendor field), and must hold SpectrometerFrequency and ResonantNucleus.
+        """
+        frequency = values["SpectrometerFrequency"][0]
+        nucleus = values["ResonantNucleus"][0]
+        hdr_ext = Hdr_Ext(frequency, nucleus)
+        for index, tag in enumerate(dim_tags):
+            hdr_ext.set_dim_info(index, tag)
+        geometry = self.NO_GEOMETRY if affine is None else affine
+        image = gen_nifti_mrs_hdr_ext(data, dwelltime, hdr_ext, geometry, no_conj=True)
+        provenance = self.provenance(sniff, tuple(notes))
+        d = MRSData.from_nifti_mrs(image, provenance, source, vendor=vendor, name=name)
+        for key, (value, field) in values.items():
+            d.meta.set(key, value, f"{source}: {field}" if field else source, field)
+        self.correct(d)
+        return d
 
     @staticmethod
     def fix(d: MRSData, key: str, value: Any, reason: str) -> None:
