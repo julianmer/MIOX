@@ -86,7 +86,10 @@ class BrukerReader(Spec2niiReader):
         return list(images), list(names), header
 
     def _check(self, sniff: Sniff, path: Path, header: dict) -> None:
-        """Say why spec2nii will refuse the data: an imaging scan, or a spectrum without phase."""
+        """Say why spec2nii will refuse the data: no method file, an imaging scan, or a spectrum
+        without phase."""
+        if "method" not in header:
+            raise ReaderError(f"{path}: the scan folder has no method file, which spec2nii needs")
         method = header.get("method", {}).get("Method") or sniff.detail.get("method")
         if Sniffer().bruker_scan_kind(method) == Kind.IMAGING:
             raise ReaderError(f"{path}: {method} is an imaging method; MR images are not read yet")
