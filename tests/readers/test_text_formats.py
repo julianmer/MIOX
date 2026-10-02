@@ -30,9 +30,14 @@ def _fid(n: int = 64) -> np.ndarray:
     return np.exp(2j * np.pi * 100 * t - t / 0.05)
 
 
+def _raw(path, header: list[str], fid: np.ndarray, width: int = 15) -> None:
+    lines = header + [f"{z.real:{width}.6E}{z.imag:{width}.6E}" for z in fid]
+    path.write_text("\n".join(lines) + "\n")
+
+
 def test_lcmodel_raw(tmp_path):
     f = tmp_path / "metab.RAW"
-    lines = [
+    header = [
         " $SEQPAR",
         " echot= 30.00",
         " seq= 'PRESS'",
@@ -43,17 +48,39 @@ def test_lcmodel_raw(tmp_path):
         " id='test', fmtdat='(2E15.6)'",
         " volume=8.0",
         " $END",
-    ] + [f" {z.real:15.6e}{z.imag:15.6e}" for z in _fid()]
-    f.write_text("\n".join(lines) + "\n")
+    ]
+    _raw(f, header, _fid())
     [d] = gu.load(f)
     assert d.shape == (1, 1, 1, 64) and d.dwelltime == pytest.approx(2.5e-4)
     assert d.spectrometer_frequency == pytest.approx(123.25)
-    assert d.meta.vendor["SEQPAR"]["ECHOT"] == "30.00"
-    assert d.meta.vendor["NMID"]["ID"] == "'test'"
-    assert d.meta.source["SpectrometerFrequency"] == "spec2nii raw: SEQPAR/HZPPPM"
-    assert d.meta.source["DwellTime"] == "spec2nii raw: SEQPAR/DWELLTIME"
-    notes = " ".join(d.provenance.notes)
-    assert "in Hz; divided by 1e6" in notes and "1H assumed" in notes
+    assert d.meta["EchoTime"] == pytest.approx(0.03)
+    assert np.allclose(d.data[0, 0, 0], _fid().conj(), atol=1e-6)  # LCModel to NIfTI-MRS
+    assert d.meta.vendor["namelists"]["nmid"]["id"] == "test"
+    assert d.meta.fields["SpectrometerFrequency"] == "namelists/seqpar/hzpppm"
+    assert any("1H assumed" in note for note in d.provenance.notes)
+
+
+def test_lcmodel_raw_text_tight_format_bruker_and_control(tmp_path):
+    f = tmp_path / "test.RAW"
+    header = [
+        "Free text written by some exporter",
+        " $NMID ID='x', FMTDAT='(2E13.5)', BRUKER=T $END",
+    ]
+    fid = -_fid()  # negative numbers run together at width 13
+    _raw(f, header, fid, width=13)
+    (tmp_path / "test.CONTROL").write_text(" $LCMODL\n HZPPPM=84.47\n DELTAT=5E-04\n $END\n")
+    [d] = gu.load(f)
+    assert d.spectrometer_frequency == pytest.approx(84.47) and d.dwelltime == pytest.approx(5e-4)
+    assert np.allclose(d.data[0, 0, 0], fid, atol=1e-5)  # BRUKER=T: already conjugated
+    assert d.meta.vendor["text"] == ["Free text written by some exporter"]
+    assert d.meta.fields["DwellTime"] == "side_namelists/lcmodl/deltat"
+
+
+def test_lcmodel_raw_without_frequency(tmp_path):
+    f = tmp_path / "basis_component.RAW"
+    _raw(f, [" $NMID ID='x', FMTDAT='(2E15.6)' $END"], _fid())
+    with pytest.raises(gu.ReaderError, match="HZPPPM and dwell time"):
+        gu.load(f)
 
 
 def test_jmrui_text(tmp_path):
@@ -72,6 +99,7 @@ def test_jmrui_text(tmp_path):
         "MagneticField: 2.89",
         "TypeOfNucleus: 1H",
         "NameOfPatient: anonymous",
+        "Name of Study: spaced key",
         "DateOfExperiment: ",
         "Spectrometer: test",
         "AdditionalInfo: none",
@@ -87,4 +115,5 @@ def test_jmrui_text(tmp_path):
     assert d.shape == (1, 1, 1, 64) and d.nucleus == "1H"
     assert d.spectrometer_frequency == pytest.approx(123.25)
     assert d.meta.vendor["PointsInDataset"] == 64
+    assert d.meta.vendor["Name of Study"] == "spaced key"
     assert d.meta.source["DwellTime"] == "spec2nii jmrui: SamplingInterval"

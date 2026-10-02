@@ -7,8 +7,8 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Reader for jMRUI files: text (.txt) and binary (.mrui). spec2nii converts; the vendor   #
-#          header is the parsed text header, or the numeric header and the trailing text of a      #
-#          .mrui file.                                                                             #
+#          header is every key of the text header (also keys with spaces, which spec2nii drops),   #
+#          or the numeric header and the trailing text of a .mrui file.                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -18,10 +18,12 @@
 #*************#
 from __future__ import annotations
 
+import re
 from argparse import Namespace
+from pathlib import Path
 
 from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.jmrui import jmrui_format, read_mrui, readjMRUItxt
+from spec2nii.jmrui import jmrui_format, read_mrui
 
 # own
 from miox.readers.base import Spec2niiReader
@@ -38,6 +40,7 @@ from miox.sniff import Format, Sniff
 class JmruiReader(Spec2niiReader):
     FORMATS = (Format.JMRUI_TEXT, Format.JMRUI_BINARY)
     CONVERTER = "jmrui"
+    SIGNAL = re.compile(r"Signal (?:number: )?\d+ out of \d+ in file")  # start of the data
     SOURCES_TEXT = {
         "SpectrometerFrequency": "TransmitterFrequency",
         "ResonantNucleus": ("TypeOfNucleus", "MagneticField"),
@@ -55,7 +58,7 @@ class JmruiReader(Spec2niiReader):
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         images, names = jmrui_format(Namespace(file=sniff.path, affine=None, fileout=None))
         if sniff.format == Format.JMRUI_TEXT:
-            header = readjMRUItxt(sniff.path)[1]
+            header = self._text_header(sniff.path)
         else:
             _, header, text = read_mrui(sniff.path)
             header = {**header, "text": text}
@@ -63,3 +66,24 @@ class JmruiReader(Spec2niiReader):
 
     def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
         return self.SOURCES_BINARY if "sampling_interval" in vendor else self.SOURCES_TEXT
+
+    def _text_header(self, path: Path) -> dict:
+        """Every ``key: value`` line before the first signal; keys may contain spaces."""
+        header = {}
+        with open(path, errors="replace") as fh:
+            for line in fh:
+                if self.SIGNAL.match(line):
+                    break
+                key, colon, value = line.partition(":")
+                if colon and key.strip():
+                    header[key.strip()] = self._number(value.strip())
+        return header
+
+    @staticmethod
+    def _number(text: str) -> int | float | str:
+        for kind in (int, float):
+            try:
+                return kind(text)
+            except ValueError:
+                pass
+        return text

@@ -3320,9 +3320,9 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/fid_proc.64": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-360.3.5/19/pdata/1/id": {
   "format": "bruker",
@@ -3565,9 +3565,9 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/fid_proc.64": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-360.3.5/7/pdata/1/id": {
   "format": "bruker",

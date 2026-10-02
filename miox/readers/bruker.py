@@ -6,9 +6,9 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Reader for Bruker ParaVision spectroscopy scans (fid, 2dseq, rawdata). spec2nii         #
-#          converts through brukerapi; the vendor header holds every parameter of every parameter  #
-#          file of the scan and its processing folder.                                             #
+# Purpose: Reader for Bruker ParaVision spectroscopy scans (fid, fid_proc.64, 2dseq, rawdata).     #
+#          spec2nii converts through brukerapi; the vendor header holds every parameter of every   #
+#          parameter file of the scan and its processing folder.                                   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -42,6 +42,7 @@ class BrukerReader(Spec2niiReader):
     FORMATS = (Format.BRUKER,)
     CONVERTER = "bruker"
     MODES = {"fid": "FID", "fid_proc.64": "FID", "2dseq": "2DSEQ", "rawdata.job0": "RAWDATA"}
+    PROCESSED = ("2dseq", "fid_proc.64")  # stored in <study>/<scan>/pdata/<n>/
     PARAMETER_FILES = ("acqp", "method", "visu_pars", "reco", "subject")
     SOURCES_FID = {
         "SpectrometerFrequency": "acqp/BF1",
@@ -94,7 +95,7 @@ class BrukerReader(Spec2niiReader):
 
     def _header(self, data_file: Path) -> dict:
         """All parameters of the files that describe ``data_file``, by file name."""
-        if data_file.name == "2dseq":  # <study>/<scan>/pdata/<n>/2dseq
+        if data_file.name in self.PROCESSED:
             folders = (data_file.parent, data_file.parents[2], data_file.parents[3])
         else:  # <study>/<scan>/fid
             folders = (data_file.parent, data_file.parents[1])

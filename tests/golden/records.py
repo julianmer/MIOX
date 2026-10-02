@@ -43,7 +43,7 @@ class ReadRecords:
     PATH = GOLDEN / "read.json"
     VOLATILE = {"ConversionTime", "ConversionMethod"}  # change with every run or version
     RTOL = 1e-6
-    BRUKER_DATA = {"fid", "2dseq", "rawdata.job0"}  # Bruker files that hold data
+    BRUKER_DATA = {"fid", "fid_proc.64", "2dseq", "rawdata.job0"}  # Bruker files that hold data
 
     def __init__(self):
         self.loader = Loader()

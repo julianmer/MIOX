@@ -148,8 +148,10 @@ class Sniffer:
     PFILE_NAME = re.compile(r"^P\d{5}\.7$", re.I)
     BRUKER_PARAM_FILES = ("acqp", "method", "visu_pars", "reco", "subject")
     BRUKER_DATA_FILES = re.compile(
-        r"^(fid|ser|2dseq|rawdata\.job\d+|fid\.refscan|rawdata\.Navigator)$"
+        r"^(fid|ser|2dseq|rawdata\.job\d+|fid\.refscan|rawdata\.Navigator"
+        r"|fid_proc\.64|fid_refscan\.64)$"
     )
+    BRUKER_PROCESSED = ("2dseq", "fid_proc.64", "fid_refscan.64")  # in <scan>/pdata/<n>/
     BRUKER_ACQP_FIELDS = {  # detail key -> acqp parameter
         "paravision_version": "ACQ_sw_version",
         "scan_name": "ACQ_scan_name",
@@ -390,7 +392,7 @@ class Sniffer:
                 return self._bruker_scan(path, path.parent, "JCAMP-DX file with Bruker parameters")
         if self.BRUKER_DATA_FILES.match(path.name):
             folder = path.parent
-            scan_dir = folder.parent.parent if path.name == "2dseq" else folder  # pdata/<n>/2dseq
+            scan_dir = folder.parent.parent if path.name in self.BRUKER_PROCESSED else folder
             if (folder / "visu_pars").is_file() or any(
                 (scan_dir / f).is_file() for f in ("acqp", "method")
             ):
@@ -530,7 +532,7 @@ class Sniffer:
                 match = re.search(rf"##\${param}=\(\s*\d+\s*\)\s*<([^>]*)>", text)
                 if match:
                     detail[key] = match.group(1)
-        if self.BRUKER_DATA_FILES.match(path.name) and path.name != "2dseq":
+        if self.BRUKER_DATA_FILES.match(path.name) and path.name not in self.BRUKER_PROCESSED:
             kind = Kind.RAW
         else:
             kind = self._bruker_scan_kind(detail.get("method"))
