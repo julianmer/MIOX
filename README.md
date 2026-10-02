@@ -1,12 +1,10 @@
-# MIOX (working name)
+# MIOX
 
 A Python package that opens any MR file from any vendor — spectroscopy first, imaging too —
 into one well-defined object with data, geometry and all metadata, and shows it in one command.
 
-Status: milestone 0 (skeleton). `miox sniff` identifies the format of a file or directory
-without reading it whole; `miox audit` lists the metadata coverage of a NIfTI-MRS file.
-Readers follow in milestone 1. See `PLAN.md` for scope, data model, layout, milestones and the
-name shortlist. MIOX is the working name for now; alternatives are listed in PLAN.md.
+`miox sniff` identifies the format of a file or directory without reading it whole;
+`miox audit` lists the metadata coverage of a NIfTI-MRS file.
 
 ```
 uv sync --extra dev

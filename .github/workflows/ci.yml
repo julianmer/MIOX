@@ -36,5 +36,5 @@ jobs:
           key: test-data-subset-${{ hashFiles('scripts/fetch_test_data.py') }}
       - if: steps.data.outputs.cache-hit != 'true'
         run: uv run python scripts/fetch_test_data.py
-      - run: uv run pytest -m data tests/test_golden.py
+      - run: uv run pytest -m data tests/golden/test_golden.py
       - run: uv run python scripts/build_coverage.py

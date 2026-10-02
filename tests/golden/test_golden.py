@@ -70,8 +70,8 @@ def test_private_data_files_are_recognised(private_roots):
     unknown = []
     for root in private_roots:
         for p in root.rglob("*"):
-            if p.name.startswith("Adj") or "LaTeX_Extras" in p.parts:
-                continue  # Bruker adjustment results, LaTeX build products
+            if p.name.startswith("Adj"):
+                continue  # Bruker adjustment results
             if p.is_file() and p.suffix.lower() in DATA_SUFFIXES:
                 if sniff(p).format == Format.UNKNOWN:
                     unknown.append(p.name)
