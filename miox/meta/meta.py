@@ -25,19 +25,24 @@ from typing import Any
 #**************************************************************************************************#
 #                                                                                                  #
 # Standard keys by name (``meta["EchoTime"]``, units as in the key table), where each value came   #
-# from (``meta.source["EchoTime"]``), and the vendor header kept whole (``meta.vendor``).          #
+# from (``meta.source["EchoTime"]``, readable; ``meta.fields["EchoTime"]``, the path of the vendor #
+# header field when the value was read from one), and the vendor header kept whole                 #
+# (``meta.vendor``).                                                                               #
 #                                                                                                  #
 #**************************************************************************************************#
 class Meta(dict):
     def __init__(self, vendor: dict | None = None):
         super().__init__()
         self.source: dict[str, str] = {}
+        self.fields: dict[str, str] = {}
         self.vendor: dict = vendor if vendor is not None else {}
 
-    def set(self, key: str, value: Any, source: str) -> None:
+    def set(self, key: str, value: Any, source: str, field: str | None = None) -> None:
         """Store ``value`` under ``key`` and record where it came from."""
         self[key] = value
         self.source[key] = source
+        if field is not None:
+            self.fields[key] = field
 
     def vendor_fields(self) -> dict[str, Any]:
         """Every leaf of the vendor header by its path, the parts joined with ``/``."""

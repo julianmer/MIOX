@@ -36,6 +36,7 @@ from miox.sniff import Format, Sniff
 #**************************************************************************************************#
 class NiftiMrsReader(Reader):
     FORMATS = (Format.NIFTI_MRS,)
+    SOURCE = "NIfTI-MRS header extension"
 
     def read(self, sniff: Sniff) -> list[MRSData]:
         notes = []
@@ -50,12 +51,11 @@ class NiftiMrsReader(Reader):
             "header_extension": image.hdr_ext.to_dict(),
         }
         name = sniff.path.name.removesuffix(".gz").removesuffix(".nii")
-        return [
-            MRSData.from_nifti_mrs(
-                image,
-                self.provenance(sniff, tuple(notes)),
-                source="NIfTI-MRS header extension",
-                vendor=vendor,
-                name=name,
-            )
-        ]
+        d = MRSData.from_nifti_mrs(
+            image, self.provenance(sniff, tuple(notes)), self.SOURCE, vendor=vendor, name=name
+        )
+        for key in d.meta:
+            if d.meta.source[key] == self.SOURCE:
+                d.meta.fields[key] = f"header_extension/{key}"
+        d.meta.set("DwellTime", d.dwelltime, "NIfTI header: pixdim[4]", "nifti/pixdim")
+        return [d]

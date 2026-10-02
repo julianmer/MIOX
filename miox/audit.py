@@ -6,9 +6,8 @@
 #                                                                                                  #
 # Created: 01/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Coverage audit: every metadata field a file carries, and whether the key table knows    #
-#          it. Supports NIfTI-MRS files, where the header extension is the whole metadata record;  #
-#          each key is classified as standard, user-defined or a nested vendor block.              #
+# Purpose: Coverage audit: every field of a file's vendor header, and whether a standard key, some #
+#          other key, or nothing is read from it.                                                  #
 #                                                                                                  #
 ####################################################################################################
 
@@ -23,38 +22,38 @@ from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 
-import nibabel as nib
-
 # own
 from miox.meta.keys import KeyTable
-from miox.sniff import Format, Sniffer
+from miox.readers import Loader
+from miox.sniff import Format
 
 
 #**************************************************************************************************#
 #                                              Status                                              #
 #**************************************************************************************************#
 #                                                                                                  #
-# How a header field relates to the standard.                                                      #
+# What is read from a header field.                                                                #
 #                                                                                                  #
 #**************************************************************************************************#
 class Status(StrEnum):
-    STANDARD = "standard"
-    USER_DEFINED = "user-defined"
-    VENDOR_BLOCK = "vendor-block"
+    STANDARD = "standard"  # a key of the key table
+    OTHER = "other"  # a key outside the key table, e.g. a user-defined NIfTI-MRS key
+    UNUSED = "unused"  # nothing
 
 
 #**************************************************************************************************#
 #                                              Field                                               #
 #**************************************************************************************************#
 #                                                                                                  #
-# One header field of an audited file.                                                             #
+# One field of an audited vendor header.                                                           #
 #                                                                                                  #
 #**************************************************************************************************#
 @dataclass(frozen=True)
 class Field:
     path: str
     status: Status
-    in_key_table: bool
+    key: str
+    """The key read from this field, empty if none."""
     value: str
     """Short preview of the value."""
 
@@ -63,7 +62,7 @@ class Field:
 #                                             Coverage                                             #
 #**************************************************************************************************#
 #                                                                                                  #
-# The audit of one file: all its header fields, with counts and a Markdown table.                  #
+# The audit of one file: all fields of its vendor header, with counts and a Markdown table.        #
 #                                                                                                  #
 #**************************************************************************************************#
 @dataclass(frozen=True)
@@ -72,11 +71,10 @@ class Coverage:
     format: Format
     fields: tuple[Field, ...]
 
-    def summary(self) -> dict[str, int]:
-        counts = {status: 0 for status in Status} | {"in_key_table": 0}
+    def summary(self) -> dict[Status, int]:
+        counts = dict.fromkeys(Status, 0)
         for f in self.fields:
             counts[f.status] += 1
-            counts["in_key_table"] += f.in_key_table
         return counts
 
     def to_markdown(self) -> str:
@@ -84,16 +82,14 @@ class Coverage:
         lines = [
             f"# Coverage: `{self.path.name}` ({self.format})",
             "",
-            f"{len(self.fields)} header fields: {s[Status.STANDARD]} standard, "
-            f"{s[Status.USER_DEFINED]} user-defined, {s[Status.VENDOR_BLOCK]} vendor blocks; "
-            f"{s['in_key_table']} in the MIOX key table.",
+            f"{len(self.fields)} header fields: {s[Status.STANDARD]} read into standard keys, "
+            f"{s[Status.OTHER]} into other keys, {s[Status.UNUSED]} unused.",
             "",
-            "| field | status | key table | value |",
+            "| field | status | key | value |",
             "|---|---|---|---|",
         ]
         for f in self.fields:
-            mark = "yes" if f.in_key_table else ""
-            lines.append(f"| `{f.path}` | {f.status} | {mark} | {f.value} |")
+            lines.append(f"| `{f.path}` | {f.status} | {f.key} | {f.value} |")
         return "\n".join(lines) + "\n"
 
 
@@ -101,39 +97,44 @@ class Coverage:
 #                                             Auditor                                              #
 #**************************************************************************************************#
 #                                                                                                  #
-# Audits the metadata coverage of files against the key table.                                     #
+# Loads a file and matches its vendor header against the fields its keys were read from. A key     #
+# read from a nested block covers every field inside it.                                           #
 #                                                                                                  #
 #**************************************************************************************************#
 class Auditor:
     PREVIEW_LIMIT = 60  # characters of a value shown in the table
 
     def __init__(self):
-        self.sniffer = Sniffer()
+        self.loader = Loader()
         self.keys = KeyTable()
 
     def audit(self, path: str | Path) -> Coverage:
-        """Audit the metadata coverage of one file."""
+        """Audit the metadata coverage of one file (all datasets in it)."""
         path = Path(path)
-        fmt = self.sniffer.sniff(path).format
-        if fmt != Format.NIFTI_MRS:
-            raise NotImplementedError(f"only NIfTI-MRS files can be audited, not {fmt}")
-        return self.nifti_mrs(path)
-
-    def nifti_mrs(self, path: Path) -> Coverage:
-        """Classify every key of the NIfTI-MRS header extension."""
-        image = nib.load(path)
-        extension = next(e for e in image.header.extensions if e.get_code() == 44)
-        header = json.loads(extension.get_content())
+        datasets = self.loader.load(path)
+        read_from = {}  # vendor field -> key
+        for d in datasets:
+            read_from.update({field: key for key, field in d.meta.fields.items()})
         fields = []
-        for name, value in header.items():
-            if name in self.keys:
+        for field, value in datasets[0].meta.vendor_fields().items():
+            key = self._key(field, read_from)
+            if not key:
+                status = Status.UNUSED
+            elif key in self.keys:
                 status = Status.STANDARD
-            elif isinstance(value, dict):
-                status = Status.VENDOR_BLOCK
             else:
-                status = Status.USER_DEFINED
-            fields.append(Field(name, status, name in self.keys, self._preview(value)))
-        return Coverage(path, Format.NIFTI_MRS, tuple(fields))
+                status = Status.OTHER
+            fields.append(Field(field, status, key, self._preview(value)))
+        return Coverage(path, datasets[0].provenance.format, tuple(fields))
+
+    @staticmethod
+    def _key(field: str, read_from: dict[str, str]) -> str:
+        parts = field.split("/")
+        for n in range(len(parts), 0, -1):
+            key = read_from.get("/".join(parts[:n]))
+            if key:
+                return key
+        return ""
 
     def _preview(self, value) -> str:
         text = json.dumps(value, default=str)

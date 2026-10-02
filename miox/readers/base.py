@@ -161,7 +161,7 @@ class Spec2niiReader(Reader):
             d = MRSData.from_nifti_mrs(image, provenance, source, vendor=vendor, name=name)
             for key, field in fields.items():
                 if d.meta.source.get(key) == source:
-                    d.meta.source[key] = f"{source}: {field}"
+                    d.meta.set(key, d.meta[key], f"{source}: {field}", field)
             datasets.append(d)
         return datasets
 

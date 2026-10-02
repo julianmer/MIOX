@@ -107,10 +107,10 @@ class CLI:
         return status
 
     def audit(self, args: argparse.Namespace) -> int:
-        """Coverage table as Markdown; status 2 if the format cannot be audited."""
+        """Coverage table as Markdown; status 2 if the file cannot be read."""
         try:
             print(Auditor().audit(args.path).to_markdown(), end="")
-        except NotImplementedError as e:
+        except ReaderError as e:
             print(f"miox audit: {e}", file=sys.stderr)
             return 2
         return 0
