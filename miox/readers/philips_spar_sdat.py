@@ -23,6 +23,7 @@ from nifti_mrs.nifti_mrs import NIFTI_MRS
 from spec2nii.Philips.philips import read_sdat_spar_pair, read_spar
 
 # own
+from miox.data import MRSData
 from miox.readers.base import ReaderError, Spec2niiReader
 from miox.sniff import Format, Sniff
 
@@ -57,6 +58,12 @@ class PhilipsSparSdatReader(Spec2niiReader):
         images, names = read_sdat_spar_pair(sdat, spar, None, [None, None, None], None, None)
         header = {key: self.plain(value) for key, value in read_spar(spar).items()}
         return list(images), list(names), header
+
+    def correct(self, d: MRSData) -> None:
+        """spec2nii stores the SPAR inversion time unscaled (ms)."""
+        super().correct(d)
+        if d.meta.fields.get("InversionTime") == "spectrum_inversion_time":
+            self.fix(d, "InversionTime", d.meta["InversionTime"] * 1e-3, "SPAR value in ms")
 
     def _pair(self, sniff: Sniff) -> tuple[Path, Path]:
         files = (sniff.path,) + sniff.companions

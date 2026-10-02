@@ -58,4 +58,5 @@ class NiftiMrsReader(Reader):
             if d.meta.source[key] == self.SOURCE:
                 d.meta.fields[key] = f"header_extension/{key}"
         d.meta.set("DwellTime", d.dwelltime, "NIfTI header: pixdim[4]", "nifti/pixdim")
+        self.correct(d)
         return [d]

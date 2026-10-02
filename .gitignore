@@ -5,6 +5,7 @@ HANDOFF.md
 CONTINUATION.md
 PLAN.md
 FORMATS.md
+SPEC2NII_FIXES.md
 
 # test data (fetched by scripts/fetch_test_data.py)
 tests/data/

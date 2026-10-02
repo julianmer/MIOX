@@ -24,6 +24,7 @@ from nifti_mrs.nifti_mrs import NIFTI_MRS
 from spec2nii.Siemens.twixfunctions import process_twix, xa_or_vx
 
 # own
+from miox.data import MRSData
 from miox.readers.base import ReaderError, Spec2niiReader
 from miox.sniff import Format, Sniff
 
@@ -113,6 +114,18 @@ class SiemensTwixReader(Spec2niiReader):
 
     def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
         return self.SOURCES_XA if xa_or_vx(vendor) == "xa" else self.SOURCES_VX
+
+    def correct(self, d: MRSData) -> None:
+        """spec2nii stores the inversion time unscaled (XA) or not at all (VB to VE)."""
+        super().correct(d)
+        inversion = d.meta.vendor["MeasYaps"].get("alTI[0]")
+        if isinstance(inversion, (int, float)):
+            d.meta.set(
+                "InversionTime",
+                inversion * 1e-6,
+                "MeasYaps/alTI[0] in µs, converted to s",
+                "MeasYaps/alTI[0]",
+            )
 
     def _stream(self, twix, sniff: Sniff, stream: str) -> tuple[list[NIFTI_MRS], list[str]]:
         images, names = process_twix(

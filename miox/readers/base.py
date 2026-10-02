@@ -63,9 +63,28 @@ class Reader:
     PACKAGES = ("miox", "nifti-mrs")  # packages whose versions go into the provenance
     PROGRESS = re.compile(r"\d+%\|")  # progress-bar lines
     LIBRARY_WARNINGS = (DeprecationWarning, PendingDeprecationWarning, FutureWarning)
+    INTEGER_TEXT = re.compile(r"-?\d+\.0")  # an integer written as float text
+    INTEGER_KEYS = ("DeviceSerialNumber", "PatientDoB")
+    QUOTED_KEYS = ("RxCoil", "TxCoil")
 
     def read(self, sniff: Sniff) -> list[MRSData]:
         raise NotImplementedError
+
+    def correct(self, d: MRSData) -> None:
+        """Fix values the parsers or converters write wrongly; the reason goes into the source."""
+        for key in self.INTEGER_KEYS:
+            value = d.meta.get(key)
+            if isinstance(value, str) and self.INTEGER_TEXT.fullmatch(value):
+                self.fix(d, key, value.removesuffix(".0"), "integer written as float text")
+        for key in self.QUOTED_KEYS:
+            value = d.meta.get(key)
+            if isinstance(value, str) and len(value) > 1 and value[0] == value[-1] == '"':
+                self.fix(d, key, value[1:-1], "surrounding quotes removed")
+
+    @staticmethod
+    def fix(d: MRSData, key: str, value: Any, reason: str) -> None:
+        source = d.meta.source.get(key, "")
+        d.meta.set(key, value, f"{source}; corrected: {reason}", d.meta.fields.get(key))
 
     def provenance(self, sniff: Sniff, notes: tuple[str, ...] = ()) -> Provenance:
         return Provenance(
@@ -162,6 +181,7 @@ class Spec2niiReader(Reader):
             for key, field in fields.items():
                 if d.meta.source.get(key) == source:
                     d.meta.set(key, d.meta[key], f"{source}: {field}", field)
+            self.correct(d)
             datasets.append(d)
         return datasets
 

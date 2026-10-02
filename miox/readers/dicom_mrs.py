@@ -34,6 +34,7 @@ with warnings.catch_warnings():  # nibabel.nicom warns on import that it is expe
     from spec2nii.uih import multi_file_dicom as uih_dicom
 
 # own
+from miox.data import MRSData
 from miox.readers.base import ReaderError, Spec2niiReader
 from miox.readers.siemens_twix import SiemensTwixReader
 from miox.sniff import Format, Sniff
@@ -115,8 +116,15 @@ class DicomMrsReader(Spec2niiReader):
     SOURCES_PHILIPS_CLASSIC = SOURCES_COMMON | {
         "SpectrometerFrequency": "dicom/(2001,1083)",
         "ResonantNucleus": "dicom/(2001,1087)",
-        "EchoTime": "dicom/(2005,1310)",
-        "RepetitionTime": "dicom/RepetitionTime",
+        "EchoTime": (f"{PER_FRAME}/MREchoSequence/0/EffectiveEchoTime", "dicom/(2005,1310)"),
+        "RepetitionTime": (
+            f"{PER_FRAME}/MRTimingAndRelatedParametersSequence/0/RepetitionTime",
+            "dicom/RepetitionTime",
+        ),
+        "ExcitationFlipAngle": (  # spec2nii reads the repetition time when per-frame data exist
+            f"{PER_FRAME}/MRTimingAndRelatedParametersSequence/0/RepetitionTime",
+            "dicom/FlipAngle",
+        ),
         "DwellTime": "dicom/(2005,1357)",
     }
     SOURCES_UIH = SOURCES_COMMON | {
@@ -150,6 +158,25 @@ class DicomMrsReader(Spec2niiReader):
             enhanced = vendor["file_meta"].get("MediaStorageSOPClassUID") == self.ENHANCED_MRS
             return self.SOURCES_PHILIPS_ENHANCED if enhanced else self.SOURCES_PHILIPS_CLASSIC
         return self.SOURCES_UIH
+
+    def correct(self, d: MRSData) -> None:
+        """Units spec2nii leaves in ms, and the flip angle it reads from the wrong field."""
+        super().correct(d)
+        fields = d.meta.fields
+        if fields.get("InversionTime") == "csa_image/InversionTime":
+            self.fix(d, "InversionTime", d.meta["InversionTime"] * 1e-3, "CSA value in ms")
+        if self.sources(d.meta.vendor) is not self.SOURCES_PHILIPS_CLASSIC:
+            return
+        if fields.get("EchoTime") == "dicom/(2005,1310)":
+            self.fix(d, "EchoTime", d.meta["EchoTime"] * 1e-3, "private tag in ms")
+        if fields.get("RepetitionTime") == "dicom/RepetitionTime":
+            self.fix(d, "RepetitionTime", d.meta["RepetitionTime"] * 1e-3, "DICOM value in ms")
+        if fields.get("ExcitationFlipAngle", "").endswith("/RepetitionTime"):
+            field = fields["ExcitationFlipAngle"].removesuffix("RepetitionTime") + "FlipAngle"
+            flip = d.meta.vendor_fields().get(field)
+            if flip is None:
+                field, flip = "dicom/FlipAngle", d.meta.vendor["dicom"].get("FlipAngle")
+            d.meta.set("ExcitationFlipAngle", flip, f"{field}; spec2nii read RepetitionTime", field)
 
     def _files(self, sniff: Sniff) -> list[Path]:
         if not sniff.path.is_dir():

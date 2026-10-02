@@ -5019,7 +5019,22 @@
   "vendor": "bruker",
   "kind": "spectroscopy"
  },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.10152.1607423474.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.10402.1607423504.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
  "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.10402.1607423504.11/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.11315.1607423575.10/result.jcamp": {
   "format": "bruker",
   "vendor": "bruker",
   "kind": "unknown"
@@ -5029,7 +5044,57 @@
   "vendor": "bruker",
   "kind": "unknown"
  },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.12216.1607423648.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.12881.1607423739.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.1479.1607421435.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.1962.1607421493.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.2942.1607421606.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.31775.1607421142.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.31775.1607421142.7/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
  "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.31775.1607421142.8/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.31775.1607421142.9/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.3870.1607421720.10/result.jcamp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/bruker/PV-6.0.1/AdjResult/2.16.756.5.5.100.3611295486.7609.1607422597.10/result.jcamp": {
   "format": "bruker",
   "vendor": "bruker",
   "kind": "unknown"
@@ -5334,6 +5399,16 @@
   "vendor": "philips",
   "kind": "imaging"
  },
+ "spec2nii_test_data/philips/DICOM_enhanced_multi_dynamic/press_mega/XX_0004": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/DICOM_enhanced_multi_dynamic/press_mega/XX_0006": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
  "spec2nii_test_data/philips/DICOM_enhanced_multi_dynamic/svsWSAntCing_S002/XX_0004": {
   "format": "dicom_mrs",
   "vendor": "philips",
@@ -5508,5 +5583,425 @@
   "format": "philips_data_list",
   "vendor": "philips",
   "kind": "raw"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4002-iso_50-80-30_rot-0-0-0/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418270580138.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4002-iso_50-80-30_rot-0-0-0/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.20230724182705801384c0baf12-9ba8-4b65-8382-52ecbde14039.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4002-iso_50-80-30_rot-0-0-0/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418270580138.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4002-iso_50-80-30_rot-0-0-0/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.20230724182705801389d8a1ae6-c33f-4407-8576-b5ffee13bf82.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4102-iso_50-80-30_rot-30-0-0/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418275589143.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4102-iso_50-80-30_rot-30-0-0/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418275589143ad4d9b74-cf81-4b1a-afa7-89b5919326a9.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4102-iso_50-80-30_rot-30-0-0/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418275589143.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4102-iso_50-80-30_rot-30-0-0/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.202307241827558914348f3d53f-66de-4115-a384-9fc88fc8f6d9.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4202-iso_50-80-30_rot-30-40-0/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418281299148.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4202-iso_50-80-30_rot-30-40-0/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418281299148599853f8-64a4-434d-b3f7-caf585f16cf7.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4202-iso_50-80-30_rot-30-40-0/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418281299148.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4202-iso_50-80-30_rot-30-40-0/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.20230724182812991480a53ceca-af97-4257-ab22-87677859c8b0.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4302-iso_50-80-30_rot-30-40-20/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418283012153.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4302-iso_50-80-30_rot-30-40-20/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418283012153a4e4208a-c2eb-4906-96f5-9a2c50eaab00.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4302-iso_50-80-30_rot-30-40-20/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418283012153.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4302-iso_50-80-30_rot-30-40-20/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.202307241828301215323b6781d-05ae-4ff4-bb5f-1cea1ea1d22a.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4402-iso_50-80-30_rot-0-40-20/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418284925158.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4402-iso_50-80-30_rot-0-40-20/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418284925158fbf7615a-b695-4d05-b924-569118e8a58f.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4402-iso_50-80-30_rot-0-40-20/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418284925158.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4402-iso_50-80-30_rot-0-40-20/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.202307241828492515822dfea5d-3783-4b3d-94af-7e4dd136bc52.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4502-iso_50-80-30_rot-30-0-20/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418290724163.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4502-iso_50-80-30_rot-30-0-20/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418290724163e70e7f88-9f9c-4fd7-9fe4-3e22531381bb.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4502-iso_50-80-30_rot-30-0-20/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418290724163.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4502-iso_50-80-30_rot-30-0-20/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418290724163b540b920-839d-4fc8-8c82-469ab5a966a1.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4602-iso_50-80-30_rot-10-10-44/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418292431168.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4602-iso_50-80-30_rot-10-10-44/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.20230724182924311689fcc2be8-08ee-4f06-9b99-189fbc586a2a.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4602-iso_50-80-30_rot-10-10-44/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418292431168.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4602-iso_50-80-30_rot-10-10-44/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418292431168c20d8c7b-c956-43d5-8a38-67eeec4aca48.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4702-iso_50-80-30_rot-10-44-10/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418293948173.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4702-iso_50-80-30_rot-10-44-10/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.20230724182939481730a508d00-9382-4749-b98c-7e372f5ce8dc.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4702-iso_50-80-30_rot-10-44-10/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418293948173.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4702-iso_50-80-30_rot-10-44-10/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418293948173e57b2eac-45b3-4dda-9999-1e04269d973e.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4802-iso_50-80-30_rot-44-10-10/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.2023072418295650178.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4802-iso_50-80-30_rot-44-10-10/MRs.1.3.46.670589.11.24058.5.22.3.1.17592.20230724182956501788cc0636e-c425-484d-859c-2ed8881598d6.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4802-iso_50-80-30_rot-44-10-10/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418295650178.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/4802-iso_50-80-30_rot-44-10-10/RAW.1.3.46.670589.11.24058.5.24.5.1.17592.2023072418295650178b142ee6e-9554-496e-8ec2-4618026d1908.dcm": {
+  "format": "dicom_other",
+  "vendor": "philips",
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/_cor_20230724170625_202.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/_sag_20230724170625_204.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/_tra_20230724170625_203.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0175": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0177": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0179": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0181": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0183": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0185": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0187": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0189": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/classic/XX_0191": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_40_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_40_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_41_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_41_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_42_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_42_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_43_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_43_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_44_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_44_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_45_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_45_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_46_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_46_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_47_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_47_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_48_2_raw_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/dbiex_48_2_raw_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0002": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0004": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0006": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0008": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0010": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0012": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0014": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0016": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_dcm_orientation_tests/enhanced/XX_0018": {
+  "format": "dicom_mrs",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_multi_avg/multi_avg.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_multi_avg/multi_avg.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_sdat_anon/manual_anon.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/philips/spar_sdat_anon/manual_anon.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spec2nii_test_data/varian/13C_spuls_01.fid/fid": {
+  "format": "varian",
+  "vendor": "varian",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/varian/13C_spuls_01.fid/log": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/varian/13C_spuls_01.fid/nfo": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spec2nii_test_data/varian/13C_spuls_01.fid/procpar": {
+  "format": "varian",
+  "vendor": "varian",
+  "kind": "raw"
+ },
+ "spec2nii_test_data/varian/13C_spuls_01.fid/text": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  }
 }
