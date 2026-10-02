@@ -35,7 +35,7 @@ from spec2nii.spec2nii import remove_zero_higher_dim_indices
 from spec2nii.spec2nii import spec2nii as Spec2niiCommand
 
 # own
-from miox.data import BasisSet, MRSData, PriorSet, Provenance
+from miox.data import BasisSet, FitResult, MRSData, PriorSet, Provenance
 from miox.meta.meta import Meta
 from miox.sniff import Format, Sniff
 
@@ -167,6 +167,26 @@ class Reader:
         for key, (value, field) in values.items():
             meta.set(key, value, f"{source}: {field}" if field else source, field)
         return PriorSet(lines, meta, self.provenance(sniff, tuple(notes)), name)
+
+    def fit_result(
+        self,
+        sniff: Sniff,
+        rows: list[dict],
+        diagnostics: dict,
+        curves: dict[str, np.ndarray],
+        values: dict[str, tuple[Any, str | None]],
+        vendor: dict,
+        name: str,
+        notes: list[str],
+        source: str,
+        voxel: tuple[int, ...] | None = None,
+    ) -> FitResult:
+        """FitResult from parsed parts; ``values`` maps standard keys to (value, vendor field)."""
+        meta = Meta(vendor)
+        for key, (value, field) in values.items():
+            meta.set(key, value, f"{source}: {field}" if field else source, field)
+        provenance = self.provenance(sniff, tuple(notes))
+        return FitResult(rows, diagnostics, curves, meta, provenance, name, voxel)
 
     def _frequency_in_mhz(self, images: list[NIFTI_MRS], notes: list[str]) -> bool:
         """Some converters store the frequency in Hz; no spectrometer runs above 100 GHz."""

@@ -22,7 +22,7 @@ import numpy as np
 import pytest
 
 # own
-from miox import MRSData, load
+from miox import Format, MRSData, load, sniff
 from tests.conftest import PUBLIC_DATA
 
 # one dataset with clear metabolite signal per format: (path, dataset name)
@@ -95,3 +95,19 @@ def test_metabolites_are_not_mirrored(relpath, name):
         pytest.skip("file not fetched")
     [d] = [d for d in load(path) if d.name == name]
     assert orientation(d) > 1.5
+
+
+@pytest.mark.data
+def test_private_osprey_containers_are_not_mirrored(private_roots):
+    """FID-A structs in Osprey containers. Paths are never recorded."""
+    found = 0
+    for root in private_roots:
+        for path in root.rglob("*.mat"):
+            if sniff(path).format != Format.OSPREY_MRSCONT:
+                continue
+            for d in load(path):
+                if d.name.startswith("raw_") and not d.name.startswith("raw_ref"):
+                    assert orientation(d) > 1.5
+                    found += 1
+    if not found:
+        pytest.skip("no Osprey container in the private data")

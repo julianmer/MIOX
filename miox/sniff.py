@@ -82,6 +82,8 @@ class Format(StrEnum):
     GAVA_PRIOR = "gava_prior"
     MIDAS_PRIOR = "midas_prior"
     PYAMARES_PRIOR = "pyamares_prior"
+    PYAMARES_RESULT = "pyamares_result"
+    OSPREY_MRSCONT = "osprey_mrscont"
     BASIS_FOLDER = "basis_folder"
     JMRUI_TEXT = "jmrui_text"
     JMRUI_BINARY = "jmrui_binary"
@@ -204,11 +206,13 @@ class Sniffer:
         (b"Signal     Conc (au)", Format.TARQUIN_RESULTS, Kind.FIT_RESULT, "TARQUIN results"),
         (b"Row : ", Format.TARQUIN_FIT, Kind.FIT_RESULT, "TARQUIN fit"),
         (b"Row, Col,", Format.LCMODEL_CSV, Kind.FIT_RESULT, "LCModel CSV"),
+        (b"name,amplitude,sd,CRLB(%)", Format.PYAMARES_RESULT, Kind.FIT_RESULT, "PyAMARES result"),
         (b"[FILE INFORMATION]", Format.VASF, Kind.SPECTROSCOPY, "VASF header"),
         (b"DATA DESCRIPTOR FILE", Format.SIVIC_DDF, Kind.SPECTROSCOPY, "UCSF DDF header"),
         (b"IMAGE DESCRIPTOR FILE", Format.SIVIC_IDF, Kind.IMAGING, "UCSF IDF header"),
     )
     MATLAB_VARIABLES = (  # (variable name, format, kind); first match wins
+        (re.compile(r"^MRSCont$"), Format.OSPREY_MRSCONT, Kind.SPECTROSCOPY),
         (re.compile(r"^BASIS$"), Format.OSPREY_BASIS, Kind.BASIS_SET),
         (re.compile(r"^lcmBasis$"), Format.INSPECTOR_BASIS, Kind.BASIS_SET),
         (re.compile(r"^exptDat$"), Format.MARSS_BASIS, Kind.BASIS_SET),

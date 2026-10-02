@@ -34,7 +34,7 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # One line per peak. Initial values become the line's values (chemicalshift as "ppm"), any other   #
 # section a dict under its lower-case name ("bounds": [low, high], None for an open side or an     #
-# empty cell). A row without values that names no parameter starts a section. Values that are     #
+# empty cell). A row without values that names no parameter starts a section. Values that are      #
 # expressions linking peaks (e.g. "BATP/2", "AATP-16Hz") stay strings.                             #
 #                                                                                                  #
 #**************************************************************************************************#

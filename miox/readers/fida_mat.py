@@ -33,9 +33,10 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # One MRSData per FID-A struct. FID-A keeps FIDs as the conjugate of NIfTI-MRS (its spectra are    #
 # fftshift(ifft(fids))): checked against an LCModel basis of the same spectra and against the ppm  #
-# axis the files store. The axes named in dims (1-based, 0 when absent) become NIfTI-MRS           #
-# dimensions in the order coils, averages, sub-spectra, extras. Without txfrq the frequency is Bo  #
-# times gamma (FID-A's 42.577 MHz/T when not stored); without nucleus 1H is assumed.               #
+# axis the files store. The axes named in dims (1-based, 0 when absent) longer than 1 become       #
+# NIfTI-MRS dimensions in the order coils, averages, sub-spectra, extras. Without txfrq the        #
+# frequency is Bo times gamma (FID-A's 42.577 MHz/T when not stored); without nucleus 1H is        #
+# assumed.                                                                                         #
 #                                                                                                  #
 #**************************************************************************************************#
 class FidaReader(Reader):
@@ -63,11 +64,12 @@ class FidaReader(Reader):
         vendor = MatFile.header(values)
         single = len(structs) == 1
         return [
-            self._dataset(sniff, name, out, vendor, sniff.path.stem if single else name)
+            self.from_struct(sniff, name, out, vendor, sniff.path.stem if single else name)
             for name, out in structs.items()
         ]
 
-    def _dataset(self, sniff: Sniff, var: str, out: dict, vendor: dict, name: str) -> MRSData:
+    def from_struct(self, sniff: Sniff, var: str, out: dict, vendor: dict, name: str) -> MRSData:
+        """MRSData from one FID-A struct; ``var`` is its path in ``vendor``."""
         fids = np.conj(np.asarray(out["fids"]))
         if "sz" in out:
             fids = fids.reshape(tuple(int(n) for n in np.ravel(out["sz"])))
@@ -76,7 +78,7 @@ class FidaReader(Reader):
         tags = []
         for field, tag, info in self.DIMS:
             index = int(dims.get(field, 0) or 0)
-            if index > 0 and index - 1 < fids.ndim:
+            if index > 0 and index - 1 < fids.ndim and fids.shape[index - 1] > 1:
                 axes.append(index - 1)
                 tags.append((tag, info, None))
         axes += [a for a in range(fids.ndim) if a not in axes and fids.shape[a] == 1]

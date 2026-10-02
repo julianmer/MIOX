@@ -27,7 +27,7 @@ from typing import Any
 import numpy as np
 
 # own
-from miox import Format, Loader, MRSData, PriorSet, Sniffer
+from miox import FitResult, Format, Loader, MRSData, PriorSet, Sniffer
 from tests.conftest import GOLDEN, PUBLIC_DATA
 
 
@@ -110,7 +110,17 @@ class ReadRecords:
             return math.isnan(a) and math.isnan(b)
         return math.isclose(a, b, rel_tol=self.RTOL, abs_tol=1e-12)
 
-    def _dataset(self, d: MRSData | PriorSet) -> dict:
+    def _dataset(self, d: MRSData | PriorSet | FitResult) -> dict:
+        if isinstance(d, FitResult):
+            record = {
+                "name": d.name,
+                "voxel": d.voxel,
+                "rows": d.rows,
+                "diagnostics": d.diagnostics,
+                "meta": dict(d.meta),
+                "curves": {k: [len(v), float(np.sum(v))] for k, v in d.curves.items()},
+            }
+            return json.loads(json.dumps(record, default=str))
         if isinstance(d, PriorSet):
             record = {
                 "name": d.name,

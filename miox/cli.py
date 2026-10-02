@@ -26,7 +26,7 @@ from pathlib import Path
 # own
 from miox import __version__
 from miox.audit import Auditor
-from miox.data import MRSData, PriorSet
+from miox.data import FitResult, MRSData, PriorSet
 from miox.readers import Loader, ReaderError
 from miox.sniff import Format, Sniffer
 
@@ -77,10 +77,15 @@ class CLI:
                 print(json.dumps(d.to_dict(), default=str) if args.json else self._describe(d))
         return status
 
-    def _describe(self, d: MRSData | PriorSet) -> str:
+    def _describe(self, d: MRSData | PriorSet | FitResult) -> str:
         lines = [f"{d.provenance.paths[0]}: {d.provenance.format} ({d.provenance.reader})"]
         if isinstance(d, PriorSet):
             lines.append(f"  {d.name}: {len(d.metabolites)} metabolites, {len(d.lines)} lines")
+        elif isinstance(d, FitResult):
+            voxel = f", voxel {d.voxel}" if d.voxel else ""
+            curves = f", curves: {', '.join(d.curves)}" if d.curves else ""
+            lines.append(f"  {d.name}: {len(d.rows)} metabolites{voxel}{curves}")
+            lines.extend(f"    {name}: {value}" for name, value in d.diagnostics.items())
         else:
             dims = " ".join(f"{name}={n}" for name, n in zip(d.dims, d.shape, strict=True))
             lines += [

@@ -257,6 +257,7 @@ def test_empty_dir(tmp_path):
             "basis_set",
         ),
         ("p.csv", "#  x,,\nIndex,A,B\nInitial Values,,\n", "pyamares_prior", "basis_set"),
+        ("r.csv", "name,amplitude,sd,CRLB(%),chem shift(ppm)\n", "pyamares_result", "fit_result"),
     ],
 )
 def test_analysis_text_formats(tmp_path, name, text, fmt, kind):
@@ -303,6 +304,7 @@ def test_spinwizard_folder(tmp_path):
 @pytest.mark.parametrize(
     "variable,fmt",
     [
+        ("MRSCont", Format.OSPREY_MRSCONT),
         ("BASIS", Format.OSPREY_BASIS),
         ("lcmBasis", Format.INSPECTOR_BASIS),
         ("exptDat", Format.MARSS_BASIS),

@@ -19,7 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 
 # own
-from miox.data import MRSData, PriorSet
+from miox.data import FitResult, MRSData, PriorSet
 from miox.readers.base import Reader, ReaderError
 from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.bruker import BrukerReader
@@ -31,19 +31,23 @@ from miox.readers.ge_pfile import GePfileReader
 from miox.readers.inspector_basis import InspectorBasisReader
 from miox.readers.jmrui import JmruiReader
 from miox.readers.lcmodel_basis import LcmodelBasisReader
+from miox.readers.lcmodel_output import LcmodelOutputReader
 from miox.readers.lcmodel_raw import LcmodelRawReader
 from miox.readers.marss_basis import MarssBasisReader
 from miox.readers.nifti_mrs import NiftiMrsReader
 from miox.readers.osprey_basis import OspreyBasisReader
+from miox.readers.osprey_container import OspreyContainerReader
 from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.readers.profit_basis import ProfitBasisReader
 from miox.readers.pyamares_prior import PyamaresPriorReader
+from miox.readers.pyamares_result import PyamaresResultReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
 from miox.readers.sivic_ddf import SivicDdfReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
+from miox.readers.tarquin_output import TarquinOutputReader
 from miox.readers.varian import VarianReader
 from miox.readers.vasf import VasfReader
 from miox.readers.vespa_prior import VespaPriorReader
@@ -73,19 +77,23 @@ class Loader:
             InspectorBasisReader(),
             JmruiReader(),
             LcmodelBasisReader(),
+            LcmodelOutputReader(),
             LcmodelRawReader(),
             MarssBasisReader(),
             NiftiMrsReader(),
             OspreyBasisReader(),
+            OspreyContainerReader(),
             PhilipsDataListReader(),
             PhilipsSparSdatReader(),
             ProfitBasisReader(),
             PyamaresPriorReader(),
+            PyamaresResultReader(),
             SiemensRdaReader(),
             SiemensTwixReader(),
             SivicDdfReader(),
             SpinwizardBasisReader(),
             TarquinDptReader(),
+            TarquinOutputReader(),
             VarianReader(),
             VasfReader(),
             VespaPriorReader(),
@@ -94,8 +102,8 @@ class Loader:
             for fmt in reader.FORMATS:
                 self.readers[fmt] = reader
 
-    def load(self, path: str | Path) -> list[MRSData | PriorSet]:
-        """Every dataset in ``path``: one MRSData (or PriorSet) each."""
+    def load(self, path: str | Path) -> list[MRSData | PriorSet | FitResult]:
+        """Every dataset in ``path``: one MRSData, PriorSet or FitResult each."""
         sniff = self.sniffer.sniff(path)
         reader = self.readers.get(sniff.format)
         if reader is None:
@@ -110,5 +118,5 @@ class Loader:
 # Load one path with a fresh Loader.                                                               #
 #                                                                                                  #
 #**************************************************************************************************#
-def load(path: str | Path) -> list[MRSData | PriorSet]:
+def load(path: str | Path) -> list[MRSData | PriorSet | FitResult]:
     return Loader().load(path)

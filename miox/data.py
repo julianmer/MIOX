@@ -251,3 +251,66 @@ class PriorSet:
             f"<PriorSet {self.name} {self.provenance.format}: {len(self.metabolites)} metabolites, "
             f"{len(self.lines)} lines>"
         )
+
+
+#**************************************************************************************************#
+#                                            FitResult                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# The result of fitting one spectrum (one voxel): a row per metabolite with "concentration" and    #
+# "sd_percent" (the tool's units; CRLB or %SD) when the format gives them and every other column   #
+# under the format's own name; fit diagnostics under the format's names; and, when the format      #
+# holds them, curves on a ppm axis ("ppm", "data", "fit", "baseline" and one per metabolite).      #
+#                                                                                                  #
+#**************************************************************************************************#
+class FitResult:
+    def __init__(
+        self,
+        rows: list[dict],
+        diagnostics: dict,
+        curves: dict[str, np.ndarray],
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+        voxel: tuple[int, ...] | None = None,
+    ):
+        self.rows = rows
+        self.diagnostics = diagnostics
+        self.curves = curves
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+        self.voxel = voxel
+
+    @property
+    def metabolites(self) -> list[str]:
+        return [row["metabolite"] for row in self.rows]
+
+    def row(self, metabolite: str) -> dict:
+        return self.rows[self.metabolites.index(metabolite)]
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the curves and the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "voxel": self.voxel,
+            "rows": self.rows,
+            "diagnostics": self.diagnostics,
+            "curves": {name: len(values) for name, values in self.curves.items()},
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "vendor_fields": len(self.meta.vendor_fields()),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        voxel = f" voxel {self.voxel}" if self.voxel else ""
+        curves = f", curves {list(self.curves)[:4]}..." if self.curves else ""
+        return (
+            f"<FitResult {self.name}{voxel} {self.provenance.format}: "
+            f"{len(self.rows)} metabolites{curves}>"
+        )
