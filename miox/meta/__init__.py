@@ -6,8 +6,7 @@
 #                                                                                                  #
 # Created: 01/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Metadata layer: the standard key table. Extraction and derivation rules follow with the #
-#          readers.                                                                                #
+# Purpose: Metadata layer: the standard key table.                                                 #
 #                                                                                                  #
 ####################################################################################################
 
@@ -17,6 +16,6 @@
 #*************#
 
 # own
-from miox.meta.keys import KEYS, Key
+from miox.meta.keys import Key, KeyTable
 
-__all__ = ["KEYS", "Key"]
+__all__ = ["Key", "KeyTable"]

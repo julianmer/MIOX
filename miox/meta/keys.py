@@ -6,12 +6,10 @@
 #                                                                                                  #
 # Created: 01/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Key table v0: the standard metadata vocabulary. The NIfTI-MRS required and standard     #
-#          keys are taken at import time from the nifti-mrs package so the two never drift, plus a #
-#          few MIOX keys the standard does not define. Each entry carries the SI unit the value #
-#          is stored in, the MRS-BIDS sidecar name where one exists, and the BasisREMY sheet name  #
-#          and unit where the sheet uses it. Vendor aliases and derivation rules are not part of   #
-#          v0.                                                                                     #
+# Purpose: Key table: the standard metadata vocabulary. The NIfTI-MRS required and standard keys   #
+#          are taken from the nifti-mrs package so the two never drift, plus the keys the standard #
+#          does not define. Each entry carries the unit its value is stored in, the MRS-BIDS       #
+#          sidecar name where one exists, and its sheet name and unit.                             #
 #                                                                                                  #
 ####################################################################################################
 
@@ -25,10 +23,15 @@ from dataclasses import dataclass
 
 from nifti_mrs.definitions import dimension_tags, nifti_mrs_version, required, standard_defined
 
-NIFTI_MRS_VERSION = tuple(nifti_mrs_version)
-DIM_TAGS = tuple(dimension_tags)
 
-
+#**************************************************************************************************#
+#                                               Key                                                #
+#**************************************************************************************************#
+#                                                                                                  #
+# One standard metadata key: its unit and type, where it comes from, and its names in MRS-BIDS and #
+# in the sheet view.                                                                               #
+#                                                                                                  #
+#**************************************************************************************************#
 @dataclass(frozen=True)
 class Key:
     name: str
@@ -44,105 +47,112 @@ class Key:
     bids: str | None = None
     """MRS-BIDS sidecar field name (BIDS schema ``rules/sidecars/mrs.yaml``)."""
     sheet: str | None = None
-    """BasisREMY sheet name."""
+    """Short name in the sheet view."""
     sheet_unit: str | None = None
     sheet_factor: float | None = None
     """``sheet value = meta value * sheet_factor``; ``None`` means a derivation rule is needed."""
 
 
-# MRS-BIDS sidecar names for NIfTI-MRS keys whose BIDS name is different or the same.
-# Only names present in the BIDS schema (rules/sidecars/mrs.yaml, checked 1 Oct 2026) are listed.
-_BIDS = {
-    "SpectrometerFrequency": "SpectrometerFrequency",
-    "ResonantNucleus": "ResonantNucleus",
-    "SpectralWidth": "SpectralWidth",
-    "EchoTime": "EchoTime",
-    "MixingTime": "MixingTime",
-    "ExcitationFlipAngle": "FlipAngle",
-    "WaterSuppressed": "WaterSuppression",
-    "WaterSuppressionType": "WaterSuppressionTechnique",
-    "Manufacturer": "Manufacturer",
-    "ManufacturersModelName": "ManufacturersModelName",
-    "DeviceSerialNumber": "DeviceSerialNumber",
-    "SoftwareVersions": "SoftwareVersions",
-    "InstitutionName": "InstitutionName",
-    "InstitutionAddress": "InstitutionAddress",
-    "RxCoil": "ReceiveCoilName",
-    "SequenceName": "SequenceName",
-    "EditCondition": "EditCondition",
-    "EditPulse": "EditPulse",
-}
+#**************************************************************************************************#
+#                                             KeyTable                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# All standard keys by name: the NIfTI-MRS required and standard keys, then the keys the standard  #
+# does not define. Also holds the NIfTI-MRS version and dimension tags it was built from.          #
+#                                                                                                  #
+#**************************************************************************************************#
+class KeyTable(dict):
+    # NIfTI-MRS key -> MRS-BIDS sidecar name, only names in the BIDS schema
+    BIDS = {
+        "SpectrometerFrequency": "SpectrometerFrequency",
+        "ResonantNucleus": "ResonantNucleus",
+        "SpectralWidth": "SpectralWidth",
+        "EchoTime": "EchoTime",
+        "MixingTime": "MixingTime",
+        "ExcitationFlipAngle": "FlipAngle",
+        "WaterSuppressed": "WaterSuppression",
+        "WaterSuppressionType": "WaterSuppressionTechnique",
+        "Manufacturer": "Manufacturer",
+        "ManufacturersModelName": "ManufacturersModelName",
+        "DeviceSerialNumber": "DeviceSerialNumber",
+        "SoftwareVersions": "SoftwareVersions",
+        "InstitutionName": "InstitutionName",
+        "InstitutionAddress": "InstitutionAddress",
+        "RxCoil": "ReceiveCoilName",
+        "SequenceName": "SequenceName",
+        "EditCondition": "EditCondition",
+        "EditPulse": "EditPulse",
+    }
 
-# BasisREMY sheet names and units (sheet times are in ms, the standard stores seconds).
-_SHEET = {
-    "EchoTime": ("TE", "ms", 1e3),
-    "MixingTime": ("TM", "ms", 1e3),
-    "SpectralWidth": ("Bandwidth", "Hz", 1.0),
-    "ResonantNucleus": ("Nucleus", None, 1.0),
-}
+    # NIfTI-MRS key -> sheet name, unit and factor (sheet times are in ms, the standard stores s)
+    SHEET = {
+        "EchoTime": ("TE", "ms", 1e3),
+        "MixingTime": ("TM", "ms", 1e3),
+        "SpectralWidth": ("Bandwidth", "Hz", 1.0),
+        "ResonantNucleus": ("Nucleus", None, 1.0),
+    }
 
+    # keys the NIfTI-MRS standard does not define
+    MIOX = (
+        Key(
+            "FieldStrength",
+            "T",
+            (float,),
+            "Static field strength, derived from SpectrometerFrequency and the gyromagnetic ratio "
+            "of ResonantNucleus unless the file states it.",
+            "miox",
+            bids="MagneticFieldStrength",
+            sheet="Bfield",
+            sheet_unit="T",
+            sheet_factor=1.0,
+        ),
+        Key(
+            "DwellTime",
+            "s",
+            (float,),
+            "Time between consecutive complex samples of the FID; inverse of SpectralWidth.",
+            "miox",
+        ),
+        Key(
+            "NumberOfPoints",
+            None,
+            (int,),
+            "Number of complex samples per FID.",
+            "miox",
+            bids="NumberOfSpectralPoints",
+            sheet="Samples",
+            sheet_unit=None,
+            sheet_factor=1.0,
+        ),
+        Key(
+            "NumberOfAverages",
+            None,
+            (int,),
+            "Number of acquired averages (transients) per spectrum, before any combination.",
+            "miox",
+        ),
+    )
 
-def _from_nifti_mrs(table: dict, origin: str) -> dict[str, Key]:
-    keys = {}
-    for name, field in table.items():
-        sheet, sheet_unit, factor = _SHEET.get(name, (None, None, None))
-        keys[name] = Key(
-            name=name,
-            unit=field.units,
-            type=field.type,
-            doc=field.doc,
-            origin=origin,
-            anon=field.anon,
-            bids=_BIDS.get(name),
-            sheet=sheet,
-            sheet_unit=sheet_unit,
-            sheet_factor=factor,
-        )
-    return keys
+    def __init__(self):
+        super().__init__()
+        self.nifti_mrs_version = tuple(nifti_mrs_version)
+        self.dim_tags = tuple(dimension_tags)
+        self._add_nifti_mrs(required, "nifti-mrs:required")
+        self._add_nifti_mrs(standard_defined, "nifti-mrs:standard")
+        self.update({key.name: key for key in self.MIOX})
 
-
-_MIOX = (
-    Key(
-        "FieldStrength",
-        "T",
-        (float,),
-        "Static field strength, derived from SpectrometerFrequency and the gyromagnetic ratio of "
-        "ResonantNucleus unless the file states it.",
-        "miox",
-        bids="MagneticFieldStrength",
-        sheet="Bfield",
-        sheet_unit="T",
-        sheet_factor=1.0,
-    ),
-    Key(
-        "DwellTime",
-        "s",
-        (float,),
-        "Time between consecutive complex samples of the FID; inverse of SpectralWidth.",
-        "miox",
-    ),
-    Key(
-        "NumberOfPoints",
-        None,
-        (int,),
-        "Number of complex samples per FID.",
-        "miox",
-        bids="NumberOfSpectralPoints",
-        sheet="Samples",
-        sheet_unit=None,
-        sheet_factor=1.0,
-    ),
-    Key(
-        "NumberOfAverages",
-        None,
-        (int,),
-        "Number of acquired averages (transients) per spectrum, before any combination.",
-        "miox",
-    ),
-)
-
-KEYS: dict[str, Key] = {
-    **_from_nifti_mrs(required, "nifti-mrs:required"),
-    **_from_nifti_mrs(standard_defined, "nifti-mrs:standard"),
-    **{k.name: k for k in _MIOX},
-}
+    def _add_nifti_mrs(self, definitions: dict, origin: str) -> None:
+        for name, definition in definitions.items():
+            sheet, sheet_unit, sheet_factor = self.SHEET.get(name, (None, None, None))
+            self[name] = Key(
+                name=name,
+                unit=definition.units,
+                type=definition.type,
+                doc=definition.doc,
+                origin=origin,
+                anon=definition.anon,
+                bids=self.BIDS.get(name),
+                sheet=sheet,
+                sheet_unit=sheet_unit,
+                sheet_factor=sheet_factor,
+            )

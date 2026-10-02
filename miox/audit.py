@@ -6,10 +6,9 @@
 #                                                                                                  #
 # Created: 01/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Coverage audit: what a file carries versus what the ecosystem keeps. Milestone 0 covers #
-#          NIfTI-MRS files only, where the header extension is the whole metadata record; each key #
-#          is classified as standard, user-defined or a nested vendor block and marked whether the #
-#          MIOX key table knows it. Other formats follow with their readers (milestone 1).      #
+# Purpose: Coverage audit: every metadata field a file carries, and whether the key table knows    #
+#          it. Supports NIfTI-MRS files, where the header extension is the whole metadata record;  #
+#          each key is classified as standard, user-defined or a nested vendor block.              #
 #                                                                                                  #
 ####################################################################################################
 
@@ -21,34 +20,60 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
 
+import nibabel as nib
+
 # own
-from miox.meta.keys import KEYS
-from miox.sniff import NIFTI_MRS, sniff
-
-STANDARD = "standard"
-USER_DEFINED = "user-defined"
-VENDOR_BLOCK = "vendor-block"
+from miox.meta.keys import KeyTable
+from miox.sniff import Format, Sniffer
 
 
+#**************************************************************************************************#
+#                                              Status                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# How a header field relates to the standard.                                                      #
+#                                                                                                  #
+#**************************************************************************************************#
+class Status(StrEnum):
+    STANDARD = "standard"
+    USER_DEFINED = "user-defined"
+    VENDOR_BLOCK = "vendor-block"
+
+
+#**************************************************************************************************#
+#                                              Field                                               #
+#**************************************************************************************************#
+#                                                                                                  #
+# One header field of an audited file.                                                             #
+#                                                                                                  #
+#**************************************************************************************************#
 @dataclass(frozen=True)
 class Field:
     path: str
-    status: str
+    status: Status
     in_key_table: bool
     value: str
     """Short preview of the value."""
 
 
+#**************************************************************************************************#
+#                                             Coverage                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# The audit of one file: all its header fields, with counts and a Markdown table.                  #
+#                                                                                                  #
+#**************************************************************************************************#
 @dataclass(frozen=True)
 class Coverage:
     path: Path
-    format: str
+    format: Format
     fields: tuple[Field, ...]
 
     def summary(self) -> dict[str, int]:
-        counts = {STANDARD: 0, USER_DEFINED: 0, VENDOR_BLOCK: 0, "in_key_table": 0}
+        counts = {status: 0 for status in Status} | {"in_key_table": 0}
         for f in self.fields:
             counts[f.status] += 1
             counts["in_key_table"] += f.in_key_table
@@ -59,9 +84,9 @@ class Coverage:
         lines = [
             f"# Coverage: `{self.path.name}` ({self.format})",
             "",
-            f"{len(self.fields)} header fields: {s[STANDARD]} standard, {s[USER_DEFINED]} "
-            f"user-defined, {s[VENDOR_BLOCK]} vendor blocks; {s['in_key_table']} in the MIOX "
-            "key table.",
+            f"{len(self.fields)} header fields: {s[Status.STANDARD]} standard, "
+            f"{s[Status.USER_DEFINED]} user-defined, {s[Status.VENDOR_BLOCK]} vendor blocks; "
+            f"{s['in_key_table']} in the MIOX key table.",
             "",
             "| field | status | key table | value |",
             "|---|---|---|---|",
@@ -72,41 +97,46 @@ class Coverage:
         return "\n".join(lines) + "\n"
 
 
-def audit(path: str | Path) -> Coverage:
-    """Audit the metadata coverage of one file."""
-    path = Path(path)
-    s = sniff(path)
-    if s.format != NIFTI_MRS:
-        raise NotImplementedError(
-            f"audit of {s.format} files needs its reader (milestone 1); only NIfTI-MRS for now"
-        )
-    return _audit_nifti_mrs(path)
+#**************************************************************************************************#
+#                                             Auditor                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# Audits the metadata coverage of files against the key table.                                     #
+#                                                                                                  #
+#**************************************************************************************************#
+class Auditor:
+    PREVIEW_LIMIT = 60  # characters of a value shown in the table
 
+    def __init__(self):
+        self.sniffer = Sniffer()
+        self.keys = KeyTable()
 
-def _audit_nifti_mrs(path: Path) -> Coverage:
-    import nibabel as nib
+    def audit(self, path: str | Path) -> Coverage:
+        """Audit the metadata coverage of one file."""
+        path = Path(path)
+        fmt = self.sniffer.sniff(path).format
+        if fmt != Format.NIFTI_MRS:
+            raise NotImplementedError(f"only NIfTI-MRS files can be audited, not {fmt}")
+        return self.nifti_mrs(path)
 
-    img = nib.load(path)
-    ext = next(e for e in img.header.extensions if e.get_code() == 44)
-    hdr = json.loads(ext.get_content())
-    fields = []
-    for name, value in hdr.items():
-        if name in KEYS:
-            status = STANDARD
-        elif isinstance(value, dict) and not _is_standard_object(name):
-            status = VENDOR_BLOCK
-        else:
-            status = USER_DEFINED
-        fields.append(Field(name, status, name in KEYS, _preview(value)))
-    return Coverage(path, NIFTI_MRS, tuple(fields))
+    def nifti_mrs(self, path: Path) -> Coverage:
+        """Classify every key of the NIfTI-MRS header extension."""
+        image = nib.load(path)
+        extension = next(e for e in image.header.extensions if e.get_code() == 44)
+        header = json.loads(extension.get_content())
+        fields = []
+        for name, value in header.items():
+            if name in self.keys:
+                status = Status.STANDARD
+            elif isinstance(value, dict):
+                status = Status.VENDOR_BLOCK
+            else:
+                status = Status.USER_DEFINED
+            fields.append(Field(name, status, name in self.keys, self._preview(value)))
+        return Coverage(path, Format.NIFTI_MRS, tuple(fields))
 
-
-def _is_standard_object(name: str) -> bool:
-    return name in KEYS
-
-
-def _preview(value, limit: int = 60) -> str:
-    text = json.dumps(value, default=str)
-    if len(text) > limit:
-        text = text[: limit - 1] + "…"
-    return text.replace("|", "\\|")
+    def _preview(self, value) -> str:
+        text = json.dumps(value, default=str)
+        if len(text) > self.PREVIEW_LIMIT:
+            text = text[: self.PREVIEW_LIMIT - 1] + "…"
+        return text.replace("|", "\\|")

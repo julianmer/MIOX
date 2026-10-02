@@ -17,23 +17,24 @@
 #*************#
 
 # own
-from miox.meta import KEYS
-from miox.meta.keys import DIM_TAGS, NIFTI_MRS_VERSION
+from miox.meta import KeyTable
 
 
 def test_standard_keys_present():
-    assert NIFTI_MRS_VERSION >= (0, 11)
-    assert "DIM_COIL" in DIM_TAGS
+    keys = KeyTable()
+    assert keys.nifti_mrs_version >= (0, 11)
+    assert "DIM_COIL" in keys.dim_tags
     for name in ("SpectrometerFrequency", "ResonantNucleus", "EchoTime", "SpectralWidth"):
-        assert name in KEYS
-    assert KEYS["EchoTime"].unit == "s"
-    assert KEYS["SpectrometerFrequency"].origin == "nifti-mrs:required"
+        assert name in keys
+    assert keys["EchoTime"].unit == "s"
+    assert keys["SpectrometerFrequency"].origin == "nifti-mrs:required"
 
 
 def test_sheet_conversion_is_consistent():
-    te = KEYS["EchoTime"]
+    keys = KeyTable()
+    te = keys["EchoTime"]
     assert (te.sheet, te.sheet_unit, te.sheet_factor) == ("TE", "ms", 1e3)
-    assert KEYS["FieldStrength"].sheet == "Bfield"
-    for key in KEYS.values():
+    assert keys["FieldStrength"].sheet == "Bfield"
+    for key in keys.values():
         if key.sheet_factor is None:
             assert key.sheet is None or key.origin == "miox"

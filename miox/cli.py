@@ -19,60 +19,72 @@
 from __future__ import annotations
 
 import argparse
-import dataclasses
 import json
 import sys
 from pathlib import Path
 
 # own
 from miox import __version__
+from miox.audit import Auditor
+from miox.sniff import Format, Sniffer
 
 
+#**************************************************************************************************#
+#                                               CLI                                                #
+#**************************************************************************************************#
+#                                                                                                  #
+# The ``miox`` command line: one method per subcommand, each returning the exit status.         #
+#                                                                                                  #
+#**************************************************************************************************#
+class CLI:
+    def __init__(self):
+        self.parser = argparse.ArgumentParser(prog="miox", description="Open any MR file.")
+        self.parser.add_argument("--version", action="version", version=f"miox {__version__}")
+        commands = self.parser.add_subparsers(dest="command", required=True)
+
+        sniff = commands.add_parser("sniff", help="identify the format of files or directories")
+        sniff.add_argument("paths", nargs="+", type=Path)
+        sniff.add_argument("--json", action="store_true", help="one JSON object per line")
+        sniff.set_defaults(func=self.sniff)
+
+        audit = commands.add_parser("audit", help="metadata coverage table for a file (Markdown)")
+        audit.add_argument("path", type=Path)
+        audit.set_defaults(func=self.audit)
+
+    def run(self, argv: list[str] | None = None) -> int:
+        args = self.parser.parse_args(argv)
+        return args.func(args)
+
+    def sniff(self, args: argparse.Namespace) -> int:
+        """One line (or JSON object) per path; status 1 if any path is unknown."""
+        sniffer = Sniffer()
+        status = 0
+        for path in args.paths:
+            result = sniffer.sniff(path)
+            if result.format == Format.UNKNOWN:
+                status = 1
+            print(json.dumps(result.to_dict()) if args.json else result)
+        return status
+
+    def audit(self, args: argparse.Namespace) -> int:
+        """Coverage table as Markdown; status 2 if the format cannot be audited."""
+        try:
+            print(Auditor().audit(args.path).to_markdown(), end="")
+        except NotImplementedError as e:
+            print(f"miox audit: {e}", file=sys.stderr)
+            return 2
+        return 0
+
+
+#**************************************************************************************************#
+#                                               main                                               #
+#**************************************************************************************************#
+#                                                                                                  #
+# Console-script entry point.                                                                      #
+#                                                                                                  #
+#**************************************************************************************************#
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="miox", description="Open any MR file.")
-    parser.add_argument("--version", action="version", version=f"miox {__version__}")
-    sub = parser.add_subparsers(dest="command", required=True)
-
-    p_sniff = sub.add_parser("sniff", help="identify the format of files or directories")
-    p_sniff.add_argument("paths", nargs="+", type=Path)
-    p_sniff.add_argument("--json", action="store_true", help="one JSON object per line")
-    p_sniff.set_defaults(func=_sniff)
-
-    p_audit = sub.add_parser("audit", help="metadata coverage table for a file (Markdown)")
-    p_audit.add_argument("path", type=Path)
-    p_audit.set_defaults(func=_audit)
-
-    args = parser.parse_args(argv)
-    return args.func(args)
-
-
-def _sniff(args) -> int:
-    from miox.sniff import UNKNOWN, sniff
-
-    status = 0
-    for path in args.paths:
-        result = sniff(path)
-        if result.format == UNKNOWN:
-            status = 1
-        if args.json:
-            record = dataclasses.asdict(result)
-            record["path"] = str(result.path)
-            record["companions"] = [str(c) for c in result.companions]
-            print(json.dumps(record))
-        else:
-            print(result)
-    return status
-
-
-def _audit(args) -> int:
-    from miox.audit import audit
-
-    try:
-        print(audit(args.path).to_markdown(), end="")
-    except NotImplementedError as e:
-        print(f"miox audit: {e}", file=sys.stderr)
-        return 2
-    return 0
+    return CLI().run(argv)
 
 
 if __name__ == "__main__":

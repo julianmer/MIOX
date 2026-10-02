@@ -23,8 +23,7 @@ import json
 import pytest
 
 # own
-from miox import sniff
-from miox.sniff import UNKNOWN
+from miox import Format, sniff
 from tests.conftest import GOLDEN
 
 DATA_SUFFIXES = {
@@ -74,6 +73,6 @@ def test_private_data_files_are_recognised(private_roots):
             if p.name.startswith("Adj") or "LaTeX_Extras" in p.parts:
                 continue  # Bruker adjustment results, LaTeX build products
             if p.is_file() and p.suffix.lower() in DATA_SUFFIXES:
-                if sniff(p).format == UNKNOWN:
+                if sniff(p).format == Format.UNKNOWN:
                     unknown.append(p.name)
     assert unknown == []
