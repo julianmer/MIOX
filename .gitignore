@@ -4,6 +4,7 @@ CHANGELOG.md
 HANDOFF.md
 CONTINUATION.md
 PLAN.md
+FORMATS.md
 
 # test data (fetched by scripts/fetch_test_data.py)
 tests/data/
