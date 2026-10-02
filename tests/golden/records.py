@@ -121,4 +121,5 @@ class ReadRecords:
             "fid_head": [[float(z.real), float(z.imag)] for z in first_fid[:4]],
             "data_norm": float(np.linalg.norm(d.data)),
         }
-        return json.loads(json.dumps(record, default=str))
+        text = json.dumps(record, default=str).replace(str(PUBLIC_DATA) + "/", "")  # no local paths
+        return json.loads(text)

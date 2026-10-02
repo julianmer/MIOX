@@ -26,6 +26,7 @@ dependencies = [
     "nifti-mrs>=1.4",
     "numpy>=1.26",
     "pydicom>=3.0",
+    "spec2nii>=0.8.15",
 ]
 
 [project.optional-dependencies]

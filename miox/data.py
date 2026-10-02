@@ -108,7 +108,7 @@ class MRSData:
                 "FieldStrength", field, "derived: SpectrometerFrequency / gyromagnetic ratio"
             )
         return cls(
-            image[:],
+            image.image[:],  # as stored; ``image[:]`` would conjugate to FSL-MRS's convention
             dwelltime,
             image.getAffine("voxel", "world"),
             meta,

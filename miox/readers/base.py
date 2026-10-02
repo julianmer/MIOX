@@ -6,8 +6,8 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Base class of all readers and the error a reader raises when a file of its format       #
-#          cannot be read.                                                                         #
+# Purpose: Base classes of the readers (plain, and converting through spec2nii) and the error a    #
+#          reader raises when a file of its format cannot be read.                                 #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,15 +19,22 @@ from __future__ import annotations
 
 import contextlib
 import io
+import re
+import sys
 import warnings
 from collections.abc import Iterator
 from importlib.metadata import version
+from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
+from nifti_mrs.nifti_mrs import NIFTI_MRS
+from spec2nii.spec2nii import remove_zero_higher_dim_indices
+from spec2nii.spec2nii import spec2nii as Spec2niiCommand
 
 # own
 from miox.data import MRSData, Provenance
+from miox.meta.meta import Meta
 from miox.sniff import Format, Sniff
 
 
@@ -54,6 +61,8 @@ class ReaderError(Exception):
 class Reader:
     FORMATS: tuple[Format, ...] = ()
     PACKAGES = ("miox", "nifti-mrs")  # packages whose versions go into the provenance
+    PROGRESS = re.compile(r"\d+%\|")  # progress-bar lines
+    LIBRARY_WARNINGS = (DeprecationWarning, PendingDeprecationWarning, FutureWarning)
 
     def read(self, sniff: Sniff) -> list[MRSData]:
         raise NotImplementedError
@@ -69,8 +78,14 @@ class Reader:
 
     @contextlib.contextmanager
     def captured(self, notes: list[str]) -> Iterator[None]:
-        """Collect what wrapped libraries print or warn into ``notes`` instead of the terminal."""
+        """Collect what wrapped libraries print or warn into ``notes`` instead of the terminal.
+
+        Progress bars and warnings about library code (deprecations) are dropped; stdin is empty,
+        so a library that asks a question fails instead of waiting for an answer.
+        """
         out = io.StringIO()
+        stdin = sys.stdin
+        sys.stdin = io.StringIO()
         try:
             with (
                 contextlib.redirect_stdout(out),
@@ -80,8 +95,12 @@ class Reader:
                 warnings.simplefilter("always")
                 yield
         finally:
-            notes.extend(line.strip() for line in out.getvalue().splitlines() if line.strip())
-            notes.extend(str(w.message) for w in caught)
+            sys.stdin = stdin
+            lines = (line.strip() for line in out.getvalue().splitlines())
+            notes.extend(line for line in lines if line and not self.PROGRESS.search(line))
+            notes.extend(
+                str(w.message) for w in caught if not issubclass(w.category, self.LIBRARY_WARNINGS)
+            )
 
     @classmethod
     def plain(cls, value: Any) -> Any:
@@ -97,3 +116,81 @@ class Reader:
         if isinstance(value, bytes):
             return value.decode("latin-1").rstrip("\0")
         return value
+
+
+#**************************************************************************************************#
+#                                          Spec2niiReader                                          #
+#**************************************************************************************************#
+#                                                                                                  #
+# Base of the readers that convert through spec2nii. A subclass parses the file once, keeps the    #
+# complete vendor header and calls the spec2nii converter; this class then does what spec2nii's    #
+# command line does after every converter (spectral width from the dwell time, all-zero indices of #
+# the higher dimensions removed) and builds the MRSData. ``SOURCES`` names the vendor field        #
+# spec2nii takes each standard key from, so the metadata says where every value came from.         #
+#                                                                                                  #
+#**************************************************************************************************#
+class Spec2niiReader(Reader):
+    PACKAGES = Reader.PACKAGES + ("spec2nii",)
+    CONVERTER = ""  # spec2nii subcommand
+    SOURCES: dict[str, str | tuple[str, ...]] = {}  # standard key -> vendor field(s), first found
+    MAX_MHZ = 1e5  # a larger spectrometer frequency is in Hz
+
+    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
+        """The converted images, their names and the complete vendor header."""
+        raise NotImplementedError
+
+    def converter(self, sniff: Sniff) -> str:
+        """The spec2nii subcommand that converts this file."""
+        return self.CONVERTER
+
+    def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
+        """Where spec2nii takes each standard key from in this vendor header."""
+        return self.SOURCES
+
+    def read(self, sniff: Sniff) -> list[MRSData]:
+        notes = []
+        with self.captured(notes):
+            images, names, vendor = self.convert(sniff)
+            self._frequency_in_mhz(images, notes)
+            images = self._as_spec2nii_command(images, notes)
+        provenance = self.provenance(sniff, tuple(notes))
+        source = f"spec2nii {self.converter(sniff)}"
+        fields = self._fields(vendor)
+        datasets = []
+        for image, name in zip(images, names, strict=True):
+            d = MRSData.from_nifti_mrs(image, provenance, source, vendor=vendor, name=name)
+            for key, field in fields.items():
+                if d.meta.source.get(key) == source:
+                    d.meta.source[key] = f"{source}: {field}"
+            datasets.append(d)
+        return datasets
+
+    def _fields(self, vendor: dict) -> dict[str, str]:
+        """The source field of every key: the first alternative present in the header."""
+        present = Meta(vendor).vendor_fields()
+        fields = {}
+        for key, alternatives in self.sources(vendor).items():
+            options = (alternatives,) if isinstance(alternatives, str) else alternatives
+            fields[key] = next((f for f in options if f in present), options[0])
+        return fields
+
+    def _frequency_in_mhz(self, images: list[NIFTI_MRS], notes: list[str]) -> None:
+        """Some converters store the frequency in Hz; no spectrometer runs above 100 GHz."""
+        for image in images:
+            frequencies = image.hdr_ext.SpectrometerFrequency
+            if any(f > self.MAX_MHZ for f in frequencies):
+                image.hdr_ext.SpectrometerFrequency = [f / 1e6 for f in frequencies]
+                notes.append(f"SpectrometerFrequency {frequencies} is in Hz; divided by 1e6")
+
+    def _as_spec2nii_command(self, images: list[NIFTI_MRS], notes: list[str]) -> list[NIFTI_MRS]:
+        Spec2niiCommand.insert_spectralwidth(SimpleNamespace(imageOut=images))
+        cleaned = []
+        for image in images:
+            before = image.shape
+            image, zeros = remove_zero_higher_dim_indices(image, remove=True)
+            removed = {d: i for d, i in zeros.items() if image.shape[d - 1] < before[d - 1]}
+            if removed:
+                notes.append(f"all-zero indices removed (dimension: indices): {removed}")
+            cleaned.append(image)
+        return cleaned
+

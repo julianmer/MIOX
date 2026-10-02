@@ -21,7 +21,15 @@ from pathlib import Path
 # own
 from miox.data import MRSData
 from miox.readers.base import Reader, ReaderError
+from miox.readers.bruker import BrukerReader
+from miox.readers.dicom_mrs import DicomMrsReader
+from miox.readers.ge_pfile import GePfileReader
+from miox.readers.jmrui import JmruiReader
+from miox.readers.lcmodel_raw import LcmodelRawReader
 from miox.readers.nifti_mrs import NiftiMrsReader
+from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
+from miox.readers.siemens_rda import SiemensRdaReader
+from miox.readers.siemens_twix import SiemensTwixReader
 from miox.sniff import Format, Sniffer
 
 
@@ -36,7 +44,17 @@ class Loader:
     def __init__(self):
         self.sniffer = Sniffer()
         self.readers: dict[Format, Reader] = {}
-        for reader in (NiftiMrsReader(),):
+        for reader in (
+            BrukerReader(),
+            DicomMrsReader(),
+            GePfileReader(),
+            JmruiReader(),
+            LcmodelRawReader(),
+            NiftiMrsReader(),
+            PhilipsSparSdatReader(),
+            SiemensRdaReader(),
+            SiemensTwixReader(),
+        ):
             for fmt in reader.FORMATS:
                 self.readers[fmt] = reader
 

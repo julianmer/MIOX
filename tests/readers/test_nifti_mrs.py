@@ -29,7 +29,8 @@ from miox.meta import Meta
 
 
 def _write(tmp_path, data, **header):
-    image = gen_nifti_mrs(data, 2.5e-4, 123.2, "1H", dim_tags=["DIM_COIL", "DIM_DYN", None])
+    tags = ["DIM_COIL", "DIM_DYN", None]
+    image = gen_nifti_mrs(data, 2.5e-4, 123.2, "1H", dim_tags=tags, no_conj=True)  # stored as given
     for key, value in header.items():
         image.add_hdr_field(key, value)
     path = tmp_path / "svs.nii.gz"
