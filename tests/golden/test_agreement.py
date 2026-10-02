@@ -104,3 +104,36 @@ def test_siemens_formats_agree(relpaths):
         assert _same(reference, d, keys) == [], f"{formats[0]} vs {fmt}"
         assert d.shape[:3] == reference.shape[:3]
         assert np.allclose(d.affine, reference.affine, atol=0.05), f"{formats[0]} vs {fmt}"
+
+
+@pytest.mark.data
+def test_siemens_va_dicom_and_rda_of_one_protocol_agree():
+    """Two acquisitions of one protocol on one VA25A scanner: geometry, timing and sign."""
+    dicom = PUBLIC_DATA / "tarquin/src/unit_tests/data/siemens_ima_WS.ima"
+    rda = PUBLIC_DATA / "tarquin/data/siemens/example.rda"
+    if not dicom.exists() or not rda.exists():
+        pytest.skip("file not fetched")
+    a, b = load(dicom)[0], load(rda)[0]
+    assert _same(a, b, ("EchoTime", "RepetitionTime", "ExcitationFlipAngle")) == []
+    assert a.dwelltime == b.dwelltime and np.allclose(a.affine, b.affine)
+    x, y = (d.data.ravel() / np.linalg.norm(d.data) for d in (a, b))
+    assert abs(np.vdot(x, y)) > 0.9 > abs(np.vdot(x, np.conj(y)))
+
+
+@pytest.mark.data
+def test_philips_csi_signal_lies_in_the_press_box():
+    """The voxels with strong water signal lie inside the localised volume (one voxel margin)."""
+    path = PUBLIC_DATA / "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0020"
+    if not path.exists():
+        pytest.skip("file not fetched")
+    reference = next(d for d in load(path) if d.name.endswith("_ref"))
+    power = np.linalg.norm(reference.data[:, :, 0], axis=-1)
+    slabs = reference.meta.vendor["dicom"]["VolumeLocalizationSequence"]
+    margin = abs(reference.affine[0, 0])
+    strong = np.argwhere(power > 0.5 * power.max())
+    assert len(strong) > 20
+    for i, j in strong:
+        centre = np.diag([-1, -1, 1]) @ (reference.affine @ [i, j, 0, 1])[:3]  # RAS to LPS
+        for slab in slabs:
+            offset = centre - np.asarray(slab["MidSlabPosition"])
+            assert abs(offset @ slab["SlabOrientation"]) <= slab["SlabThickness"] / 2 + margin

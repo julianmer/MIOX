@@ -775,7 +775,7 @@ class Sniffer:
         if self.BRUKER_DATA_FILES.match(path.name) and path.name not in self.BRUKER_PROCESSED:
             kind = Kind.RAW
         else:
-            kind = self._bruker_scan_kind(detail.get("method"))
+            kind = self.bruker_scan_kind(detail.get("method"))
         return Sniff(
             path,
             Format.BRUKER,
@@ -787,7 +787,7 @@ class Sniffer:
             detail=detail,
         )
 
-    def _bruker_scan_kind(self, method: str | None) -> Kind:
+    def bruker_scan_kind(self, method: str | None) -> Kind:
         if method is None:
             return Kind.UNKNOWN
         if any(m in method.lower() for m in self.BRUKER_MRS_METHODS):

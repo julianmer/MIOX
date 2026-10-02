@@ -47,6 +47,9 @@ REFERENCES = [
         "svs_press_te144_SVS",
     ),
     ("spec2nii_test_data/Siemens/rda/latin1.rda", "latin1"),
+    ("tarquin/src/unit_tests/data/siemens_ima_WS.ima", "SVS_se_30_PRESS_20mm"),  # Siemens VA
+    ("tarquin/src/unit_tests/data/SVS.dcm", "anon"),  # Philips enhanced, one localisation slab
+    ("nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0020", "s2D_PRESS_144"),  # Philips CSI
     ("spec2nii_test_data/philips/P3/SV_PRESS_sh_4_2_raw_act.SDAT", "SV_PRESS_sh_4_2_raw_act"),
     ("spec2nii_test_data/philips/hyper/raw_226.list", "raw_226_hyper_edited"),
     (
@@ -111,3 +114,27 @@ def test_private_osprey_containers_are_not_mirrored(private_roots):
                     found += 1
     if not found:
         pytest.skip("no Osprey container in the private data")
+
+
+@pytest.mark.data
+def test_private_hbcd_press_water_frames_are_the_reference(private_roots):
+    """GE HBCD PRESS: every water frame far above every metabolite frame. Paths not recorded."""
+    found = 0
+    for root in private_roots:
+        for path in root.rglob("*"):
+            if not path.is_file() or sniff(path).format != Format.GE_PFILE:
+                continue
+            try:
+                datasets = load(path)
+            except Exception:  # sequences no reader maps, e.g. concentric-ring MRSI
+                continue
+            first = datasets[0]
+            if first.meta.get("SequenceName") != "hbcd" or len(datasets) != 2:
+                continue
+            if "press" not in str(first.meta.get("ProtocolName", "")).lower():
+                continue
+            metab, ref = (np.abs(d.data[0, 0, 0, :8]).mean(axis=(0, 1)) for d in datasets)
+            assert ref.min() > 5 * metab.max()
+            found += 1
+    if not found:
+        pytest.skip("no HBCD PRESS P-file in the private data")

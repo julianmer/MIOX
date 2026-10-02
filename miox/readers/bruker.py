@@ -27,7 +27,7 @@ from spec2nii.bruker import read_bruker
 
 # own
 from miox.readers.base import ReaderError, Spec2niiReader
-from miox.sniff import Format, Sniff
+from miox.sniff import Format, Kind, Sniff, Sniffer
 
 
 #**************************************************************************************************#
@@ -80,8 +80,23 @@ class BrukerReader(Spec2niiReader):
             nospectrum=False,
             fileout=None,
         )
+        header = self._header(path)
+        self._check(sniff, path, header)
         images, names = read_bruker(args)
-        return list(images), list(names), self._header(path)
+        return list(images), list(names), header
+
+    def _check(self, sniff: Sniff, path: Path, header: dict) -> None:
+        """Say why spec2nii will refuse the data: an imaging scan, or a spectrum without phase."""
+        method = header.get("method", {}).get("Method") or sniff.detail.get("method")
+        if Sniffer().bruker_scan_kind(method) == Kind.IMAGING:
+            raise ReaderError(f"{path}: {method} is an imaging method; MR images are not read yet")
+        frames = header.get("visu_pars", {}).get("VisuCoreFrameType")
+        frames = [frames] if isinstance(frames, str) else frames or []
+        if path.name == "2dseq" and frames and set(frames) == {"MAGNITUDE_IMAGE"}:
+            raise ReaderError(
+                f"{path}: a magnitude spectrum (VisuCoreFrameType MAGNITUDE_IMAGE) holds no "
+                "phase, so no FID; the complex data are in the scan's fid or rawdata"
+            )
 
     def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
         return self.SOURCES_2DSEQ if "visu_pars" in vendor else self.SOURCES_FID
