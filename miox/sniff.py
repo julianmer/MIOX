@@ -140,6 +140,8 @@ class Sniffer:
         ("hyperfine", re.compile(r"hyperfine", re.I)),
         ("varian", re.compile(r"varian|agilent", re.I)),
     )
+    NIFTI_MRS_INTENT = re.compile(r"^mrs_v(\d+)_(\d+)$")  # intent_name, e.g. mrs_v0_2
+    NIFTI_MRS_DIM_TAG = re.compile(r"^dim_[5-7]$")  # header extension keys of the tagged dims
     SPAR_KEYS = (b"examination_name", b"scan_id", b"synthesizer_frequency", b"samples")
     TWIX_VB_BUFFERS = (b"Config", b"Dicom", b"Meas", b"MeasYaps", b"Phoenix", b"Spice")
     PFILE_REVISIONS = (7, 8, 9, 10, 11, 12, 14, 15, 16, 20, 24, 26, 27, 28, 30)
@@ -243,13 +245,11 @@ class Sniffer:
                 evidence=(f"NIfTI-{version} magic",),
                 detail=detail,
             )
+        intent_name = header["intent_name"].item().decode("ascii", "replace")
+        intent = self.NIFTI_MRS_INTENT.match(intent_name)
+        detail["nifti_mrs_version"] = f"{intent[1]}.{intent[2]}" if intent else ""
         mrs = json.loads(extension.get_content())
-        detail["nifti_mrs_version"] = (
-            mrs.get("NIfTI_MRS_version") or mrs.get("nifti_mrs_version") or ""
-        )
-        detail["dim_tags"] = {
-            k: v for k, v in mrs.items() if k.startswith("dim_") and k.endswith("tag")
-        }
+        detail["dim_tags"] = {k: v for k, v in mrs.items() if self.NIFTI_MRS_DIM_TAG.match(k)}
         return Sniff(
             path,
             Format.NIFTI_MRS,

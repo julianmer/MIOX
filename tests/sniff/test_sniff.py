@@ -181,10 +181,12 @@ def test_nifti_mrs(tmp_path):
     img = nib.Nifti2Image(np.zeros((1, 1, 1, 8), dtype=np.complex64), np.eye(4))
     hdr = {"SpectrometerFrequency": [123.2], "ResonantNucleus": ["1H"], "dim_5": "DIM_DYN"}
     img.header.extensions.append(nib.nifti1.Nifti1Extension(44, json.dumps(hdr).encode()))
+    img.header.set_intent("none", (), name="mrs_v0_2")
     img.to_filename(f)
     s = sniff(f)
-    assert s.format == "nifti_mrs" and s.kind == Kind.SPECTROSCOPY
-    assert s.detail["nifti_version"] == 2 and s.detail["dim_tags"] == {}
+    assert s.format == Format.NIFTI_MRS and s.kind == Kind.SPECTROSCOPY
+    assert s.detail["nifti_version"] == 2 and s.detail["nifti_mrs_version"] == "0.2"
+    assert s.detail["dim_tags"] == {"dim_5": "DIM_DYN"}
 
 
 def test_unknown_and_missing(tmp_path):
