@@ -1134,6 +1134,5591 @@
   "vendor": null,
   "kind": "basis_set"
  },
+ "dcm_qa_12bit/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_12bit/In/12bitSigned_0x0F0F.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_12bit/In/12bitUnsigned.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_12bit/In/12bitUnsigned_0x0F0F.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_12bit/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_12bit/Ref/2.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_12bit/Ref/3.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_12bit/Ref/4.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_12bit/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_enh/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_enh/In/Canon/DTI_PA.dcm": {
+  "format": "dicom_image",
+  "vendor": "canon",
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/In/Philips/IM_0006_T1.dcm": {
+  "format": "dicom_image",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/In/Philips/IM_0027_fMAP.dcm": {
+  "format": "dicom_image",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/In/Philips/IM_0035_fMRI.dcm": {
+  "format": "dicom_image",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/In/Siemens/XA10/6_1.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/In/Siemens/XA10/6_2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/In/Siemens/XA10/6_3.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/In/Siemens/XA10/6_4.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_enh/Ref/Canon_DTI_PA-ortho_9000.bval": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_enh/Ref/Canon_DTI_PA-ortho_9000.bvec": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_enh/Ref/Canon_DTI_PA-ortho_9000.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/Ref/Philips_WIP_AnatBrain_T1W3D_301.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/Ref/Philips_WIP_AnatBrain_T1W3D_301_ph.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/Ref/Philips_WIP_B0_NS_801_e1.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/Ref/Philips_WIP_B0_NS_801_e2_fieldmaphz.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/Ref/Philips_WIP_resting_state_1001_e1.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/Ref/Philips_WIP_resting_state_1001_e2.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/Ref/Siemens_REST1_w_SMS_PF7-8_6.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_enh/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_frag/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_frag/In/5.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001007.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001008.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001009.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001010.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001011.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001012.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001013.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001014.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001015.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001016.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001017.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001018.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001019.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001020.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001021.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001022.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001023.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001024.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001025.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001026.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001027.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001028.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001029.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001030.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001031.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001032.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001033.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001034.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001035.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001036.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001037.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001038.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001039.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001040.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001041.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001042.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001043.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001044.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001045.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001046.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001047.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001048.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001049.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001050.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001051.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001052.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001053.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001054.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001055.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001056.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001057.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001058.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001059.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001060.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001061.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001062.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001063.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001064.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001065.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001066.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001067.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001068.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001069.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001070.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001071.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001072.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001073.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001074.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001075.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001076.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001077.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001078.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001079.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001080.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001081.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001082.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001083.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001084.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001085.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001086.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001087.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001088.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001089.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001090.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001091.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001092.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001093.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001094.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001095.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/5001_anat-T1w_acq-tfl/5001096.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001001_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000493.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001002_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000494.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001003_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000495.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001004_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000496.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001005_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000497.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001006_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000498.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001007_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000499.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001008_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000500.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001009_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000501.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001010_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000502.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001011_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000503.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001012_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000504.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001013_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000505.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001014_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000506.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001015_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000507.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001016_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000508.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001017_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000509.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001018_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000510.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001019_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000511.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001020_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000512.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001021_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000513.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001022_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000514.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001023_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000515.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001024_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000516.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001025_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000517.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001026_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000518.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001027_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000519.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001028_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000520.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001029_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000521.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001030_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000522.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001031_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000523.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001032_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000524.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001033_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000525.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001034_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000526.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001035_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000527.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001036_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000528.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001037_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000529.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001038_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000530.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001039_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000531.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001040_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000532.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001041_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000533.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001042_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000534.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001043_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000535.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001044_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000536.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001045_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000537.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001046_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000538.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001047_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000539.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001048_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000540.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001049_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000541.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001050_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000542.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001051_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000543.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001052_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000544.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001053_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000545.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001054_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000546.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001055_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000547.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001056_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000548.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001057_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000549.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001058_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000550.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001059_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000551.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001060_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000552.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001061_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000553.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001062_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000554.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001063_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000555.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001064_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000556.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001065_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000557.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001066_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000558.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001067_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000559.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001068_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000560.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001069_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000561.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001070_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000562.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001071_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000563.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001072_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000564.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001073_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000565.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001074_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000566.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001075_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000567.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001076_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000568.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001077_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000569.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001078_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000570.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001079_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000571.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001080_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000572.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001081_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000573.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001082_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000574.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001083_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000575.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001084_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000576.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001085_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000577.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001086_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000578.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001087_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000579.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001088_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000580.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001089_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000581.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001090_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000582.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001091_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000583.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001092_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000584.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001093_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000585.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001094_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000586.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001095_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000587.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/In/6001_anat-T1w_acq-tfl/6001096_1.3.12.2.1107.5.2.43.67093.30000023011319484937100000588.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_frag/Ref/anat-T1w_acq-tfl_5001.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/Ref/anat-T1w_acq-tfl_6001.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_frag/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_me/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0001_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0002_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0003_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0004_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0005_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0006_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0007.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0007_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0008.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0008_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0009.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0009_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0010.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0010_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0011.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0011_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0012.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0012_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0013.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0013_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0014.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0014_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0015.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0015_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0016.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0016_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0017.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0017_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0018.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0018_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0019.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0019_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0020.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0020_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0021.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0021_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0022.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0022_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0023.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0023_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0024.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0024_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0025.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0025_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0026.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0026_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0027.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0027_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0028.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0028_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0029.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0029_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0030.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0030_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0031.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0031_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0032.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0032_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0033.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0033_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0034.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0034_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0035.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0035_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0036.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/2_me_FieldMap_GRE/0036_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0001_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0002_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0003_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0004_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0005_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0006_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0007_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0008_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0009_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0010_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0011_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0012_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0013_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0014_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0015_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0016_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0017_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0018_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0019_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0020_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0021_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0022_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0023_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0024_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0025_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0026_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0027_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0028_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0029_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0030_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0031_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0032_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0033_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0034_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0035_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/3_me_FieldMap_GRE/0036_e2_ph.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/4_me_fMRI/0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/4_me_fMRI/0002_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/4_me_fMRI/0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/4_me_fMRI/0004_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/4_me_fMRI/0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/In/4_me_fMRI/0006_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_me/Ref/me_FieldMap_GRE_2_e1.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_me/Ref/me_FieldMap_GRE_2_e2.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_me/Ref/me_FieldMap_GRE_3_e2_ph.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_me/Ref/me_fMRI_4_e1.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_me/Ref/me_fMRI_4_e2.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_me/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_mosaic/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_6/IM-0005-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_6/IM-0005-0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_6/IM-0005-0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_6/IM-0005-0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_6/IM-0005-0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_6/IM-0005-0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_HF_7/IM-0006-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_HF_7/IM-0006-0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_HF_7/IM-0006-0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_HF_7/IM-0006-0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_HF_7/IM-0006-0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Asc_HF_7/IM-0006-0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_8/IM-0007-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_8/IM-0007-0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_8/IM-0007-0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_8/IM-0007-0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_8/IM-0007-0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_8/IM-0007-0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_HF_9/IM-0008-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_HF_9/IM-0008-0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_HF_9/IM-0008-0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_HF_9/IM-0008-0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_HF_9/IM-0008-0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/cmrr_Int_HF_9/IM-0008-0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_2/IM-0001-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_2/IM-0001-0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_2/IM-0001-0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_2/IM-0001-0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_2/IM-0001-0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_2/IM-0001-0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/IM-0009-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/IM-0009-0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/IM-0009-0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/IM-0009-0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/IM-0009-0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/IM-0009-0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/ep2d_Asc_HF.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/ep2d_Asc_HF_10.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/ep2d_Asc_HF_10a.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Asc_HF_10/ep2d_Asc_HF_10b.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_4/IM-0003-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_4/IM-0003-0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_4/IM-0003-0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_4/IM-0003-0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_4/IM-0003-0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_4/IM-0003-0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_HF_5/IM-0004-0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_HF_5/IM-0004-0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_HF_5/IM-0004-0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_HF_5/IM-0004-0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_HF_5/IM-0004-0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/In/ep2d_Int_HF_5/IM-0004-0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_mosaic/Ref/10_ep2d_Asc_HF.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/Ref/2_ep2d_Asc.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/Ref/4_ep2d_Int.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/Ref/5_ep2d_Int_HF.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/Ref/6_cmrr_Asc.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/Ref/7_cmrr_Asc_HF.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/Ref/8_cmrr_Int.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/Ref/9_cmrr_Int_HF.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_mosaic/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918GE/README-Study.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/README-Series.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00001.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00002.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00003.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00004.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00005.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00006.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00007.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00008.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00009.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00010.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00011.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00012.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00013.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00014.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00015.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00016.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00017.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00018.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00019.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00020.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00021.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00022.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00023.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00024.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00025.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00026.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00027.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00028.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00029.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00030.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00031.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00032.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00033.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00034.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00035.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00036.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00037.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00038.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00039.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00040.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00041.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00042.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00043.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00044.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00045.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00046.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00047.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00048.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00049.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00050.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00051.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00052.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00053.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00054.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00055.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00056.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00057.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00058.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00059.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00060.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00061.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00062.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00063.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00064.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00065.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00066.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00067.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00068.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00069.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00070.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00071.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00072.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00073.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00074.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00075.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00076.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00077.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00078.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00079.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00080.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00081.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00082.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00083.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00084.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00085.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00086.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00087.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00088.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00089.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00090.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00091.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00092.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00093.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00094.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00095.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00096.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00097.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00098.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00099.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00100.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00101.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00102.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00103.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00104.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00105.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00106.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00107.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00108.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00109.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00110.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00111.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00112.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00113.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00114.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00115.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00116.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00117.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00118.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00119.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00120.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00121.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00122.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00123.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00124.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00125.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00126.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00127.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00128.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00129.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00130.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00131.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00132.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00133.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00134.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00135.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00136.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00137.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00138.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00139.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00140.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00141.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00142.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00143.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00144.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00145.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00146.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00147.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00148.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00149.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0004/axial_epi_fmri_interleaved_i_to_s-00150.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/README-Series.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00001.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00002.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00003.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00004.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00005.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00006.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00007.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00008.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00009.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00010.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00011.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00012.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00013.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00014.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00015.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00016.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00017.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00018.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00019.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00020.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00021.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00022.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00023.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00024.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00025.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00026.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00027.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00028.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00029.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00030.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00031.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00032.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00033.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00034.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00035.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00036.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00037.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00038.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00039.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00040.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00041.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00042.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00043.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00044.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00045.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00046.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00047.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00048.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00049.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00050.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00051.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00052.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00053.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00054.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00055.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00056.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00057.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00058.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00059.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00060.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00061.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00062.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00063.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00064.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00065.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00066.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00067.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00068.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00069.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00070.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00071.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00072.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00073.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00074.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00075.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00076.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00077.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00078.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00079.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00080.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00081.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00082.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00083.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00084.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00085.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00086.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00087.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00088.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00089.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00090.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00091.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00092.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00093.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00094.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00095.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00096.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00097.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00098.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00099.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00100.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00101.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00102.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00103.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00104.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00105.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00106.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00107.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00108.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00109.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00110.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00111.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00112.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00113.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00114.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00115.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00116.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00117.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00118.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00119.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00120.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00121.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00122.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00123.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00124.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00125.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00126.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00127.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00128.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00129.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00130.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00131.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00132.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00133.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00134.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00135.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00136.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00137.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00138.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00139.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00140.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00141.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00142.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00143.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00144.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00145.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00146.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00147.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00148.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00149.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0005/axial_epi_fmri_sequential_i_to_s-00150.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/README-Series.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00001.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00002.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00003.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00004.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00005.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00006.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00007.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00008.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00009.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00010.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00011.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00012.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00013.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00014.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00015.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00016.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00017.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00018.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00019.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00020.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00021.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00022.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00023.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00024.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00025.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00026.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00027.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00028.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00029.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00030.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00031.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00032.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00033.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00034.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00035.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00036.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00037.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00038.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00039.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00040.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00041.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00042.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00043.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00044.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00045.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00046.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00047.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00048.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00049.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00050.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00051.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00052.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00053.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00054.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00055.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00056.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00057.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00058.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00059.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00060.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00061.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00062.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00063.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00064.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00065.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00066.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00067.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00068.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00069.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00070.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00071.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00072.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00073.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00074.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00075.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00076.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00077.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00078.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00079.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00080.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00081.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00082.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00083.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00084.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00085.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00086.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00087.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00088.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00089.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00090.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00091.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00092.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00093.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00094.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00095.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00096.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00097.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00098.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00099.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00100.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00101.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00102.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00103.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00104.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00105.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00106.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00107.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00108.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00109.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00110.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00111.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00112.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00113.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00114.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00115.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00116.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00117.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00118.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00119.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00120.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00121.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00122.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00123.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00124.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00125.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00126.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00127.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00128.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00129.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00130.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00131.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00132.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00133.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00134.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00135.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00136.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00137.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00138.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00139.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00140.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00141.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00142.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00143.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00144.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00145.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00146.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00147.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00148.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00149.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0006/axial_epi_fmri_interleaved_s_to_i-00150.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/README-Series.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00001.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00002.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00003.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00004.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00005.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00006.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00007.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00008.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00009.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00010.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00011.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00012.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00013.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00014.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00015.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00016.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00017.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00018.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00019.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00020.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00021.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00022.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00023.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00024.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00025.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00026.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00027.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00028.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00029.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00030.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00031.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00032.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00033.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00034.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00035.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00036.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00037.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00038.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00039.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00040.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00041.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00042.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00043.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00044.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00045.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00046.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00047.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00048.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00049.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00050.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00051.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00052.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00053.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00054.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00055.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00056.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00057.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00058.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00059.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00060.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00061.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00062.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00063.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00064.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00065.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00066.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00067.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00068.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00069.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00070.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00071.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00072.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00073.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00074.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00075.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00076.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00077.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00078.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00079.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00080.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00081.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00082.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00083.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00084.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00085.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00086.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00087.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00088.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00089.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00090.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00091.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00092.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00093.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00094.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00095.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00096.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00097.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00098.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00099.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00100.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00101.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00102.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00103.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00104.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00105.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00106.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00107.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00108.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00109.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00110.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00111.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00112.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00113.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00114.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00115.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00116.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00117.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00118.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00119.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00120.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00121.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00122.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00123.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00124.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00125.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00126.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00127.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00128.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00129.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00130.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00131.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00132.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00133.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00134.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00135.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00136.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00137.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00138.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00139.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00140.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00141.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00142.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00143.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00144.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00145.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00146.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00147.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00148.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00149.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918GE/mr_0007/axial_epi_fmri_sequential_s_to_i-00150.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918Si/README-Study.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0003/README-Series.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0003/epi_pe_ap-00001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0003/epi_pe_ap-00002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0004/README-Series.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0004/epi_pe_pa-00001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0004/epi_pe_pa-00002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0005/README-Series.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0005/epi_pe_rl-00001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0005/epi_pe_rl-00002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0006/README-Series.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0006/epi_pe_lr-00001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/In/20180918Si/mr_0006/epi_pe_lr-00002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_nih/Ref/DCM2NIIX_regression_test_4.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/Ref/DCM2NIIX_regression_test_5.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/Ref/DCM2NIIX_regression_test_6.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/Ref/DCM2NIIX_regression_test_7.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/Ref/EPI_PE=AP_3.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/Ref/EPI_PE=LR_6.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/Ref/EPI_PE=PA_4.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/Ref/EPI_PE=RL_5.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_nih/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_pdt2/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0001.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0002.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0003.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0004.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0005.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0006.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0007.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0008.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0009.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0010.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0011.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0012.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0013.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0014.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0015.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0016.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0017.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0018.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0019.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0020.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0021.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0022.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0023.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0024.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0025.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0026.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0027.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0028.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0029.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0030.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0031.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0032.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0033.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0034.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0035.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0036_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0037_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0038_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0039_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0040_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0041_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0042_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0043_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0044_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0045_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0046_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0047_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0048_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0049_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0050_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0051_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0052_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0053_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0054_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0055_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0056_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0057_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0058_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0059_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0060_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0061_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0062_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0063_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0064_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0065_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0066_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0067_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0068_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0069_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/In/Siemens/VE11/0070_e2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_pdt2/Ref/Siemens_pd+t2_tse_sag_ISO_1.8mm_3_e1.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/Ref/Siemens_pd+t2_tse_sag_ISO_1.8mm_3_e2.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_pdt2/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "dcm_qa_spec/.gitignore": {
   "format": "unknown",
   "vendor": null,
@@ -1470,16 +7055,121 @@
   "kind": "unknown"
  },
  "dcm_qa_spec/Ref/svs_se_30.nii": {
-  "format": "nifti",
+  "format": "nifti_sidecar_mrs",
   "vendor": null,
-  "kind": "imaging"
+  "kind": "spectroscopy"
  },
  "dcm_qa_spec/Ref/svs_se_31.nii": {
+  "format": "nifti_sidecar_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "dcm_qa_spec/batch.sh": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_ts/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_ts/In/1.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/In/2.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/In/3.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/In/4.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/In/5.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/In/6.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/In/7.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/In/8.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/In/9.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dcm_qa_ts/Ref/1.nii": {
   "format": "nifti",
   "vendor": null,
   "kind": "imaging"
  },
- "dcm_qa_spec/batch.sh": {
+ "dcm_qa_ts/Ref/2.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/Ref/3.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/Ref/4.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/Ref/5.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/Ref/6.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/Ref/7.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/Ref/8.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/Ref/9.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "dcm_qa_ts/batch.sh": {
   "format": "unknown",
   "vendor": null,
   "kind": "unknown"
@@ -2758,6 +8448,506 @@
   "format": "dicom_mrs",
   "vendor": "siemens",
   "kind": "spectroscopy"
+ },
+ "nibabel/nibabel/nicom/tests/data/0.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/nicom/tests/data/1.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/nicom/tests/data/4d_multiframe_test.dcm": {
+  "format": "dicom_image",
+  "vendor": "acme medical devices",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/nicom/tests/data/ascconv_sample.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/csa2_b0.bin": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/csa2_b1000.bin": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/csa2_zero_len.bin.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/csa_slice_norm.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/nicom/tests/data/csa_str_1001n_items.bin": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/csa_str_valid.bin": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/decimal_rescale.dcm": {
+  "format": "dicom_other",
+  "vendor": "siemens",
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/philips_mprage.dcm.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/siemens_dwi_0.dcm.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/siemens_dwi_1000.dcm.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/nicom/tests/data/slicethickness_empty_string.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/.gitignore": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/0.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/1.dcm": {
+  "format": "dicom_image",
+  "vendor": "siemens",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/ADC_Map.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/ASL_3D_Multiecho.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/DTI.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/DTIv40.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/NA.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_cor_20APtrans_15RLrot_SENSE_15_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_cor_SENSE_8_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_sag_15AP_SENSE_13_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_sag_15FH_SENSE_12_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_sag_15RL_SENSE_11_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_sag_SENSE_7_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_tra_-30AP_10RL_20FH_SENSE_14_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_tra_15FH_SENSE_9_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_tra_15RL_SENSE_10_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/Phantom_EPI_3mm_tra_SENSE_6_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/R11_T2W_TSE.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/README.rst": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/T1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/T1_3echo_mag_real_imag_phase.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/T1_dual_echo.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/T2-interleaved.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/T2.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/T2_-interleaved.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/T2_.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/analyze.hdr": {
+  "format": "analyze",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/anatomical.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/bad_attribute+orig.HEAD": {
+  "format": "afni",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/bad_datatype+orig.HEAD": {
+  "format": "afni",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/complex.trk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/complex_big_endian.trk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/empty.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/empty.trk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/example4d+orig.BRIK.gz": {
+  "format": "afni",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/example4d+orig.HEAD": {
+  "format": "afni",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/example4d.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/example_nifti2.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/fieldmap.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/functional.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/matlab_nan.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/minc1-no-att.mnc": {
+  "format": "minc1",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/minc1_1_scale.mnc": {
+  "format": "minc1",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/minc1_4d.mnc": {
+  "format": "minc1",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/minc2-4d-d.mnc": {
+  "format": "minc2",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/minc2-no-att.mnc": {
+  "format": "minc2",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/minc2_1_scale.mnc": {
+  "format": "minc2",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/minc2_4d.mnc": {
+  "format": "minc2",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/minc2_baddim.mnc": {
+  "format": "minc2",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/multiline_header_field.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/nifti1.hdr": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/nifti2.hdr": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/no_header_end.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/no_header_end_eof.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/no_magic_number.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/phantom_EPI_asc_CLEAR_2_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/phantom_EPI_asc_CLEAR_2_1.REC": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/phantom_fake_dualTR.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/phantom_fake_v4.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/phantom_fake_v4_1.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/phantom_truncated.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/phantom_truncated.REC": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/phantom_varscale.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/phantom_varscale.REC": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/reoriented_anat_moved.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/resample_using_spm.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/resampled_anat_moved.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/row_major.dconn.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/scaled+tlrc.BRIK": {
+  "format": "afni",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/scaled+tlrc.HEAD": {
+  "format": "afni",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/simple.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/simple.trk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/simple_big_endian.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/small.mnc": {
+  "format": "minc2",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/standard.LPS.trk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/standard.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/standard.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/standard.trk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/test.mgz": {
+  "format": "mgh",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/tiny.mnc": {
+  "format": "minc1",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/tinypet.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/to_canonical.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/tests/data/umass_anonymized.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "nibabel/nibabel/tests/data/variant_v4_2_header.PAR": {
+  "format": "parrec",
+  "vendor": "philips",
+  "kind": "imaging"
  },
  "nifti_mrs_examples/example_01.nii.gz": {
   "format": "nifti_mrs",

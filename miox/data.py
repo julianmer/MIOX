@@ -314,3 +314,65 @@ class FitResult:
             f"<FitResult {self.name}{voxel} {self.provenance.format}: "
             f"{len(self.rows)} metabolites{curves}>"
         )
+
+
+#**************************************************************************************************#
+#                                             MRImage                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# One MR image (volume or series): ``data`` indexed (i, j, k, further dimensions) as the file      #
+# stores the voxels, ``affine`` mapping (i, j, k) to RAS+ millimetres as in NIfTI. ``dims`` names  #
+# the dimensions after the third (e.g. "time", "echo").                                            #
+#                                                                                                  #
+#**************************************************************************************************#
+class MRImage:
+    def __init__(
+        self,
+        data: np.ndarray,
+        affine: np.ndarray,
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+        dims: tuple[str, ...] = (),
+    ):
+        self.data = data
+        self.affine = affine
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+        names = ("i", "j", "k") + tuple(dims)
+        names += tuple(f"dim{n}" for n in range(len(names), data.ndim))
+        self.dims = names[: data.ndim]
+
+    @property
+    def shape(self) -> tuple[int, ...]:
+        return self.data.shape
+
+    @property
+    def voxel_sizes(self) -> tuple[float, float, float]:
+        """mm, the lengths of the affine's first three columns."""
+        return tuple(float(v) for v in np.linalg.norm(self.affine[:3, :3], axis=0))
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the data array and the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "shape": list(self.shape),
+            "dims": list(self.dims),
+            "dtype": str(self.data.dtype),
+            "affine": self.affine.tolist(),
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "vendor_fields": len(self.meta.vendor_fields()),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        sizes = " x ".join(f"{v:.3g}" for v in self.voxel_sizes)
+        kind = f"{self.provenance.format} {self.shape} {self.data.dtype}"
+        return f"<MRImage{name} {kind}, {sizes} mm>"

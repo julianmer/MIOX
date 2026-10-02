@@ -19,7 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 
 # own
-from miox.data import FitResult, MRSData, PriorSet
+from miox.data import FitResult, MRImage, MRSData, PriorSet
 from miox.readers.base import Reader, ReaderError
 from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.bruker import BrukerReader
@@ -34,7 +34,9 @@ from miox.readers.lcmodel_basis import LcmodelBasisReader
 from miox.readers.lcmodel_output import LcmodelOutputReader
 from miox.readers.lcmodel_raw import LcmodelRawReader
 from miox.readers.marss_basis import MarssBasisReader
+from miox.readers.nibabel_image import NibabelImageReader
 from miox.readers.nifti_mrs import NiftiMrsReader
+from miox.readers.nifti_sidecar_mrs import NiftiSidecarMrsReader
 from miox.readers.osprey_basis import OspreyBasisReader
 from miox.readers.osprey_container import OspreyContainerReader
 from miox.readers.philips_data_list import PhilipsDataListReader
@@ -80,7 +82,9 @@ class Loader:
             LcmodelOutputReader(),
             LcmodelRawReader(),
             MarssBasisReader(),
+            NibabelImageReader(),
             NiftiMrsReader(),
+            NiftiSidecarMrsReader(),
             OspreyBasisReader(),
             OspreyContainerReader(),
             PhilipsDataListReader(),
@@ -102,8 +106,8 @@ class Loader:
             for fmt in reader.FORMATS:
                 self.readers[fmt] = reader
 
-    def load(self, path: str | Path) -> list[MRSData | PriorSet | FitResult]:
-        """Every dataset in ``path``: one MRSData, PriorSet or FitResult each."""
+    def load(self, path: str | Path) -> list[MRSData | MRImage | PriorSet | FitResult]:
+        """Every dataset in ``path``: one MRSData, MRImage, PriorSet or FitResult each."""
         sniff = self.sniffer.sniff(path)
         reader = self.readers.get(sniff.format)
         if reader is None:
@@ -118,5 +122,5 @@ class Loader:
 # Load one path with a fresh Loader.                                                               #
 #                                                                                                  #
 #**************************************************************************************************#
-def load(path: str | Path) -> list[MRSData | PriorSet | FitResult]:
+def load(path: str | Path) -> list[MRSData | MRImage | PriorSet | FitResult]:
     return Loader().load(path)

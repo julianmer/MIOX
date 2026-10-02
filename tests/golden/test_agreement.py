@@ -64,6 +64,8 @@ def _siemens_groups() -> list[list[str]]:
         if isinstance(record, dict) or not relpath.startswith("spec2nii_test_data/Siemens"):
             continue
         meta = record[0]["meta"]
+        if "SpectrometerFrequency" not in meta:  # images next to the spectra
+            continue
         frequency = str(meta["SpectrometerFrequency"])
         key = (meta.get("ProtocolName"), meta.get("PatientName"), frequency)
         groups[key].append(relpath)
@@ -137,3 +139,17 @@ def test_philips_csi_signal_lies_in_the_press_box():
         for slab in slabs:
             offset = centre - np.asarray(slab["MidSlabPosition"])
             assert abs(offset @ slab["SlabOrientation"]) <= slab["SlabThickness"] / 2 + margin
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("series", ["30", "31"])
+def test_dcm2niix_spectroscopy_nifti_equals_the_dicom(series):
+    """dcm2niix's complex NIfTI with an MRS sidecar holds what MIOX reads from the DICOM."""
+    reference = PUBLIC_DATA / f"dcm_qa_spec/Ref/svs_se_{series}.nii"
+    folder = PUBLIC_DATA / f"dcm_qa_spec/In/{series}_svs_se"
+    if not reference.exists() or not folder.exists():
+        pytest.skip("dcm_qa_spec not fetched")
+    [nifti], [dicom] = load(reference), load(folder)
+    assert nifti.shape == dicom.shape and np.allclose(nifti.data, dicom.data)
+    assert np.allclose(nifti.affine, dicom.affine, atol=1e-4)
+    assert _same(nifti, dicom, ("SpectrometerFrequency", "EchoTime")) == []

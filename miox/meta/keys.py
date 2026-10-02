@@ -141,6 +141,56 @@ class KeyTable(dict):
         ),
     )
 
+    # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning
+    BIDS_MRI = (
+        ("Modality", None, (str,), "Imaging modality, e.g. MR."),
+        ("SeriesDescription", None, (str,), "Free-text description of the series."),
+        ("SeriesNumber", None, (int,), "Number of the series in the session."),
+        ("AcquisitionNumber", None, (int,), "Number of the acquisition within the series."),
+        ("AcquisitionTime", None, (str,), "Time of day the acquisition started, hh:mm:ss.ffffff."),
+        ("ImageType", None, (list, str), "DICOM image type values (e.g. ORIGINAL, PRIMARY, M)."),
+        ("StudyDescription", None, (str,), "Free-text description of the study."),
+        ("ProcedureStepDescription", None, (str,), "Description of the procedure step."),
+        ("StationName", None, (str,), "Name of the scanner station."),
+        ("InstitutionalDepartmentName", None, (str,), "Department of the institution."),
+        ("BodyPart", None, (str,), "Body part examined."),
+        ("SliceThickness", "mm", (float,), "Nominal slice thickness."),
+        ("SpacingBetweenSlices", "mm", (float,), "Distance between centres of adjacent slices."),
+        ("MRAcquisitionType", None, (str,), "2D or 3D acquisition."),
+        ("ScanningSequence", None, (str,), "DICOM scanning sequence (e.g. SE, GR, EP)."),
+        ("SequenceVariant", None, (str,), "DICOM sequence variant (e.g. SK, SP)."),
+        ("ScanOptions", None, (str,), "DICOM scan options (e.g. FS, PFP)."),
+        ("PulseSequenceType", None, (str,), "General type of the pulse sequence."),
+        ("PixelBandwidth", "Hz", (float,), "Receiver bandwidth per pixel."),
+        ("PercentPhaseFOV", "%", (float,), "Phase field of view relative to the readout one."),
+        ("PercentSampling", "%", (float,), "Fraction of acquisition matrix lines sampled."),
+        ("AcquisitionMatrixPE", None, (int,), "Acquired phase-encoding lines."),
+        ("ReconMatrixPE", None, (int,), "Reconstructed phase-encoding lines."),
+        ("PhaseEncodingSteps", None, (int,), "Number of phase-encoding steps."),
+        ("PhaseEncodingDirection", None, (str,), "Phase-encoding axis and sign (i, j, k, -)."),
+        ("InPlanePhaseEncodingDirectionDICOM", None, (str,), "ROW or COL, as DICOM states it."),
+        ("ParallelReductionFactorInPlane", None, (float,), "In-plane acceleration factor."),
+        ("ParallelReductionFactorOutOfPlane", None, (float,), "Slice acceleration factor."),
+        ("MultibandAccelerationFactor", None, (float,), "Simultaneous multi-slice factor."),
+        ("PartialFourier", None, (float,), "Fraction of k-space sampled (partial Fourier)."),
+        ("EchoTrainLength", None, (int,), "Echoes per excitation."),
+        ("EchoNumber", None, (int,), "Index of the echo in a multi-echo acquisition."),
+        ("EffectiveEchoSpacing", "s", (float,), "Effective echo spacing (sampling interval)."),
+        ("TotalReadoutTime", "s", (float,), "Readout time used for distortion correction."),
+        ("SliceTiming", "s", (list, float), "Acquisition time of each slice from volume start."),
+        ("DelayTime", "s", (float,), "Pause after each volume."),
+        ("AcquisitionDuration", "s", (float,), "Duration of the acquisition."),
+        ("SAR", "W/kg", (float,), "Specific absorption rate."),
+        ("TablePosition", "mm", (list, float), "Table position."),
+        ("ShimSetting", None, (list, float), "Shim currents, vendor units."),
+        ("CoilCombinationMethod", None, (str,), "How the coil channels were combined."),
+        ("MatrixCoilMode", None, (str,), "Coil acceleration mode (e.g. GRAPPA)."),
+        ("NonlinearGradientCorrection", None, (bool,), "Gradient non-linearity corrected."),
+        ("MTState", None, (bool,), "Magnetisation transfer pulse used."),
+        ("SpoilingState", None, (bool,), "Spoiling used."),
+        ("ImageOrientationPatientDICOM", None, (list, float), "DICOM ImageOrientationPatient."),
+    )
+
     def __init__(self):
         super().__init__()
         self.nifti_mrs_version = tuple(nifti_mrs_version)
@@ -148,6 +198,8 @@ class KeyTable(dict):
         self._add_nifti_mrs(required, "nifti-mrs:required")
         self._add_nifti_mrs(standard_defined, "nifti-mrs:standard")
         self.update({key.name: key for key in self.MIOX})
+        for name, unit, kind, doc in self.BIDS_MRI:
+            self[name] = Key(name, unit, kind, doc, "bids", bids=name)
 
     def _add_nifti_mrs(self, definitions: dict, origin: str) -> None:
         for name, definition in definitions.items():

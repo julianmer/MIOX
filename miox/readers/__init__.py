@@ -31,7 +31,9 @@ from miox.readers.lcmodel_output import LcmodelOutputReader
 from miox.readers.lcmodel_raw import LcmodelRawReader
 from miox.readers.loader import Loader, load
 from miox.readers.marss_basis import MarssBasisReader
+from miox.readers.nibabel_image import NibabelImageReader
 from miox.readers.nifti_mrs import NiftiMrsReader
+from miox.readers.nifti_sidecar_mrs import NiftiSidecarMrsReader
 from miox.readers.osprey_basis import OspreyBasisReader
 from miox.readers.osprey_container import OspreyContainerReader
 from miox.readers.philips_data_list import PhilipsDataListReader
@@ -65,7 +67,9 @@ __all__ = [
     "LcmodelRawReader",
     "Loader",
     "MarssBasisReader",
+    "NibabelImageReader",
     "NiftiMrsReader",
+    "NiftiSidecarMrsReader",
     "OspreyBasisReader",
     "OspreyContainerReader",
     "PhilipsDataListReader",

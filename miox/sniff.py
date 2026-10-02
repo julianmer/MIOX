@@ -54,6 +54,13 @@ class Format(StrEnum):
     DICOM_OTHER = "dicom_other"
     NIFTI_MRS = "nifti_mrs"
     NIFTI = "nifti"
+    NIFTI_SIDECAR_MRS = "nifti_sidecar_mrs"  # complex NIfTI with MRS values in a BIDS sidecar
+    ANALYZE = "analyze"
+    MGH = "mgh"
+    MINC1 = "minc1"
+    MINC2 = "minc2"
+    PARREC = "parrec"
+    AFNI = "afni"
     BRUKER = "bruker"
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
@@ -211,6 +218,10 @@ class Sniffer:
         (b"DATA DESCRIPTOR FILE", Format.SIVIC_DDF, Kind.SPECTROSCOPY, "UCSF DDF header"),
         (b"IMAGE DESCRIPTOR FILE", Format.SIVIC_IDF, Kind.IMAGING, "UCSF IDF header"),
     )
+    PAR_LINE = re.compile(rb"^\.\s+[A-Za-z]", re.M)  # ".    Patient name :"; LIST: ".    0    0"
+    NIFTI_SIDECARS = (".json", ".bval", ".bvec", ".img")  # BIDS sidecar, diffusion tables, pair
+    ANALYZE_SIZES = (b"\x00\x00\x01\x5c", b"\x5c\x01\x00\x00")  # sizeof_hdr 348, either byte order
+    BRIK = re.compile(r"\.brik(\.gz)?$", re.I)
     MATLAB_VARIABLES = (  # (variable name, format, kind); first match wins
         (re.compile(r"^MRSCont$"), Format.OSPREY_MRSCONT, Kind.SPECTROSCOPY),
         (re.compile(r"^BASIS$"), Format.OSPREY_BASIS, Kind.BASIS_SET),
@@ -249,6 +260,7 @@ class Sniffer:
         self.rules = (
             self.dicom,
             self.nifti,
+            self.image_files,
             self.rda,
             self.matlab,
             self.companion_binary,
@@ -340,12 +352,26 @@ class Sniffer:
         detail = {"nifti_version": version, "shape": tuple(int(n) for n in header.get_data_shape())}
         extension = next((e for e in header.extensions if e.get_code() == 44), None)
         if extension is None:
+            stem = path.name.removesuffix(".gz").removesuffix(".nii").removesuffix(".hdr")
+            sidecars = [path.with_name(stem + s) for s in self.NIFTI_SIDECARS]
+            sidecars = tuple(s for s in sidecars if s.is_file())
+            if header.get_data_dtype().kind == "c" and self._mrs_sidecar(sidecars):
+                return Sniff(
+                    path,
+                    Format.NIFTI_SIDECAR_MRS,
+                    Kind.SPECTROSCOPY,
+                    confidence=0.9,
+                    evidence=(f"NIfTI-{version} magic", "complex data", "MRS values in sidecar"),
+                    companions=sidecars,
+                    detail=detail,
+                )
             return Sniff(
                 path,
                 Format.NIFTI,
                 Kind.IMAGING,
                 confidence=1.0,
                 evidence=(f"NIfTI-{version} magic",),
+                companions=sidecars,
                 detail=detail,
             )
         intent_name = header["intent_name"].item().decode("ascii", "replace")
@@ -361,6 +387,18 @@ class Sniffer:
             evidence=(f"NIfTI-{version} magic", "header extension ecode 44"),
             detail=detail,
         )
+
+    @staticmethod
+    def _mrs_sidecar(sidecars: tuple[Path, ...]) -> bool:
+        """A BIDS sidecar that states the spectrometer frequency and nucleus."""
+        sidecar = next((s for s in sidecars if s.suffix == ".json"), None)
+        if sidecar is None:
+            return False
+        try:
+            values = json.loads(sidecar.read_text())
+        except ValueError:
+            return False
+        return "SpectrometerFrequency" in values and "ResonantNucleus" in values
 
     def rda(self, path: Path, head: bytes) -> Sniff | None:
         if not head.startswith(b">>> Begin of header <<<"):
@@ -406,6 +444,19 @@ class Sniffer:
         return None
 
     def data_list(self, path: Path, head: bytes) -> Sniff | None:
+        if head.startswith(b"# === DATA DESCRIPTION FILE") and self.PAR_LINE.search(head):
+            rec = self._sibling(path, ".rec")
+            return Sniff(
+                path,
+                Format.PARREC,
+                Kind.IMAGING,
+                vendor="philips",
+                confidence=1.0 if rec else 0.9,
+                evidence=("PAR header markers", "REC companion found" if rec else "no REC"),
+                companions=(rec,) if rec else (),
+            )
+        if path.suffix.lower() == ".rec" and (par := self._sibling(path, ".par")):
+            return dataclasses.replace(self.sniff(par), path=path, companions=(par,))
         if head.startswith(b"# === DATA DESCRIPTION FILE"):
             data = self._sibling(path, ".data")
             return Sniff(
@@ -637,6 +688,52 @@ class Sniffer:
                 data = self._sibling(path, suffix)
                 return (data,) if data else ()
         return ()
+
+    def image_files(self, path: Path, head: bytes) -> Sniff | None:
+        """Image formats nibabel reads: MGH, MINC 1 and 2, AFNI, Analyze (and their data halves)."""
+        name, suffix = path.name.lower(), path.suffix.lower()
+        if name.endswith((".mgh", ".mgz")):
+            if head[:2] == b"\x1f\x8b":
+                head = zlib.decompressobj(31).decompress(head, 16)
+            if head[:4] == b"\x00\x00\x00\x01":
+                return self._image(path, Format.MGH, "MGH version 1")
+        if suffix == ".mnc" and head[:4] in (b"CDF\x01", b"CDF\x02"):
+            return self._image(path, Format.MINC1, "NetCDF .mnc")
+        if suffix == ".mnc" and head[:8] == b"\x89HDF\r\n\x1a\n":
+            return self._image(path, Format.MINC2, "HDF5 .mnc")
+        if suffix == ".head" and b"name" in head and b"type" in head:
+            stem = path.name[:-5]
+            briks = [path.with_name(stem + s) for s in (".BRIK", ".BRIK.gz", ".brik")]
+            brik = next((b for b in briks if b.is_file()), None)
+            return self._image(path, Format.AFNI, "AFNI attributes", brik, "BRIK")
+        if name.endswith((".brik", ".brik.gz")):
+            header = path.with_name(self.BRIK.sub(".HEAD", path.name))
+            if header.is_file():
+                return dataclasses.replace(self.sniff(header), path=path, companions=(header,))
+        if suffix == ".hdr" and head[:4] in self.ANALYZE_SIZES:
+            img = self._sibling(path, ".img")
+            return self._image(path, Format.ANALYZE, "Analyze header size 348", img, "IMG")
+        if suffix == ".img" and (hdr := self._sibling(path, ".hdr")):
+            return dataclasses.replace(self.sniff(hdr), path=path, companions=(hdr,))
+        return None
+
+    @staticmethod
+    def _image(
+        path: Path, fmt: Format, evidence: str, companion: Path | None = None, part: str = ""
+    ) -> Sniff:
+        """An image format; with ``part`` the format needs a companion data file."""
+        found = companion is not None or not part
+        notes = (evidence,)
+        if part:
+            notes += (f"{part} companion {'found' if found else 'missing'}",)
+        return Sniff(
+            path,
+            fmt,
+            Kind.IMAGING,
+            confidence=1.0 if found else 0.8,
+            evidence=notes,
+            companions=(companion,) if companion else (),
+        )
 
     def matlab(self, path: Path, head: bytes) -> Sniff | None:
         """MATLAB files, by the variable names the tools save."""

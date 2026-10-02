@@ -102,6 +102,18 @@ class DataFetcher:
         "osprey": ("https://github.com/schorschinho/osprey.git", ["fit/basissets"]),
         "pyamares": ("https://github.com/HawkMRS/pyAMARES.git", ["pyAMARES/examples", "tests"]),
         "profit": ("https://gitlab.tuebingen.mpg.de/AG_Henning/ProFit-1D.git", ["sampleBasisSet"]),
+        "nibabel": (
+            "https://github.com/nipy/nibabel.git",
+            ["nibabel/tests/data", "nibabel/nicom/tests/data"],
+        ),
+        "dcm_qa_nih": ("https://github.com/neurolabusc/dcm_qa_nih.git", None),
+        "dcm_qa_enh": ("https://github.com/neurolabusc/dcm_qa_enh.git", None),
+        "dcm_qa_mosaic": ("https://github.com/neurolabusc/dcm_qa_mosaic.git", None),
+        "dcm_qa_ts": ("https://github.com/neurolabusc/dcm_qa_ts.git", None),
+        "dcm_qa_12bit": ("https://github.com/neurolabusc/dcm_qa_12bit.git", None),
+        "dcm_qa_frag": ("https://github.com/neurolabusc/dcm_qa_frag.git", None),
+        "dcm_qa_me": ("https://github.com/neurolabusc/dcm_qa_me.git", None),
+        "dcm_qa_pdt2": ("https://github.com/neurolabusc/dcm_qa_pdt2.git", None),
     }
     NEMA = "ftp://medical.nema.org/medical/dicom/DataSets/WG16"
     NEMA_FILES = {  # spectroscopy DICOM examples of the DICOM working group 16
