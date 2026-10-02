@@ -17,10 +17,13 @@
 
 # own
 from miox.readers.base import Reader, ReaderError, Spec2niiReader
+from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.bruker import BrukerReader
 from miox.readers.dicom_mrs import DicomMrsReader
+from miox.readers.fsl_mrs_basis import FslMrsBasisReader
 from miox.readers.ge_pfile import GePfileReader
 from miox.readers.jmrui import JmruiReader
+from miox.readers.lcmodel_basis import LcmodelBasisReader
 from miox.readers.lcmodel_raw import LcmodelRawReader
 from miox.readers.loader import Loader, load
 from miox.readers.nifti_mrs import NiftiMrsReader
@@ -29,16 +32,20 @@ from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
 from miox.readers.sivic_ddf import SivicDdfReader
+from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.varian import VarianReader
 from miox.readers.vasf import VasfReader
 from miox.readers.vespa_viff import VespaViffReader
 
 __all__ = [
+    "BasisFolderReader",
     "BrukerReader",
     "DicomMrsReader",
+    "FslMrsBasisReader",
     "GePfileReader",
     "JmruiReader",
+    "LcmodelBasisReader",
     "LcmodelRawReader",
     "Loader",
     "NiftiMrsReader",
@@ -50,6 +57,7 @@ __all__ = [
     "SiemensTwixReader",
     "SivicDdfReader",
     "Spec2niiReader",
+    "SpinwizardBasisReader",
     "TarquinDptReader",
     "VarianReader",
     "VasfReader",

@@ -249,6 +249,7 @@ def test_analysis_text_formats(tmp_path, name, text, fmt, kind):
     f.write_text(text)
     s = sniff(f)
     assert (s.format, s.kind) == (fmt, kind)
+    assert s.vendor is None and 0 < s.confidence <= 1
 
 
 def test_header_and_binary_pairs(tmp_path):
@@ -259,3 +260,26 @@ def test_header_and_binary_pairs(tmp_path):
     assert sniff(tmp_path / "press.rsp").companions == (tmp_path / "press.rsd",)
     assert sniff(tmp_path / "press.rsd").format == Format.VASF
     assert sniff(tmp_path / "csi.cmplx").format == Format.SIVIC_DDF
+
+
+def test_basis_folder(tmp_path):
+    raw = " $SEQPAR\n echot= 30.\n $END\n $NMID\n id='x'\n $END\n 1.0 0.0\n"
+    for name in ("NAA", "Cr", "GABA"):
+        (tmp_path / f"{name}.RAW").write_text(raw)
+    s = sniff(tmp_path)
+    assert (s.format, s.kind, s.vendor) == (Format.BASIS_FOLDER, Kind.BASIS_SET, None)
+    assert s.detail["member_format"] == Format.LCMODEL_RAW and len(s.companions) == 3
+
+
+def test_dataset_folder_is_not_a_basis_folder(tmp_path):
+    raw = " $SEQPAR\n echot= 30.\n $END\n $NMID\n id='x'\n $END\n 1.0 0.0\n"
+    for name in ("subject1", "subject2", "subject3"):
+        (tmp_path / f"{name}.RAW").write_text(raw)
+    assert sniff(tmp_path).format == Format.UNKNOWN
+
+
+def test_spinwizard_folder(tmp_path):
+    (tmp_path / "BasisSetParameters.txt").write_text("SF 400.2\n")
+    (tmp_path / "NAA.txt").write_text("1.0 0.0\n")
+    s = sniff(tmp_path)
+    assert (s.format, s.kind, s.vendor) == (Format.SPINWIZARD_BASIS, Kind.BASIS_SET, None)

@@ -35,7 +35,7 @@ from spec2nii.spec2nii import remove_zero_higher_dim_indices
 from spec2nii.spec2nii import spec2nii as Spec2niiCommand
 
 # own
-from miox.data import MRSData, Provenance
+from miox.data import BasisSet, MRSData, Provenance
 from miox.meta.meta import Meta
 from miox.sniff import Format, Sniff
 
@@ -69,6 +69,8 @@ class Reader:
     NO_GEOMETRY = np.diag([1e4, 1e4, 1e4, 1.0])  # a 10 m voxel: the file stores no geometry
     INTEGER_KEYS = ("DeviceSerialNumber", "PatientDoB")
     QUOTED_KEYS = ("RxCoil", "TxCoil")
+    MAX_MHZ = 1e5  # a larger spectrometer frequency is in Hz
+    BASIS_TAG = ("DIM_USER_0", "basis set metabolites", None)
 
     def read(self, sniff: Sniff) -> list[MRSData]:
         raise NotImplementedError
@@ -95,26 +97,69 @@ class Reader:
         notes: list[str],
         source: str,
         affine: np.ndarray | None = None,
-        dim_tags: tuple[str, ...] = (),
+        dim_tags: tuple[str | tuple[str, str | None, dict | None], ...] = (),
+        kind: type[MRSData] = MRSData,
     ) -> MRSData:
-        """MRSData from data and header values a reader parsed itself.
+        """MRSData (or ``kind``) from data and header values a reader parsed itself.
 
         ``data`` is in NIfTI-MRS order and convention; ``values`` maps standard keys to
         (value, vendor field), and must hold SpectrometerFrequency and ResonantNucleus.
+        ``dim_tags`` names dimensions 5 to 7, each a tag or (tag, info, per-index header).
         """
         frequency = values["SpectrometerFrequency"][0]
         nucleus = values["ResonantNucleus"][0]
         hdr_ext = Hdr_Ext(frequency, nucleus)
         for index, tag in enumerate(dim_tags):
-            hdr_ext.set_dim_info(index, tag)
+            tag, info, header = (tag, None, None) if isinstance(tag, str) else tag
+            hdr_ext.set_dim_info(index, tag, info=info, hdr=header)
         geometry = self.NO_GEOMETRY if affine is None else affine
         image = gen_nifti_mrs_hdr_ext(data, dwelltime, hdr_ext, geometry, no_conj=True)
         provenance = self.provenance(sniff, tuple(notes))
-        d = MRSData.from_nifti_mrs(image, provenance, source, vendor=vendor, name=name)
+        d = kind.from_nifti_mrs(image, provenance, source, vendor=vendor, name=name)
         for key, (value, field) in values.items():
             d.meta.set(key, value, f"{source}: {field}" if field else source, field)
         self.correct(d)
         return d
+
+    def basis_set(
+        self,
+        sniff: Sniff,
+        fids: np.ndarray,
+        metabolites: list[str],
+        dwelltime: float,
+        values: dict[str, tuple[Any, str | None]],
+        vendor: dict,
+        name: str,
+        notes: list[str],
+        source: str,
+    ) -> BasisSet:
+        """BasisSet from ``fids`` (points, metabolites), one column per name in ``metabolites``."""
+        data = fids.reshape(1, 1, 1, *fids.shape)
+        d = self.dataset(
+            sniff,
+            data,
+            dwelltime,
+            values,
+            vendor,
+            name,
+            notes,
+            source,
+            dim_tags=(self.BASIS_TAG,),
+            kind=BasisSet,
+        )
+        d.dim_info.setdefault(5, {})["header"] = {"Metabolite": list(metabolites)}
+        return d
+
+    def _frequency_in_mhz(self, images: list[NIFTI_MRS], notes: list[str]) -> bool:
+        """Some converters store the frequency in Hz; no spectrometer runs above 100 GHz."""
+        changed = False
+        for image in images:
+            frequencies = image.hdr_ext.SpectrometerFrequency
+            if any(f > self.MAX_MHZ for f in frequencies):
+                image.hdr_ext.SpectrometerFrequency = [f / 1e6 for f in frequencies]
+                notes.append(f"SpectrometerFrequency {frequencies} is in Hz; divided by 1e6")
+                changed = True
+        return changed
 
     @staticmethod
     def fix(d: MRSData, key: str, value: Any, reason: str) -> None:
@@ -187,7 +232,6 @@ class Spec2niiReader(Reader):
     PACKAGES = Reader.PACKAGES + ("spec2nii",)
     CONVERTER = ""  # spec2nii subcommand
     SOURCES: dict[str, str | tuple[str, ...]] = {}  # standard key -> vendor field(s), first found
-    MAX_MHZ = 1e5  # a larger spectrometer frequency is in Hz
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         """The converted images, their names and the complete vendor header."""
@@ -228,14 +272,6 @@ class Spec2niiReader(Reader):
             options = (alternatives,) if isinstance(alternatives, str) else alternatives
             fields[key] = next((f for f in options if f in present), options[0])
         return fields
-
-    def _frequency_in_mhz(self, images: list[NIFTI_MRS], notes: list[str]) -> None:
-        """Some converters store the frequency in Hz; no spectrometer runs above 100 GHz."""
-        for image in images:
-            frequencies = image.hdr_ext.SpectrometerFrequency
-            if any(f > self.MAX_MHZ for f in frequencies):
-                image.hdr_ext.SpectrometerFrequency = [f / 1e6 for f in frequencies]
-                notes.append(f"SpectrometerFrequency {frequencies} is in Hz; divided by 1e6")
 
     def _as_spec2nii_command(self, images: list[NIFTI_MRS], notes: list[str]) -> list[NIFTI_MRS]:
         Spec2niiCommand.insert_spectralwidth(SimpleNamespace(imageOut=images))

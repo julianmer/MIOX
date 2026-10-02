@@ -176,3 +176,31 @@ class MRSData:
             f"<MRSData{name} {self.provenance.format} {dims}, {self.nucleus} at "
             f"{self.spectrometer_frequency:.3f} MHz, dwell {self.dwelltime * 1e3:.4g} ms>"
         )
+
+
+#**************************************************************************************************#
+#                                             BasisSet                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# A basis set for fitting: one FID per metabolite (or macromolecule) along dimension 5, the names  #
+# in that dimension's header under "Metabolite". Edited sub-spectra, when present, follow along a  #
+# further tagged dimension.                                                                        #
+#                                                                                                  #
+#**************************************************************************************************#
+class BasisSet(MRSData):
+    @property
+    def metabolites(self) -> list[str]:
+        return list(self.dim_info.get(5, {}).get("header", {}).get("Metabolite", []))
+
+    def fid(self, metabolite: str) -> np.ndarray:
+        """The FID(s) of one metabolite: time first, then any further dimensions."""
+        index = self.metabolites.index(metabolite)
+        return self.data[0, 0, 0, :, index] if self.data.ndim > 4 else self.data[0, 0, 0, :]
+
+    def __repr__(self) -> str:
+        return (
+            f"<BasisSet {self.name} {self.provenance.format}: {len(self.metabolites)} metabolites, "
+            f"{self.n_points} points, {self.nucleus} at {self.spectrometer_frequency:.3f} MHz, "
+            f"dwell {self.dwelltime * 1e3:.4g} ms>"
+        )
+

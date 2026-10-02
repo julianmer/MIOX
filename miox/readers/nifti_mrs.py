@@ -51,6 +51,7 @@ class NiftiMrsReader(Reader):
             "header_extension": image.hdr_ext.to_dict(),
         }
         name = sniff.path.name.removesuffix(".gz").removesuffix(".nii")
+        in_hz = self._frequency_in_mhz([image], notes)
         d = MRSData.from_nifti_mrs(
             image, self.provenance(sniff, tuple(notes)), self.SOURCE, vendor=vendor, name=name
         )
@@ -58,5 +59,8 @@ class NiftiMrsReader(Reader):
             if d.meta.source[key] == self.SOURCE:
                 d.meta.fields[key] = f"header_extension/{key}"
         d.meta.set("DwellTime", d.dwelltime, "NIfTI header: pixdim[4]", "nifti/pixdim")
+        if in_hz:
+            frequency = d.meta["SpectrometerFrequency"]
+            self.fix(d, "SpectrometerFrequency", frequency, "stored in Hz; divided by 1e6")
         self.correct(d)
         return [d]

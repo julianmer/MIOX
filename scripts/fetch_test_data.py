@@ -95,6 +95,13 @@ class DataFetcher:
             "https://github.com/LarsonLab/hyperpolarized-mri-toolbox.git",
             ["reconstruction/EPSI demo/dummy_ddf"],
         ),
+        "basis_toolbox": (
+            "https://github.com/igweckay/MRS-Basis-Set-Conversion-Toolbox.git",
+            ["sample_basis_sets"],
+        ),
+        "osprey": ("https://github.com/schorschinho/osprey.git", ["fit/basissets"]),
+        "pyamares": ("https://github.com/HawkMRS/pyAMARES.git", ["pyAMARES/examples", "tests"]),
+        "profit": ("https://gitlab.tuebingen.mpg.de/AG_Henning/ProFit-1D.git", ["sampleBasisSet"]),
     }
     NEMA = "ftp://medical.nema.org/medical/dicom/DataSets/WG16"
     NEMA_FILES = {  # spectroscopy DICOM examples of the DICOM working group 16

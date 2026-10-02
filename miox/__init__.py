@@ -16,12 +16,13 @@
 #*************#
 
 # own
-from miox.data import MRSData, Provenance
+from miox.data import BasisSet, MRSData, Provenance
 from miox.readers import Loader, ReaderError, load
 from miox.sniff import Format, Kind, Sniff, Sniffer, sniff
 
 __version__ = "0.0.0"
 __all__ = [
+    "BasisSet",
     "Format",
     "Kind",
     "Loader",

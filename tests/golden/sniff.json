@@ -1,4 +1,1139 @@
 {
+ "basis_toolbox/sample_basis_sets/GAVA/gava_priors.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Asc": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Asp": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/BasisRFOffset.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/BasisSetParameters.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Cho": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Cr391": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/CrNo391": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/GABA": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/GPC": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/GSH": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Glc": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Gln": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Glu": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Gly": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/LCMBasisSet.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Lac": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/MM": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/MM09": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/NAA": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/NAAG": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/PCr393": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/PCrNo393": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/PE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/Tau": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/mI": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_marss_converted/sI": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/2HG": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/2HGH2": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/2HGH2_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/2HGH3": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/2HGH3_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/2HGH4": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/2HGH4_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/BasisRFOffset.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/BasisSetParameters.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/Choline": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CholineH1": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CholineH1_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CholineH2": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CholineH2_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CholineH3": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CholineH3_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CholineN": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CholineN_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/Creatine": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CreatineH2": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CreatineH2_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CreatineH4": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/CreatineH4_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GABA": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GABAH2": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GABAH2_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GABAH3": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GABAH3_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GABAH4": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GABAH4_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/Glutamate": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamateH2": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamateH2_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamateH3": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamateH3_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamateH4": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamateH4_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/Glutamine": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamineH2": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamineH2_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamineH3": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamineH3_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamineH4": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/GlutamineH4_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/LCMBasisSet.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAA": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAAH2": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAAH2_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAAH3A": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAAH3A_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAAH3B": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAAH3B_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAAH6": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JET/from_spinwizard_mouse/NAAH6_noinv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Asc.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Asp.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Cho.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Cr391.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/CrNo391.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/GABA.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/GPC.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/GSH.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Glc.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Gln.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Glu.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Gly.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Lac.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/MM.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/MM09.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/NAA.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/NAAG.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/PCr393.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/PCrNo393.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/PE.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/Tau.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/mI.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/JMRUI/sI.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/BASIS_file/LCModel_Siemens_UnEdited_sLASER_105_.BASIS": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/BASIS_file/SLASER_Siemens26.basis": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Asc.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Asp.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Cho.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Cr391.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/CrNo391.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/GABA.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/GPC.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/GSH.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Glc.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Gln.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Glu.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Gly.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Lac.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/MM.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/MM09.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/NAA.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/NAAG.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/PCr393.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/PCrNo393.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/PE.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/Tau.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/mI.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/LCModel/raw_files/sI.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Asc.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Asp.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Cho.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Cr391.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/CrNo391.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/GABA.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/GPC.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/GSH.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Glc.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Gln.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Glu.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Gly.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Lac.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/MM.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/MM09.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/NAA.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/NAAG.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/PCr393.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/PCrNo393.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/PE.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/Tau.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/mI.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MARSS/raw_basis_functions/sI.raw": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/MIDAS/midas_priors.xml": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Asc.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Asc_conj.nii.gz/Asc.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Asp.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Asp_conj.nii.gz/Asp.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Cho.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Cho_conj.nii.gz/Cho.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Cr391.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Cr391_conj.nii.gz/Cr391.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/CrNo391.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/CrNo391_conj.nii.gz/CrNo391.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/GABA.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/GABA_conj.nii.gz/GABA.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/GPC.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/GPC_conj.nii.gz/GPC.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/GSH.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/GSH_conj.nii.gz/GSH.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Glc.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Glc_conj.nii.gz/Glc.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Gln.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Gln_conj.nii.gz/Gln.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Glu.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Glu_conj.nii.gz/Glu.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Gly.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Gly_conj.nii.gz/Gly.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Lac.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Lac_conj.nii.gz/Lac.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/MM.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/MM09.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/MM09_conj.nii.gz/MM09.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/MM_conj.nii.gz/MM.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/NAA.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/NAAG.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/NAAG_conj.nii.gz/NAAG.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/NAA_conj.nii.gz/NAA.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/PCr393.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/PCr393_conj.nii.gz/PCr393.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/PCrNo393.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/PCrNo393_conj.nii.gz/PCrNo393.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/PE.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/PE_conj.nii.gz/PE.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Tau.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/Tau_conj.nii.gz/Tau.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/mI.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/mI_conj.nii.gz/mI.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/sI.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/NIFTI-MRS/sI_conj.nii.gz/sI.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "basis_toolbox/sample_basis_sets/OXSA/run_oxsa_amares.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Asc": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Asp": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/BasisRFOffset.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/BasisSetParameters.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Cho": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Cr391": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/CrNo391": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/GABA": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/GPC": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/GSH": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Glc": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Gln": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Glu": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Gly": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/LCMBasisSet.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Lac": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/MM": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/MM09": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/NAA": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/NAAG": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/PCr393": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/PCrNo393": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/PE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/Tau": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/mI": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/SPINWIZARD/sI": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "basis_toolbox/sample_basis_sets/VESPA/vespa_priors.xml": {
+  "format": "vespa_viff",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "dcm_qa_spec/.gitignore": {
   "format": "unknown",
   "vendor": null,
@@ -356,27 +1491,27 @@
  },
  "hyperpolarized_toolbox/reconstruction/EPSI demo/dummy_ddf/dynth01_phased.ddf": {
   "format": "sivic_ddf",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "lcmodel/test_lcm/3t.basis": {
   "format": "lcmodel_basis",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "basis_set"
  },
  "lcmodel/test_lcm/control.file": {
   "format": "lcmodel_control",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "protocol"
  },
  "lcmodel/test_lcm/data.raw": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "lcmodel/test_lcm/out_ref_build.ps": {
   "format": "lcmodel_ps",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "report"
  },
  "mrs_fitting_challenge/Cr_water_scaling_JMRUI/Cr_10mM_test_water_scaling_WS.txt": {
@@ -391,12 +1526,12 @@
  },
  "mrs_fitting_challenge/Cr_water_scaling_LCModel/Cr_10mM_test_water_scaling.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/Cr_water_scaling_LCModel/Cr_10mM_test_water_scaling.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/Cr_water_scaling_text/Cr_10mM_test_water_scaling.txt": {
@@ -521,117 +1656,117 @@
  },
  "mrs_fitting_challenge/basisset_LCModel/Ace.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Ala.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Asc.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Asp.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Cr.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/GABA.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/GPC.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/GSH.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Glc.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Gln.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Glu.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Gly.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Ins.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Lac.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Mac.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/NAA.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/NAAG.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/PCho.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/PCr.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/PE.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/Tau.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_LCModel/press3T_30ms.BASIS": {
   "format": "lcmodel_basis",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "basis_set"
  },
  "mrs_fitting_challenge/basisset_LCModel/sIns.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/basisset_text/Ace.txt": {
@@ -1136,282 +2271,282 @@
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset1.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset1.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset10.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset10.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset11.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset11.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset12.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset12.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset13.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset13.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset14.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset14.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset15.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset15.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset16.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset16.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset17.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset17.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset18.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset18.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset19.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset19.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset2.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset2.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset20.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset20.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset21.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset21.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset22.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset22.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset23.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset23.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset24.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset24.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset25.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset25.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset26.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset26.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset27.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset27.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset28.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset28.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset3.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset3.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset4.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset4.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset5.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset5.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset6.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset6.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset7.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset7.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset8.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset8.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset9.H2O": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_LCModel/dataset9.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "mrs_fitting_challenge/datasets_text/dataset1.txt": {
@@ -1673,6 +2808,96 @@
   "format": "nifti_mrs",
   "vendor": null,
   "kind": "spectroscopy"
+ },
+ "osprey/fit/basissets/3T/ge/unedited/press/35/3T_PRESS_GE_35ms_noMM.BASIS": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "osprey/fit/basissets/3T/philips/unedited/press/35/3T_PRESS_Philips_35ms_noMM.BASIS": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "osprey/fit/basissets/3T/siemens/unedited/press/35/3T_PRESS_Siemens_35ms_noMM.BASIS": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "osprey/fit/basissets/3T/siemens/unedited/special/8_5/basis_siemens_special8_5.basis": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "osprey/fit/basissets/3T/siemens/unedited/special/8_5/siemens_special8_5.control": {
+  "format": "lcmodel_control",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "osprey/fit/basissets/7T/siemens/unedited/special/9/basis_siemens_special9.basis": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "osprey/fit/basissets/7T/siemens/unedited/steam/5/basis_siemens_steam5.BASIS": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "osprey/fit/basissets/7T/siemens/unedited/steam/5/basis_siemens_steam5.control": {
+  "format": "lcmodel_control",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "pyamares/pyAMARES/examples/fid.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/pyAMARES/examples/simple_example.svg": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/tests/a_voxel_Xe.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/tests/fid.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/tests/step1_download.ipynb": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/tests/step2_simple.ipynb": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/tests/step3_priorknowledge.ipynb": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/tests/step4_X_nuclei.ipynb": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/tests/step5_hsvd.ipynb": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyamares/tests/step6_batch.ipynb": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "spec2nii_test_data/.gitattributes": {
   "format": "unknown",
@@ -6966,7 +8191,7 @@
  },
  "spec2nii_test_data/other/metab.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/other/metab.nii": {
@@ -6981,7 +8206,7 @@
  },
  "spec2nii_test_data/other/metab_nohdr.RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/philips/DICOM/SV_phantom_45deg_AP/IM-0021-0002-0001.dcm": {
@@ -7636,22 +8861,22 @@
  },
  "suspect/tests/test_data/lcmodel/liver.COORD": {
   "format": "lcmodel_coord",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "fit_result"
  },
  "suspect/tests/test_data/lcmodel/press_30ms_3T.basis": {
   "format": "lcmodel_basis",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "basis_set"
  },
  "suspect/tests/test_data/lcmodel/svs_97.COORD": {
   "format": "lcmodel_coord",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "fit_result"
  },
  "suspect/tests/test_data/lcmodel/svs_97.TABLE": {
   "format": "lcmodel_table",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "fit_result"
  },
  "suspect/tests/test_data/siemens/SVS_30.IMA": {
@@ -7841,27 +9066,27 @@
  },
  "suspect/tests/test_data/tarquin/tarquin_megapress_fit.txt": {
   "format": "tarquin_fit",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "fit_result"
  },
  "suspect/tests/test_data/tarquin/tarquin_results.txt": {
   "format": "tarquin_results",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "fit_result"
  },
  "tarquin/data/7T_smo_mouse.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/LCM/W/RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/LCM/WS/RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/SIEMENSTEST": {
@@ -7871,32 +9096,32 @@
  },
  "tarquin/data/SKNAS.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/aligned_batch_processed.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/broken.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/broken2.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/examples/Siemens_1000/RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/examples/Siemens_2000/RAW": {
   "format": "lcmodel_raw",
-  "vendor": 1.0,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/ge/P1751_1.5T_030_2000.7": {
@@ -8121,12 +9346,12 @@
  },
  "tarquin/data/phillips/svs_135_w.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/phillips/svs_135_ws.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/phillips/svs_30_WS.SDAT": {
@@ -8151,27 +9376,27 @@
  },
  "tarquin/data/phillips/svs_30_w.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/phillips/svs_30_ws.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/processed.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/real_mb.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/real_mb_proc.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/risto_mrs/DBIEX_10_1_raw_act.SDAT": {
@@ -8231,12 +9456,12 @@
  },
  "tarquin/data/svs_135_w.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/svs_135_ws.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/svs_30_WS.SDAT": {
@@ -8261,17 +9486,17 @@
  },
  "tarquin/data/svs_30_w.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/svs_30_ws.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/testing_data/1.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/data/testing_data/1.txt": {
@@ -8281,7 +9506,7 @@
  },
  "tarquin/data/unknown.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/src/fast_sim/eigen3_1_1/bench/btl/data/CMakeLists.txt": {
@@ -8546,7 +9771,7 @@
  },
  "tarquin/src/unit_tests/data/dpt_test_input.dpt": {
   "format": "tarquin_dpt",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "tarquin/src/unit_tests/data/fast_sim_H.ref": {
@@ -8666,7 +9891,7 @@
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_01_import-file/press_cp0.rsp": {
   "format": "vasf",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp0.rsd": {
@@ -8676,7 +9901,7 @@
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp0.rsp": {
   "format": "vasf",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp4.rsd": {
@@ -8686,7 +9911,7 @@
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp4.rsp": {
   "format": "vasf",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp7.rsd": {
@@ -8696,7 +9921,7 @@
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_02_import-stack/press_cp7.rsp": {
   "format": "vasf",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_03_open-multiple-datasets/press_cp0.xml": {
@@ -8716,7 +9941,7 @@
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_04_eddy-current-correction/press_cp4.rsp": {
   "format": "vasf",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_04_eddy-current-correction/press_cp4_with_ecc.xml": {
@@ -8731,7 +9956,7 @@
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_04_eddy-current-correction/press_cp4_wref.rsp": {
   "format": "vasf",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_05_interactive_svd_filtering/press_cp0.rsd": {
@@ -8741,7 +9966,7 @@
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_05_interactive_svd_filtering/press_cp0.rsp": {
   "format": "vasf",
-  "vendor": 0.9,
+  "vendor": null,
   "kind": "spectroscopy"
  },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_06_fitting_press_te24/_prior_for_press24_forCP0.xml": {

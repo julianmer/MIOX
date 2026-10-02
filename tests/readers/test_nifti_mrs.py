@@ -66,6 +66,20 @@ def test_invalid_header_is_read_with_a_note(tmp_path):
     assert any("not valid NIfTI-MRS" in note for note in d.provenance.notes)
 
 
+def test_frequency_in_hz_is_corrected(tmp_path):
+    path = _write(tmp_path, np.ones((1, 1, 1, 64, 2, 1), complex))
+    image = nib.load(path)
+    header = json.loads(image.header.extensions[0].get_content())
+    header["SpectrometerFrequency"] = [123.2e6]
+    image.header.extensions[0] = nib.nifti1.Nifti1Extension(44, json.dumps(header).encode())
+    nib.save(image, path)
+    [d] = gu.load(path)
+    assert d.spectrometer_frequency == pytest.approx(123.2)
+    assert d.meta["FieldStrength"] == pytest.approx(2.894, abs=1e-3)
+    assert "corrected: stored in Hz" in d.meta.source["SpectrometerFrequency"]
+    assert d.meta.vendor["header_extension"]["SpectrometerFrequency"] == [123.2e6]
+
+
 def test_vendor_fields_flatten_nested_headers():
     meta = Meta({"a": {"b": [1, 2], "c": [{"d": 1}, [3, 4]]}, "e": "x"})
     assert meta.vendor_fields() == {"a/b": [1, 2], "a/c/0/d": 1, "a/c/1": [3, 4], "e": "x"}

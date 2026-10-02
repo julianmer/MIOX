@@ -25,7 +25,7 @@ import re
 import struct
 import warnings
 import zlib
-from dataclasses import dataclass, field
+from dataclasses import KW_ONLY, dataclass, field
 from enum import StrEnum
 from pathlib import Path
 
@@ -68,6 +68,9 @@ class Format(StrEnum):
     VESPA_VIFF = "vespa_viff"
     SIVIC_DDF = "sivic_ddf"
     SIVIC_IDF = "sivic_idf"
+    FSL_MRS_BASIS = "fsl_mrs_basis"
+    SPINWIZARD_BASIS = "spinwizard_basis"
+    BASIS_FOLDER = "basis_folder"
     JMRUI_TEXT = "jmrui_text"
     JMRUI_BINARY = "jmrui_binary"
     ISMRMRD = "ismrmrd"
@@ -105,6 +108,7 @@ class Sniff:
     path: Path
     format: Format
     kind: Kind = Kind.UNKNOWN
+    _: KW_ONLY
     vendor: str | None = None
     confidence: float = 0.0
     evidence: tuple[str, ...] = ()
@@ -190,6 +194,14 @@ class Sniffer:
         (b"DATA DESCRIPTOR FILE", Format.SIVIC_DDF, Kind.SPECTROSCOPY, "UCSF DDF header"),
         (b"IMAGE DESCRIPTOR FILE", Format.SIVIC_IDF, Kind.IMAGING, "UCSF IDF header"),
     )
+    BASIS_MEMBERS = (Format.LCMODEL_RAW, Format.JMRUI_TEXT, Format.FSL_MRS_BASIS, Format.NIFTI_MRS)
+    METABOLITES = (  # lower-case abbreviations and names used for basis-set files
+        "naa", "naag", "cr", "pcr", "tcr", "cre", "creatine", "cho", "choline", "gpc", "pch",
+        "pcho", "tcho", "ins", "mi", "mins", "myo", "si", "sins", "scyllo", "glu", "glutamate",
+        "gln", "glutamine", "glx", "gaba", "gsh", "lac", "ala", "asp", "asc", "ace", "tau", "glc",
+        "gly", "pe", "ser", "cit", "2hg", "lip", "mm", "mac", "bhb", "etoh", "suc", "thr", "val",
+        "pyr", "h2o", "water", "his", "phe", "trp", "tyr", "ala", "ac", "acetate", "lys",
+    )
     COMPANIONS = (  # (data suffix, header suffix, format)
         (".rsd", ".rsp", Format.VASF),
         (".cmplx", ".ddf", Format.SIVIC_DDF),
@@ -236,13 +248,26 @@ class Sniffer:
         return Sniff(path, Format.UNKNOWN)
 
     def directory(self, path: Path) -> Sniff:
-        """A directory is a Bruker scan, a Varian .fid folder or a DICOM series."""
+        """A Bruker scan, a Varian .fid folder, a basis set of one file per metabolite, or a
+        DICOM series."""
         names = {p.name for p in path.iterdir()}
         if names & set(self.BRUKER_PARAM_FILES):
             return self._bruker_scan(path, path, "directory with Bruker parameter files")
         if "procpar" in names:
             return self._varian_scan(path, path, "directory with procpar")
         files = [c for c in sorted(path.iterdir()) if c.is_file() and c.name != ".DS_Store"]
+        if "BasisSetParameters.txt" in names:
+            evidence = ("SpinWizard BasisSetParameters.txt",)
+            return Sniff(
+                path,
+                Format.SPINWIZARD_BASIS,
+                Kind.BASIS_SET,
+                confidence=1.0,
+                evidence=evidence,
+                companions=tuple(files),
+            )
+        if basis := self._basis_folder(path, files):
+            return basis
         for child in files[: self.DIR_PROBE_LIMIT]:
             if not self._is_dicom(self._head(child)):
                 continue
@@ -481,13 +506,19 @@ class Sniffer:
         """Text formats of LCModel, TARQUIN, VASF and SIVIC, recognised by their own markers."""
         upper = head.upper()
         stripped = head.lstrip()
+        if stripped.startswith(b"{") and b'"basis_re"' in head:
+            evidence = ("FSL-MRS basis JSON",)
+            fmt = Format.FSL_MRS_BASIS
+            return Sniff(path, fmt, Kind.BASIS_SET, confidence=1.0, evidence=evidence)
         if stripped.startswith(b"%!PS") and b"Creator: LCModel" in head:
             evidence = ("LCModel PostScript",)
-            return Sniff(path, Format.LCMODEL_PS, Kind.REPORT, 1.0, evidence=evidence)
+            return Sniff(path, Format.LCMODEL_PS, Kind.REPORT, confidence=1.0, evidence=evidence)
         for markers, fmt, kind, evidence in self.TEXT_MARKERS:
             if any(m in upper for m in markers):
                 companions = self._text_companions(path, fmt)
-                return Sniff(path, fmt, kind, 1.0, evidence=(evidence,), companions=companions)
+                return Sniff(
+                    path, fmt, kind, confidence=1.0, evidence=(evidence,), companions=companions
+                )
         if stripped.startswith(b"LCModel (Version"):
             if b"$$CONC" in head:
                 fmt = Format.LCMODEL_TABLE
@@ -495,11 +526,13 @@ class Sniffer:
                 fmt = Format.LCMODEL_COORD
             else:
                 fmt = Format.LCMODEL_PRINT
-            return Sniff(path, fmt, Kind.FIT_RESULT, 0.9, evidence=("LCModel banner",))
+            return Sniff(path, fmt, Kind.FIT_RESULT, confidence=0.9, evidence=("LCModel banner",))
         for start, fmt, kind, evidence in self.TEXT_STARTS:
             if stripped.startswith(start):
                 companions = self._text_companions(path, fmt)
-                return Sniff(path, fmt, kind, 0.9, evidence=(evidence,), companions=companions)
+                return Sniff(
+                    path, fmt, kind, confidence=0.9, evidence=(evidence,), companions=companions
+                )
         return None
 
     def vespa(self, path: Path, head: bytes) -> Sniff | None:
@@ -516,6 +549,42 @@ class Sniffer:
         elif b"<experiment" in head or b"<metabolite" in head:
             kind = Kind.BASIS_SET
         return Sniff(path, Format.VESPA_VIFF, kind, confidence=1.0, evidence=("<vespa_export>",))
+
+    def _basis_folder(self, path: Path, files: list[Path]) -> Sniff | None:
+        """Several files of one spectroscopy format, most named after metabolites."""
+        members = {}
+        for child in files[: self.DIR_PROBE_LIMIT]:
+            fmt = self.sniff(child).format
+            if fmt in self.BASIS_MEMBERS:
+                members.setdefault(fmt, []).append(child)
+        if not members:
+            return None
+        fmt, paths = max(members.items(), key=lambda item: len(item[1]))
+        named = sum(self.is_metabolite(p.name.split(".")[0]) for p in paths)
+        if len(paths) < 2 or named < len(paths) / 2:
+            return None
+        evidence = (f"{len(paths)} {fmt} files, {named} named after metabolites",)
+        detail = {"member_format": str(fmt)}
+        return Sniff(
+            path,
+            Format.BASIS_FOLDER,
+            Kind.BASIS_SET,
+            confidence=0.8,
+            evidence=evidence,
+            companions=tuple(paths),
+            detail=detail,
+        )
+
+    @classmethod
+    def is_metabolite(cls, name: str) -> bool:
+        """``name`` starts with a metabolite or macromolecule abbreviation (NAA, Cr391, MM09)."""
+        name = name.lower()
+        for known in cls.METABOLITES:
+            if name == known or (name.startswith(known) and len(known) >= 3):
+                return True
+            if name.startswith(known) and not name[len(known)].isalpha():
+                return True
+        return False
 
     def _text_companions(self, path: Path, fmt: Format) -> tuple[Path, ...]:
         for suffix, header, companion_fmt in self.COMPANIONS:

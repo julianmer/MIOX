@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Reader for LCModel .RAW / .H2O files: Fortran namelists ($SEQPAR, $NMID, ...) followed  #
 #          by the FID as real/imaginary pairs. LCModel keeps the frequency and dwell time in the   #
-#          .CONTROL (or MakeBasis .IN) file when the .RAW does not state them; such a file next to #
+#          control file (or a MakeBasis .IN or .BASIS) when the .RAW does not; such a file next to #
 #          the .RAW is read too. The vendor header keeps every namelist, any text before the first #
 #          namelist, and the side file's namelists.                                                #
 #                                                                                                  #
@@ -53,8 +53,9 @@ class LcmodelRawReader(Reader):
     FIELD = re.compile(r"\(\s*(\d*)\s*[EFGD](\d+)", re.I)  # FMTDAT repeat count and field width
     NUMBER = re.compile(r"[-+]?(?:\d+\.?\d*|\.\d+)(?:[EeDd][-+]?\d+)?")
     DWELL = (("dwelltime", 1.0), ("deltat", 1.0), ("badelt", 1.0))  # header keys, factor to s
-    SIDE_LIMIT = 1_000_000  # bytes; control files are small text files
+    SIDE_LIMIT = 50_000_000  # bytes; control, MakeBasis and basis files
     SIDE_MARKERS = ("$LCMODL", "&LCMODL", "$SEQPAR", "&SEQPAR")  # namelists stating HZPPPM
+    GROUP = re.compile(r"\$(\w+)(.*?)\$END", re.S | re.I)  # one namelist, data lines skipped
 
     def read(self, sniff: Sniff) -> list[MRSData]:
         notes = [f"nucleus not stored in LCModel .RAW files; {self.NUCLEUS} assumed"]
@@ -122,11 +123,12 @@ class LcmodelRawReader(Reader):
             text = candidate.read_text(errors="replace")
             if not any(marker in text.upper() for marker in self.SIDE_MARKERS):
                 continue
-            end = text.upper().rfind("$END")
-            try:
-                namelists = self._namelists(text[: end + 4] if end >= 0 else text)
-            except Exception:  # not a namelist file after all
-                continue
+            namelists = {}
+            for group in self.GROUP.finditer(text):
+                try:
+                    namelists.update(self._namelists(f"${group[1]}{group[2]}$END"))
+                except Exception:  # not a namelist after all
+                    continue
             if self._find({"namelists": namelists}, "hzpppm")[0] is not None:
                 return candidate
         return None
