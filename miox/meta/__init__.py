@@ -6,7 +6,7 @@
 #                                                                                                  #
 # Created: 01/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Metadata layer: the standard key table.                                                 #
+# Purpose: Metadata layer: the standard key table and the metadata of one dataset.                 #
 #                                                                                                  #
 ####################################################################################################
 
@@ -17,5 +17,6 @@
 
 # own
 from miox.meta.keys import Key, KeyTable
+from miox.meta.meta import Meta
 
-__all__ = ["Key", "KeyTable"]
+__all__ = ["Key", "KeyTable", "Meta"]
