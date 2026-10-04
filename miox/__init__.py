@@ -17,7 +17,7 @@
 
 # own
 from miox.data import BasisSet, FitResult, MRImage, MRSData, PriorSet, Provenance
-from miox.readers import Loader, ReaderError, load
+from miox.readers import IncompleteError, Loader, ReaderError, load
 from miox.sniff import Format, Kind, Sniff, Sniffer, sniff
 
 __version__ = "0.0.0"
@@ -25,6 +25,7 @@ __all__ = [
     "BasisSet",
     "FitResult",
     "Format",
+    "IncompleteError",
     "Kind",
     "Loader",
     "MRImage",

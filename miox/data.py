@@ -21,8 +21,10 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import numpy as np
+from mrs_tools.constants import GYRO_MAG_RATIO
 from nifti_mrs.nifti_mrs import NIFTI_MRS
 
 # own
@@ -53,16 +55,19 @@ class Provenance:
 # One spectroscopy dataset. ``data`` holds the complex FIDs as (x, y, z, t) plus up to three       #
 # tagged dimensions (coils, dynamics, edit conditions, ...), following the NIfTI-MRS dimension and #
 # conjugation conventions. ``dim_tags`` names dimensions 5 to 7, ``dim_info`` holds their          #
-# description and per-index header values.                                                         #
+# description and per-index header values. A file may state no frequency, nucleus or dwell time:   #
+# ``missing`` names those gaps and ``supply`` fills them from values given by the caller.          #
 #                                                                                                  #
 #**************************************************************************************************#
 class MRSData:
     DIM_KEY = re.compile(r"^dim_([5-7])(?:_(info|header))?$")  # dimension keys of the header
+    REQUIRED = ("SpectrometerFrequency", "ResonantNucleus", "DwellTime")  # NIfTI-MRS needs these
+    LIST_KEYS = ("SpectrometerFrequency", "ResonantNucleus")  # one value per nucleus
 
     def __init__(
         self,
         data: np.ndarray,
-        dwelltime: float,
+        dwelltime: float | None,
         affine: np.ndarray,
         meta: Meta,
         provenance: Provenance,
@@ -128,27 +133,69 @@ class MRSData:
         return ("x", "y", "z", "t") + tuple(str(t) for t in self.dim_tags[: self.data.ndim - 4])
 
     @property
-    def spectrometer_frequency(self) -> float:
-        """MHz."""
-        return float(self.meta["SpectrometerFrequency"][0])
+    def spectrometer_frequency(self) -> float | None:
+        """MHz; None when not stated."""
+        value = self.meta.get("SpectrometerFrequency")
+        return None if value is None else float(value[0])
 
     @property
-    def nucleus(self) -> str:
-        return self.meta["ResonantNucleus"][0]
+    def nucleus(self) -> str | None:
+        value = self.meta.get("ResonantNucleus")
+        return None if value is None else value[0]
 
     @property
-    def spectral_width(self) -> float:
-        """Hz."""
-        return 1 / self.dwelltime
+    def spectral_width(self) -> float | None:
+        """Hz; None when the dwell time is not stated."""
+        return None if self.dwelltime is None else 1 / self.dwelltime
 
     @property
     def n_points(self) -> int:
         return self.data.shape[3]
 
     @property
-    def time_axis(self) -> np.ndarray:
-        """Seconds from the first point."""
-        return np.arange(self.n_points) * self.dwelltime
+    def time_axis(self) -> np.ndarray | None:
+        """Seconds from the first point; None when the dwell time is not stated."""
+        return None if self.dwelltime is None else np.arange(self.n_points) * self.dwelltime
+
+    @property
+    def missing(self) -> tuple[str, ...]:
+        """The required keys (frequency, nucleus, dwell time) the file did not state."""
+        return tuple(key for key in self.REQUIRED if key not in self.meta)
+
+    def supply(self, values: dict[str, Any], source: str = "given") -> None:
+        """Fill the standard keys in ``values`` that are not stated; stated values stay.
+
+        The dwell time may come as DwellTime or SpectralWidth; the other one and FieldStrength
+        are derived.
+        """
+        for key, value in values.items():
+            if key in self.meta:
+                continue
+            if key in self.LIST_KEYS and not isinstance(value, list):
+                value = [value]
+            self.meta.set(key, value, source)
+        if self.dwelltime is None and "DwellTime" not in self.meta and "SpectralWidth" in self.meta:
+            dwelltime = 1 / float(self.meta["SpectralWidth"])
+            self.meta.set("DwellTime", dwelltime, "derived: 1 / SpectralWidth")
+        if self.dwelltime is None and "DwellTime" in self.meta:
+            self.dwelltime = float(self.meta["DwellTime"])
+            if "SpectralWidth" not in self.meta:
+                self.meta.set("SpectralWidth", 1 / self.dwelltime, "derived: 1 / DwellTime")
+        frequency, nucleus = self.spectrometer_frequency, self.nucleus
+        if "FieldStrength" not in self.meta and frequency is not None and nucleus in GYRO_MAG_RATIO:
+            field = frequency / GYRO_MAG_RATIO[nucleus]
+            self.meta.set(
+                "FieldStrength", field, "derived: SpectrometerFrequency / gyromagnetic ratio"
+            )
+
+    def acquisition(self) -> str:
+        """Nucleus, frequency and dwell time in words, "unknown" where not stated."""
+        nucleus = self.nucleus or "unknown nucleus"
+        frequency = self.spectrometer_frequency
+        frequency = "unknown frequency" if frequency is None else f"{frequency:.4f} MHz"
+        dwell = self.dwelltime
+        dwell = "unknown dwell time" if dwell is None else f"dwell {dwell * 1e3:.4g} ms"
+        return f"{nucleus} at {frequency}, {dwell}"
 
     def to_dict(self) -> dict:
         """JSON-ready summary: everything except the data array and the vendor header itself."""
@@ -172,10 +219,7 @@ class MRSData:
     def __repr__(self) -> str:
         name = f" {self.name}" if self.name else ""
         dims = " ".join(f"{d}={n}" for d, n in zip(self.dims, self.shape, strict=True))
-        return (
-            f"<MRSData{name} {self.provenance.format} {dims}, {self.nucleus} at "
-            f"{self.spectrometer_frequency:.3f} MHz, dwell {self.dwelltime * 1e3:.4g} ms>"
-        )
+        return f"<MRSData{name} {self.provenance.format} {dims}, {self.acquisition()}>"
 
 
 #**************************************************************************************************#
@@ -200,8 +244,7 @@ class BasisSet(MRSData):
     def __repr__(self) -> str:
         return (
             f"<BasisSet {self.name} {self.provenance.format}: {len(self.metabolites)} metabolites, "
-            f"{self.n_points} points, {self.nucleus} at {self.spectrometer_frequency:.3f} MHz, "
-            f"dwell {self.dwelltime * 1e3:.4g} ms>"
+            f"{self.n_points} points, {self.acquisition()}>"
         )
 
 

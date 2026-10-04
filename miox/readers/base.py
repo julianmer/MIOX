@@ -52,6 +52,18 @@ class ReaderError(Exception):
 
 
 #**************************************************************************************************#
+#                                         IncompleteError                                          #
+#**************************************************************************************************#
+#                                                                                                  #
+# A dataset read without a value NIfTI-MRS requires (frequency, nucleus or dwell time), when the   #
+# caller asked for complete datasets.                                                              #
+#                                                                                                  #
+#**************************************************************************************************#
+class IncompleteError(ReaderError):
+    pass
+
+
+#**************************************************************************************************#
 #                                              Reader                                              #
 #**************************************************************************************************#
 #                                                                                                  #
@@ -90,7 +102,7 @@ class Reader:
         self,
         sniff: Sniff,
         data: np.ndarray,
-        dwelltime: float,
+        dwelltime: float | None,
         values: dict[str, tuple[Any, str | None]],
         vendor: dict,
         name: str,
@@ -103,30 +115,63 @@ class Reader:
         """MRSData (or ``kind``) from data and header values a reader parsed itself.
 
         ``data`` is in NIfTI-MRS order and convention; ``values`` maps standard keys to
-        (value, vendor field), and must hold SpectrometerFrequency and ResonantNucleus.
-        ``dim_tags`` names dimensions 5 to 7, each a tag or (tag, info, per-index header).
+        (value, vendor field). ``dim_tags`` names dimensions 5 to 7, each a tag or
+        (tag, info, per-index header). A file that states no dwell time, SpectrometerFrequency
+        or ResonantNucleus gives a dataset without them.
         """
-        frequency = values["SpectrometerFrequency"][0]
-        nucleus = values["ResonantNucleus"][0]
-        hdr_ext = Hdr_Ext(frequency, nucleus)
-        for index, tag in enumerate(dim_tags):
-            tag, info, header = (tag, None, None) if isinstance(tag, str) else tag
-            hdr_ext.set_dim_info(index, tag, info=info, hdr=header)
         geometry = self.NO_GEOMETRY if affine is None else affine
-        image = gen_nifti_mrs_hdr_ext(data, dwelltime, hdr_ext, geometry, no_conj=True)
         provenance = self.provenance(sniff, tuple(notes))
-        d = kind.from_nifti_mrs(image, provenance, source, vendor=vendor, name=name)
+        tags = [(tag, None, None) if isinstance(tag, str) else tag for tag in dim_tags]
+        if dwelltime is None or any(key not in values for key in MRSData.LIST_KEYS):
+            d = self._without_nifti_mrs(
+                data, dwelltime, geometry, vendor, provenance, name, tags, source, kind
+            )
+        else:
+            frequency = values["SpectrometerFrequency"][0]
+            nucleus = values["ResonantNucleus"][0]
+            hdr_ext = Hdr_Ext(frequency, nucleus)
+            for index, (tag, info, header) in enumerate(tags):
+                hdr_ext.set_dim_info(index, tag, info=info, hdr=header)
+            image = gen_nifti_mrs_hdr_ext(data, dwelltime, hdr_ext, geometry, no_conj=True)
+            d = kind.from_nifti_mrs(image, provenance, source, vendor=vendor, name=name)
         for key, (value, field) in values.items():
             d.meta.set(key, value, f"{source}: {field}" if field else source, field)
         self.correct(d)
         return d
+
+    @staticmethod
+    def _without_nifti_mrs(
+        data: np.ndarray,
+        dwelltime: float | None,
+        affine: np.ndarray,
+        vendor: dict,
+        provenance: Provenance,
+        name: str,
+        tags: list[tuple[str, str | None, dict | None]],
+        source: str,
+        kind: type[MRSData],
+    ) -> MRSData:
+        """The dataset built directly: NIfTI-MRS requires frequency, nucleus and dwell time."""
+        meta = Meta(vendor)
+        meta.set("NumberOfPoints", int(data.shape[3]), "data shape")
+        if dwelltime is not None:
+            meta.set("DwellTime", dwelltime, source)
+            meta.set("SpectralWidth", 1 / dwelltime, "derived: 1 / DwellTime")
+        dim_tags = [None, None, None]
+        dim_info = {}
+        for index, (tag, info, header) in enumerate(tags):
+            dim_tags[index] = tag
+            described = {k: v for k, v in (("info", info), ("header", header)) if v is not None}
+            if described:
+                dim_info[index + 5] = described
+        return kind(data, dwelltime, affine, meta, provenance, tuple(dim_tags), dim_info, name)
 
     def basis_set(
         self,
         sniff: Sniff,
         fids: np.ndarray,
         metabolites: list[str],
-        dwelltime: float,
+        dwelltime: float | None,
         values: dict[str, tuple[Any, str | None]],
         vendor: dict,
         name: str,

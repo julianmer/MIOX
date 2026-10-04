@@ -17,10 +17,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 # own
 from miox.data import FitResult, MRImage, MRSData, PriorSet
-from miox.readers.base import Reader, ReaderError
+from miox.readers.base import IncompleteError, Reader, ReaderError
 from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.bruker import BrukerReader
 from miox.readers.dicom_image import DicomImageReader
@@ -51,6 +52,7 @@ from miox.readers.sivic_ddf import SivicDdfReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.tarquin_output import TarquinOutputReader
+from miox.readers.text_fid import TextFidReader
 from miox.readers.varian import VarianReader
 from miox.readers.vasf import VasfReader
 from miox.readers.vespa_prior import VespaPriorReader
@@ -62,7 +64,9 @@ from miox.sniff import Format, Sniffer
 #                                              Loader                                              #
 #**************************************************************************************************#
 #                                                                                                  #
-# Holds one instance of every reader, keyed by the formats it handles.                             #
+# Holds one instance of every reader, keyed by the formats it handles. ``load`` returns what a     #
+# file states; ``given`` fills standard keys it lacks and ``complete`` demands the keys NIfTI-MRS  #
+# requires.                                                                                        #
 #                                                                                                  #
 #**************************************************************************************************#
 class Loader:
@@ -100,6 +104,7 @@ class Loader:
             SpinwizardBasisReader(),
             TarquinDptReader(),
             TarquinOutputReader(),
+            TextFidReader(),
             VarianReader(),
             VasfReader(),
             VespaPriorReader(),
@@ -108,13 +113,36 @@ class Loader:
             for fmt in reader.FORMATS:
                 self.readers[fmt] = reader
 
-    def load(self, path: str | Path) -> list[MRSData | MRImage | PriorSet | FitResult]:
-        """Every dataset in ``path``: one MRSData, MRImage, PriorSet or FitResult each."""
+    def load(
+        self,
+        path: str | Path,
+        *,
+        given: dict[str, Any] | None = None,
+        complete: bool = False,
+    ) -> list[MRSData | MRImage | PriorSet | FitResult]:
+        """Every dataset in ``path``: one MRSData, MRImage, PriorSet or FitResult each.
+
+        ``given`` maps standard keys to values for what the file does not state
+        (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated
+        value is never overridden. With ``complete``, a spectroscopy dataset that still lacks a
+        key NIfTI-MRS requires raises IncompleteError instead of being returned as read.
+        """
         sniff = self.sniffer.sniff(path)
         reader = self.readers.get(sniff.format)
         if reader is None:
             raise ReaderError(f"no reader for {sniff.format}: {sniff.path}")
-        return reader.read(sniff)
+        datasets = reader.read(sniff)
+        for d in datasets:
+            if not isinstance(d, MRSData):
+                continue
+            if given:
+                d.supply(given)
+            if complete and d.missing:
+                name = f" ({d.name})" if d.name else ""
+                raise IncompleteError(
+                    f"{sniff.path.name}{name} states no {', '.join(d.missing)}; pass them in given"
+                )
+        return datasets
 
 
 #**************************************************************************************************#
@@ -124,5 +152,7 @@ class Loader:
 # Load one path with a fresh Loader.                                                               #
 #                                                                                                  #
 #**************************************************************************************************#
-def load(path: str | Path) -> list[MRSData | MRImage | PriorSet | FitResult]:
-    return Loader().load(path)
+def load(
+    path: str | Path, *, given: dict[str, Any] | None = None, complete: bool = False
+) -> list[MRSData | MRImage | PriorSet | FitResult]:
+    return Loader().load(path, given=given, complete=complete)

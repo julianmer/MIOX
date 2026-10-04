@@ -25,8 +25,6 @@ from pathlib import Path
 
 import f90nml
 import numpy as np
-from nifti_mrs.create_nmrs import gen_nifti_mrs_hdr_ext
-from nifti_mrs.hdr_ext import Hdr_Ext
 
 # own
 from miox.data import MRSData
@@ -82,9 +80,9 @@ class LcmodelRawReader(Reader):
             missing = " and ".join(
                 name for name, v in (("HZPPPM", frequency), ("dwell time", dwell)) if v is None
             )
-            raise ReaderError(
-                f"{sniff.path.name} states no {missing}, and neither does a control file "
-                "($LCMODL or $SEQPAR namelist) next to it"
+            notes.append(
+                f"no {missing} in the file or a control file ($LCMODL or $SEQPAR namelist) next "
+                "to it"
             )
         nmid = header["namelists"].get("nmid", {})
         fid = self._fid(text[end + 4 :], nmid.get("fmtdat"))
@@ -92,25 +90,37 @@ class LcmodelRawReader(Reader):
             fid = fid.conj()
         points = header["namelists"].get("seqpar", {}).get("numberofpoints")
         data = self._shape(fid, points, notes)
-        hdr_ext = Hdr_Ext(float(frequency), self.NUCLEUS)
-        hdr_ext.set_standard_def("OriginalFile", [sniff.path.name])
+        values = {
+            "ResonantNucleus": ([self.NUCLEUS], None),
+            "OriginalFile": ([sniff.path.name], None),
+        }
+        if frequency is not None:
+            values["SpectrometerFrequency"] = ([float(frequency)], frequency_field)
         echo, echo_field = self._find(header, "echot")
         if echo is not None:
-            hdr_ext.set_standard_def("EchoTime", float(echo) * 1e-3)
+            values["EchoTime"] = (float(echo) * 1e-3, echo_field)
+        dim_tags = ()
         if data.ndim == 5:
-            hdr_ext.set_dim_info(0, "DIM_USER_0", info="FIDs in file order (MRSI grid in .CONTROL)")
-        image = gen_nifti_mrs_hdr_ext(data, dwell, hdr_ext, self.NO_GEOMETRY, no_conj=True)
-        provenance = self.provenance(sniff, tuple(notes))
-        d = MRSData.from_nifti_mrs(
-            image, provenance, self.SOURCE, vendor=header, name=sniff.path.stem
+            dim_tags = (("DIM_USER_0", "FIDs in file order (MRSI grid in .CONTROL)", None),)
+        d = self.dataset(
+            sniff,
+            data,
+            dwell,
+            values,
+            header,
+            sniff.path.stem,
+            notes,
+            self.SOURCE,
+            dim_tags=dim_tags,
         )
-        d.meta.set("SpectrometerFrequency", [float(frequency)], self.SOURCE, frequency_field)
+        if frequency is not None:
+            d.meta.set("SpectrometerFrequency", [float(frequency)], self.SOURCE, frequency_field)
         d.meta.set("ResonantNucleus", [self.NUCLEUS], f"assumed: {self.NUCLEUS}")
         d.meta.set("OriginalFile", [sniff.path.name], "file name")
-        d.meta.set("DwellTime", dwell, self.SOURCE, dwell_field)
+        if dwell is not None:
+            d.meta.set("DwellTime", dwell, self.SOURCE, dwell_field)
         if echo is not None:
             d.meta.set("EchoTime", float(echo) * 1e-3, f"{self.SOURCE} (ms to s)", echo_field)
-        self.correct(d)
         return [d]
 
     def _namelists(self, text: str) -> dict:

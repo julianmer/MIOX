@@ -317,3 +317,24 @@ def test_matlab_by_variable(tmp_path, variable, fmt):
     f = tmp_path / "x.mat"
     scipy.io.savemat(f, {variable: {"a": 1.0}})
     assert sniff(f).format == fmt
+
+
+def test_headerless_numeric_text(tmp_path):
+    rows = [f"{i * 0.5:.4E}\t{-i:.4E}" for i in range(16)]
+    f = tmp_path / "fid.txt"
+    f.write_text("\n".join(rows) + "\n")
+    s = sniff(f)
+    assert s.format == Format.TEXT_FID and s.kind == Kind.SPECTROSCOPY and s.confidence == 0.5
+    assert s.detail["columns"] == 2
+    g = tmp_path / "four.csv"
+    g.write_text("".join(f"{i}, {i}, {i}, {i}\n" for i in range(16)))
+    assert sniff(g).format == Format.TEXT_FID and sniff(g).detail["columns"] == 4
+    h = tmp_path / "titled.txt"
+    h.write_text("real imag\n" + "\n".join(rows) + "\n")
+    assert sniff(h).format == Format.UNKNOWN
+    odd = tmp_path / "odd.txt"
+    odd.write_text("".join(f"{i} {i} {i}\n" for i in range(16)))
+    assert sniff(odd).format == Format.UNKNOWN
+    short = tmp_path / "table.bvec"
+    short.write_text("".join(" ".join("0.5" for _ in range(10)) + "\n" for _ in range(3)))
+    assert sniff(short).format == Format.UNKNOWN

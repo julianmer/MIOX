@@ -57,10 +57,7 @@ class BasisFolderReader(Reader):
         self._check(sniff, members)
         fids = np.stack([m.data.reshape(-1) for m in members], axis=-1)
         vendor = {name: m.meta.vendor for name, m in zip(names, members, strict=True)}
-        keys = {
-            "SpectrometerFrequency": (first.meta["SpectrometerFrequency"], None),
-            "ResonantNucleus": (first.meta["ResonantNucleus"], None),
-        }
+        keys = {key: (first.meta[key], None) for key in MRSData.LIST_KEYS if key in first.meta}
         notes = [f"{len(members)} files read by {first.provenance.reader}"]
         notes.extend(dict.fromkeys(note for m in members for note in m.provenance.notes))
         d = self.basis_set(
@@ -91,14 +88,13 @@ class BasisFolderReader(Reader):
             raise ReaderError(f"basis-set file {path.name} holds more than one spectrum")
         return datasets[0]
 
-    @staticmethod
-    def _check(sniff: Sniff, members: list[MRSData]) -> None:
+    def _check(self, sniff: Sniff, members: list[MRSData]) -> None:
         """The files must describe the same acquisition grid."""
         first = members[0]
         for m in members[1:]:
             same = (
-                np.isclose(m.spectrometer_frequency, first.spectrometer_frequency, rtol=1e-6)
-                and np.isclose(m.dwelltime, first.dwelltime, rtol=1e-6)
+                self._close(m.spectrometer_frequency, first.spectrometer_frequency)
+                and self._close(m.dwelltime, first.dwelltime)
                 and m.nucleus == first.nucleus
                 and m.n_points == first.n_points
             )
@@ -107,3 +103,8 @@ class BasisFolderReader(Reader):
                     f"{sniff.path.name}: {m.name} differs from {first.name} in frequency, "
                     "nucleus, dwell time or length"
                 )
+
+    @staticmethod
+    def _close(a: float | None, b: float | None) -> bool:
+        """Equal within rounding; a value not stated equals only another not stated."""
+        return a == b if a is None or b is None else bool(np.isclose(a, b, rtol=1e-6))

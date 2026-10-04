@@ -92,11 +92,8 @@ class CLI:
             lines.extend(f"    {name}: {value}" for name, value in d.diagnostics.items())
         else:
             dims = " ".join(f"{name}={n}" for name, n in zip(d.dims, d.shape, strict=True))
-            lines += [
-                f"  {d.name}: {dims}",
-                f"    {d.nucleus}, {d.spectrometer_frequency:.4f} MHz, dwell "
-                f"{d.dwelltime * 1e3:.4g} ms ({d.spectral_width:.6g} Hz), {d.n_points} points",
-            ]
+            width = "" if d.spectral_width is None else f" ({d.spectral_width:.6g} Hz)"
+            lines += [f"  {d.name}: {dims}", f"    {d.acquisition()}{width}, {d.n_points} points"]
         width = max((len(key) for key in d.meta), default=0)
         for key, value in d.meta.items():
             text = json.dumps(value, default=str)

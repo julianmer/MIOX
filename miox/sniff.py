@@ -94,6 +94,7 @@ class Format(StrEnum):
     BASIS_FOLDER = "basis_folder"
     JMRUI_TEXT = "jmrui_text"
     JMRUI_BINARY = "jmrui_binary"
+    TEXT_FID = "text_fid"  # headerless columns of real and imaginary parts
     ISMRMRD = "ismrmrd"
     UNKNOWN = "unknown"
 
@@ -220,6 +221,9 @@ class Sniffer:
         (b"IMAGE DESCRIPTOR FILE", Format.SIVIC_IDF, Kind.IMAGING, "UCSF IDF header"),
     )
     PAR_LINE = re.compile(rb"^\.\s+[A-Za-z]", re.M)  # ".    Patient name :"; LIST: ".    0    0"
+    NUMBER = re.compile(r"[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?")  # one numeric text field
+    FIELD_SEPARATOR = re.compile(r"[,\s]+")
+    TEXT_FID_LINES = 8  # complete numeric lines a headerless text file must start with
     NIFTI_SIDECARS = (".json", ".bval", ".bvec", ".img")  # BIDS sidecar, diffusion tables, pair
     ANALYZE_SIZES = (b"\x00\x00\x01\x5c", b"\x5c\x01\x00\x00")  # sizeof_hdr 348, either byte order
     BRIK = re.compile(r"\.brik(\.gz)?$", re.I)
@@ -234,6 +238,7 @@ class Sniffer:
     BASIS_MEMBERS = (
         Format.LCMODEL_RAW,
         Format.JMRUI_TEXT,
+        Format.TEXT_FID,
         Format.FSL_MRS_BASIS,
         Format.NIFTI_MRS,
         Format.FIDA_MAT,
@@ -591,7 +596,34 @@ class Sniffer:
                 confidence=1.0,
                 evidence=("jMRUI text marker",),
             )
+        if self._is_text(head) and (columns := self._numeric_columns(head)):
+            return Sniff(
+                path,
+                Format.TEXT_FID,
+                Kind.SPECTROSCOPY,
+                confidence=0.5,
+                evidence=(f"headerless text, {columns} numeric columns",),
+                detail={"columns": columns},
+            )
         return None
+
+    def _numeric_columns(self, head: bytes) -> int:
+        """Columns of a text file that starts with nothing but numbers in an even number of
+        columns (pairs of real and imaginary parts), 0 otherwise."""
+        lines = head.decode("ascii", "replace").splitlines()
+        if len(head) >= self.HEAD_BYTES:
+            lines = lines[:-1]  # cut off
+        lines = [line for line in lines if line.strip()]
+        if len(lines) < self.TEXT_FID_LINES:
+            return 0
+        counts = set()
+        for line in lines:
+            fields = [f for f in self.FIELD_SEPARATOR.split(line) if f]
+            if not all(self.NUMBER.fullmatch(f) for f in fields):
+                return 0
+            counts.add(len(fields))
+        columns = counts.pop() if len(counts) == 1 else 0
+        return columns if columns >= 2 and columns % 2 == 0 else 0
 
     def companion_binary(self, path: Path, head: bytes) -> Sniff | None:
         """Headerless binary data next to the text header that describes it."""

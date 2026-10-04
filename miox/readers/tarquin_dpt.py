@@ -21,7 +21,7 @@ import numpy as np
 
 # own
 from miox.data import MRSData
-from miox.readers.base import Reader, ReaderError
+from miox.readers.base import Reader
 from miox.sniff import Format, Sniff
 
 
@@ -48,30 +48,34 @@ class TarquinDptReader(Reader):
                 key, _, value = line.strip().partition("\t")
                 header[key] = self._number(value.strip())
             rows = np.loadtxt(fh, ndmin=2)
-        if "Sampling_frequency" not in header or "Transmitter_frequency" not in header:
-            raise ReaderError(f"{sniff.path.name} has no sampling or transmitter frequency")
         fid = (rows[:, 0] + 1j * rows[:, 1]).reshape(1, 1, 1, -1)
-        values = {
-            "SpectrometerFrequency": (
+        values = {"ResonantNucleus": ([self.NUCLEUS], None)}
+        notes = [f"nucleus not stored in .dpt files; {self.NUCLEUS} assumed"]
+        if "Transmitter_frequency" in header:
+            values["SpectrometerFrequency"] = (
                 [header["Transmitter_frequency"] / 1e6],
                 "Transmitter_frequency",
-            ),
-            "ResonantNucleus": ([self.NUCLEUS], None),
-        }
+            )
+        else:
+            notes.append("no Transmitter_frequency in the header")
         if "Echo_time" in header:
             values["EchoTime"] = (header["Echo_time"], "Echo_time")
-        notes = [f"nucleus not stored in .dpt files; {self.NUCLEUS} assumed"]
         if header.get("PPM_reference"):
             values["ReferencePPM"] = (float(header["PPM_reference"]), "PPM_reference")
         else:
             notes.append("PPM_reference 0: not referenced")
-        dwelltime = 1 / header["Sampling_frequency"]
+        dwelltime = None
+        if "Sampling_frequency" in header:
+            dwelltime = 1 / header["Sampling_frequency"]
+        else:
+            notes.append("no Sampling_frequency in the header")
         d = self.dataset(
             sniff, fid, dwelltime, values, header, sniff.path.stem, notes, self.SOURCE
         )
         d.meta.set("ResonantNucleus", [self.NUCLEUS], f"assumed: {self.NUCLEUS}")
-        source = f"{self.SOURCE}: 1 / Sampling_frequency"
-        d.meta.set("DwellTime", dwelltime, source, "Sampling_frequency")
+        if dwelltime is not None:
+            source = f"{self.SOURCE}: 1 / Sampling_frequency"
+            d.meta.set("DwellTime", dwelltime, source, "Sampling_frequency")
         return [d]
 
     @staticmethod

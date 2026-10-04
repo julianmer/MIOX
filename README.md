@@ -14,6 +14,15 @@ d.data, d.dims, d.dwelltime    # complex FIDs in NIfTI-MRS order
 d.meta["EchoTime"], d.meta.source["EchoTime"], d.meta.vendor
 ```
 
+`load` returns what a file states; a file without frequency, nucleus or dwell time (headerless
+text columns, a bare LCModel .RAW) gives a dataset whose `missing` names those keys. Pass them in
+`given` and ask for `complete=True` when everything NIfTI-MRS needs must be there:
+
+```python
+[d] = gu.load("fid.txt", given={"SpectrometerFrequency": 123.2, "ResonantNucleus": "1H",
+                                "SpectralWidth": 4000}, complete=True)   # IncompleteError if not
+```
+
 `miox info` prints what a file holds and where each value came from; `miox sniff`
 identifies a file or directory without reading it whole; `miox audit` lists every field of
 the vendor header and whether a key is read from it. `docs/coverage/` has that audit for every

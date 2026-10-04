@@ -153,3 +153,38 @@ def test_dcm2niix_spectroscopy_nifti_equals_the_dicom(series):
     assert nifti.shape == dicom.shape and np.allclose(nifti.data, dicom.data)
     assert np.allclose(nifti.affine, dicom.affine, atol=1e-4)
     assert _same(nifti, dicom, ("SpectrometerFrequency", "EchoTime")) == []
+
+
+CHALLENGE = PUBLIC_DATA / "mrs_fitting_challenge"
+CHALLENGE_GIVEN = {"SpectrometerFrequency": 123.22, "ResonantNucleus": "1H", "DwellTime": 2.5e-4}
+
+
+@pytest.mark.data
+def test_fitting_challenge_text_lcmodel_and_jmrui_agree():
+    """The headerless text columns hold the same values as the jMRUI and LCModel exports; the
+    text and LCModel files state no frequency or dwell time and take jMRUI's."""
+    if not CHALLENGE.is_dir():
+        pytest.skip("mrs_fitting_challenge not fetched")
+    suppressed, water = load(CHALLENGE / "datasets_text/dataset1.txt", given=CHALLENGE_GIVEN)
+    [raw] = load(CHALLENGE / "datasets_LCModel/dataset1.RAW", given=CHALLENGE_GIVEN, complete=True)
+    [h2o] = load(CHALLENGE / "datasets_LCModel/dataset1.H2O", given=CHALLENGE_GIVEN, complete=True)
+    [jmrui_ws] = load(CHALLENGE / "datasets_JMRUI/dataset1_WS.txt")
+    [jmrui_water] = load(CHALLENGE / "datasets_JMRUI/dataset1_nWS.txt")
+    assert suppressed.name == "dataset1 columns 1-2" and water.name == "dataset1 columns 3-4"
+    for a, b, c in ((suppressed, raw, jmrui_ws), (water, h2o, jmrui_water)):
+        assert _same(a, c, ("SpectrometerFrequency", "ResonantNucleus") + AVERAGED_KEYS) == []
+        assert np.allclose(a.data, c.data, rtol=1e-6, atol=1e-3)
+        assert np.allclose(b.data, c.data, rtol=1e-5, atol=1e-3)  # .RAW: 6 significant digits
+
+
+@pytest.mark.data
+def test_fitting_challenge_text_basis_equals_lcmodel_basis():
+    if not CHALLENGE.is_dir():
+        pytest.skip("mrs_fitting_challenge not fetched")
+    [lcmodel] = load(CHALLENGE / "basisset_LCModel")
+    given = CHALLENGE_GIVEN | {"SpectrometerFrequency": lcmodel.meta["SpectrometerFrequency"]}
+    [text] = load(CHALLENGE / "basisset_text", given=given, complete=True)
+    assert text.provenance.format == Format.BASIS_FOLDER and text.metabolites == lcmodel.metabolites
+    assert _same(text, lcmodel, ("SpectrometerFrequency", "ResonantNucleus") + AVERAGED_KEYS) == []
+    for metabolite in text.metabolites:
+        assert np.allclose(text.fid(metabolite), lcmodel.fid(metabolite), rtol=1e-5, atol=1e-5)

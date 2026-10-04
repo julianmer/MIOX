@@ -237,3 +237,17 @@ def test_pyamares_prior(tmp_path):
     assert p.lines[1]["bounds"]["ppm"] == [-2.6, -2.4] and p.lines[0]["bounds"]["ppm"] is None
     assert p.lines[0]["bounds"]["amplitude"] == [0.0, None]
     assert p.meta.vendor["comments"] == ["#  a comment"]
+
+
+def test_folder_of_text_fids(tmp_path):
+    for name, frequency in (("NAA", 100), ("Cr", -50), ("GABA", 20)):
+        (tmp_path / f"{name}.txt").write_text(
+            "".join(f"{z.real:.6E} {z.imag:.6E}\n" for z in _fid(frequency))
+        )
+    [b] = gu.load(tmp_path)
+    assert b.metabolites == ["Cr", "GABA", "NAA"] and b.shape == (1, 1, 1, 64, 3)
+    assert b.missing == ("SpectrometerFrequency", "ResonantNucleus", "DwellTime")
+    given = {"SpectrometerFrequency": 123.2, "ResonantNucleus": "1H", "DwellTime": 2.5e-4}
+    [b] = gu.load(tmp_path, given=given, complete=True)
+    assert b.spectrometer_frequency == 123.2 and b.dwelltime == 2.5e-4
+    assert np.allclose(b.fid("GABA"), _fid(20), atol=1e-6)

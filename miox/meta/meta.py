@@ -47,7 +47,7 @@ class Meta(dict):
     def vendor_fields(self) -> dict[str, Any]:
         """Every leaf of the vendor header by its path, the parts joined with ``/``."""
         fields = {}
-        stack = [("", self.vendor)]
+        stack = [("", self.vendor)] if self.vendor else []
         while stack:
             prefix, node = stack.pop()
             if isinstance(node, dict) and node:

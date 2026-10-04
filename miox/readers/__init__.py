@@ -16,7 +16,7 @@
 #*************#
 
 # own
-from miox.readers.base import Reader, ReaderError, Spec2niiReader
+from miox.readers.base import IncompleteError, Reader, ReaderError, Spec2niiReader
 from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.bruker import BrukerReader
 from miox.readers.dicom_image import DicomImageReader
@@ -48,6 +48,7 @@ from miox.readers.sivic_ddf import SivicDdfReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.tarquin_output import TarquinOutputReader
+from miox.readers.text_fid import TextFidReader
 from miox.readers.varian import VarianReader
 from miox.readers.vasf import VasfReader
 from miox.readers.vespa_prior import VespaPriorReader
@@ -62,6 +63,7 @@ __all__ = [
     "FslMrsBasisReader",
     "GavaMidasPriorReader",
     "GePfileReader",
+    "IncompleteError",
     "InspectorBasisReader",
     "JmruiReader",
     "LcmodelBasisReader",
@@ -88,6 +90,7 @@ __all__ = [
     "SpinwizardBasisReader",
     "TarquinDptReader",
     "TarquinOutputReader",
+    "TextFidReader",
     "VarianReader",
     "VasfReader",
     "VespaPriorReader",
