@@ -46,7 +46,7 @@ with warnings.catch_warnings():  # nibabel.nicom warns on import that it is expe
 from miox.data import MRSData
 from miox.readers.base import ReaderError, Spec2niiReader
 from miox.readers.siemens_twix import SiemensTwixReader
-from miox.sniff import Format, Sniff
+from miox.sniff import Format, Sniff, open_dicom
 
 
 #**************************************************************************************************#
@@ -76,6 +76,7 @@ class DicomMrsReader(Spec2niiReader):
     REFERENCE = "dicom/ChemicalShiftReference"
     TAGS = {"dicom": "DIM_DYN", "philips_dicom": "DIM_DYN", "uih": None}  # spec2nii defaults
     BINARY_VRS = {"OB", "OW", "OF", "OD", "OL", "OV", "UN"}
+    XA_SERIES_HEADER = (0x0021, 0x1019)  # Siemens XA: XProtocol text with the ASCCONV block
     BULK = 1024  # binary values longer than this are summarised by their size
     ENHANCED_MRS = "1.2.840.10008.5.1.4.1.1.4.2"
     SHARED = "dicom/SharedFunctionalGroupsSequence/0"
@@ -233,8 +234,10 @@ class DicomMrsReader(Spec2niiReader):
         return sorted(files)
 
     def header(self, path: Path) -> dict:
-        """Complete header of one DICOM file: elements, CSA headers and Siemens protocol."""
-        ds = pydicom.dcmread(path)
+        """Complete header of one DICOM file: elements, CSA headers and Siemens protocol (from
+        the CSA series header, or from the XA series header (0021,1019) of enhanced files)."""
+        with open_dicom(path) as fh:
+            ds = pydicom.dcmread(fh)
         header = {"file_meta": self._dataset(ds.file_meta), "dicom": self._dataset(ds)}
         for kind in ("image", "series"):
             csa = csareader.get_csa_header(ds, kind)
@@ -245,11 +248,20 @@ class DicomMrsReader(Spec2niiReader):
         for name in ("MrPhoenixProtocol", "MrProtocol"):  # VB and later, VA
             protocol = header.get("csa_series", {}).get(name)
             if isinstance(protocol, str):
-                header[name] = {
-                    SiemensTwixReader.protocol_key(k): self.plain(v)
-                    for k, v in parse_buffer(protocol).items()
-                }
+                header[name] = self._protocol(protocol)
+        if "MrPhoenixProtocol" not in header:
+            for element in ds.iterall():
+                value = element.value if element.tag == self.XA_SERIES_HEADER else None
+                if isinstance(value, bytes) and b"### ASCCONV BEGIN" in value:
+                    header["MrPhoenixProtocol"] = self._protocol(value.decode("latin-1"))
+                    break
         return header
+
+    def _protocol(self, text: str) -> dict:
+        """The ASCCONV block of a Siemens protocol as a flat dict."""
+        return {
+            SiemensTwixReader.protocol_key(k): self.plain(v) for k, v in parse_buffer(text).items()
+        }
 
     @contextlib.contextmanager
     def _one_slab(self) -> Iterator[None]:

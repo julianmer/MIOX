@@ -28,12 +28,22 @@ import zlib
 from dataclasses import KW_ONLY, dataclass, field
 from enum import StrEnum
 from pathlib import Path
+from typing import BinaryIO
 
 import nibabel as nib
 import pydicom
 
 # own
 from miox.matfile import MatFile
+
+GZIP_MAGIC = b"\x1f\x8b"
+
+
+def open_dicom(path: Path) -> BinaryIO:
+    """The file for reading, decompressed when it is a gzipped export (.dcm.gz)."""
+    with open(path, "rb") as fh:
+        gzipped = fh.read(2) == GZIP_MAGIC
+    return gzip.open(path, "rb") if gzipped else open(path, "rb")
 
 
 #**************************************************************************************************#
@@ -319,25 +329,35 @@ class Sniffer:
             )
         if basis := self._basis_folder(path, files):
             return basis
-        for child in files[: self.DIR_PROBE_LIMIT]:
-            if not self._is_dicom(self._head(child)):
-                continue
-            first = self._read_dicom(child)
+        dicoms = [c for c in files[: self.DIR_PROBE_LIMIT] if self._is_dicom_file(c)]
+        if dicoms:
+            first, child = self._deciding_dicom(dicoms)
             return dataclasses.replace(
                 first,
                 path=path,
-                evidence=("directory; first DICOM file decides",) + first.evidence,
+                evidence=("directory; first DICOM data file decides",) + first.evidence,
                 companions=(child,) + tuple(c for c in files if c != child),
             )
         if any(c.is_dir() for c in path.iterdir()) and (study := self._study(path)):
-            first = self._read_dicom(study[0])
+            first, _ = self._deciding_dicom(study)
             return dataclasses.replace(
                 first,
                 path=path,
-                evidence=("study folder; first DICOM file decides",) + first.evidence,
+                evidence=("study folder; first DICOM data file decides",) + first.evidence,
                 companions=tuple(study),
             )
         return Sniff(path, Format.UNKNOWN, evidence=("directory with no recognised content",))
+
+    def _deciding_dicom(self, paths: list[Path]) -> tuple[Sniff, Path]:
+        """The sniff of the first image or spectroscopy file among ``paths`` (presentation
+        states, reports and raw data are passed over), else of the first file."""
+        first = None
+        for child in paths[: self.DIR_PROBE_LIMIT]:
+            sniff = self._read_dicom(child)
+            first = first or (sniff, child)
+            if sniff.format != Format.DICOM_OTHER:
+                return sniff, child
+        return first
 
     def _study(self, path: Path) -> list[Path]:
         """DICOM files in the subfolders of a folder without DICOM files of its own (a study)."""
@@ -346,14 +366,18 @@ class Sniffer:
             if len(found) >= self.STUDY_LIMIT:
                 break
             if child.is_file() and not child.name.startswith("."):
-                with open(child, "rb") as fh:
-                    if fh.read(132)[128:] == b"DICM":
-                        found.append(child)
+                if self._is_dicom_file(child):
+                    found.append(child)
         return found
 
     # --- file rules ------------------------------------------------------------------------------
 
     def dicom(self, path: Path, head: bytes) -> Sniff | None:
+        if head[:2] == GZIP_MAGIC:
+            try:
+                head = zlib.decompressobj(31).decompress(head, 132)
+            except zlib.error:
+                return None
         if self._is_dicom(head):
             return self._read_dicom(path)
         return None
@@ -861,6 +885,12 @@ class Sniffer:
         return head[128:132] == b"DICM"
 
     @staticmethod
+    def _is_dicom_file(path: Path) -> bool:
+        """DICM magic after the preamble, in a plain or gzipped file."""
+        with open_dicom(path) as fh:
+            return fh.read(132)[128:] == b"DICM"
+
+    @staticmethod
     def _sibling(path: Path, suffix: str) -> Path | None:
         """Companion file with the same stem and ``suffix`` in any letter case."""
         for candidate in path.parent.iterdir():
@@ -876,7 +906,8 @@ class Sniffer:
         return manufacturer.strip().lower() or None
 
     def _read_dicom(self, path: Path, force: bool = False) -> Sniff:
-        ds = pydicom.dcmread(path, stop_before_pixels=True, force=force)
+        with open_dicom(path) as fh:
+            ds = pydicom.dcmread(fh, stop_before_pixels=True, force=force)
         sop = str(ds.get("SOPClassUID", ""))
         if not sop and force:
             raise ValueError("not DICOM")
