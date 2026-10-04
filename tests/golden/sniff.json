@@ -1,4 +1,29 @@
 {
+ "agilent_fdf/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "agilent_fdf/MRI_FDF/0009.fdf": {
+  "format": "varian_fdf",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "agilent_fdf/MRI_FDF/0030.fdf": {
+  "format": "varian_fdf",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "agilent_fdf/MRI_TXTimages/0009.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "agilent_fdf/MRI_TXTimages/0030.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "basis_toolbox/sample_basis_sets/GAVA/gava_priors.txt": {
   "format": "gava_prior",
   "vendor": null,
@@ -5079,6 +5104,106 @@
   "vendor": null,
   "kind": "spectroscopy"
  },
+ "itk_ge/baseline/113766.003.001.mha": {
+  "format": "metaimage",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/baseline/19771.002.001.mha": {
+  "format": "metaimage",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/baseline/c_vf1122.fre.mha": {
+  "format": "metaimage",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/baseline/c_vf1210.fre.mha": {
+  "format": "metaimage",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/ct_genesis/c_vf1122.fre": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/ct_genesis/c_vf1123.fre": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/ct_genesis/c_vf1210.fre": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/ct_genesis/c_vf1211.fre": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge4/19771.002.001": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge4/19771.002.002": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge4/19771.002.003": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge4/19771.002.004": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge4/19771.002.005": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge4/19771.002.006": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge5/113766.003.001": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge5/113766.003.002": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge5/113766.003.003": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge5/113766.003.004": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge5/113766.003.005": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_ge/test_ge5/113766.003.006": {
+  "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
  "lcmodel/test_lcm/3t.basis": {
   "format": "lcmodel_basis",
   "vendor": null,
@@ -6274,6 +6399,271 @@
   "vendor": null,
   "kind": "spectroscopy"
  },
+ "mrtrix_test_data/SIFT_phantom/dwi.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/SIFT_phantom/fixels/mask.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/SIFT_phantom/mask.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/dwi.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/dwi2fod/msmt/dwi.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/dwi2fod/msmt/mask.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/fixel_image_template/mask.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mask.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrconvert/dwi_select_axes.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrconvert/in.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrconvert/pngaxial.mif.gz": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrconvert/pngaxial0.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngaxial1.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngaxial2.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngaxial3.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngaxial4.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngcoronal.mif.gz": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrconvert/pngcoronal0.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngcoronal1.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngcoronal2.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngcoronal3.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngcoronal4.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask.mif.gz": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrconvert/pngmask0.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask1.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask2.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask3.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask4.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask5.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask6.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask7.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngmask8.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb00.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb01.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb02.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb03.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb04.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb05.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb06.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb07.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb08.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb09.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngrgb10.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngsagittal.mif.gz": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrconvert/pngsagittal0.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngsagittal1.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrconvert/pngsagittal2.png": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrtrix_test_data/mrcrop/mask.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrmath/out1.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrmath/out2.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/mrmath/out3.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/tckedit/mask.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "mrtrix_test_data/template.mif.gz": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
  "nema_wg16/Philips/Philips MR Spectroscopy/DICOM/XX_0003": {
   "format": "dicom_other",
   "vendor": "philips",
@@ -6933,6 +7323,86 @@
   "format": "unknown",
   "vendor": null,
   "kind": "unknown"
+ },
+ "pynrrd/BallBinary30x30x30.nhdr": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30.raw": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pynrrd/BallBinary30x30x30_byteskip_minus_five.nhdr": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30_byteskip_minus_one.nhdr": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30_byteskip_minus_one_nifti.nhdr": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30_bz2.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30_gz.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30_gz_byteskip_minus_one.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30_gz_lineskip.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/BallBinary30x30x30_nifti.nhdr": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/test1d_ascii.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/test2d_ascii.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/test_customFields.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "pynrrd/test_simple4d_raw.nrrd": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
  },
  "spec2nii_test_data/.gitattributes": {
   "format": "unknown",

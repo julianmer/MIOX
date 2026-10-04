@@ -9,7 +9,8 @@
 # Purpose: Fetches the public test data into tests/data (gitignored): the spec2nii test set (git   #
 #          LFS, a small per-format subset by default, --all for everything, retried on the         #
 #          server's rate limit), the NIfTI-MRS example data from Zenodo record 5085449, the test   #
-#          folders of further public repositories, and NEMA's spectroscopy DICOM examples.         #
+#          folders of further public repositories, single files by URL (ITK's GE images through   #
+#          an IPFS gateway), and NEMA's spectroscopy DICOM examples.                               #
 #                                                                                                  #
 ####################################################################################################
 
@@ -128,6 +129,59 @@ class DataFetcher:
         "dcm_qa_dti": ("https://github.com/neurolabusc/dcm_qa_dti.git", None),
         "dcm_qa_asl": ("https://github.com/neurolabusc/dcm_qa_asl.git", None),
         "dcm_qa_stc": ("https://github.com/neurolabusc/dcm_qa_stc.git", None),
+        "mrtrix_test_data": (
+            "https://github.com/MRtrix3/test_data.git",
+            ["dwi.mif", "mask.mif", "template.mif.gz", "mrmath", "mrconvert"],
+        ),
+    }
+    # single files: folder -> (base URL, {relative path: name or content id under the base})
+    PYNRRD = "https://raw.githubusercontent.com/mhe/pynrrd/master/nrrd/tests/data"  # MIT
+    SWELLING = (  # fdf images and their ImageJ text exports, CC BY 4.0 (Beata Wereszczyńska)
+        "https://raw.githubusercontent.com/BeataWereszczynska/"
+        "Swelling_tablet_fronts_D_k_from_MRI_T2_or_img/main"
+    )
+    IPFS = "https://ipfs.filebase.io/ipfs"  # gateway to ITK's test data store, Apache 2.0
+    PYNRRD_FILES = (
+        "BallBinary30x30x30.nhdr", "BallBinary30x30x30.nii.gz", "BallBinary30x30x30.nrrd",
+        "BallBinary30x30x30.raw", "BallBinary30x30x30_byteskip_minus_five.nhdr",
+        "BallBinary30x30x30_byteskip_minus_one.nhdr",
+        "BallBinary30x30x30_byteskip_minus_one_nifti.nhdr", "BallBinary30x30x30_bz2.nrrd",
+        "BallBinary30x30x30_gz.nrrd", "BallBinary30x30x30_gz_byteskip_minus_one.nrrd",
+        "BallBinary30x30x30_gz_lineskip.nrrd", "BallBinary30x30x30_nifti.nhdr",
+        "test1d_ascii.nrrd", "test2d_ascii.nrrd", "test_customFields.nrrd",
+        "test_simple4d_raw.nrrd",
+    )
+    SWELLING_FILES = (
+        "MRI_FDF/0009.fdf", "MRI_FDF/0030.fdf", "MRI_TXTimages/0009.txt", "MRI_TXTimages/0030.txt",
+        "LICENSE",
+    )
+    ITK_GE_FILES = {  # relative path: content id
+        "test_ge5/113766.003.001": "bafkreiecl6v2p36p5ewgmmptvjajopa2bod3bcnqdgq2rosq4nmd25fl3e",
+        "test_ge5/113766.003.002": "bafkreicbywnrrjcl2wehhbqmff73bjcwwoucopxutj53g5virc5x2qal6m",
+        "test_ge5/113766.003.003": "bafkreihvzsg2qtvsy7pbdry25tzm5gzjqwyo5gyfw36vix26chj5eu4oe4",
+        "test_ge5/113766.003.004": "bafkreiffchdk6cqi2tkyysxfwbaw2kqit6k7fq7exnsbopn76ehrtp2jfq",
+        "test_ge5/113766.003.005": "bafkreiafcd4siu7wrrm7c6k5ou5a7wm4p2j7iyczgngjh5h5a74rmk4eem",
+        "test_ge5/113766.003.006": "bafkreicv562xhqs7mdeasawxh5p5kjnhua4boomkvjp2i4ob6fskhvnv5i",
+        "test_ge4/19771.002.001": "bafkreidl5lywjunmfxfy6kbaocfok2fuehj5bx4ciiozw46pcxaa44rzte",
+        "test_ge4/19771.002.002": "bafkreib5x4r4zcroilk36n2bsx3wo7y5grmoosudojifnn2dcf2viwieiu",
+        "test_ge4/19771.002.003": "bafkreickggjzritwhvbdqj64w6s4olnsh5f4icp6ycqyvtidpzybqitndm",
+        "test_ge4/19771.002.004": "bafkreia6nz4nrxgal47ns5epex7wxgaag4gughg5xorjem7oewdj7ck6nu",
+        "test_ge4/19771.002.005": "bafkreic4zoyqnybqogydtkiwidosy3v6xwnofzjnofir7txgd553bel4zq",
+        "test_ge4/19771.002.006": "bafkreiftiogu3h7dpyk55svoz6fw7ybzlfd3u3odancrs23rhgljrbjvdq",
+        "ct_genesis/c_vf1122.fre": "bafkreia6hxgzn43ez65h4tren4dxlcoheh665pfaq4rysylc6tygazztd4",
+        "ct_genesis/c_vf1123.fre": "bafkreidcnq2bohnkvzvmexfbpedg4xlxvov77a2nqcvoyfn2deu2eqptmy",
+        "ct_genesis/c_vf1210.fre": "bafkreih35u5ecdox6sbbwphke7f3xsq7dea7gdeeeizorgyo67e6sabcwi",
+        "ct_genesis/c_vf1211.fre": "bafkreif26rvs3wdnvsoiyycpidrirr4fygob3fsn3bfhlde6e7frllfpgq",
+        "baseline/c_vf1122.fre.mha": "bafybeieqjaqvkwbubml5lsnwzy25wlgadhwqtytt6mig6g6n6f7yb3tfcu",
+        "baseline/c_vf1210.fre.mha": "bafybeifecxwzugdiethtnupgvc5uumlkyucp7zbkokfbzpzgb6nk2xecri",
+        "baseline/113766.003.001.mha":
+            "bafkreighxzakrzvtd5ykjw5ju4eycxwmxcruphkqi6weza2zayhx2ub33a",
+        "baseline/19771.002.001.mha": "bafkreidvxasu7bdqrqvsicgkmirp4tzunpgnm6z4y6egoo5ch3f6yyrxyi",
+    }
+    FILES = {
+        "pynrrd": (PYNRRD, dict(zip(PYNRRD_FILES, PYNRRD_FILES, strict=True))),
+        "agilent_fdf": (SWELLING, dict(zip(SWELLING_FILES, SWELLING_FILES, strict=True))),
+        "itk_ge": (IPFS, ITK_GE_FILES),
     }
     NEMA = "ftp://medical.nema.org/medical/dicom/DataSets/WG16"
     NEMA_FILES = {  # spectroscopy DICOM examples of the DICOM working group 16
@@ -146,6 +200,8 @@ class DataFetcher:
         self.zenodo(self.dest / "nifti_mrs_examples")
         for name, (url, paths) in self.REPOSITORIES.items():
             self.repository(self.dest / name, url, paths)
+        for name, (base, files) in self.FILES.items():
+            self.files(self.dest / name, base, files)
         self.nema(self.dest / "nema_wg16")
 
     def repository(self, dest: Path, url: str, paths: list[str] | None) -> None:
@@ -164,6 +220,26 @@ class DataFetcher:
         subprocess.run(["git", "checkout"], cwd=dest, check=True)
         for archive in dest.rglob("*.zip"):
             shutil.unpack_archive(archive, archive.with_suffix(""))
+
+    def files(self, dest: Path, base: str, files: dict[str, str]) -> None:
+        """Download single files, skipping those present; gateways are retried with a pause."""
+        for relative, name in files.items():
+            url, target = f"{base}/{name}", dest / relative
+            if target.is_file():
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            for attempt in range(1, self.retries + 1):
+                try:
+                    print(f"downloading {dest.name}/{relative}")
+                    urllib.request.urlretrieve(url, target)
+                    break
+                except OSError as e:
+                    print(f"  failed ({e}), attempt {attempt}/{self.retries}")
+                    time.sleep(min(10 * attempt, 60))
+            else:
+                sys.exit(f"could not fetch {url}")
+            time.sleep(0.5)  # the gateways rate-limit bursts
+        print(f"{dest.name}: {len(files)} files")
 
     def nema(self, dest: Path) -> None:
         """Download the selected files of the NEMA FTP folders, skipping those already present."""

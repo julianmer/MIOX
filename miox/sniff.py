@@ -37,6 +37,9 @@ import pydicom
 from miox.matfile import MatFile
 
 GZIP_MAGIC = b"\x1f\x8b"
+SIGNA_4X_STUDY_START = 1536  # GE Signa 4.x: study header block, in 16-bit words
+SIGNA_4X_SERIES_START = 2048  # series header block, in words
+SIGNA_4X_PLANE_NAME = 139  # the plane name in that block, in words
 
 
 def open_dicom(path: Path) -> BinaryIO:
@@ -71,6 +74,11 @@ class Format(StrEnum):
     MINC2 = "minc2"
     PARREC = "parrec"
     AFNI = "afni"
+    NRRD = "nrrd"
+    METAIMAGE = "metaimage"
+    MRTRIX = "mrtrix"
+    VARIAN_FDF = "varian_fdf"  # Varian/Agilent VnmrJ image
+    GE_SIGNA = "ge_signa"  # GE Signa 4.x, Genesis 5.x and Advantage Windows images
     BRUKER = "bruker"
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
@@ -234,6 +242,7 @@ class Sniffer:
     NUMBER = re.compile(r"[-+]?(\d+\.?\d*|\.\d+)([eE][-+]?\d+)?")  # one numeric text field
     FIELD_SEPARATOR = re.compile(r"[,\s]+")
     TEXT_FID_LINES = 8  # complete numeric lines a headerless text file must start with
+    TEXT_FID_MAX_COLUMNS = 8  # more numeric columns than that is a table or an image, not FIDs
     NIFTI_SIDECARS = (".json", ".bval", ".bvec", ".img")  # BIDS sidecar, diffusion tables, pair
     ANALYZE_SIZES = (b"\x00\x00\x01\x5c", b"\x5c\x01\x00\x00")  # sizeof_hdr 348, either byte order
     BRIK = re.compile(r"\.brik(\.gz)?$", re.I)
@@ -314,6 +323,8 @@ class Sniffer:
         names = {p.name for p in path.iterdir()}
         if names & set(self.BRUKER_PARAM_FILES):
             return self._bruker_scan(path, path, "directory with Bruker parameter files")
+        if fdfs := sorted(p for p in path.iterdir() if p.suffix.lower() == ".fdf"):
+            return self._image(path, Format.VARIAN_FDF, f"directory with {len(fdfs)} fdf files")
         if "procpar" in names:
             return self._varian_scan(path, path, "directory with procpar")
         files = [c for c in sorted(path.iterdir()) if c.is_file() and c.name != ".DS_Store"]
@@ -338,6 +349,9 @@ class Sniffer:
                 evidence=("directory; first DICOM data file decides",) + first.evidence,
                 companions=(child,) + tuple(c for c in files if c != child),
             )
+        for child in files[: self.DIR_PROBE_LIMIT]:
+            if signa := self._ge_signa(child, self._head(child)):
+                return self._image(path, Format.GE_SIGNA, f"directory of GE Signa files ({signa})")
         if any(c.is_dir() for c in path.iterdir()) and (study := self._study(path)):
             first, _ = self._deciding_dicom(study)
             return dataclasses.replace(
@@ -612,6 +626,15 @@ class Sniffer:
         return None
 
     def text_formats(self, path: Path, head: bytes) -> Sniff | None:
+        if head.startswith(b"NRRD000"):
+            where = "detached" if b"data file:" in head or b"datafile:" in head else "attached"
+            return self._image(path, Format.NRRD, f"NRRD magic, data {where}")
+        if head.startswith(b"mrtrix image"):
+            return self._image(path, Format.MRTRIX, "mrtrix image magic")
+        if head.startswith(b"ObjectType") and b"NDims" in head and b"ElementType" in head:
+            return self._image(path, Format.METAIMAGE, "MetaImage ObjectType header")
+        if head.startswith(b"#!/usr/local/fdf/startup"):
+            return self._image(path, Format.VARIAN_FDF, "fdf startup line")
         if b"jMRUI Data Textfile" in head:
             return Sniff(
                 path,
@@ -647,6 +670,8 @@ class Sniffer:
                 return 0
             counts.add(len(fields))
         columns = counts.pop() if len(counts) == 1 else 0
+        if columns > self.TEXT_FID_MAX_COLUMNS:
+            return 0
         return columns if columns >= 2 and columns % 2 == 0 else 0
 
     def companion_binary(self, path: Path, head: bytes) -> Sniff | None:
@@ -767,8 +792,17 @@ class Sniffer:
         return ()
 
     def image_files(self, path: Path, head: bytes) -> Sniff | None:
-        """Image formats nibabel reads: MGH, MINC 1 and 2, AFNI, Analyze (and their data halves)."""
+        """Image formats nibabel reads: MGH, MINC 1 and 2, AFNI, Analyze (and their data halves);
+        gzipped MRtrix images; GE Signa images."""
         name, suffix = path.name.lower(), path.suffix.lower()
+        if name.endswith(".mif.gz") and head[:2] == GZIP_MAGIC:
+            try:
+                if zlib.decompressobj(31).decompress(head, 32).startswith(b"mrtrix image"):
+                    return self._image(path, Format.MRTRIX, "gzipped mrtrix image magic")
+            except zlib.error:
+                pass
+        if signa := self._ge_signa(path, head):
+            return self._image(path, Format.GE_SIGNA, signa)
         if name.endswith((".mgh", ".mgz")):
             if head[:2] == b"\x1f\x8b":
                 head = zlib.decompressobj(31).decompress(head, 16)
@@ -883,6 +917,23 @@ class Sniffer:
     @staticmethod
     def _is_dicom(head: bytes) -> bool:
         return head[128:132] == b"DICM"
+
+    @staticmethod
+    def _ge_signa(path: Path, head: bytes) -> str | None:
+        """Evidence of a GE Signa image: the Genesis 5.x "IMGF" pixel header or suite header
+        with the product "SIGNA", or a Signa 4.x study header block whose series block names the
+        plane."""
+        if head[:4] == b"IMGF":
+            return "GE Genesis IMGF magic"
+        if head[7:12] == b"SIGNA" and head[114 + 305 : 114 + 307] in (b"MR", b"CT"):
+            return "GE Genesis suite header"
+        if head[2 * SIGNA_4X_STUDY_START :][:5] == b"STUDY":
+            with open(path, "rb") as fh:
+                fh.seek(2 * (SIGNA_4X_SERIES_START + SIGNA_4X_PLANE_NAME))
+                plane = fh.read(16)
+            if any(p in plane for p in (b"AXIAL", b"CORONAL", b"SAGITTAL", b"OBLIQUE")):
+                return "GE Signa 4.x study and series headers"
+        return None
 
     @staticmethod
     def _is_dicom_file(path: Path) -> bool:

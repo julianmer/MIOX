@@ -114,6 +114,7 @@ class ReadRecords:
 
     def _dataset(self, d: MRSData | MRImage | PriorSet | FitResult) -> dict:
         if isinstance(d, MRImage):
+            values = np.abs(d.data) if np.iscomplexobj(d.data) else d.data
             record = {
                 "name": d.name,
                 "shape": list(d.shape),
@@ -121,8 +122,8 @@ class ReadRecords:
                 "dtype": str(d.data.dtype),
                 "affine": np.round(d.affine, 6).tolist(),
                 "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
-                "data_sum": float(np.sum(d.data, dtype=np.float64)),
-                "data_norm": float(np.linalg.norm(np.asarray(d.data, dtype=np.float64))),
+                "data_sum": float(np.sum(values, dtype=np.float64)),
+                "data_norm": float(np.linalg.norm(np.asarray(values, dtype=np.float64))),
             }
             return json.loads(json.dumps(record, default=str))
         if isinstance(d, FitResult):
