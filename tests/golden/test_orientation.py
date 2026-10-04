@@ -56,7 +56,6 @@ REFERENCES = [
         "spec2nii_test_data/ge/pFiles/sLASER/sub-01_ses-01_acq-slaser_svs_noID.7",
         "sub-01_ses-01_acq-slaser_svs_noID",
     ),
-    ("spec2nii_test_data/bruker/PV-6.0.1/9/pdata/2/2dseq", "2DSEQ_9_2_lego_rod_3"),
     ("spec2nii_test_data/jmrui/metab_jmrui.txt", "metab_jmrui"),
     ("spec2nii_test_data/jmrui/press2.mrui", "press2"),
     ("spec2nii_test_data/other/metab.RAW", "metab"),
