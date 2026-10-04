@@ -65,3 +65,34 @@ def test_mgh_units(tmp_path):
 )
 def test_written_patient_position(text, code):
     assert NibabelImageReader()._position(text) == code
+
+
+def test_bruker_2dseq_frames_groups_and_geometry(tmp_path):
+    from miox.readers.bruker_2dseq import Bruker2dseq
+
+    visu = {
+        "VisuCoreSize": [4, 3],
+        "VisuCoreDimDesc": ["spatial", "spatial"],
+        "VisuCoreExtent": [8.0, 6.0],
+        "VisuCoreFrameCount": 6,
+        "VisuCoreFrameType": "MAGNITUDE_IMAGE",
+        "VisuCoreWordType": "_16BIT_SGN_INT",
+        "VisuCoreByteOrder": "littleEndian",
+        "VisuCoreDataSlope": [0.5] * 6,
+        "VisuCoreDataOffs": [1.0] * 6,
+        "VisuFGOrderDesc": [[3, "<FG_SLICE>", "<>", 0, 2], [2, "<FG_ECHO>", "<>", 2, 1]],
+        "VisuCoreOrientation": [[1, 0, 0, 0, 1, 0, 0, 0, 1]] * 6,
+        "VisuCorePosition": [[0, 0, float(k)] for k in (0, 2, 4)] * 2,
+        "VisuCoreSlicePacksSlices": [[0, 3]],
+    }
+    path = tmp_path / "2dseq"
+    try:
+        np.arange(6 * 12, dtype="<i2").tofile(path)
+        d = Bruker2dseq(path, visu)
+        frames = d.frames()
+        assert frames.shape == (6, 3, 4) and frames[0, 0, 1] == 1 * 0.5 + 1.0
+        assert d.groups() == [("FG_SLICE", 3), ("FG_ECHO", 2)] and d.spacing() == [2.0, 2.0]
+        assert d.slice_packs() == [(0, 3)] and d.spectral_axis() is None
+        assert np.allclose(d.position(5), [0, 0, 4]) and not d.transposed(0)
+    finally:
+        path.unlink(missing_ok=True)
