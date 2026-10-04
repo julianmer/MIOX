@@ -9,7 +9,7 @@
 # Purpose: Fetches the public test data into tests/data (gitignored): the spec2nii test set (git   #
 #          LFS, a small per-format subset by default, --all for everything, retried on the         #
 #          server's rate limit), the NIfTI-MRS example data from Zenodo record 5085449, the test   #
-#          folders of further public repositories, single files by URL (ITK's GE images through   #
+#          folders of further public repositories, single files by URL (ITK's GE images through    #
 #          an IPFS gateway), and NEMA's spectroscopy DICOM examples.                               #
 #                                                                                                  #
 ####################################################################################################
