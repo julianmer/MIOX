@@ -25,7 +25,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 # own
-from miox import Sniffer  # noqa: E402
+from miox import Format, Sniffer  # noqa: E402
 from tests.conftest import GOLDEN, PUBLIC_DATA  # noqa: E402
 from tests.golden.records import ReadRecords  # noqa: E402
 
@@ -77,8 +77,22 @@ class GoldenUpdater:
                 "kind": s.kind,
             }
             n += 1
+        records = self._one_slice_per_series(records)
         self.out.write_text(json.dumps(dict(sorted(records.items())), indent=1) + "\n")
         print(f"{n} files sniffed, {len(records)} records in {self.out}")
+
+    @staticmethod
+    def _one_slice_per_series(records: dict) -> dict:
+        """DICOM image files are recorded one per folder: the series are checked as wholes."""
+        kept, folders = {}, set()
+        for key, record in sorted(records.items()):
+            folder = key.rsplit("/", 1)[0]
+            if record["format"] == str(Format.DICOM_IMAGE):
+                if folder in folders:
+                    continue
+                folders.add(folder)
+            kept[key] = record
+        return kept
 
     def read(self) -> None:
         records = self.reads.expected()

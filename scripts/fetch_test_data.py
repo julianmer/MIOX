@@ -114,6 +114,20 @@ class DataFetcher:
         "dcm_qa_frag": ("https://github.com/neurolabusc/dcm_qa_frag.git", None),
         "dcm_qa_me": ("https://github.com/neurolabusc/dcm_qa_me.git", None),
         "dcm_qa_pdt2": ("https://github.com/neurolabusc/dcm_qa_pdt2.git", None),
+        "dcm_qa": ("https://github.com/neurolabusc/dcm_qa.git", None),
+        "dcm_qa_ge": ("https://github.com/neurolabusc/dcm_qa_ge.git", None),
+        "dcm_qa_xa30": ("https://github.com/neurolabusc/dcm_qa_xa30.git", None),
+        "dcm_qa_philips": ("https://github.com/neurolabusc/dcm_qa_philips.git", None),
+        "dcm_qa_philips_enh": ("https://github.com/neurolabusc/dcm_qa_philips_enh.git", None),
+        "dcm_qa_philips_asl": ("https://github.com/neurolabusc/dcm_qa_philips_asl.git", None),
+        "dcm_qa_uih": ("https://github.com/neurolabusc/dcm_qa_uih.git", None),
+        "dcm_qa_canon_enh": ("https://github.com/neurolabusc/dcm_qa_canon_enh.git", None),
+        "dcm_qa_toshiba": ("https://github.com/neurolabusc/dcm_qa_toshiba.git", None),
+        "dcm_qa_agfa": ("https://github.com/neurolabusc/dcm_qa_agfa.git", None),
+        "dcm_qa_fmap": ("https://github.com/neurolabusc/dcm_qa_fmap.git", None),
+        "dcm_qa_dti": ("https://github.com/neurolabusc/dcm_qa_dti.git", None),
+        "dcm_qa_asl": ("https://github.com/neurolabusc/dcm_qa_asl.git", None),
+        "dcm_qa_stc": ("https://github.com/neurolabusc/dcm_qa_stc.git", None),
     }
     NEMA = "ftp://medical.nema.org/medical/dicom/DataSets/WG16"
     NEMA_FILES = {  # spectroscopy DICOM examples of the DICOM working group 16
