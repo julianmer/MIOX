@@ -87,7 +87,11 @@ class NibabelImageReader(Reader):
         if affine is None:
             affine = np.eye(4)
             notes.append("no spatial affine (e.g. CIFTI); identity used")
-        dims = ("time",) if self._timed(img) else ("volume",) * max(data.ndim - 3, 0)
+        color = data.dtype.names is not None  # RGB(A) samples stored as a structured type
+        if color:
+            data = np.stack([data[name] for name in data.dtype.names], axis=-1)
+        dims = ("time",) if self._timed(img) else ("volume",) * max(data.ndim - 3 - color, 0)
+        dims += ("rgb",) if color else ()
         if np.iscomplexobj(data) and data.ndim == 4 and data.shape[:3] == (1, 1, 1):
             notes.append("complex 1x1x1xN data look like spectroscopy, but the file has no "
                          "NIfTI-MRS extension or MRS sidecar")
@@ -116,6 +120,7 @@ class NibabelImageReader(Reader):
             if sidecar:
                 vendor["sidecar"] = json.loads(sidecar.read_text())
                 values = self.bids_values(vendor["sidecar"])
+            values.update(self.diffusion_values(img, files, vendor))
             return values, vendor
         if fmt == Format.MGH:
             vendor = {"header": {k: self.plain(img.header[k]) for k in img.header.keys()}}
@@ -126,6 +131,31 @@ class NibabelImageReader(Reader):
         if fmt == Format.AFNI:
             return {}, {"header": self.plain(img.header.info)}
         return {}, {"header": self._minc(files[0], fmt)}
+
+    def diffusion_values(self, img, files: tuple[Path, ...], vendor: dict) -> dict:
+        """B-values and gradient directions from .bval/.bvec files next to the image; the
+        directions, given along the voxel axes, are turned into RAS world unit vectors."""
+        bval = next((f for f in files if f.suffix.lower() == ".bval"), None)
+        bvec = next((f for f in files if f.suffix.lower() == ".bvec"), None)
+        if bval is None or bvec is None:
+            return {}
+        values = np.atleast_1d(np.loadtxt(bval, dtype=float))
+        vectors = np.atleast_2d(np.loadtxt(bvec, dtype=float))
+        if vectors.shape[0] != 3 or vectors.shape[1] != values.size:
+            return {}
+        vendor["bval"], vendor["bvec"] = values.tolist(), vectors.tolist()
+        axes = img.affine[:3, :3] / np.linalg.norm(img.affine[:3, :3], axis=0)
+        world = axes @ vectors
+        norms = np.linalg.norm(world, axis=0)
+        world = np.where(norms > 0, world / np.where(norms > 0, norms, 1), 0.0)
+        return {
+            "DiffusionBValue": (values.tolist(), "bval", f"{bval.name}"),
+            "DiffusionGradientOrientation": (
+                world.T.round(6).tolist(),
+                "bvec",
+                f"{bvec.name}: voxel-axis vectors turned into RAS world vectors",
+            ),
+        }
 
     def bids_values(self, sidecar: dict) -> dict:
         """Sidecar fields that are standard keys, as {key: (value, vendor field, source)}."""

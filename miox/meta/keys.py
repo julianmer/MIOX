@@ -114,6 +114,21 @@ class KeyTable(dict):
             "miox",
         ),
         Key(
+            "DiffusionBValue",
+            "s/mm^2",
+            (list, float),
+            "Diffusion weighting of each volume of an image.",
+            "miox",
+        ),
+        Key(
+            "DiffusionGradientOrientation",
+            None,
+            (list, float),
+            "Diffusion gradient direction of each volume as a unit vector in RAS world "
+            "coordinates; zero where the volume is not diffusion weighted.",
+            "miox",
+        ),
+        Key(
             "NumberOfPoints",
             None,
             (int,),
@@ -190,6 +205,57 @@ class KeyTable(dict):
         ("SpoilingState", None, (bool,), "Spoiling used."),
         ("ImageOrientationPatientDICOM", None, (list, float), "DICOM ImageOrientationPatient."),
     )
+    # fields dcm2niix writes beyond BIDS: name, unit, types, meaning
+    DCM2NIIX = (
+        ("AcquisitionDateTime", None, (str,), "Date and time the acquisition started, ISO 8601."),
+        ("BaseResolution", None, (int,), "Siemens readout matrix size."),
+        ("TxRefAmp", "V", (float,), "Siemens transmitter reference amplitude."),
+        ("PhaseResolution", None, (float,), "Siemens phase resolution relative to readout."),
+        ("PhaseOversampling", None, (float,), "Siemens phase oversampling fraction."),
+        ("VendorReportedEchoSpacing", "s", (float,), "Echo spacing as the vendor reports it."),
+        ("DerivedVendorReportedEchoSpacing", "s", (float,),
+         "Echo spacing from the bandwidth per pixel, acceleration and oversampling."),
+        ("BandwidthPerPixelPhaseEncode", "Hz", (float,), "Bandwidth per pixel, phase encoding."),
+        ("RefLinesPE", None, (int,), "Siemens reference lines for parallel imaging."),
+        ("Interpolation2D", None, (int,), "Siemens in-plane interpolation switch."),
+        ("ConsistencyInfo", None, (str,), "Siemens software baseline of the protocol."),
+        ("PulseSequenceDetails", None, (str,), "Siemens sequence file name."),
+        ("WipMemBlock", None, (str,), "Siemens work-in-progress sequence free text."),
+        ("CoilString", None, (str,), "Receive coil name when it differs from the elements."),
+        ("ReceiveCoilActiveElements", None, (str,), "Receive coil elements used."),
+        ("ImageOrientationText", None, (str,), "Siemens slice orientation text (Tra, Sag>Cor)."),
+        ("ImageTypeText", None, (list, str), "Siemens XA image type text values."),
+        ("PhaseEncodingAxis", None, (str,), "Phase-encoding axis (i, j) when the sign is unknown."),
+        ("PhaseEncodingDirectionDisplayed", None, (str,), "UIH phase-encoding direction text."),
+        ("PhaseEncodingPolarityGE", None, (str,), "GE phase-encoding polarity, Flipped/Unflipped."),
+        ("PrescanReuseString", None, (str,), "GE prescan reuse settings."),
+        ("InternalPulseSequenceName", None, (str,), "GE internal pulse sequence name."),
+        ("PulseSequenceName", None, (str,), "Pulse sequence name when SequenceName is stated too."),
+        ("NumberOfKSpaceTrajectories", None, (int,), "Number of k-space trajectories."),
+        ("FrequencyEncodingSteps", None, (int,), "Frequency-encoding steps."),
+        ("PhaseEncodingStepsOutOfPlane", None, (int,), "Out-of-plane phase-encoding steps."),
+        ("PartialFourierEnabled", None, (str,), "Philips: partial matrix scanned (YES)."),
+        ("PhaseEncodingStepsNoPartialFourier", None, (int,),
+         "Phase-encoding steps before partial Fourier (Philips)."),
+        ("ParallelAcquisitionTechnique", None, (str,), "Parallel imaging technique (SENSE, ...)."),
+        ("PartialFourierDirection", None, (str,), "Partial Fourier direction."),
+        ("SpoilingType", None, (str,), "Spoiling type (RF, GRADIENT, COMBINED)."),
+        ("DiffusionScheme", None, (str,), "Siemens diffusion scheme (Bipolar, Monopolar)."),
+        ("WaterFatShift", "pixels", (float,), "Philips water-fat shift."),
+        ("EstimatedEffectiveEchoSpacing", "s", (float,),
+         "Philips effective echo spacing estimated from the water-fat shift."),
+        ("EstimatedTotalReadoutTime", "s", (float,),
+         "Philips readout time estimated from the water-fat shift."),
+        ("PhilipsRescaleSlope", None, (float,), "Philips RescaleSlope of the stored values."),
+        ("PhilipsRescaleIntercept", None, (float,), "Philips RescaleIntercept of stored values."),
+        ("PhilipsScaleSlope", None, (float,), "Philips private scale slope (2005,100E)."),
+        ("UsePhilipsFloatNotDisplayScaling", None, (int,),
+         "1 when values are floating point (stored / (RescaleSlope * ScaleSlope))."),
+        ("PhilipsRWVSlope", None, (float,), "Philips real-world value slope."),
+        ("PhilipsRWVIntercept", None, (float,), "Philips real-world value intercept."),
+        ("Units", None, (str,), "Unit of the voxel values (e.g. Hz for a field map)."),
+        ("ImageComments", None, (str,), "Free-text image comments."),
+    )
 
     def __init__(self):
         super().__init__()
@@ -200,6 +266,8 @@ class KeyTable(dict):
         self.update({key.name: key for key in self.MIOX})
         for name, unit, kind, doc in self.BIDS_MRI:
             self[name] = Key(name, unit, kind, doc, "bids", bids=name)
+        for name, unit, kind, doc in self.DCM2NIIX:
+            self[name] = Key(name, unit, kind, doc, "dcm2niix", bids=name)
 
     def _add_nifti_mrs(self, definitions: dict, origin: str) -> None:
         for name, definition in definitions.items():
