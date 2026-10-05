@@ -998,7 +998,7 @@ class Sniffer:
     def _read_dicom(self, path: Path, force: bool = False) -> Sniff:
         with open_dicom(path) as fh:
             ds = pydicom.dcmread(fh, stop_before_pixels=True, force=force)
-        sop = str(ds.get("SOPClassUID", ""))
+        sop = str(ds.get("SOPClassUID", "") or ds.file_meta.get("MediaStorageSOPClassUID", ""))
         if not sop and force:
             raise ValueError("not DICOM")
         manufacturer = str(ds.get("Manufacturer", ""))
