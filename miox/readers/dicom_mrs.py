@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import contextlib
+import dataclasses
 import re
 import warnings
 from collections.abc import Iterator
@@ -53,21 +54,22 @@ from miox.sniff import Format, Sniff, open_dicom
 #                                          DicomMrsReader                                          #
 #**************************************************************************************************#
 #                                                                                                  #
-# A folder is read as one series set: all its DICOM files go to the converter together, which      #
-# groups them by series. The source tables follow spec2nii's extraction per vendor and variant     #
-# (Siemens VB-VE with CSA headers or XA enhanced; Philips enhanced or classic; UIH). Siemens VA    #
-# single-voxel files (CSA headers in (0029,12xx), protocol "MrProtocol"), which spec2nii does not  #
-# read, are converted here: data in (7FE1,1010) as stored, the dwell time RealDwellTime (the ADC   #
-# dwell of the protocol is oversampled), the voxel from the protocol's sVoI (ImagePositionPatient  #
-# is its corner there) and the CSA ImageOrientationPatient. Philips enhanced files with one        #
-# localisation slab (spec2nii needs three) take the voxel from the plane position (the slab        #
-# centre), the plane orientation negated as spec2nii negates the slab orientations, PixelSpacing   #
-# in plane and the slab thickness along the normal. Philips enhanced CSI, which spec2nii does not  #
-# read: SpectroscopyData as (frames, rows, columns, points), the frames split into metabolite and  #
-# reference by (2005,1304) of the private per-frame items, conjugated as spec2nii conjugates       #
-# Philips SVS (checked: NAA, Cr, Cho at 2.02, 3.03, 3.23 ppm), the grid from the plane position    #
-# (first voxel), orientation and pixel spacing. The MR Spectroscopy module's Chemical Shift        #
-# Reference (ppm at the transmitter frequency) is ReferencePPM.                                    #
+# A folder is read series by series (SeriesInstanceUID): the files of each series go to the        #
+# converter together, which splits off references; the converters expect one series at a time      #
+# and stack or misname several. The source tables follow spec2nii's extraction per vendor and      #
+# variant (Siemens VB-VE with CSA headers or XA enhanced; Philips enhanced or classic; UIH).       #
+# Siemens VA single-voxel files (CSA headers in (0029,12xx), protocol "MrProtocol"), which         #
+# spec2nii does not read, are converted here: data in (7FE1,1010) as stored, the dwell time        #
+# RealDwellTime (the ADC dwell of the protocol is oversampled), the voxel from the protocol's sVoI #
+# (ImagePositionPatient is its corner there) and the CSA ImageOrientationPatient. Philips enhanced #
+# files with one localisation slab (spec2nii needs three) take the voxel from the plane position   #
+# (the slab centre), the plane orientation negated as spec2nii negates the slab orientations,      #
+# PixelSpacing in plane and the slab thickness along the normal. Philips enhanced CSI, which       #
+# spec2nii does not read: SpectroscopyData as (frames, rows, columns, points), the frames split    #
+# into metabolite and reference by (2005,1304) of the private per-frame items, conjugated as       #
+# spec2nii conjugates Philips SVS (checked: NAA, Cr, Cho at 2.02, 3.03, 3.23 ppm), the grid from   #
+# the plane position (first voxel), orientation and pixel spacing. The MR Spectroscopy module's    #
+# Chemical Shift Reference (ppm at the transmitter frequency) is ReferencePPM.                     #
 #                                                                                                  #
 #**************************************************************************************************#
 class DicomMrsReader(Spec2niiReader):
@@ -170,6 +172,26 @@ class DicomMrsReader(Spec2niiReader):
         "SequenceName": "dicom/SequenceName",
         "DwellTime": "dicom/SpectralWidth",
     }
+
+    def read(self, sniff: Sniff) -> list[MRSData]:
+        series = self._series(sniff)
+        if len(series) == 1:
+            return super().read(sniff)
+        datasets = []
+        for files in series.values():
+            part = dataclasses.replace(sniff, companions=tuple(files))
+            datasets += super().read(part)
+        return datasets
+
+    def _series(self, sniff: Sniff) -> dict[str, list[Path]]:
+        """The DICOM files of a folder grouped by SeriesInstanceUID, in folder order."""
+        series: dict[str, list[Path]] = {}
+        for path in self._files(sniff):
+            with open_dicom(path) as fh:
+                tags = ["SeriesInstanceUID"]
+                ds = pydicom.dcmread(fh, stop_before_pixels=True, specific_tags=tags)
+            series.setdefault(str(ds.get("SeriesInstanceUID", "")), []).append(path)
+        return series
 
     def converter(self, sniff: Sniff) -> str:
         if sniff.vendor not in self.CONVERTERS:
