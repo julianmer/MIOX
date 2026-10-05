@@ -5094,6 +5094,96 @@
   "vendor": null,
   "kind": "unknown"
  },
+ "gadgetron/T2W/generic_grappa_T2W_ref_20220817_klk.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/T2W/meas_MID00057_T2w.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "gadgetron/epi/epi_2d_out_20161020_pjv.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/generic/meas_MID01095_FID40115/meas_MID01095_FID40115.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "gadgetron/generic/meas_MID01095_FID40115/ref_20210923_klk.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/grappa_3d/grappa2x1_ref_20210917.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/gre_3d/simple_gre_out_3d_20210910_klk.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/hyper/Kidney4cmSlice_sb_outV4.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/matlab/Kidney4cmSlice.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "gadgetron/radial_phantom/fixed_radial_mode1_20210923_klk.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/radial_phantom/meas_MID00133_FID20080_CV_Radial_Fixed_Angle_128_x8_32phs.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "gadgetron/rtgrappa/grappa_rate2_cpu_out.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/simple_gre/ismrmrd_dump_output_20240811.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "gadgetron/simple_gre/meas_MiniGadgetron_GRE.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "gadgetron/simple_gre/ref_20240810.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/simple_gre/simple_gre_in_20220831.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "gadgetron/simple_gre/simple_gre_out_20210909_klk.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/spiral/simple_spiral_out_v2.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
  "hyperpolarized_toolbox/reconstruction/EPSI demo/dummy_ddf/dynth01_phased.cmplx": {
   "format": "sivic_ddf",
   "vendor": null,
@@ -5103,6 +5193,16 @@
   "format": "sivic_ddf",
   "vendor": null,
   "kind": "spectroscopy"
+ },
+ "ismrmrd/simple_gre.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "ismrmrd/simple_spiral.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
  },
  "itk_ge/baseline/113766.003.001.mha": {
   "format": "metaimage",
@@ -5223,6 +5323,16 @@
   "format": "lcmodel_ps",
   "vendor": null,
   "kind": "report"
+ },
+ "m4raw/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "m4raw/multicoil_test/2022101103_T206.h5": {
+  "format": "fastmri_h5",
+  "vendor": null,
+  "kind": "raw"
  },
  "mrs_fitting_challenge/Cr_water_scaling_JMRUI/Cr_10mM_test_water_scaling_WS.txt": {
   "format": "jmrui_text",
@@ -6759,11 +6869,6 @@
   "vendor": null,
   "kind": "unknown"
  },
- "nibabel/nibabel/nicom/tests/data/decimal_rescale.dcm": {
-  "format": "dicom_other",
-  "vendor": "siemens",
-  "kind": "unknown"
- },
  "nibabel/nibabel/tests/data/.gitignore": {
   "format": "unknown",
   "vendor": null,
@@ -7233,6 +7338,191 @@
   "format": "nifti_mrs",
   "vendor": null,
   "kind": "spectroscopy"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-09-165819-tse_3d_T2-mapping_CaliberMRI/image_magnitude.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-09-165819-tse_3d_T2-mapping_CaliberMRI/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-09-165819-tse_3d_T2-mapping_CaliberMRI/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-110503-tse_3d_B0_dt0-1500_TE10ms_no-shim_CaliberMRI/b0_map.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-110503-tse_3d_B0_dt0-1500_TE10ms_no-shim_CaliberMRI/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-110503-tse_3d_B0_dt0-1500_TE10ms_no-shim_CaliberMRI/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-112655-tse_3d_PDw_100px_CaliberMRI/image_magnitude.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-112655-tse_3d_PDw_100px_CaliberMRI/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-112655-tse_3d_PDw_100px_CaliberMRI/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-114223-tse_3d_T1w_100px_CaliberMRI/image_magnitude.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-114223-tse_3d_T1w_100px_CaliberMRI/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-114223-tse_3d_T1w_100px_CaliberMRI/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-160324-tse_3d_TE12_ETL7_HelloWorld/image_magnitude.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-160324-tse_3d_TE12_ETL7_HelloWorld/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-07-23-160324-tse_3d_TE12_ETL7_HelloWorld/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-144405-tse_3d_B0_dt0-1500_TE10ms_no-shim_Sphere/b0_map.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-144405-tse_3d_B0_dt0-1500_TE10ms_no-shim_Sphere/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-144405-tse_3d_B0_dt0-1500_TE10ms_no-shim_Sphere/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-145002-tse_3d_B0_dt0-1500_TE10ms_FID-shim_Sphere/b0_map.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-145002-tse_3d_B0_dt0-1500_TE10ms_FID-shim_Sphere/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-145002-tse_3d_B0_dt0-1500_TE10ms_FID-shim_Sphere/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-145822-tse_3d_B0_dt0-1500_TE10ms_LS-shim_Sphere/b0_map.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-145822-tse_3d_B0_dt0-1500_TE10ms_LS-shim_Sphere/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-03-145822-tse_3d_B0_dt0-1500_TE10ms_LS-shim_Sphere/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-14-140826-tse_3d_T1-mapping_CaliberMRI/image_magnitude.dcm": {
+  "format": "dicom_image",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-14-140826-tse_3d_T1-mapping_CaliberMRI/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-14-140826-tse_3d_T1-mapping_CaliberMRI/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_113205_simulation_tse_3d_T1-mapping_single_slice_CaliberMRI/image_magnitude.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_113205_simulation_tse_3d_T1-mapping_single_slice_CaliberMRI/image_phase.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_113205_simulation_tse_3d_T1-mapping_single_slice_CaliberMRI/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_113205_simulation_tse_3d_T1-mapping_single_slice_CaliberMRI/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_113205_simulation_tse_3d_T1-mapping_single_slice_CaliberMRI/t1_map.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_115832_simulation_tse_3d_T2-mapping_single_slice_CaliberMRI/image_magnitude.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_115832_simulation_tse_3d_T2-mapping_single_slice_CaliberMRI/image_phase.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_115832_simulation_tse_3d_T2-mapping_single_slice_CaliberMRI/ismrmrd_data.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_115832_simulation_tse_3d_T2-mapping_single_slice_CaliberMRI/sequence.seq": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/2026-08-16_115832_simulation_tse_3d_T2-mapping_single_slice_CaliberMRI/t2_map.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
  },
  "osprey/fit/basissets/3T/ge/unedited/press/35/3T_PRESS_GE_35ms_noMM.BASIS": {
   "format": "lcmodel_basis",
@@ -12195,11 +12485,6 @@
   "kind": "unknown"
  },
  "tarquin/src/unit_tests/data/simulation.ref": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
- },
- "vespa_io/docs/user_manuals/files/tutorial_data_analysis.zip": {
   "format": "unknown",
   "vendor": null,
   "kind": "unknown"
