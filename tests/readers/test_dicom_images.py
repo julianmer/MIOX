@@ -7,8 +7,8 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: DICOM image reader on synthetic series: slice and volume order, the RAS affine,         #
-#          rescaling, Philips floating-point scaling, echoes split into images, study folders. No  #
-#          test data needed.                                                                       #
+#          rescaling, Philips floating-point scaling, echoes split into images, study folders      #
+#          with and without a DICOMDIR. No test data needed.                                       #
 #                                                                                                  #
 ####################################################################################################
 
@@ -22,6 +22,7 @@ import numpy as np
 import pydicom
 import pytest
 from pydicom.dataset import Dataset, FileMetaDataset
+from pydicom.fileset import FileSet
 from pydicom.uid import ExplicitVRLittleEndian, MRImageStorage, generate_uid
 
 # own
@@ -109,3 +110,23 @@ def test_study_folder(tmp_path):
     assert gu.sniff(tmp_path).format == gu.Format.DICOM_IMAGE
     [im] = gu.load(tmp_path)
     assert im.shape == (3, 2, 2, 2)
+
+
+def test_study_with_dicomdir(tmp_path):
+    """A DICOMDIR at the top of the study is not data; the series below it are read."""
+    study = {
+        "PatientID": "p", "PatientName": "P", "StudyInstanceUID": "1.2", "StudyID": "1",
+        "StudyDate": "20200101", "StudyTime": "120000",
+    }
+    (tmp_path / "flat").mkdir()
+    values = _series(tmp_path / "flat", **study)
+    file_set = FileSet()
+    for path in sorted((tmp_path / "flat").iterdir()):
+        file_set.add(pydicom.dcmread(path))
+    file_set.write(tmp_path / "cd")
+    assert (tmp_path / "cd" / "DICOMDIR").is_file()
+    assert gu.sniff(tmp_path / "cd" / "DICOMDIR").format == gu.Format.DICOM_OTHER
+    assert gu.sniff(tmp_path / "cd").format == gu.Format.DICOM_IMAGE
+    [im] = gu.load(tmp_path / "cd")
+    assert im.shape == (3, 2, 2, 2)
+    assert np.array_equal(im.data[:, :, 0, 1], values[(5.0, 2)].T)

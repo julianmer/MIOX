@@ -319,7 +319,7 @@ class Sniffer:
 
     def directory(self, path: Path) -> Sniff:
         """A Bruker scan, a Varian .fid folder, a basis set of one file per metabolite, a DICOM
-        series, or a study folder of DICOM series folders."""
+        series, or a study folder of DICOM series folders (a DICOMDIR at its top is passed over)."""
         names = {p.name for p in path.iterdir()}
         if names & set(self.BRUKER_PARAM_FILES):
             return self._bruker_scan(path, path, "directory with Bruker parameter files")
@@ -341,18 +341,20 @@ class Sniffer:
         if basis := self._basis_folder(path, files):
             return basis
         dicoms = [c for c in files[: self.DIR_PROBE_LIMIT] if self._is_dicom_file(c)]
+        subdirs = any(c.is_dir() for c in path.iterdir())
         if dicoms:
             first, child = self._deciding_dicom(dicoms)
-            return dataclasses.replace(
-                first,
-                path=path,
-                evidence=("directory; first DICOM data file decides",) + first.evidence,
-                companions=(child,) + tuple(c for c in files if c != child),
-            )
+            if first.format != Format.DICOM_OTHER or not subdirs:
+                return dataclasses.replace(
+                    first,
+                    path=path,
+                    evidence=("directory; first DICOM data file decides",) + first.evidence,
+                    companions=(child,) + tuple(c for c in files if c != child),
+                )
         for child in files[: self.DIR_PROBE_LIMIT]:
             if signa := self._ge_signa(child, self._head(child)):
                 return self._image(path, Format.GE_SIGNA, f"directory of GE Signa files ({signa})")
-        if any(c.is_dir() for c in path.iterdir()) and (study := self._study(path)):
+        if subdirs and (study := self._study(path)):
             first, _ = self._deciding_dicom(study)
             return dataclasses.replace(
                 first,
@@ -374,7 +376,8 @@ class Sniffer:
         return first
 
     def _study(self, path: Path) -> list[Path]:
-        """DICOM files in the subfolders of a folder without DICOM files of its own (a study)."""
+        """DICOM files anywhere under a folder whose own DICOM files, if any, hold no data (a
+        study, with or without a DICOMDIR)."""
         found = []
         for child in sorted(path.rglob("*")):
             if len(found) >= self.STUDY_LIMIT:

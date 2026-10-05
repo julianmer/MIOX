@@ -16,6 +16,8 @@
 #*************#
 from __future__ import annotations
 
+import dataclasses
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -62,7 +64,7 @@ from miox.readers.varian_fdf import VarianFdfReader
 from miox.readers.vasf import VasfReader
 from miox.readers.vespa_prior import VespaPriorReader
 from miox.readers.vespa_viff import VespaViffReader
-from miox.sniff import Format, Sniffer
+from miox.sniff import Format, Sniff, Sniffer
 
 
 #**************************************************************************************************#
@@ -71,10 +73,13 @@ from miox.sniff import Format, Sniffer
 #                                                                                                  #
 # Holds one instance of every reader, keyed by the formats it handles. ``load`` returns what a     #
 # file states; ``given`` fills standard keys it lacks and ``complete`` demands the keys NIfTI-MRS  #
-# requires.                                                                                        #
+# requires. A DICOM folder (one series or a whole study) is split by SOP class first, so its       #
+# image series and its spectroscopy series each reach their own reader.                            #
 #                                                                                                  #
 #**************************************************************************************************#
 class Loader:
+    DICOM_FORMATS = (Format.DICOM_IMAGE, Format.DICOM_MRS)
+
     def __init__(self):
         self.sniffer = Sniffer()
         self.readers: dict[Format, Reader] = {}
@@ -138,10 +143,7 @@ class Loader:
         key NIfTI-MRS requires raises IncompleteError instead of being returned as read.
         """
         sniff = self.sniffer.sniff(path)
-        reader = self.readers.get(sniff.format)
-        if reader is None:
-            raise ReaderError(f"no reader for {sniff.format}: {sniff.path}")
-        datasets = reader.read(sniff)
+        datasets = self._read(sniff)
         for d in datasets:
             if not isinstance(d, MRSData):
                 continue
@@ -152,6 +154,45 @@ class Loader:
                 raise IncompleteError(
                     f"{sniff.path.name}{name} states no {', '.join(d.missing)}; pass them in given"
                 )
+        return datasets
+
+    def _read(self, sniff: Sniff) -> list[MRSData | MRImage | PriorSet | FitResult]:
+        if sniff.path.is_dir() and sniff.format in self.DICOM_FORMATS:
+            return self._dicom_folder(sniff)
+        reader = self.readers.get(sniff.format)
+        if reader is None:
+            raise ReaderError(f"no reader for {sniff.format}: {sniff.path}")
+        return reader.read(sniff)
+
+    def _dicom_folder(self, sniff: Sniff) -> list[MRSData | MRImage]:
+        """Every series of a DICOM folder: the files of each format go to its reader together,
+        which splits them into series. Files of other SOP classes (presentation states, reports,
+        DICOMDIR) are passed over. A format whose reader fails is noted on the datasets of the
+        others; the error is raised only when nothing could be read."""
+        groups: dict[Format, list[tuple[Path, Sniff]]] = defaultdict(list)
+        for path in sniff.companions:
+            if path.is_file():
+                file = self.sniffer.sniff(path)
+                if file.format in self.DICOM_FORMATS:
+                    groups[file.format].append((path, file))
+        datasets, failed = [], []
+        for fmt, files in groups.items():
+            part = dataclasses.replace(
+                files[0][1],
+                path=sniff.path,
+                evidence=(f"{fmt} files of {sniff.path.name}",),
+                companions=tuple(path for path, _ in files),
+            )
+            try:
+                datasets += self.readers[fmt].read(part)
+            except ReaderError as e:
+                failed.append(f"{fmt} series not read: {e}")
+        if not datasets:
+            raise ReaderError("; ".join(failed) or f"{sniff.path.name}: no DICOM data files")
+        for d in datasets:
+            d.provenance = dataclasses.replace(
+                d.provenance, notes=d.provenance.notes + tuple(failed)
+            )
         return datasets
 
 
