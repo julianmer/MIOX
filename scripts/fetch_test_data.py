@@ -8,9 +8,10 @@
 #                                                                                                  #
 # Purpose: Fetches the public test data into tests/data (gitignored): the spec2nii test set (git   #
 #          LFS, a small per-format subset by default, --all for everything, retried on the         #
-#          server's rate limit), the NIfTI-MRS example data from Zenodo record 5085449, the test   #
-#          folders of further public repositories, single files by URL (ITK's GE images through    #
-#          an IPFS gateway), and NEMA's spectroscopy DICOM examples.                               #
+#          server's rate limit), the NIfTI-MRS examples and the OSI2ONE k-space data from Zenodo,  #
+#          the test folders of further public repositories, single files by URL (ITK's GE images   #
+#          through an IPFS gateway, ISMRMRD and Gadgetron k-space samples, one M4Raw file), and    #
+#          NEMA's spectroscopy DICOM examples.                                                     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -24,6 +25,7 @@ import argparse
 import json
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import time
@@ -42,8 +44,16 @@ from pathlib import Path
 #**************************************************************************************************#
 class DataFetcher:
     SPEC2NII_URL = "https://git.fmrib.ox.ac.uk/wclarke/spec2nii_test_data.git"
-    ZENODO_RECORD = "5085449"
-    ZENODO_SMALL_LIMIT = 5_000_000  # bytes; larger Zenodo files only with --all
+    ZENODO_SMALL_LIMIT = 5_000_000  # bytes; larger files of a Zenodo record only with --all
+    TIMEOUT = 120  # seconds without data before a download is retried
+    ZENODO = {  # folder: (record, files always fetched; None for every file up to the limit)
+        "nifti_mrs_examples": ("5085449", None),
+        "osi2one": ("21807140", ("OSIIONE_Reference_System_Data_v1.zip",)),
+        "osi2one_lumc": ("19661402", ()),
+    }
+    ZENODO_ALL = {  # with --all: further files of large records (CC BY 4.0)
+        "osi2one_lumc": ("partial_fourier.zip",),
+    }
 
     # LFS include patterns for the subset: one small example per format and vendor
     SUBSET = [
@@ -178,10 +188,48 @@ class DataFetcher:
             "bafkreighxzakrzvtd5ykjw5ju4eycxwmxcruphkqi6weza2zayhx2ub33a",
         "baseline/19771.002.001.mha": "bafkreidvxasu7bdqrqvsicgkmirp4tzunpgnm6z4y6egoo5ch3f6yyrxyi",
     }
+    ISMRMRD = "https://downloads.sourceforge.net/project/ismrmrd/data"  # ISMRMRD's own samples
+    ISMRMRD_FILES = ("simple_gre.h5", "simple_spiral.h5")
+    ISMRMRD_FILES_ALL = ("3D_partial_fourier.h5",)
+    GADGETRON = "https://gadgetrondata.blob.core.windows.net/gadgetrontestdata"
+    GADGETRON_FILES = (  # twix imaging .dat with their ISMRMRD conversions and reconstructions
+        "simple_gre/meas_MiniGadgetron_GRE.dat", "simple_gre/simple_gre_in_20220831.mrd",
+        "simple_gre/ismrmrd_dump_output_20240811.h5", "simple_gre/simple_gre_out_20210909_klk.mrd",
+        "simple_gre/ref_20240810.mrd",
+        "radial_phantom/meas_MID00133_FID20080_CV_Radial_Fixed_Angle_128_x8_32phs.dat",
+        "radial_phantom/fixed_radial_mode1_20210923_klk.mrd",
+        "T2W/meas_MID00057_T2w.dat", "T2W/generic_grappa_T2W_ref_20220817_klk.mrd",
+        "generic/meas_MID01095_FID40115/meas_MID01095_FID40115.mrd",
+        "generic/meas_MID01095_FID40115/ref_20210923_klk.mrd",
+        "matlab/Kidney4cmSlice.mrd", "hyper/Kidney4cmSlice_sb_outV4.mrd",
+        "spiral/simple_spiral_out_v2.mrd", "gre_3d/simple_gre_out_3d_20210910_klk.mrd",
+        "grappa_3d/grappa2x1_ref_20210917.mrd", "epi/epi_2d_out_20161020_pjv.mrd",
+        "rtgrappa/grappa_rate2_cpu_out.mrd",
+    )
+    GADGETRON_FILES_ALL = (  # the large raw files (0.1 to 1.2 GB each)
+        "gre_3d/meas_MID248_gre_FID30644.dat", "spiral/meas_MID00080_FID16005_MiniIRT_B0.dat",
+        "spiral/meas_MID1132_MiniIRT_spiral_16int_tr500_acc1_10reps_FID13142.dat",
+        "rtgrappa/acc_data_with_device_2.dat", "epi/meas_MID517_nih_ep2d_bold_fa60_FID82077.dat",
+        "grappa_3d/gre_3D_Grappa2x1.mrd", "grappa_3d/gre_3D_Grappa2x2.mrd",
+        "grappa_3d/grappa2x2_ref_20210917.mrd",
+        "generic/meas_MID836_1slice_FID22517/meas_MID836_1slice_FID22517.dat",
+        "generic/meas_MID836_1slice_FID22517/ref_20220817_klk.mrd",
+    )
+    M4RAW = "https://huggingface.co/datasets/mylyu/M4Raw_brain/resolve/main"  # CC BY 4.0
+    M4RAW_FILES = ("multicoil_test/2022101103_T206.h5", "H5_FORMAT.md", "LICENSE")
     FILES = {
         "pynrrd": (PYNRRD, dict(zip(PYNRRD_FILES, PYNRRD_FILES, strict=True))),
         "agilent_fdf": (SWELLING, dict(zip(SWELLING_FILES, SWELLING_FILES, strict=True))),
         "itk_ge": (IPFS, ITK_GE_FILES),
+        "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES, ISMRMRD_FILES, strict=True))),
+        "gadgetron": (GADGETRON, dict(zip(GADGETRON_FILES, GADGETRON_FILES, strict=True))),
+        "m4raw": (M4RAW, dict(zip(M4RAW_FILES, M4RAW_FILES, strict=True))),
+    }
+    FILES_ALL = {  # with --all
+        "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),
+        "gadgetron": (
+            GADGETRON, dict(zip(GADGETRON_FILES_ALL, GADGETRON_FILES_ALL, strict=True))
+        ),
     }
     NEMA = "ftp://medical.nema.org/medical/dicom/DataSets/WG16"
     NEMA_FILES = {  # spectroscopy DICOM examples of the DICOM working group 16
@@ -193,15 +241,20 @@ class DataFetcher:
         self.dest = dest
         self.everything = everything
         self.retries = retries
+        socket.setdefaulttimeout(self.TIMEOUT)
 
     def run(self) -> None:
         self.dest.mkdir(parents=True, exist_ok=True)
         self.spec2nii(self.dest / "spec2nii_test_data")
-        self.zenodo(self.dest / "nifti_mrs_examples")
+        for name, (record, keys) in self.ZENODO.items():
+            more = self.ZENODO_ALL.get(name, ()) if self.everything else ()
+            self.zenodo(self.dest / name, record, None if keys is None else keys + more)
         for name, (url, paths) in self.REPOSITORIES.items():
             self.repository(self.dest / name, url, paths)
-        for name, (base, files) in self.FILES.items():
-            self.files(self.dest / name, base, files)
+        groups = (self.FILES, self.FILES_ALL) if self.everything else (self.FILES,)
+        for group in groups:
+            for name, (base, files) in group.items():
+                self.files(self.dest / name, base, files)
         self.nema(self.dest / "nema_wg16")
 
     def repository(self, dest: Path, url: str, paths: list[str] | None) -> None:
@@ -228,10 +281,12 @@ class DataFetcher:
             if target.is_file():
                 continue
             target.parent.mkdir(parents=True, exist_ok=True)
+            partial = target.with_name(target.name + ".part")
             for attempt in range(1, self.retries + 1):
                 try:
                     print(f"downloading {dest.name}/{relative}")
-                    urllib.request.urlretrieve(url, target)
+                    urllib.request.urlretrieve(url, partial)
+                    partial.replace(target)
                     break
                 except OSError as e:
                     print(f"  failed ({e}), attempt {attempt}/{self.retries}")
@@ -280,21 +335,26 @@ class DataFetcher:
         ).stdout.count(" - ")
         print(f"spec2nii test data in {dest}; {left} objects still pointers")
 
-    def zenodo(self, dest: Path) -> None:
-        """Download the record's files, skipping those already complete."""
+    def zenodo(self, dest: Path, record: str, keys: tuple[str, ...] | None) -> None:
+        """Download the named files of a Zenodo record (all of them up to the size limit when
+        ``keys`` is None), skipping those already complete; zip archives are unpacked."""
         dest.mkdir(parents=True, exist_ok=True)
-        url = f"https://zenodo.org/api/records/{self.ZENODO_RECORD}"
-        with urllib.request.urlopen(url) as resp:
-            record = json.load(resp)
-        for entry in record["files"]:
-            if not self.everything and entry["size"] > self.ZENODO_SMALL_LIMIT:
+        with urllib.request.urlopen(f"https://zenodo.org/api/records/{record}") as resp:
+            entries = json.load(resp)["files"]
+        for entry in entries:
+            if keys is None:
+                if not self.everything and entry["size"] > self.ZENODO_SMALL_LIMIT:
+                    continue
+            elif entry["key"] not in keys:
                 continue
             target = dest / entry["key"]
             if target.is_file() and target.stat().st_size == entry["size"]:
                 continue
             print(f"downloading {entry['key']} ({entry['size'] / 1e6:.1f} MB)")
             urllib.request.urlretrieve(entry["links"]["self"], target)
-        print(f"NIfTI-MRS examples in {dest}")
+            if target.suffix == ".zip":
+                shutil.unpack_archive(target, target.with_suffix(""))
+        print(f"Zenodo record {record} in {dest}")
 
 
 #**************************************************************************************************#

@@ -53,6 +53,8 @@ class GoldenUpdater:
         ".tex",
         ".gitattributes",
         ".gitignore",
+        ".zip",
+        ".part",  # a download in progress
     }
     IGNORE_NAMES = {".DS_Store"}
 
