@@ -24,8 +24,9 @@ from nifti_mrs.nifti_mrs import NIFTI_MRS
 from spec2nii.Siemens.twixfunctions import process_twix, xa_or_vx
 
 # own
-from miox.data import MRSData
+from miox.data import MRSData, RawData
 from miox.readers.base import ReaderError, Spec2niiReader
+from miox.readers.siemens_twix_raw import SiemensTwixRaw
 from miox.sniff import Format, Sniff
 
 
@@ -33,9 +34,11 @@ from miox.sniff import Format, Sniff
 #                                        SiemensTwixReader                                         #
 #**************************************************************************************************#
 #                                                                                                  #
-# Converts every data stream (evalinfo flag) of the measurement: ``image`` holds the scan itself;  #
-# the others (water reference, noise, phase correction, ...) become further datasets named after   #
-# their flag, and a stream spec2nii cannot convert is noted instead of failing the read. Header    #
+# A spectroscopy measurement (the protocol states a spectral vector size) is converted by          #
+# spec2nii, every data stream (evalinfo flag): ``image`` holds the scan itself; the others (water  #
+# reference, noise, phase correction, ...) become further datasets named after their flag, and a   #
+# stream spec2nii cannot convert is noted instead of failing the read. Any other measurement is    #
+# imaging raw data: its streams become RawData with their scan headers (SiemensTwixRaw). Header    #
 # keys of the protocol buffers are written in Siemens notation, e.g. ``sTXSPEC.asNucleusInfo[0].   #
 # tNucleus``.                                                                                      #
 #                                                                                                  #
@@ -91,10 +94,33 @@ class SiemensTwixReader(Spec2niiReader):
         "PatientName": "Meas/PatientName",
     }
 
-    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
+    def read(self, sniff: Sniff) -> list[MRSData | RawData]:
+        notes: list[str] = []
+        with self.captured(notes):
+            twix = self._measurement(sniff)
+        if self.is_spectroscopy(twix):
+            return super().read(sniff)
+        streams = [key for key in twix.keys() if key != "hdr"]
+        if self.MAIN_STREAM not in streams:
+            raise ReaderError(f"no '{self.MAIN_STREAM}' data in {sniff.path.name}: {streams}")
+        provenance = self.provenance(sniff, tuple(notes))
+        raw = SiemensTwixRaw(sniff.path, twix, self._vendor(twix, streams), provenance)
+        return raw.datasets([self.MAIN_STREAM] + [s for s in streams if s != self.MAIN_STREAM])
+
+    def _measurement(self, sniff: Sniff):
         twix = mapVBVD(str(sniff.path), quiet=True)
         if isinstance(twix, list):
             twix = twix[min(self.MULTIRAID, len(twix)) - 1]
+        return twix
+
+    @staticmethod
+    def is_spectroscopy(twix) -> bool:
+        """A spectral vector size in the protocol marks a spectroscopy measurement."""
+        value = twix["hdr"]["Phoenix"].get(("sSpecPara", "lVectorSize"))
+        return isinstance(value, (int, float)) and value > 0
+
+    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
+        twix = self._measurement(sniff)
         streams = [key for key in twix.keys() if key != "hdr"]
         if self.MAIN_STREAM not in streams:
             raise ReaderError(f"no '{self.MAIN_STREAM}' data in {sniff.path.name}: {streams}")
