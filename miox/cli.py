@@ -26,7 +26,7 @@ from pathlib import Path
 # own
 from miox import __version__
 from miox.audit import Auditor
-from miox.data import FitResult, MRImage, MRSData, PriorSet
+from miox.data import FitResult, MRImage, MRSData, PriorSet, RawData
 from miox.readers import Loader, ReaderError
 from miox.sniff import Format, Sniffer
 
@@ -77,9 +77,16 @@ class CLI:
                 print(json.dumps(d.to_dict(), default=str) if args.json else self._describe(d))
         return status
 
-    def _describe(self, d: MRSData | MRImage | PriorSet | FitResult) -> str:
+    def _describe(self, d: MRSData | MRImage | RawData | PriorSet | FitResult) -> str:
         lines = [f"{d.provenance.paths[0]}: {d.provenance.format} ({d.provenance.reader})"]
-        if isinstance(d, MRImage):
+        if isinstance(d, RawData):
+            trajectory = ", with trajectory" if d.trajectory is not None else ""
+            waveforms = f", {len(d.waveforms)} waveforms" if d.waveforms else ""
+            lines.append(
+                f"  {d.name}: {d.n_readouts} readouts x {d.n_coils} coils x "
+                f"{d.data.shape[-1]} samples, {d.data.dtype}{trajectory}{waveforms}"
+            )
+        elif isinstance(d, MRImage):
             dims = " ".join(f"{name}={n}" for name, n in zip(d.dims, d.shape, strict=True))
             sizes = " x ".join(f"{v:.4g}" for v in d.voxel_sizes)
             lines.append(f"  {d.name}: {dims}, {d.data.dtype}, voxels {sizes} mm")

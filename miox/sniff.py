@@ -30,6 +30,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import BinaryIO
 
+import h5py
 import nibabel as nib
 import pydicom
 
@@ -114,6 +115,7 @@ class Format(StrEnum):
     JMRUI_BINARY = "jmrui_binary"
     TEXT_FID = "text_fid"  # headerless columns of real and imaginary parts
     ISMRMRD = "ismrmrd"
+    FASTMRI_H5 = "fastmri_h5"
     UNKNOWN = "unknown"
 
 
@@ -871,17 +873,51 @@ class Sniffer:
         return Sniff(path, Format.UNKNOWN, evidence=(f"MATLAB file with {sorted(variables)}",))
 
     def hdf5(self, path: Path, head: bytes) -> Sniff | None:
+        """ISMRMRD: a group with an ``xml`` header and a ``data`` table (raw) or ``image_*``
+        subgroups; fastMRI: ``kspace`` and ``ismrmrd_header`` at the root."""
         if head[:8] != b"\x89HDF\r\n\x1a\n":
             return None
-        if path.suffix.lower() in (".h5", ".mrd", ".hdf5"):
+        try:
+            with h5py.File(path, "r") as fh:
+                names = list(fh.keys())
+                groups = {
+                    name: list(fh[name].keys())
+                    for name in names
+                    if isinstance(fh[name], h5py.Group)
+                }
+        except OSError as e:
+            return Sniff(path, Format.UNKNOWN, evidence=(f"HDF5 container, unreadable: {e}",))
+        for name, members in groups.items():
+            images = [m for m in members if m.startswith("image_")]
+            if "xml" in members and "data" in members:
+                kind, what = Kind.RAW, f"ISMRMRD xml header and {name}/data"
+            elif images:
+                kind, what = Kind.IMAGING, f"ISMRMRD image groups in {name}: {len(images)}"
+            else:
+                continue
             return Sniff(
                 path,
                 Format.ISMRMRD,
-                Kind.RAW,
-                confidence=0.7,
-                evidence=("HDF5 magic", f"{path.suffix} extension"),
+                kind,
+                confidence=1.0,
+                evidence=("HDF5 magic", what),
+                detail={"groups": groups},
             )
-        return Sniff(path, Format.UNKNOWN, evidence=("HDF5 container, unknown layout",))
+        if "kspace" in names and "ismrmrd_header" in names:
+            return Sniff(
+                path,
+                Format.FASTMRI_H5,
+                Kind.RAW,
+                confidence=1.0,
+                evidence=("HDF5 magic", "kspace and ismrmrd_header datasets"),
+                detail={"names": names},
+            )
+        return Sniff(
+            path,
+            Format.UNKNOWN,
+            evidence=("HDF5 container, unknown layout",),
+            detail={"names": names},
+        )
 
     def extension_only(self, path: Path, head: bytes) -> Sniff | None:
         if path.suffix.lower() == ".mrui":

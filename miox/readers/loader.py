@@ -134,7 +134,7 @@ class Loader:
         *,
         given: dict[str, Any] | None = None,
         complete: bool = False,
-    ) -> list[MRSData | MRImage | PriorSet | FitResult]:
+    ) -> list[MRSData | MRImage | RawData | PriorSet | FitResult]:
         """Every dataset in ``path``: one MRSData, MRImage, PriorSet or FitResult each.
 
         ``given`` maps standard keys to values for what the file does not state
@@ -156,7 +156,7 @@ class Loader:
                 )
         return datasets
 
-    def _read(self, sniff: Sniff) -> list[MRSData | MRImage | PriorSet | FitResult]:
+    def _read(self, sniff: Sniff) -> list[MRSData | MRImage | RawData | PriorSet | FitResult]:
         if sniff.path.is_dir() and sniff.format in self.DICOM_FORMATS:
             return self._dicom_folder(sniff)
         reader = self.readers.get(sniff.format)
@@ -205,5 +205,5 @@ class Loader:
 #**************************************************************************************************#
 def load(
     path: str | Path, *, given: dict[str, Any] | None = None, complete: bool = False
-) -> list[MRSData | MRImage | PriorSet | FitResult]:
+) -> list[MRSData | MRImage | RawData | PriorSet | FitResult]:
     return Loader().load(path, given=given, complete=complete)

@@ -6,9 +6,9 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: The canonical spectroscopy object every reader returns: complex FIDs in NIfTI-MRS       #
-#          dimension order, dwell time, geometry, tagged higher dimensions, metadata and the       #
-#          provenance of the read.                                                                 #
+# Purpose: The objects every reader returns: spectroscopy (complex FIDs in NIfTI-MRS dimension     #
+#          order, dwell time, geometry, tagged higher dimensions), images, raw k-space readouts,   #
+#          basis sets, priors and fit results, each with metadata and the provenance of the read.  #
 #                                                                                                  #
 ####################################################################################################
 
@@ -419,3 +419,98 @@ class MRImage:
         sizes = " x ".join(f"{v:.3g}" for v in self.voxel_sizes)
         kind = f"{self.provenance.format} {self.shape} {self.data.dtype}"
         return f"<MRImage{name} {kind}, {sizes} mm>"
+
+
+#**************************************************************************************************#
+#                                             RawData                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# Raw k-space as acquired: ``data`` holds the readouts as (readouts, coils, samples) complex       #
+# values, ``headers`` one row per readout (a structured array: encoding counters, flags, time      #
+# stamps, position and directions of the readout, ...), ``trajectory`` the k-space coordinates of  #
+# every sample as (readouts, samples, dimensions) when the file states them. Readouts of unequal   #
+# length are padded with zeros to the longest; ``samples`` gives each one's own length.            #
+# ``encoding`` holds the file's encoding description (matrix sizes, fields of view in mm, limits   #
+# of the counters, trajectory type), ``waveforms`` physiological or other recordings stored with   #
+# the readouts (one dict per waveform: header fields and the samples), ``flag_names`` the meaning  #
+# of the bits of the readouts' ``flags`` field (bit number from 1: name). Nothing is               #
+# reconstructed.                                                                                   #
+#                                                                                                  #
+#**************************************************************************************************#
+class RawData:
+    def __init__(
+        self,
+        data: np.ndarray,
+        headers: np.ndarray,
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+        trajectory: np.ndarray | None = None,
+        samples: np.ndarray | None = None,
+        encoding: dict | None = None,
+        waveforms: list[dict] | None = None,
+        flag_names: dict[int, str] | None = None,
+    ):
+        self.data = data
+        self.headers = headers
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+        self.trajectory = trajectory
+        self.samples = samples if samples is not None else np.full(data.shape[0], data.shape[-1])
+        self.encoding = encoding if encoding is not None else {}
+        self.waveforms = waveforms if waveforms is not None else []
+        self.flag_names = flag_names if flag_names is not None else {}
+
+    @property
+    def shape(self) -> tuple[int, ...]:
+        return self.data.shape
+
+    @property
+    def n_readouts(self) -> int:
+        return self.data.shape[0]
+
+    @property
+    def n_coils(self) -> int:
+        return self.data.shape[1]
+
+    def counters(self, name: str) -> np.ndarray:
+        """The encoding counter ``name`` (e.g. "kspace_encode_step_1", "slice") of every readout."""
+        return np.asarray(self.headers["idx"][name])
+
+    def flagged(self, name: str) -> np.ndarray:
+        """Whether each readout carries the flag ``name`` (a key of ``flag_names``)."""
+        bit = next(b for b, n in self.flag_names.items() if n == name)
+        return (np.asarray(self.headers["flags"]).astype(np.uint64) >> np.uint64(bit - 1)) & 1 == 1
+
+    def flags_of(self, index: int) -> list[str]:
+        """The names of the flags set on readout ``index``."""
+        value = int(self.headers["flags"][index])
+        return [name for bit, name in self.flag_names.items() if value >> (bit - 1) & 1]
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the data, headers and the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "shape": list(self.shape),
+            "dtype": str(self.data.dtype),
+            "trajectory": None if self.trajectory is None else list(self.trajectory.shape),
+            "encoding": self.encoding,
+            "waveforms": len(self.waveforms),
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "vendor_fields": len(self.meta.vendor_fields()),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        trajectory = ", with trajectory" if self.trajectory is not None else ""
+        return (
+            f"<RawData{name} {self.provenance.format}: {self.n_readouts} readouts x "
+            f"{self.n_coils} coils x {self.data.shape[-1]} samples{trajectory}>"
+        )

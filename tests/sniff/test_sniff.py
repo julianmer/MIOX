@@ -159,10 +159,12 @@ def test_jmrui(tmp_path):
 
 
 def test_hdf5(tmp_path):
+    """The magic alone is not enough: the layout decides, and a truncated container is noted."""
     magic = b"\x89HDF\r\n\x1a\n"
     f = tmp_path / "x.h5"
     f.write_bytes(magic + b"\x00" * 64)
-    assert sniff(f).format == Format.ISMRMRD
+    assert sniff(f).format == Format.UNKNOWN
+    assert "unreadable" in sniff(f).evidence[0]
     g = tmp_path / "x.bin"
     g.write_bytes(magic + b"\x00" * 64)
     assert sniff(g).format == Format.UNKNOWN

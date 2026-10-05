@@ -27,7 +27,7 @@ from typing import Any
 import numpy as np
 
 # own
-from miox import FitResult, Format, Loader, MRImage, MRSData, PriorSet, Sniffer
+from miox import FitResult, Format, Loader, MRImage, MRSData, PriorSet, RawData, Sniffer
 from tests.conftest import GOLDEN, PUBLIC_DATA
 
 
@@ -65,6 +65,8 @@ class ReadRecords:
         """Public files whose format has a reader."""
         for path in sorted(q for top in PUBLIC_DATA.iterdir() for q in top.rglob("*")):
             if not path.is_file() or ".git" in path.parts or self.is_lfs_pointer(path):
+                continue
+            if path.suffix == ".part":  # a download in progress
                 continue
             fmt = self.sniffer.sniff(path).format
             if fmt not in self.loader.readers:
@@ -112,7 +114,23 @@ class ReadRecords:
             return math.isnan(a) and math.isnan(b)
         return math.isclose(a, b, rel_tol=self.RTOL, abs_tol=1e-12)
 
-    def _dataset(self, d: MRSData | MRImage | PriorSet | FitResult) -> dict:
+    def _dataset(self, d: MRSData | MRImage | RawData | PriorSet | FitResult) -> dict:
+        if isinstance(d, RawData):
+            record = {
+                "name": d.name,
+                "shape": list(d.shape),
+                "dtype": str(d.data.dtype),
+                "trajectory": None if d.trajectory is None else list(d.trajectory.shape),
+                "waveforms": len(d.waveforms),
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+                "data_norm": float(np.linalg.norm(d.data)),
+                "first_readout": [[float(z.real), float(z.imag)] for z in d.data[0, 0, :3]],
+                "counters_head": {
+                    n: d.counters(n)[:4].tolist()
+                    for n in ("kspace_encode_step_1", "kspace_encode_step_2", "slice")
+                },
+            }
+            return json.loads(json.dumps(record, default=str))
         if isinstance(d, MRImage):
             values = np.abs(d.data) if np.iscomplexobj(d.data) else d.data
             record = {

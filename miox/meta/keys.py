@@ -154,6 +154,71 @@ class KeyTable(dict):
             "Number of acquired averages (transients) per spectrum, before any combination.",
             "miox",
         ),
+        Key(
+            "H1ResonanceFrequency",
+            "MHz",
+            (float,),
+            "Proton resonance frequency of the system, whatever nucleus the data was acquired on.",
+            "miox",
+        ),
+        Key(
+            "PatientPosition",
+            None,
+            (str,),
+            "Position of the patient in the scanner as a DICOM code (HFS, HFP, FFS, ...).",
+            "miox",
+        ),
+        Key(
+            "NumberOfReceiveChannels",
+            None,
+            (int,),
+            "Receive channels of the system available for the acquisition.",
+            "miox",
+        ),
+        Key(
+            "EncodedMatrixSize",
+            None,
+            (list, int),
+            "Matrix size of the encoded k-space (x, y, z), oversampling included.",
+            "miox",
+        ),
+        Key(
+            "EncodedFieldOfView",
+            "mm",
+            (list, float),
+            "Field of view of the encoded k-space (x, y, z).",
+            "miox",
+        ),
+        Key(
+            "ReconMatrixSize",
+            None,
+            (list, int),
+            "Matrix size of the reconstructed image (x, y, z).",
+            "miox",
+        ),
+        Key(
+            "ReconFieldOfView",
+            "mm",
+            (list, float),
+            "Field of view of the reconstructed image (x, y, z).",
+            "miox",
+        ),
+        Key(
+            "EncodingLimits",
+            None,
+            (dict,),
+            "Per encoding counter (kspace_encoding_step_1, slice, repetition, ...) its minimum, "
+            "maximum and centre index.",
+            "miox",
+        ),
+        Key(
+            "KSpaceTrajectory",
+            None,
+            (str,),
+            "Sampling trajectory of the readouts: cartesian, epi, radial, goldenangle, spiral or "
+            "other.",
+            "miox",
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning
