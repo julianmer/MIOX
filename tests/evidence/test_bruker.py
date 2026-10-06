@@ -23,7 +23,7 @@ import pytest
 # own
 from miox import MRImage, MRSData, load
 from tests.conftest import PUBLIC_DATA
-from tests.golden.test_dicom_images import grid_mapping, on_reference_grid, same
+from tests.evidence.test_dicom_images import grid_mapping, on_reference_grid, same
 
 BRUKER = PUBLIC_DATA / "spec2nii_test_data/bruker"
 EXPORTED = sorted(p.parent.relative_to(BRUKER).as_posix() for p in BRUKER.glob("*/*/pdata/*/dicom"))

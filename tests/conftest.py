@@ -25,7 +25,7 @@ from pathlib import Path
 import pytest
 
 PUBLIC_DATA = Path(__file__).parent / "data"
-GOLDEN = Path(__file__).parent / "golden"
+RECORDS = Path(__file__).parent / "records"
 
 
 @pytest.fixture(scope="session")

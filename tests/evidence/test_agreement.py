@@ -7,7 +7,7 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Cross-format agreement on the public test data: the same acquisition stored in several  #
-#          formats must give the same values. Unlike the golden records, this is independent       #
+#          formats must give the same values. Unlike the records, this is independent              #
 #          evidence that the values are correct.                                                   #
 #                                                                                                  #
 ####################################################################################################
@@ -26,7 +26,7 @@ import pytest
 # own
 from miox import Format, MRSData, load
 from tests.conftest import PUBLIC_DATA
-from tests.golden.records import ReadRecords
+from tests.records.records import ReadRecords
 
 PHILIPS = PUBLIC_DATA / "spec2nii_test_data/philips/spar_dcm_orientation_tests"
 SIEMENS_KEYS = (  # values twix, DICOM and RDA of one Siemens scan must share

@@ -6,9 +6,9 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Golden records of what the readers return for the public test files: names, shape,      #
-#          dimensions, dwell time, standard keys and a fingerprint of the data. Files that cannot  #
-#          be read are recorded with their error, so a change either way shows up.                 #
+# Purpose: Records of what the readers return for the public test files: names, shape, dimensions, #
+#          dwell time, standard keys and a fingerprint of the data. Files that cannot be read are  #
+#          recorded with their error, so a change either way shows up.                             #
 #                                                                                                  #
 ####################################################################################################
 
@@ -28,7 +28,7 @@ import numpy as np
 
 # own
 from miox import FitResult, Format, Loader, MRImage, MRSData, PriorSet, RawData, Sniffer
-from tests.conftest import GOLDEN, PUBLIC_DATA
+from tests.conftest import PUBLIC_DATA, RECORDS
 
 
 #**************************************************************************************************#
@@ -40,7 +40,7 @@ from tests.conftest import GOLDEN, PUBLIC_DATA
 #                                                                                                  #
 #**************************************************************************************************#
 class ReadRecords:
-    PATH = GOLDEN / "read.json"
+    PATH = RECORDS / "read.json"
     VOLATILE = {"ConversionTime", "ConversionMethod"}  # change with every run or version
     RTOL = 1e-6
     BRUKER_DATA = {"fid", "fid_proc.64", "2dseq", "rawdata.job0"}  # Bruker files that hold data

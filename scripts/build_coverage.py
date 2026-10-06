@@ -27,7 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 # own
 from miox.audit import Auditor, Coverage, Status  # noqa: E402
 from tests.conftest import PUBLIC_DATA  # noqa: E402
-from tests.golden.records import ReadRecords  # noqa: E402
+from tests.records.records import ReadRecords  # noqa: E402
 
 
 #**************************************************************************************************#
@@ -53,7 +53,7 @@ class CoverageBuilder:
             try:
                 coverage = self.auditor.audit(path)
             except Exception:
-                continue  # files that cannot be read are listed in the golden read records
+                continue  # files that cannot be read are listed in the read records
             pages[coverage.format].append(coverage)
         for fmt, coverages in sorted(pages.items()):
             out = self.DOCS / f"{fmt}.md"

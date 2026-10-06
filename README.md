@@ -35,7 +35,7 @@ uv run miox sniff path/to/file.dat
 uv run miox audit path/to/file.dat
 uv run pytest                        # synthetic tests, no data needed
 uv run python scripts/fetch_test_data.py   # public test data (subset; --all for everything)
-uv run pytest -m data                # golden-record tests on the fetched data
+uv run pytest -m data                # record tests on the fetched data       
 ```
 
 Private test sets are picked up from `MIOX_PRIVATE_DATA` (directories separated by the

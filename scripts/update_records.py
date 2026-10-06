@@ -1,14 +1,14 @@
 ####################################################################################################
-#                                         update_golden.py                                         #
+#                                        update_records.py                                         #
 ####################################################################################################
 #                                                                                                  #
 # Authors: J. P. Merkofer (j.p.merkofer@tue.nl)                                                    #
 #                                                                                                  #
 # Created: 01/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Regenerates the golden records from the public data under tests/data: sniff.json for    #
-#          every file except obvious non-data, read.json for every file with a reader. Records of  #
-#          files no longer present are kept so a subset fetch never erases the full set.           #
+# Purpose: Regenerates the records from the public data under tests/data: sniff.json for every     #
+#          file except obvious non-data, read.json for every file with a reader. Records of files  #
+#          no longer present are kept so a subset fetch never erases the full set.                 #
 #                                                                                                  #
 ####################################################################################################
 
@@ -26,19 +26,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 # own
 from miox import Format, Sniffer  # noqa: E402
-from tests.conftest import GOLDEN, PUBLIC_DATA  # noqa: E402
-from tests.golden.records import ReadRecords  # noqa: E402
+from tests.conftest import PUBLIC_DATA, RECORDS  # noqa: E402
+from tests.records.records import ReadRecords  # noqa: E402
 
 
 #**************************************************************************************************#
-#                                          GoldenUpdater                                           #
+#                                          RecordUpdater                                           #
 #**************************************************************************************************#
 #                                                                                                  #
 # Sniffs every public data file and reads every one that has a reader, merging the results into    #
-# the golden records.                                                                              #
+# the records.                                                                                     #
 #                                                                                                  #
 #**************************************************************************************************#
-class GoldenUpdater:
+class RecordUpdater:
     IGNORE_SUFFIXES = {
         ".png",
         ".jpg",
@@ -61,7 +61,7 @@ class GoldenUpdater:
     def __init__(self):
         self.sniffer = Sniffer()
         self.reads = ReadRecords()
-        self.out = GOLDEN / "sniff.json"
+        self.out = RECORDS / "sniff.json"
 
     def run(self) -> int:
         self.sniff()
@@ -120,4 +120,4 @@ class GoldenUpdater:
 
 
 if __name__ == "__main__":
-    sys.exit(GoldenUpdater().run())
+    sys.exit(RecordUpdater().run())
