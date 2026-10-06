@@ -119,6 +119,7 @@ class Format(StrEnum):
     FASTMRI_H5 = "fastmri_h5"
     GE_SCANARCHIVE = "ge_scanarchive"
     PULSEQ = "pulseq"
+    BART_CFL = "bart_cfl"
     UNKNOWN = "unknown"
 
 
@@ -306,6 +307,7 @@ class Sniffer:
             self.bruker,
             self.varian,
             self.pulseq,
+            self.bart,
             self.text_formats,
             self.hdf5,
             self.extension_only,
@@ -682,6 +684,38 @@ class Sniffer:
                 confidence=1.0,
                 evidence=("[VERSION] section" if b"[VERSION]" in head else "Pulseq comment",),
             )
+        return None
+
+    def bart(self, path: Path, head: bytes) -> Sniff | None:
+        """BART arrays: a .hdr starting with "# Dimensions" beside a .cfl, a .cfl beside such a
+        .hdr, or a .ra file with the rawarray magic."""
+        suffix = path.suffix.lower()
+        if suffix == ".ra" and head[:8] == b"rawarray":
+            return Sniff(
+                path, Format.BART_CFL, Kind.IMAGING, confidence=1.0, evidence=("rawarray magic",)
+            )
+        if suffix == ".hdr" and head.startswith(b"# Dimensions"):
+            cfl = self._sibling(path, ".cfl")
+            return Sniff(
+                path,
+                Format.BART_CFL,
+                Kind.IMAGING,
+                confidence=1.0 if cfl else 0.7,
+                evidence=("# Dimensions line", "CFL companion found" if cfl else "no CFL"),
+                companions=(cfl,) if cfl else (),
+            )
+        if suffix == ".cfl" and (hdr := self._sibling(path, ".hdr")):
+            with open(hdr, "rb") as fh:
+                first = fh.read(12)
+            if first.startswith(b"# Dimensions"):
+                return Sniff(
+                    path,
+                    Format.BART_CFL,
+                    Kind.IMAGING,
+                    confidence=1.0,
+                    evidence=(".cfl extension", "HDR companion with Dimensions"),
+                    companions=(hdr,),
+                )
         return None
 
     def text_formats(self, path: Path, head: bytes) -> Sniff | None:

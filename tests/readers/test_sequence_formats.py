@@ -7,7 +7,8 @@
 # Created: 07/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Pulseq files of revisions 1.3, 1.4 and 1.5 (column layouts, shape decompression,        #
-#          extensions, definitions as keys) on synthetic files.                                   #
+#          extensions, definitions as keys) and BART arrays (.cfl with .hdr, .ra) on synthetic     #
+#          files.                                                                                  #
 #                                                                                                  #
 ####################################################################################################
 
@@ -16,6 +17,8 @@
 #   imports   #
 #*************#
 from __future__ import annotations
+
+import struct
 
 import numpy as np
 import pytest
@@ -199,3 +202,37 @@ def test_shape_decompression_examples():
     )
     assert PulseqReader.decompress(np.array([0, 0, 98])).tolist() == [0.0] * 100
     assert PulseqReader.decompress(np.array([1, 0, 0, 97])).tolist() == [1.0] * 100
+
+
+def test_bart_cfl_and_ra(tmp_path):
+    values = (np.arange(24, dtype=np.float32) + 1j * np.arange(24, dtype=np.float32)[::-1])
+    values = values.astype(np.complex64)
+    (tmp_path / "ksp.cfl").write_bytes(values.tobytes())
+    header = "# Dimensions\n2 3 4 1 1 1 1 1 1 1 1 1 1 1 1 1\n# Command\nbart phantom -k\n"
+    (tmp_path / "ksp.hdr").write_text(header)
+    for suffix in ("hdr", "cfl"):
+        sniff = gu.sniff(tmp_path / f"ksp.{suffix}")
+        assert (sniff.format, sniff.kind) == (gu.Format.BART_CFL, gu.Kind.IMAGING)
+        assert len(sniff.companions) == 1
+    [image] = gu.load(tmp_path / "ksp.hdr")
+    assert isinstance(image, gu.MRImage) and image.shape == (2, 3, 4)
+    assert image.dims == ("i", "j", "k")
+    assert image.data[1, 0, 0] == values[1] and image.data[0, 1, 0] == values[2]  # column-major
+    assert image.data[0, 0, 1] == values[6] and image.data.dtype == np.complex64
+    assert image.meta.vendor["header"]["Command"] == "bart phantom -k"
+    assert image.meta.vendor["dimensions"][:4] == [2, 3, 4, 1] and image.name == "ksp"
+    assert any("k-space" in note for note in image.provenance.notes)
+    # a coil dimension is named, trailing singletons dropped
+    (tmp_path / "coils.cfl").write_bytes(np.ones(2 * 3 * 1 * 4, dtype=np.complex64).tobytes())
+    (tmp_path / "coils.hdr").write_text("# Dimensions\n2 3 1 4 1 1 1 1 1 1 1 1 1 1 1 1\n")
+    [coils] = gu.load(tmp_path / "coils.cfl")
+    assert coils.shape == (2, 3, 1, 4) and coils.dims == ("i", "j", "k", "coil")
+    # rawarray
+    header = struct.pack("<6Q", 0x7961727261776172, 0, 4, 8, values.nbytes, 3)
+    header += struct.pack("<3Q", 2, 3, 4)
+    (tmp_path / "ksp.ra").write_bytes(header + values.tobytes())
+    sniff = gu.sniff(tmp_path / "ksp.ra")
+    assert sniff.format == gu.Format.BART_CFL and sniff.evidence == ("rawarray magic",)
+    [ra] = gu.load(tmp_path / "ksp.ra")
+    assert np.array_equal(ra.data, image.data)
+    assert ra.meta.vendor["header"]["data_bytes"] == values.nbytes

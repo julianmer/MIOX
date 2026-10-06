@@ -23,6 +23,7 @@ from typing import Any
 
 # own
 from miox.data import FitResult, MRImage, MRSData, PriorSet, PulseSequence, RawData
+from miox.readers.bart_cfl import BartReader
 from miox.readers.base import IncompleteError, Reader, ReaderError
 from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.bruker import BrukerReader
@@ -91,6 +92,7 @@ class Loader:
         self.sniffer = Sniffer()
         self.readers: dict[Format, Reader] = {}
         for reader in (
+            BartReader(),
             BasisFolderReader(self),
             BrukerReader(),
             DicomImageReader(),
