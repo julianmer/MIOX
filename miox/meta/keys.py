@@ -219,6 +219,14 @@ class KeyTable(dict):
             "other.",
             "miox",
         ),
+        Key("StudyID", None, (str,), "Identifier of the study (exam) on the scanner.", "miox"),
+        Key("ScanDuration", "s", (float,), "Duration of the scan the scanner states.", "miox"),
+        Key(
+            "PatientAge", "years", (int, str),
+            "Age of the patient at the examination: a number of years, or DICOM's age string "
+            "(e.g. 040Y) when a sidecar states it that way.",
+            "miox",
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning

@@ -6,9 +6,9 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Reader for GE P-files (.7). spec2nii converts; the vendor header holds every named      #
-#          field of spec2nii's P-file header structure (a subset of the full rdb header, padding   #
-#          skipped).                                                                               #
+# Purpose: Reader for GE P-files (.7). Spectroscopy sequences spec2nii knows are converted by it;  #
+#          every other P-file is read as raw k-space. The vendor header holds the named fields of  #
+#          the rdb header (GeRdbHeader).                                                           #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,7 +19,6 @@
 from __future__ import annotations
 
 import contextlib
-import ctypes
 import warnings
 from collections.abc import Iterator
 from pathlib import Path
@@ -31,8 +30,10 @@ from spec2nii.GE.ge_pfile import _process_mrsi_pfile, _process_svs_pfile
 from spec2nii.GE.ge_read_pfile import Pfile
 
 # own
-from miox.data import MRSData
+from miox.data import MRSData, RawData
 from miox.readers.base import Spec2niiReader
+from miox.readers.ge_pfile_raw import GePfileRaw
+from miox.readers.ge_rdb import GeRdbHeader
 from miox.sniff import Format, Sniff
 
 
@@ -77,32 +78,15 @@ class GePfile(Pfile):
 
 
 #**************************************************************************************************#
-#                                           PfileHeader                                            #
-#**************************************************************************************************#
-#                                                                                                  #
-# GePfile without the data: the constructor would also map the whole file.                         #
-#                                                                                                  #
-#**************************************************************************************************#
-class PfileHeader(GePfile):
-    def __init__(self, fname: str):
-        self.file_name = fname
-        self.version = 0
-        self.hdr = None
-        self.map = None
-        self.endian = "little"
-        self.encoding = None
-        self.read_header()
-
-
-#**************************************************************************************************#
 #                                          GePfileReader                                           #
 #**************************************************************************************************#
 #                                                                                                  #
-# Reads one P-file; a file with water references or several sub-experiments gives one MRSData      #
-# per output spec2nii makes (``_ref``, ``_edited``, ...). HBCD PRESS files store user19 water      #
-# frames, then user4 metabolite frames (checked by their amplitudes); spec2nii's PRESS split       #
-# (16 / nex water frames) moves water frames into the metabolites, so they are split here. The     #
-# sequence name comes from the header, not from the name used for mapping.                         #
+# Reads one P-file. A spectroscopy sequence spec2nii has a mapper for is converted by it; a file   #
+# with water references or several sub-experiments gives one MRSData per output spec2nii makes     #
+# (``_ref``, ``_edited``, ...). Any other P-file is raw k-space (GePfileRaw). HBCD PRESS files     #
+# store user19 water frames, then user4 metabolite frames (checked by their amplitudes);           #
+# spec2nii's PRESS split (16 / nex water frames) moves water frames into the metabolites, so they  #
+# are split here. The sequence name comes from the header, not from the name used for mapping.     #
 #                                                                                                  #
 #**************************************************************************************************#
 class GePfileReader(Spec2niiReader):
@@ -126,6 +110,12 @@ class GePfileReader(Spec2niiReader):
         "PatientSex": "rhe_patsex",
         "DwellTime": "rhr_spectral_width",
     }
+
+    def read(self, sniff: Sniff) -> list[MRSData | RawData]:
+        header = GeRdbHeader.from_file(sniff.path)
+        if header.spectroscopy_mapper():
+            return super().read(sniff)
+        return GePfileRaw(sniff.path, header, self.provenance(sniff)).datasets()
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         """spec2nii's read_pfile, with GePfile in place of its Pfile."""
@@ -169,15 +159,4 @@ class GePfileReader(Spec2niiReader):
             ge_pfile._process_probe_p = original
 
     def _header(self, path: Path) -> dict:
-        pfile = PfileHeader(str(path))
-        header = {"version": pfile.version}
-        for info in pfile._dump_struct(pfile.hdr):
-            if info.label.startswith("pad"):
-                continue
-            value = info.value
-            if isinstance(value, ctypes.Array):
-                value = list(value)
-            if isinstance(value, bytes) and pfile.encoding:
-                value = value.decode(pfile.encoding, "replace").rstrip("\0")
-            header[info.label] = self.plain(value)
-        return header
+        return GeRdbHeader.from_file(path).values
