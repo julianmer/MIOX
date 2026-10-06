@@ -11,7 +11,8 @@
 #          server's rate limit), the NIfTI-MRS examples and the OSI2ONE k-space data from Zenodo,  #
 #          the test folders of further public repositories, single files by URL (ITK's GE images   #
 #          through an IPFS gateway, ISMRMRD and Gadgetron k-space samples, one M4Raw file, the GE  #
-#          P-files and ScanArchives of ge_to_ismrmrd), and NEMA's spectroscopy DICOM examples.     #
+#          P-files and ScanArchives of ge_to_ismrmrd, a Philips raw/lab/sin export), and NEMA's    #
+#          spectroscopy DICOM examples.                                                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -217,6 +218,12 @@ class DataFetcher:
     )
     M4RAW = "https://huggingface.co/datasets/mylyu/M4Raw_brain/resolve/main"  # CC BY 4.0
     M4RAW_FILES = ("multicoil_test/2022101103_T206.h5", "H5_FORMAT.md", "LICENSE")
+    LABRAWSIN = "https://raw.githubusercontent.com/welcheb/labrawsin_env/main"  # MIT
+    LABRAWSIN_FILES = {  # one Philips raw/lab/sin export (coronal GRE)
+        **{f"20250617_210621_COR_GRE.{s}": f"20250617_210621_COR_GRE.{s}"
+           for s in ("lab", "raw", "sin")},
+        "LICENSE": "LICENSE",
+    }
     GE_TO_ISMRMRD = "https://raw.githubusercontent.com/ismrmrd/ge_to_ismrmrd/master"  # NIH
     GE_TO_ISMRMRD_FILES = {  # P-files and ScanArchives of GE's converter, public domain
         "P20480_GRE.7": "sampleData/P20480_GRE.7", "P21504_FSE.7": "sampleData/P21504_FSE.7",
@@ -232,6 +239,7 @@ class DataFetcher:
         "gadgetron": (GADGETRON, dict(zip(GADGETRON_FILES, GADGETRON_FILES, strict=True))),
         "m4raw": (M4RAW, dict(zip(M4RAW_FILES, M4RAW_FILES, strict=True))),
         "ge_to_ismrmrd": (GE_TO_ISMRMRD, GE_TO_ISMRMRD_FILES),
+        "labrawsin": (LABRAWSIN, LABRAWSIN_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),

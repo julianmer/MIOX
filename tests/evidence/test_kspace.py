@@ -35,6 +35,7 @@ from tests.conftest import PUBLIC_DATA
 GADGETRON = PUBLIC_DATA / "gadgetron"
 ISMRMRD = PUBLIC_DATA / "ismrmrd"
 GE = PUBLIC_DATA / "ge_to_ismrmrd"
+PHILIPS = PUBLIC_DATA / "labrawsin/20250617_210621_COR_GRE.lab"
 GE_MRS = PUBLIC_DATA / "spec2nii_test_data/ge/pFiles/svMRS/P03072.7"
 TWIX_GRE = GADGETRON / "simple_gre/meas_MiniGadgetron_GRE.dat"
 ISMRMRD_GRE = GADGETRON / "simple_gre/simple_gre_in_20220831.mrd"
@@ -260,3 +261,38 @@ def test_ge_epi_scanarchive():
     assert raw.meta["AcquisitionDateTime"].startswith("2019-05-29T09:11:02")
     assert raw.meta["InPlanePhaseEncodingDirectionDICOM"] == "COL"
     assert raw.headers["position"].any() and not raw.provenance.notes
+
+
+# --- Philips ------------------------------------------------------------------------------------
+
+
+def test_philips_raw_export_matches_the_published_reading():
+    """The repository of the sample shows what Philips' closed reader returns for it: k-space
+    (12 channels, 320 profiles, 640 samples), noise (12 x 19840), the channel names and the
+    scan parameters; the k-space centre lies at the encoding centre and the echo at the centre
+    sample."""
+    _need(PHILIPS)
+    image, echo_phase, noise = load(PHILIPS)
+    assert image.shape == (320, 12, 640) and noise.shape == (1, 12, 19840)
+    assert echo_phase.shape == (1, 2, 640) and noise.flags_of(0) == ["IS_NOISE_MEASUREMENT"]
+    assert sorted(image.counters("kspace_encode_step_1").tolist()) == list(range(320))
+    m = image.meta
+    assert m["RepetitionTime"] == pytest.approx(0.0297091)
+    assert m["EchoTime"] == pytest.approx(0.0092081) and m["ExcitationFlipAngle"] == 15.0
+    assert m["DwellTime"] == pytest.approx(22.16e-6)
+    assert m["NumberOfReceiveChannels"] == 12 and m["ProtocolName"] == "COR GRE"
+    assert m["AcquisitionDateTime"] == "2025-06-17T21:06:21.61"
+    assert m["EncodedMatrixSize"] == [640, 320, 1] and m["ReconMatrixSize"] == [320, 320, 1]
+    assert m["EncodingLimits"]["kspace_encoding_step_1"]["center"] == 159
+    names = [e["values"][0] for e in m.vendor["sin"]["channel_names"]]
+    assert len(names) == 14 and names[0] == "_ODU_DCC1/SMALL_BODY_ARRAY.E01"
+    assert names[-1] == "_ConnQBC/BODY_QUAD.E2"
+    energy = np.abs(image.data).sum(axis=(1, 2))
+    assert image.counters("kspace_encode_step_1")[np.argmax(energy)] == 159
+    echo = int(np.abs(image.data).sum(axis=(0, 1)).argmax())
+    assert echo == image.headers["center_sample"][0] == 320
+    covariance = noise.data[0] @ noise.data[0].conj().T / noise.data.shape[-1]
+    diagonal = np.abs(np.diag(covariance)).max()
+    off = np.abs(covariance - np.diag(np.diag(covariance))).max() / diagonal
+    assert off < 0.5  # channels mostly independent, as the published covariance picture shows
+    assert any("skipped before label 19" in note for note in image.provenance.notes)
