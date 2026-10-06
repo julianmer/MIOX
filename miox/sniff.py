@@ -116,6 +116,7 @@ class Format(StrEnum):
     TEXT_FID = "text_fid"  # headerless columns of real and imaginary parts
     ISMRMRD = "ismrmrd"
     FASTMRI_H5 = "fastmri_h5"
+    GE_SCANARCHIVE = "ge_scanarchive"
     UNKNOWN = "unknown"
 
 
@@ -874,7 +875,8 @@ class Sniffer:
 
     def hdf5(self, path: Path, head: bytes) -> Sniff | None:
         """ISMRMRD: a group with an ``xml`` header and a ``data`` table (raw) or ``image_*``
-        subgroups; fastMRI: ``kspace`` and ``ismrmrd_header`` at the root."""
+        subgroups; fastMRI: ``kspace`` and ``ismrmrd_header`` at the root; GE ScanArchive:
+        ``DownloadData.xml`` and an ``Acquisition`` group at the root."""
         if head[:8] != b"\x89HDF\r\n\x1a\n":
             return None
         try:
@@ -902,6 +904,16 @@ class Sniffer:
                 confidence=1.0,
                 evidence=("HDF5 magic", what),
                 detail={"groups": groups},
+            )
+        if "DownloadData.xml" in names and "Acquisition" in groups:
+            return Sniff(
+                path,
+                Format.GE_SCANARCHIVE,
+                Kind.RAW,
+                vendor="ge",
+                confidence=1.0,
+                evidence=("HDF5 magic", "DownloadData.xml and the Acquisition group"),
+                detail={"names": names},
             )
         if "kspace" in names and "ismrmrd_header" in names:
             return Sniff(

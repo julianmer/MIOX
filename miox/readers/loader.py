@@ -33,6 +33,7 @@ from miox.readers.fida_mat import FidaReader
 from miox.readers.fsl_mrs_basis import FslMrsBasisReader
 from miox.readers.gava_midas_prior import GavaMidasPriorReader
 from miox.readers.ge_pfile import GePfileReader
+from miox.readers.ge_scanarchive import GeScanArchiveReader
 from miox.readers.ge_signa import GeSignaReader
 from miox.readers.inspector_basis import InspectorBasisReader
 from miox.readers.ismrmrd import IsmrmrdReader
@@ -95,6 +96,7 @@ class Loader:
             FslMrsBasisReader(),
             GavaMidasPriorReader(),
             GePfileReader(),
+            GeScanArchiveReader(),
             GeSignaReader(),
             InspectorBasisReader(),
             IsmrmrdReader(),
