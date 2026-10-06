@@ -35,6 +35,7 @@ from miox.data import MRImage
 from miox.meta.meta import Meta
 from miox.readers.base import ReaderError, Spec2niiReader
 from miox.readers.bruker_2dseq import Bruker2dseq
+from miox.readers.bruker_raw import BrukerRaw
 from miox.readers.dicom_image import DicomImageReader
 from miox.sniff import Format, Kind, Sniff, Sniffer
 
@@ -140,7 +141,25 @@ class BrukerReader(Spec2niiReader):
                 return self._images(sniff, dataset, header)
             if set(dataset.frame_types) <= {"MAGNITUDE_IMAGE"}:
                 return self._spectra(sniff, dataset, header)
+        elif self._imaging_raw(path, sniff):
+            header = self._header(path)
+            processed = path.parent / "pdata" / "1"
+            geometry = None
+            if (processed / "visu_pars").is_file():
+                visu = self._parameters(processed / "visu_pars")
+                geometry = Bruker2dseq(processed / "2dseq", visu)
+            return BrukerRaw(path, header, self.provenance(sniff), geometry).datasets()
         return super().read(sniff)
+
+    def _imaging_raw(self, path: Path, sniff: Sniff) -> bool:
+        """A fid or rawdata.jobN file of an imaging method, or any job beyond the first."""
+        if path.name.startswith("rawdata.job") and path.name != "rawdata.job0":
+            return True
+        if path.name not in ("fid", "rawdata.job0"):
+            return False
+        header = self._header(path)
+        method = header.get("method", {}).get("Method") or sniff.detail.get("method")
+        return Sniffer().bruker_scan_kind(method) == Kind.IMAGING
 
     # --- spectroscopy through spec2nii -----------------------------------------------------------
 
@@ -158,9 +177,6 @@ class BrukerReader(Spec2niiReader):
         header = self._header(path)
         if "method" not in header:
             raise ReaderError(f"{path}: the scan folder has no method file, which spec2nii needs")
-        method = header["method"].get("Method") or sniff.detail.get("method")
-        if path.name != "2dseq" and Sniffer().bruker_scan_kind(method) == Kind.IMAGING:
-            raise ReaderError(f"{path}: {method} is an imaging method; raw k-space is not read yet")
         images, names = read_bruker(args)
         if path.name == "2dseq":
             dataset = Bruker2dseq(path, header["visu_pars"])

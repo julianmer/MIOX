@@ -6,8 +6,11 @@
 #                                                                                                  #
 # Created: 04/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Bruker 2dseq images against the vendor's own DICOM export, and 2dseq spectra against    #
-#          the magnitude spectra and raw FIDs of the same scans.                                   #
+# Purpose: Bruker 2dseq images against the vendor's own DICOM exports, complex 2dseq spectra       #
+#          against the magnitude spectra, and imaging k-space (fid, rawdata.job0) against the      #
+#          2dseq images of the same scans: the lines placed by the encoding steps and objects      #
+#          reconstruct, with zero-filling to the recon matrix, to the vendor's image of every      #
+#          slice up to the in-plane orientation.                                                   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -21,7 +24,7 @@ import numpy as np
 import pytest
 
 # own
-from miox import MRImage, MRSData, load
+from miox import MRImage, MRSData, RawData, load
 from tests.conftest import PUBLIC_DATA
 from tests.evidence.test_dicom_images import grid_mapping, on_reference_grid, same
 
@@ -109,3 +112,65 @@ def test_magnitude_spectrum_keys():
     cycles = _magnitude("PV-360.1.1/12")
     assert cycles.shape == (1, 1, 1, 2060, 12) and cycles.dims[4] == "cycle"
     assert cycles.meta.source["SpectralWidth"] == "method: PVM_SpecSWH"  # VisuCoreExtent is 0
+
+
+# --- k-space ------------------------------------------------------------------------------------
+
+RAW_SCANS = [  # scan, raw file: Cartesian imaging scans with their reconstructed 2dseq
+    ("PV-6.0.1/1", "fid"),  # FLASH, three orthogonal slice packs of three slices
+    ("PV-6.0.1/3", "fid"),  # RARE, echo trains of 8, ten interleaved slices
+    ("PV-360.3.5/3", "rawdata.job0"),  # FLASH, four receive channels, three packs
+    ("PV-360.1.1/2", "rawdata.job0"),
+]
+ORIENTATIONS = (
+    lambda a: a, lambda a: a.T, lambda a: a[::-1], lambda a: a[:, ::-1], lambda a: a.T[::-1],
+    lambda a: a.T[:, ::-1], lambda a: a[::-1, ::-1], lambda a: a.T[::-1, ::-1],
+)
+
+
+def _reconstruct(raw: RawData, slice_number: int) -> np.ndarray:
+    """Root sum of squares image of one slice: the lines at their encoding steps, zero-filled
+    to the reconstruction matrix, inverse Fourier transformed."""
+    h = raw.headers
+    rows = np.nonzero((h["idx"]["slice"] == slice_number) & (h["idx"]["repetition"] == 0))[0]
+    lines = int(h["idx"]["kspace_encode_step_1"].max()) + 1
+    matrix = raw.meta["ReconMatrixSize"]
+    k = np.zeros((raw.n_coils, matrix[1], matrix[0]), dtype=complex)
+    top, left = (matrix[1] - lines) // 2, (matrix[0] - raw.data.shape[-1]) // 2
+    for row in rows:
+        line = int(h["idx"]["kspace_encode_step_1"][row])
+        k[:, top + line, left : left + raw.data.shape[-1]] = raw.data[row]
+    axes = (1, 2)
+    image = np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(k, axes=axes), axes=axes), axes=axes)
+    return np.sqrt((np.abs(image) ** 2).sum(axis=0))
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("scan, raw_file", RAW_SCANS)
+def test_imaging_kspace_reconstructs_to_the_2dseq_image(scan, raw_file):
+    [raw] = load(BRUKER / scan / raw_file)
+    images = load(BRUKER / scan / "pdata/1/2dseq")
+    slices = [np.abs(image.data[:, :, k]) for image in images for k in range(image.shape[2])]
+    assert raw.n_readouts == raw.encoding["blocks"] and not raw.provenance.notes
+    assert raw.encoding["geometry"].startswith("pdata/1/visu_pars")
+    counters = sorted(set(raw.counters("slice").tolist()))
+    assert counters == list(range(len(slices)))  # one geometric slice per 2dseq slice
+    frames = [(image, k) for image in images for k in range(image.shape[2])]
+    for s in counters:
+        image, k = frames[s]
+        rows = raw.counters("slice") == s
+        voxel = np.array([(image.shape[0] - 1) / 2, (image.shape[1] - 1) / 2, k, 1.0])
+        centre_lps = np.diag([-1, -1, 1, 1]) @ image.affine @ voxel
+        assert np.allclose(raw.headers["position"][rows], centre_lps[:3], atol=1e-3)
+        axes = np.diag([-1.0, -1.0, 1.0]) @ image.affine[:3, :3]
+        axes /= np.linalg.norm(axes, axis=0)
+        read = raw.headers["read_dir"][rows][0]
+        assert np.allclose(read, axes[:, 0], atol=1e-6) or np.allclose(read, axes[:, 1], atol=1e-6)
+        assert np.allclose(np.abs(raw.headers["slice_dir"][rows][0]), np.abs(axes[:, 2]), atol=1e-6)
+        reconstruction = _reconstruct(raw, s)
+        best = max(
+            np.corrcoef(orient(reconstruction).ravel(), slices[s].ravel())[0, 1]
+            for orient in ORIENTATIONS
+            if orient(reconstruction).shape == slices[s].shape
+        )
+        assert best > 0.999, f"{scan} slice {s}: correlation {best:.4f}"
