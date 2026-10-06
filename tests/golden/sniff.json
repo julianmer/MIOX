@@ -5184,6 +5184,36 @@
   "vendor": null,
   "kind": "imaging"
  },
+ "ge_to_ismrmrd/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "ge_to_ismrmrd/P20480_GRE.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "ge_to_ismrmrd/P21504_FSE.7": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "ge_to_ismrmrd/ScanArchive_EPI.h5": {
+  "format": "ge_scanarchive",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "ge_to_ismrmrd/ScanArchive_FSE.h5": {
+  "format": "ge_scanarchive",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "ge_to_ismrmrd/ScanArchive_GRE.h5": {
+  "format": "ge_scanarchive",
+  "vendor": "ge",
+  "kind": "raw"
+ },
  "hyperpolarized_toolbox/reconstruction/EPSI demo/dummy_ddf/dynth01_phased.cmplx": {
   "format": "sivic_ddf",
   "vendor": null,

@@ -10,8 +10,8 @@
 #          LFS, a small per-format subset by default, --all for everything, retried on the         #
 #          server's rate limit), the NIfTI-MRS examples and the OSI2ONE k-space data from Zenodo,  #
 #          the test folders of further public repositories, single files by URL (ITK's GE images   #
-#          through an IPFS gateway, ISMRMRD and Gadgetron k-space samples, one M4Raw file), and    #
-#          NEMA's spectroscopy DICOM examples.                                                     #
+#          through an IPFS gateway, ISMRMRD and Gadgetron k-space samples, one M4Raw file, the GE  #
+#          P-files and ScanArchives of ge_to_ismrmrd), and NEMA's spectroscopy DICOM examples.     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -217,6 +217,13 @@ class DataFetcher:
     )
     M4RAW = "https://huggingface.co/datasets/mylyu/M4Raw_brain/resolve/main"  # CC BY 4.0
     M4RAW_FILES = ("multicoil_test/2022101103_T206.h5", "H5_FORMAT.md", "LICENSE")
+    GE_TO_ISMRMRD = "https://raw.githubusercontent.com/ismrmrd/ge_to_ismrmrd/master"  # NIH
+    GE_TO_ISMRMRD_FILES = {  # P-files and ScanArchives of GE's converter, public domain
+        "P20480_GRE.7": "sampleData/P20480_GRE.7", "P21504_FSE.7": "sampleData/P21504_FSE.7",
+        "ScanArchive_GRE.h5": "sampleData/ScanArchive_GRE.h5",
+        "ScanArchive_FSE.h5": "sampleData/ScanArchive_FSE.h5",
+        "ScanArchive_EPI.h5": "sampleData/ScanArchive_EPI.h5", "LICENSE": "LICENSE",
+    }
     FILES = {
         "pynrrd": (PYNRRD, dict(zip(PYNRRD_FILES, PYNRRD_FILES, strict=True))),
         "agilent_fdf": (SWELLING, dict(zip(SWELLING_FILES, SWELLING_FILES, strict=True))),
@@ -224,6 +231,7 @@ class DataFetcher:
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES, ISMRMRD_FILES, strict=True))),
         "gadgetron": (GADGETRON, dict(zip(GADGETRON_FILES, GADGETRON_FILES, strict=True))),
         "m4raw": (M4RAW, dict(zip(M4RAW_FILES, M4RAW_FILES, strict=True))),
+        "ge_to_ismrmrd": (GE_TO_ISMRMRD, GE_TO_ISMRMRD_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),
