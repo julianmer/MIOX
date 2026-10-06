@@ -26,7 +26,7 @@ from pathlib import Path
 # own
 from miox import __version__
 from miox.audit import Auditor
-from miox.data import FitResult, MRImage, MRSData, PriorSet, RawData
+from miox.data import FitResult, MRImage, PriorSet, PulseSequence, RawData
 from miox.readers import Loader, ReaderError
 from miox.sniff import Format, Sniffer
 
@@ -77,7 +77,7 @@ class CLI:
                 print(json.dumps(d.to_dict(), default=str) if args.json else self._describe(d))
         return status
 
-    def _describe(self, d: MRSData | MRImage | RawData | PriorSet | FitResult) -> str:
+    def _describe(self, d) -> str:
         lines = [f"{d.provenance.paths[0]}: {d.provenance.format} ({d.provenance.reader})"]
         if isinstance(d, RawData):
             trajectory = ", with trajectory" if d.trajectory is not None else ""
@@ -92,6 +92,10 @@ class CLI:
             lines.append(f"  {d.name}: {dims}, {d.data.dtype}, voxels {sizes} mm")
         elif isinstance(d, PriorSet):
             lines.append(f"  {d.name}: {len(d.metabolites)} metabolites, {len(d.lines)} lines")
+        elif isinstance(d, PulseSequence):
+            events = ", ".join(f"{len(t)} {n}" for n, t in d.events.items())
+            duration = f", {d.duration:.4g} s" if d.duration is not None else ""
+            lines.append(f"  {d.name}: Pulseq {d.version}, {d.n_blocks} blocks{duration}; {events}")
         elif isinstance(d, FitResult):
             voxel = f", voxel {d.voxel}" if d.voxel else ""
             curves = f", curves: {', '.join(d.curves)}" if d.curves else ""

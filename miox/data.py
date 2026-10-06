@@ -534,3 +534,80 @@ class RawData:
             f"<RawData{name} {self.provenance.format}: {self.n_readouts} readouts x "
             f"{self.n_coils} coils x {self.data.shape[-1]} samples{trajectory}>"
         )
+
+
+#**************************************************************************************************#
+#                                          PulseSequence                                           #
+#**************************************************************************************************#
+#                                                                                                  #
+# A pulse sequence as a Pulseq file describes it: ``version`` (major.minor.revision),              #
+# ``definitions`` (the key/value pairs, FOV in metres, times in seconds), ``blocks`` (a structured #
+# array with the block id, its duration in units of BlockDurationRaster or its delay event id, and #
+# the rf, gx, gy, gz, adc and ext event ids), ``events`` (per table name "rf", "gradients",        #
+# "trap", "adc", "delays": the events by id with the columns named as the specification names      #
+# them), ``extensions`` (the linked list and the specifications by extension name), ``shapes``     #
+# (the decompressed samples by shape id) and ``signature``. ``duration`` is the sum of the block   #
+# durations in seconds when the file states them.                                                  #
+#                                                                                                  #
+#**************************************************************************************************#
+class PulseSequence:
+    def __init__(
+        self,
+        version: str,
+        definitions: dict,
+        blocks: np.ndarray,
+        events: dict[str, dict[int, dict]],
+        extensions: dict,
+        shapes: dict[int, np.ndarray],
+        signature: dict,
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+    ):
+        self.version = version
+        self.definitions = definitions
+        self.blocks = blocks
+        self.events = events
+        self.extensions = extensions
+        self.shapes = shapes
+        self.signature = signature
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    @property
+    def n_blocks(self) -> int:
+        return len(self.blocks)
+
+    @property
+    def duration(self) -> float | None:
+        """Total duration in seconds from the block durations, None for files before 1.4."""
+        raster = self.definitions.get("BlockDurationRaster")
+        if "duration" not in self.blocks.dtype.names or not isinstance(raster, (int, float)):
+            return None
+        return float(self.blocks["duration"].sum() * raster)
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: counts, definitions and keys, no tables."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "version": self.version,
+            "n_blocks": self.n_blocks,
+            "duration": self.duration,
+            "events": {name: len(table) for name, table in self.events.items()},
+            "extensions": sorted(self.extensions.get("specifications", {})),
+            "shapes": len(self.shapes),
+            "definitions": self.definitions,
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        duration = f", {self.duration:.4g} s" if self.duration is not None else ""
+        return f"<PulseSequence{name} v{self.version}: {self.n_blocks} blocks{duration}>"

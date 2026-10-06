@@ -118,6 +118,7 @@ class Format(StrEnum):
     ISMRMRD = "ismrmrd"
     FASTMRI_H5 = "fastmri_h5"
     GE_SCANARCHIVE = "ge_scanarchive"
+    PULSEQ = "pulseq"
     UNKNOWN = "unknown"
 
 
@@ -135,6 +136,7 @@ class Kind(StrEnum):
     BASIS_SET = "basis_set"  # one signal per metabolite, for fitting
     FIT_RESULT = "fit_result"  # concentrations, fitted curves
     PROTOCOL = "protocol"  # acquisition or analysis settings
+    SEQUENCE = "sequence"  # pulse sequence timing: RF, gradients, ADC events
     REPORT = "report"  # graphics for reading, no data
     UNKNOWN = "unknown"
 
@@ -303,6 +305,7 @@ class Sniffer:
             self.pfile,
             self.bruker,
             self.varian,
+            self.pulseq,
             self.text_formats,
             self.hdf5,
             self.extension_only,
@@ -666,6 +669,19 @@ class Sniffer:
     def varian(self, path: Path, head: bytes) -> Sniff | None:
         if path.name == "procpar" or (path.name == "fid" and (path.parent / "procpar").is_file()):
             return self._varian_scan(path, path.parent, f"{path.name} with procpar")
+        return None
+
+    def pulseq(self, path: Path, head: bytes) -> Sniff | None:
+        if not self._is_text(head):
+            return None
+        if head.startswith(b"# Pulseq") or (b"[VERSION]" in head and b"major" in head):
+            return Sniff(
+                path,
+                Format.PULSEQ,
+                Kind.SEQUENCE,
+                confidence=1.0,
+                evidence=("[VERSION] section" if b"[VERSION]" in head else "Pulseq comment",),
+            )
         return None
 
     def text_formats(self, path: Path, head: bytes) -> Sniff | None:

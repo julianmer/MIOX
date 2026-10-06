@@ -16,7 +16,16 @@
 #*************#
 
 # own
-from miox.data import BasisSet, FitResult, MRImage, MRSData, PriorSet, Provenance, RawData
+from miox.data import (
+    BasisSet,
+    FitResult,
+    MRImage,
+    MRSData,
+    PriorSet,
+    Provenance,
+    PulseSequence,
+    RawData,
+)
 from miox.readers import IncompleteError, Loader, ReaderError, load
 from miox.sniff import Format, Kind, Sniff, Sniffer, sniff
 
@@ -32,6 +41,7 @@ __all__ = [
     "MRSData",
     "PriorSet",
     "Provenance",
+    "PulseSequence",
     "RawData",
     "ReaderError",
     "Sniff",

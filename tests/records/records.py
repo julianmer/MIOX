@@ -27,7 +27,16 @@ from typing import Any
 import numpy as np
 
 # own
-from miox import FitResult, Format, Loader, MRImage, MRSData, PriorSet, RawData, Sniffer
+from miox import (
+    FitResult,
+    Format,
+    Loader,
+    MRImage,
+    PriorSet,
+    PulseSequence,
+    RawData,
+    Sniffer,
+)
 from tests.conftest import PUBLIC_DATA, RECORDS
 
 
@@ -114,7 +123,19 @@ class ReadRecords:
             return math.isnan(a) and math.isnan(b)
         return math.isclose(a, b, rel_tol=self.RTOL, abs_tol=1e-12)
 
-    def _dataset(self, d: MRSData | MRImage | RawData | PriorSet | FitResult) -> dict:
+    def _dataset(self, d) -> dict:
+        if isinstance(d, PulseSequence):
+            record = {
+                "name": d.name,
+                "version": d.version,
+                "n_blocks": d.n_blocks,
+                "duration": d.duration,
+                "events": {name: len(table) for name, table in d.events.items()},
+                "shapes": len(d.shapes),
+                "definitions": d.definitions,
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
         if isinstance(d, RawData):
             record = {
                 "name": d.name,
