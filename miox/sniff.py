@@ -62,6 +62,7 @@ class Format(StrEnum):
     SIEMENS_RDA = "siemens_rda"
     PHILIPS_SPAR_SDAT = "philips_spar_sdat"
     PHILIPS_DATA_LIST = "philips_data_list"
+    PHILIPS_RAW_LAB = "philips_raw_lab"
     GE_PFILE = "ge_pfile"
     DICOM_MRS = "dicom_mrs"
     DICOM_IMAGE = "dicom_image"
@@ -209,6 +210,7 @@ class Sniffer:
     NIFTI_MRS_INTENT = re.compile(r"^mrs_v(\d+)_(\d+)$")  # intent_name, e.g. mrs_v0_2
     NIFTI_MRS_DIM_TAG = re.compile(r"^dim_[5-7]$")  # header extension keys of the tagged dims
     SPAR_KEYS = (b"examination_name", b"scan_id", b"synthesizer_frequency", b"samples")
+    SIN_LINE = re.compile(rb"^\s*\d+\s+\d+\s+\d+\s*:\s*[a-z_]+\s*:", re.M)  # Philips .sin parameter
     TWIX_VB_BUFFERS = (b"Config", b"Dicom", b"Meas", b"MeasYaps", b"Phoenix", b"Spice")
     PFILE_REVISIONS = (7, 8, 9, 10, 11, 12, 14, 15, 16, 20, 24, 26, 27, 28, 30)
     PFILE_NAME = re.compile(r"^P\d{5}\.7$", re.I)
@@ -295,6 +297,7 @@ class Sniffer:
             self.analysis_text,
             self.vespa,
             self.spar_sdat,
+            self.raw_lab_sin,
             self.data_list,
             self.twix,
             self.pfile,
@@ -512,6 +515,40 @@ class Sniffer:
                 companions=(spar,) if spar else (),
             )
         return None
+
+    def raw_lab_sin(self, path: Path, head: bytes) -> Sniff | None:
+        """Philips raw export: .lab labels (type 0x7f01 to 0x7f05 at byte 14), the .sin parameter
+        text, or a .raw with a .lab beside it."""
+        suffix = path.suffix.lower()
+        if suffix == ".lab" and len(head) >= 16 and self._label_type(head):
+            what = "label types at byte 14"
+        elif suffix == ".sin" and self._is_text(head) and self.SIN_LINE.search(head):
+            what = "parameter lines"
+        elif suffix == ".raw" and (lab := self._sibling(path, ".lab")):
+            with open(lab, "rb") as fh:
+                label = fh.read(16)
+            if len(label) < 16 or not self._label_type(label):
+                return None
+            what = ".lab companion with label types"
+        else:
+            return None
+        companions = tuple(
+            c for s in (".lab", ".raw", ".sin") if s != suffix and (c := self._sibling(path, s))
+        )
+        return Sniff(
+            path,
+            Format.PHILIPS_RAW_LAB,
+            Kind.RAW,
+            vendor="philips",
+            confidence=1.0 if len(companions) == 2 else 0.7,
+            evidence=(what, f"{len(companions)} of 2 companions found"),
+            companions=companions,
+        )
+
+    @staticmethod
+    def _label_type(label: bytes) -> bool:
+        """Whether the 64-byte Philips label starts with a known label type at byte 14."""
+        return 0x7F00 < struct.unpack_from("<H", label, 14)[0] < 0x7F06
 
     def data_list(self, path: Path, head: bytes) -> Sniff | None:
         if head.startswith(b"# === DATA DESCRIPTION FILE") and self.PAR_LINE.search(head):

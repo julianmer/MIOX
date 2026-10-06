@@ -51,6 +51,7 @@ from miox.readers.nrrd import NrrdReader
 from miox.readers.osprey_basis import OspreyBasisReader
 from miox.readers.osprey_container import OspreyContainerReader
 from miox.readers.philips_data_list import PhilipsDataListReader
+from miox.readers.philips_raw_lab import PhilipsRawLabReader
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.readers.profit_basis import ProfitBasisReader
 from miox.readers.pyamares_prior import PyamaresPriorReader
@@ -68,6 +69,8 @@ from miox.readers.vasf import VasfReader
 from miox.readers.vespa_prior import VespaPriorReader
 from miox.readers.vespa_viff import VespaViffReader
 from miox.sniff import Format, Sniff, Sniffer
+
+Dataset = MRSData | MRImage | RawData | PriorSet | FitResult
 
 
 #**************************************************************************************************#
@@ -114,6 +117,7 @@ class Loader:
             OspreyBasisReader(),
             OspreyContainerReader(),
             PhilipsDataListReader(),
+            PhilipsRawLabReader(),
             PhilipsSparSdatReader(),
             ProfitBasisReader(),
             PyamaresPriorReader(),
@@ -140,8 +144,8 @@ class Loader:
         *,
         given: dict[str, Any] | None = None,
         complete: bool = False,
-    ) -> list[MRSData | MRImage | RawData | PriorSet | FitResult]:
-        """Every dataset in ``path``: one MRSData, MRImage, PriorSet or FitResult each.
+    ) -> list[Dataset]:
+        """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet or FitResult each.
 
         ``given`` maps standard keys to values for what the file does not state
         (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated
@@ -162,7 +166,7 @@ class Loader:
                 )
         return datasets
 
-    def _read(self, sniff: Sniff) -> list[MRSData | MRImage | RawData | PriorSet | FitResult]:
+    def _read(self, sniff: Sniff) -> list[Dataset]:
         if sniff.path.is_dir() and sniff.format in self.DICOM_FORMATS:
             return self._dicom_folder(sniff)
         reader = self.readers.get(sniff.format)
@@ -211,5 +215,5 @@ class Loader:
 #**************************************************************************************************#
 def load(
     path: str | Path, *, given: dict[str, Any] | None = None, complete: bool = False
-) -> list[MRSData | MRImage | RawData | PriorSet | FitResult]:
+) -> list[Dataset]:
     return Loader().load(path, given=given, complete=complete)
