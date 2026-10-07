@@ -136,6 +136,11 @@ class MiraDecoder:
 #**************************************************************************************************#
 class PhilipsRawLabReader(Reader):
     FORMATS = (Format.PHILIPS_RAW_LAB,)
+    SAMPLE_ORDER = (
+        "samples as stored (real, imaginary), as philips_to_ismrmrd reads them; Philips' own "
+        "reader swaps the two (i·conj of these values), which mirrors the image along the "
+        "readout; which is right is not settled"
+    )
     SOURCE = "sin header"
     FLAGS = IsmrmrdReader.ACQUISITION_FLAGS
     NOISE_FLAG = 19
@@ -224,7 +229,7 @@ class PhilipsRawLabReader(Reader):
         labels = np.fromfile(files[".lab"], dtype=self.OLD_LABEL if old else self.NEW_LABEL)
         if len(labels) == 0:
             raise ReaderError(f"{files['.lab'].name}: no labels")
-        notes: list[str] = []
+        notes: list[str] = [self.SAMPLE_ORDER]
         blocks = self._blocks(files[".raw"], labels, old, notes)
         if not blocks:
             raise ReaderError(f"{files['.raw'].name}: no data blocks could be read")

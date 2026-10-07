@@ -297,6 +297,7 @@ def test_philips_raw_export_matches_the_published_reading():
     off = np.abs(covariance - np.diag(np.diag(covariance))).max() / diagonal
     assert off < 0.5  # channels mostly independent, as the published covariance picture shows
     assert any("skipped before label 19" in note for note in image.provenance.notes)
+    assert any("not settled" in note for note in image.provenance.notes)
 
 
 def _philips_image(kspace: np.ndarray) -> np.ndarray:
