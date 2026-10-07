@@ -27,6 +27,7 @@ from miox.data import (
     MRImage,
     MRSData,
     NoiseCovariance,
+    Phantom,
     PhysioData,
     PriorSet,
     Protocol,
@@ -82,6 +83,11 @@ from miox.readers.pyamares_result import PyamaresResultReader
 from miox.readers.siemens_protocol import SiemensPrintedProtocolReader, SiemensProtocolReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
+from miox.readers.simulation import (
+    JemrisPhantomReader,
+    JemrisSignalReader,
+    KomaPhantomReader,
+)
 from miox.readers.sivic_ddf import SivicDdfReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
@@ -96,7 +102,7 @@ from miox.sniff import Format, Sniff, Sniffer
 
 Dataset = (
     MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | NoiseCovariance
-    | PhysioData | Protocol
+    | PhysioData | Protocol | Phantom
 )
 
 
@@ -135,7 +141,10 @@ class Loader:
             GeSignaReader(),
             InspectorBasisReader(),
             IsmrmrdReader(),
+            JemrisPhantomReader(),
+            JemrisSignalReader(),
             JmruiReader(),
+            KomaPhantomReader(),
             LcmodelBasisReader(),
             LcmodelControlReader(),
             LcmodelOutputReader(),
@@ -186,7 +195,7 @@ class Loader:
         complete: bool = False,
     ) -> list[Dataset]:
         """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet, FitResult,
-        PulseSequence, NoiseCovariance, PhysioData or Protocol each.
+        PulseSequence, NoiseCovariance, PhysioData, Protocol or Phantom each.
 
         ``given`` maps standard keys to values for what the file does not state
         (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated

@@ -33,6 +33,7 @@ from miox import (
     Loader,
     MRImage,
     NoiseCovariance,
+    Phantom,
     PhysioData,
     PriorSet,
     Protocol,
@@ -131,6 +132,19 @@ class ReadRecords:
             record = {
                 "name": d.name,
                 "location": list(d.location),
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
+        if isinstance(d, Phantom):
+            record = {
+                "name": d.name,
+                "n_spins": d.n_spins,
+                "properties": list(d.properties),
+                "units": d.units,
+                "motion": len(d.motion),
+                "positions_head": d.positions[:2].tolist(),
+                "property_sums": {k: float(np.nansum(np.where(np.isinf(v), 0, v)))
+                                  for k, v in d.properties.items()},
                 "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
             }
             return json.loads(json.dumps(record, default=str))

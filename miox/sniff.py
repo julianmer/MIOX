@@ -128,6 +128,9 @@ class Format(StrEnum):
     GE_PHYSIO = "ge_physio"
     BIDS_PHYSIO = "bids_physio"
     BIOPAC_ACQ = "biopac_acq"
+    KOMA_PHANTOM = "koma_phantom"
+    JEMRIS_PHANTOM = "jemris_phantom"
+    JEMRIS_SIGNAL = "jemris_signal"
     SIEMENS_PRO = "siemens_pro"
     SIEMENS_EXAR = "siemens_exar"
     SIEMENS_PRINTPROT = "siemens_printprot"
@@ -151,6 +154,7 @@ class Kind(StrEnum):
     PROTOCOL = "protocol"  # acquisition or analysis settings
     SEQUENCE = "sequence"  # pulse sequence timing: RF, gradients, ADC events
     PHYSIO = "physio"  # physiological recordings: cardiac, respiratory, triggers
+    PHANTOM = "phantom"  # simulation phantoms: spins and their properties
     REPORT = "report"  # graphics for reading, no data
     UNKNOWN = "unknown"
 
@@ -1054,7 +1058,9 @@ class Sniffer:
     def hdf5(self, path: Path, head: bytes) -> Sniff | None:
         """ISMRMRD: a group with an ``xml`` header and a ``data`` table (raw) or ``image_*``
         subgroups; fastMRI: ``kspace`` and ``ismrmrd_header`` at the root; GE ScanArchive:
-        ``DownloadData.xml`` and an ``Acquisition`` group at the root."""
+        ``DownloadData.xml`` and an ``Acquisition`` group at the root; JEMRIS signals
+        (``signal/channels`` and ``signal/times``) and phantoms (``sample/data``); KomaMRI
+        phantoms (``position`` and ``contrast`` groups, or x, y, z and ρ at the root)."""
         if head[:8] != b"\x89HDF\r\n\x1a\n":
             return None
         try:
@@ -1093,6 +1099,17 @@ class Sniffer:
                 evidence=("HDF5 magic", "DownloadData.xml and the Acquisition group"),
                 detail={"names": names},
             )
+        if "signal" in groups and {"channels", "times"} <= set(groups["signal"]):
+            return Sniff(path, Format.JEMRIS_SIGNAL, Kind.RAW, confidence=1.0,
+                         evidence=("HDF5 magic", "signal/channels and signal/times"),
+                         detail={"names": names})
+        if "sample" in groups and "data" in groups["sample"]:
+            return Sniff(path, Format.JEMRIS_PHANTOM, Kind.PHANTOM, confidence=1.0,
+                         evidence=("HDF5 magic", "sample/data"), detail={"names": names})
+        if {"position", "contrast"} <= set(groups) or {"x", "y", "z", "ρ"} <= set(names):
+            what = "position and contrast groups" if "position" in groups else "x, y, z and ρ"
+            return Sniff(path, Format.KOMA_PHANTOM, Kind.PHANTOM, confidence=1.0,
+                         evidence=("HDF5 magic", what), detail={"names": names})
         if "kspace" in names and "ismrmrd_header" in names:
             return Sniff(
                 path,

@@ -30,6 +30,7 @@ from miox.data import (
     FitResult,
     MRImage,
     NoiseCovariance,
+    Phantom,
     PhysioData,
     PriorSet,
     Protocol,
@@ -104,6 +105,8 @@ class CLI:
         elif isinstance(d, Protocol):
             where = f" in {' / '.join(d.location)}" if d.location else ""
             lines.append(f"  protocol {d.name}{where}")
+        elif isinstance(d, Phantom):
+            lines.append(f"  {d.name}: {d.n_spins} spins, {', '.join(d.properties)}")
         elif isinstance(d, PhysioData):
             rate = f" at {d.sampling_frequency:g} Hz" if d.sampling_frequency else ""
             events = "".join(f", {len(v)} {k}" for k, v in d.events.items())

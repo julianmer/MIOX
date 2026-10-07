@@ -1,0 +1,102 @@
+####################################################################################################
+#                                        test_simulation.py                                        #
+####################################################################################################
+#                                                                                                  #
+# Authors: J. P. Merkofer (j.p.merkofer@tue.nl)                                                    #
+#                                                                                                  #
+# Created: 07/10/26                                                                                #
+#                                                                                                  #
+# Purpose: Simulation readers on synthetic files: a KomaMRI .phantom with motion and a spin list,  #
+#          a 3D JEMRIS phantom grid with offset, a JEMRIS signal of two channels with readouts of  #
+#          unequal length.                                                                         #
+#                                                                                                  #
+####################################################################################################
+
+
+#*************#
+#   imports   #
+#*************#
+from __future__ import annotations
+
+import h5py
+import numpy as np
+import pytest
+
+# own
+import miox as gu
+
+
+def test_koma_phantom_with_motion(tmp_path):
+    path = tmp_path / "ring.phantom"
+    with h5py.File(path, "w") as fh:
+        fh.attrs.update({"Name": "ring", "Ns": 3, "Dims": 2, "Version": "0.9.0"})
+        for c, values in zip("xyz", ([0.0, 0.01, 0.02], [0.0, -0.01, 0.01], [0.0] * 3),
+                             strict=True):
+            fh[f"position/{c}"] = values
+        for k, values in (("ρ", [1.0, 0.5, 0.2]), ("T1", [1.0] * 3), ("T2", [0.1] * 3),
+                          ("T2s", [0.05] * 3), ("Δw", [0.0, 10.0, -10.0])):
+            fh[f"contrast/{k}"] = values
+        fh.create_group("motion/motion_1/action").attrs.update({"type": "Translate", "dy": 0.02})
+        fh.create_group("motion/motion_1/time").attrs.update(
+            {"type": "TimeRange", "t_start": 0.0, "t_end": 0.5})
+        fh.create_group("motion/motion_1/spins").attrs["type"] = "AllSpins"
+    sniff = gu.sniff(path)
+    assert (sniff.format, sniff.kind) == (gu.Format.KOMA_PHANTOM, gu.Kind.PHANTOM)
+    [phantom] = gu.load(path)
+    assert isinstance(phantom, gu.Phantom) and phantom.name == "ring"
+    assert phantom.positions[1].tolist() == [0.01, -0.01, 0.0]
+    assert phantom.properties["rho"].tolist() == [1.0, 0.5, 0.2]
+    assert phantom.properties["dw"].tolist() == [0.0, 10.0, -10.0]
+    assert phantom.units["dw"] == "rad/s" and phantom.grid is None
+    [motion] = phantom.motion
+    assert motion["action"] == {"type": "Translate", "dy": 0.02}
+    assert motion["time"]["t_end"] == 0.5
+
+
+def test_koma_spin_list(tmp_path):
+    path = tmp_path / "spins.h5"
+    with h5py.File(path, "w") as fh:
+        for k, values in (("x", [0.0, 0.1]), ("y", [0.0, 0.0]), ("z", [0.0, 0.0]),
+                          ("ρ", [1.0, 1.0]), ("T1", [0.5, 0.6])):
+            fh[k] = values
+    [phantom] = gu.load(path)
+    assert phantom.n_spins == 2 and list(phantom.properties) == ["T1", "rho"]
+
+
+def test_jemris_grid(tmp_path):
+    path = tmp_path / "sample.h5"
+    data = np.zeros((5, 3, 2, 2))  # (values, x, y, z) as JEMRIS writes it
+    data[:, 2, 1, 0] = [1.0, 0.001, 0.01, 0.0, 5.0]
+    data[:, 0, 0, 1] = [0.5, 0.002, 0.02, 0.04, 0.0]
+    with h5py.File(path, "w") as fh:
+        fh["sample/data"] = data.T
+        fh["sample/resolution"] = [[2.0], [1.0], [4.0]]
+        fh["sample/offset"] = [[10.0], [0.0], [-2.0]]
+    [phantom] = gu.load(path)
+    assert phantom.n_spins == 2
+    assert phantom.grid["shape"] == [3, 2, 2]
+    assert phantom.grid["indices"].tolist() == [[0, 0, 1], [2, 1, 0]]
+    assert np.allclose(phantom.positions, [[0.008, -0.0005, 0.0], [0.012, 0.0005, -0.004]])
+    assert phantom.properties["T1"].tolist() == pytest.approx([0.5, 1.0])
+    assert phantom.properties["T2s"].tolist() == [0.025, np.inf]
+    assert phantom.properties["DB"].tolist() == [0.0, 5.0]
+
+
+def test_jemris_signal(tmp_path):
+    path = tmp_path / "signals.h5"
+    times = np.concatenate([np.arange(4) * 0.01 + 1.0, np.arange(3) * 0.01 + 2.0])  # ms
+    values = np.arange(7 * 3, dtype=np.float64).reshape(7, 3)
+    with h5py.File(path, "w") as fh:
+        fh["signal/times"] = times
+        fh["signal/channels/00"] = values
+        fh["signal/channels/01"] = -values
+    sniff = gu.sniff(path)
+    assert (sniff.format, sniff.kind) == (gu.Format.JEMRIS_SIGNAL, gu.Kind.RAW)
+    [raw] = gu.load(path)
+    assert raw.data.shape == (2, 2, 4) and raw.samples.tolist() == [4, 3]
+    assert raw.data[1, 0, :3].tolist() == [12 + 13j, 15 + 16j, 18 + 19j]
+    assert raw.data[1, 1, 0] == -12 - 13j and raw.data[1, 0, 3] == 0
+    mz, time = raw.waveforms
+    assert mz["data"][0, 0].tolist() == [2.0, 5.0, 8.0, 11.0]
+    assert time["data"][1, :3].tolist() == pytest.approx([2e-3, 2.01e-3, 2.02e-3])
+    assert raw.meta["DwellTime"] == 1e-5

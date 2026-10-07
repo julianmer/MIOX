@@ -5740,19 +5740,19 @@
   "kind": "imaging"
  },
  "komamri/KomaMRICore/test/test_files/jemris_signals_epi_brain_motion.h5": {
-  "format": "unknown",
+  "format": "jemris_signal",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "raw"
  },
  "komamri/KomaMRICore/test/test_files/jemris_signals_epi_sphere_cs.h5": {
-  "format": "unknown",
+  "format": "jemris_signal",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "raw"
  },
  "komamri/KomaMRICore/test/test_files/phantom_sphere.h5": {
-  "format": "unknown",
+  "format": "koma_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/KomaMRICore/test/test_files/utils.jl": {
   "format": "unknown",
@@ -5760,9 +5760,9 @@
   "kind": "unknown"
  },
  "komamri/KomaMRIFiles/test/test_files/phantom/column1d.h5": {
-  "format": "unknown",
+  "format": "jemris_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.2/epi_JEMRIS.seq": {
   "format": "pulseq",
@@ -5950,29 +5950,29 @@
   "kind": "raw"
  },
  "komamri/examples/2.phantoms/brain.h5": {
-  "format": "unknown",
+  "format": "jemris_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/examples/2.phantoms/brain_motion.phantom": {
-  "format": "unknown",
+  "format": "koma_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/examples/2.phantoms/brain_susceptibility.h5": {
-  "format": "unknown",
+  "format": "jemris_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/examples/2.phantoms/column1d.h5": {
-  "format": "unknown",
+  "format": "jemris_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/examples/2.phantoms/contracting_ring.phantom": {
-  "format": "unknown",
+  "format": "koma_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/examples/2.phantoms/motion_jemris.dat": {
   "format": "unknown",
@@ -5980,14 +5980,14 @@
   "kind": "unknown"
  },
  "komamri/examples/2.phantoms/shepplogan.h5": {
-  "format": "unknown",
+  "format": "jemris_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/examples/2.phantoms/sphere_chemical_shift.h5": {
-  "format": "unknown",
+  "format": "jemris_phantom",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "labrawsin/20250617_210621_COR_GRE.lab": {
   "format": "philips_raw_lab",

@@ -791,3 +791,62 @@ class Protocol:
     def __repr__(self) -> str:
         where = f" in {' / '.join(self.location)}" if self.location else ""
         return f"<Protocol {self.name}{where} {self.provenance.format}>"
+
+
+#**************************************************************************************************#
+#                                             Phantom                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# A simulation phantom as a set of spins: ``positions`` (spins, 3) in metres, ``properties`` one   #
+# array per spin property by name (rho, T1, T2, T2s in seconds, ...) with their ``units``, the     #
+# ``motion`` definitions as the file gives them, and ``grid`` when the phantom is defined on a     #
+# voxel grid (shape, resolution and offset in metres, and the grid index of every spin).           #
+#                                                                                                  #
+#**************************************************************************************************#
+class Phantom:
+    def __init__(
+        self,
+        positions: np.ndarray,
+        properties: dict[str, np.ndarray],
+        units: dict[str, str],
+        motion: list[dict],
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+        grid: dict | None = None,
+    ):
+        self.positions = positions
+        self.properties = properties
+        self.units = units
+        self.motion = motion
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+        self.grid = grid
+
+    @property
+    def n_spins(self) -> int:
+        return self.positions.shape[0]
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the spin arrays and the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "n_spins": self.n_spins,
+            "properties": list(self.properties),
+            "units": self.units,
+            "motion": len(self.motion),
+            "grid": None if self.grid is None else {
+                k: v for k, v in self.grid.items() if k != "indices"},
+            "meta": dict(self.meta),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        return (f"<Phantom{name} {self.provenance.format}: {self.n_spins} spins, "
+                f"{', '.join(self.properties)}>")
