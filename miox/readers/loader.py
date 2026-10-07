@@ -27,6 +27,7 @@ from miox.data import (
     MRImage,
     MRSData,
     NoiseCovariance,
+    PhysioData,
     PriorSet,
     PulseSequence,
     RawData,
@@ -63,6 +64,13 @@ from miox.readers.osprey_container import OspreyContainerReader
 from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_raw_lab import PhilipsRawLabReader
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
+from miox.readers.physio import (
+    BidsPhysioReader,
+    CmrrPhysioReader,
+    GePhysioReader,
+    PhilipsPhyslogReader,
+    SiemensPmuReader,
+)
 from miox.readers.profit_basis import ProfitBasisReader
 from miox.readers.pulseq import PulseqReader
 from miox.readers.pyamares_prior import PyamaresPriorReader
@@ -81,7 +89,10 @@ from miox.readers.vespa_prior import VespaPriorReader
 from miox.readers.vespa_viff import VespaViffReader
 from miox.sniff import Format, Sniff, Sniffer
 
-Dataset = MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | NoiseCovariance
+Dataset = (
+    MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | NoiseCovariance
+    | PhysioData
+)
 
 
 #**************************************************************************************************#
@@ -95,15 +106,17 @@ Dataset = MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | N
 #                                                                                                  #
 #**************************************************************************************************#
 class Loader:
-    DICOM_FORMATS = (Format.DICOM_IMAGE, Format.DICOM_MRS)
+    DICOM_FORMATS = (Format.DICOM_IMAGE, Format.DICOM_MRS, Format.CMRR_PHYSIO)
 
     def __init__(self):
         self.sniffer = Sniffer()
         self.readers: dict[Format, Reader] = {}
         for reader in (
             BartReader(),
+            BidsPhysioReader(),
             BasisFolderReader(self),
             BrukerReader(),
+            CmrrPhysioReader(),
             DicomImageReader(),
             DicomMrsReader(),
             FastMriReader(),
@@ -111,6 +124,7 @@ class Loader:
             FslMrsBasisReader(),
             GavaMidasPriorReader(),
             GePfileReader(),
+            GePhysioReader(),
             GeScanArchiveReader(),
             GeSignaReader(),
             InspectorBasisReader(),
@@ -131,11 +145,13 @@ class Loader:
             OspreyContainerReader(),
             PhilipsDataListReader(),
             PhilipsRawLabReader(),
+            PhilipsPhyslogReader(),
             PhilipsSparSdatReader(),
             ProfitBasisReader(),
             PulseqReader(),
             PyamaresPriorReader(),
             PyamaresResultReader(),
+            SiemensPmuReader(),
             SiemensRdaReader(),
             SiemensTwixReader(),
             SivicDdfReader(),
@@ -160,7 +176,7 @@ class Loader:
         complete: bool = False,
     ) -> list[Dataset]:
         """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet, FitResult,
-        PulseSequence or NoiseCovariance each.
+        PulseSequence, NoiseCovariance or PhysioData each.
 
         ``given`` maps standard keys to values for what the file does not state
         (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated

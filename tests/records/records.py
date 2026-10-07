@@ -33,6 +33,7 @@ from miox import (
     Loader,
     MRImage,
     NoiseCovariance,
+    PhysioData,
     PriorSet,
     PulseSequence,
     RawData,
@@ -125,6 +126,19 @@ class ReadRecords:
         return math.isclose(a, b, rel_tol=self.RTOL, abs_tol=1e-12)
 
     def _dataset(self, d) -> dict:
+        if isinstance(d, PhysioData):
+            record = {
+                "name": d.name,
+                "shape": list(d.data.shape),
+                "channels": list(d.channels),
+                "sampling_frequency": d.sampling_frequency,
+                "start_time": d.start_time,
+                "events": {k: len(v) for k, v in d.events.items()},
+                "data_head": d.data[:3].tolist(),
+                "data_sum": float(np.nansum(d.data)),
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
         if isinstance(d, NoiseCovariance):
             record = {
                 "name": d.name,

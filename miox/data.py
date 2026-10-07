@@ -8,8 +8,8 @@
 #                                                                                                  #
 # Purpose: The objects every reader returns: spectroscopy (complex FIDs in NIfTI-MRS dimension     #
 #          order, dwell time, geometry, tagged higher dimensions), images, raw k-space readouts,   #
-#          basis sets, priors, fit results, pulse sequences and noise covariances, each with       #
-#          metadata and the provenance of the read.                                                #
+#          basis sets, priors, fit results, pulse sequences, noise covariances and physiological   #
+#          recordings, each with metadata and the provenance of the read.                          #
 #                                                                                                  #
 ####################################################################################################
 
@@ -672,4 +672,84 @@ class NoiseCovariance:
         return (
             f"<NoiseCovariance{name} {self.provenance.format}: {self.n_coils} x {self.n_coils}, "
             f"{self.sample_count} samples>"
+        )
+
+
+#**************************************************************************************************#
+#                                            PhysioData                                            #
+#**************************************************************************************************#
+#                                                                                                  #
+# A physiological or other continuous recording at one sampling frequency: ``data`` (samples x     #
+# channels, as recorded), ``channels`` (their names, as BIDS names them where it does: cardiac,    #
+# respiratory, trigger, ...), ``sampling_frequency`` in Hz, ``start_time`` in seconds against the  #
+# clock ``time_reference`` names (e.g. seconds since midnight on the scanner clock), and           #
+# ``events`` (per event name the indices of the samples at or right after each event: triggers,    #
+# volume markers). Either may be None when the file does not state it.                             #
+#                                                                                                  #
+#**************************************************************************************************#
+class PhysioData:
+    def __init__(
+        self,
+        data: np.ndarray,
+        channels: tuple[str, ...],
+        sampling_frequency: float | None,
+        start_time: float | None,
+        time_reference: str,
+        events: dict[str, np.ndarray],
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+    ):
+        self.data = data
+        self.channels = tuple(channels)
+        self.sampling_frequency = sampling_frequency
+        self.start_time = start_time
+        self.time_reference = time_reference
+        self.events = events
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    @property
+    def n_samples(self) -> int:
+        return self.data.shape[0]
+
+    @property
+    def duration(self) -> float | None:
+        """Seconds covered by the samples, None without a sampling frequency."""
+        if not self.sampling_frequency:
+            return None
+        return self.n_samples / self.sampling_frequency
+
+    def times(self) -> np.ndarray | None:
+        """The time of every sample in seconds (from 0 without a start time)."""
+        if not self.sampling_frequency:
+            return None
+        return (self.start_time or 0.0) + np.arange(self.n_samples) / self.sampling_frequency
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the samples and the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "shape": list(self.data.shape),
+            "channels": list(self.channels),
+            "sampling_frequency": self.sampling_frequency,
+            "start_time": self.start_time,
+            "time_reference": self.time_reference,
+            "events": {name: len(indices) for name, indices in self.events.items()},
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        rate = f" at {self.sampling_frequency:g} Hz" if self.sampling_frequency else ""
+        return (
+            f"<PhysioData{name} {self.provenance.format}: {self.n_samples} samples x "
+            f"{', '.join(self.channels)}{rate}>"
         )

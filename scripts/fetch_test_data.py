@@ -127,6 +127,14 @@ class DataFetcher:
             ["sample_basis_sets"],
         ),
         "osprey": ("https://github.com/schorschinho/osprey.git", ["fit/basissets"]),
+        "bidsphysio": (  # physio logs with their BIDS conversions (MIT)
+            "https://github.com/cbinyu/bidsphysio.git",
+            [f"bidsphysio.{m}/tests/data" for m in ("acq2bids", "base", "dcm2bids", "edf2bids",
+                                                     "physio2bids", "pmu2bids")],
+        ),
+        "scanphyslog2bids": (  # Philips SCANPHYSLOG files with their scans (MIT)
+            "https://github.com/lukassnoek/scanphyslog2bids.git", ["scanphyslog2bids/data"],
+        ),
         "pyamares": ("https://github.com/HawkMRS/pyAMARES.git", ["pyAMARES/examples", "tests"]),
         "profit": ("https://gitlab.tuebingen.mpg.de/AG_Henning/ProFit-1D.git", ["sampleBasisSet"]),
         "nibabel": (
@@ -246,6 +254,13 @@ class DataFetcher:
         "ScanArchive_FSE.h5": "sampleData/ScanArchive_FSE.h5",
         "ScanArchive_EPI.h5": "sampleData/ScanArchive_EPI.h5", "LICENSE": "LICENSE",
     }
+    OSF = "https://osf.io"  # phys2bids' test files (project 3txqr, no licence stated)
+    OSF_FILES = {  # GE physio logs: file: OSF file id
+        "PPGData_epiRT_0000000000_00_00_000.gep": "wb84d/download",
+        "RESPData_epiRT_0000000000_00_00_000.gep": "qawjv/download",
+        "PPGData_epiRT_0000000000_00_00_000": "u9wsr/download",
+        "RESPData_epiRT_0000000000_00_00_000": "49xpw/download",
+    }
     MRD_REPOSITORY = "https://raw.githubusercontent.com/ismrmrd/mrd/main"  # MIT
     MRD_FILES = {  # a Pulseq file the MRD tools convert, and the licence
         "haste.seq": "test/test_data/pulseq/1.4.2/haste.seq", "LICENSE": "LICENSE",
@@ -260,6 +275,7 @@ class DataFetcher:
         "ge_to_ismrmrd": (GE_TO_ISMRMRD, GE_TO_ISMRMRD_FILES),
         "labrawsin": (LABRAWSIN, LABRAWSIN_FILES),
         "mrd": (MRD_REPOSITORY, MRD_FILES),
+        "phys2bids_ge": (OSF, OSF_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),

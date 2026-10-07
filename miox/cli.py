@@ -26,7 +26,15 @@ from pathlib import Path
 # own
 from miox import __version__
 from miox.audit import Auditor
-from miox.data import FitResult, MRImage, NoiseCovariance, PriorSet, PulseSequence, RawData
+from miox.data import (
+    FitResult,
+    MRImage,
+    NoiseCovariance,
+    PhysioData,
+    PriorSet,
+    PulseSequence,
+    RawData,
+)
 from miox.readers import Loader, ReaderError
 from miox.sniff import Format, Sniffer
 
@@ -92,6 +100,11 @@ class CLI:
             lines.append(f"  {d.name}: {dims}, {d.data.dtype}, voxels {sizes} mm")
         elif isinstance(d, PriorSet):
             lines.append(f"  {d.name}: {len(d.metabolites)} metabolites, {len(d.lines)} lines")
+        elif isinstance(d, PhysioData):
+            rate = f" at {d.sampling_frequency:g} Hz" if d.sampling_frequency else ""
+            events = "".join(f", {len(v)} {k}" for k, v in d.events.items())
+            channels = ", ".join(d.channels)
+            lines.append(f"  {d.name}: {d.n_samples} samples of {channels}{rate}{events}")
         elif isinstance(d, NoiseCovariance):
             lines.append(
                 f"  {d.name}: noise covariance of {d.n_coils} channels, {d.sample_count} samples"

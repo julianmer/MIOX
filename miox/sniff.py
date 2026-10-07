@@ -122,6 +122,11 @@ class Format(StrEnum):
     PULSEQ = "pulseq"
     BART_CFL = "bart_cfl"
     MRD = "mrd"
+    SIEMENS_PMU = "siemens_pmu"
+    CMRR_PHYSIO = "cmrr_physio"
+    PHILIPS_PHYSLOG = "philips_physlog"
+    GE_PHYSIO = "ge_physio"
+    BIDS_PHYSIO = "bids_physio"
     UNKNOWN = "unknown"
 
 
@@ -140,6 +145,7 @@ class Kind(StrEnum):
     FIT_RESULT = "fit_result"  # concentrations, fitted curves
     PROTOCOL = "protocol"  # acquisition or analysis settings
     SEQUENCE = "sequence"  # pulse sequence timing: RF, gradients, ADC events
+    PHYSIO = "physio"  # physiological recordings: cardiac, respiratory, triggers
     REPORT = "report"  # graphics for reading, no data
     UNKNOWN = "unknown"
 
@@ -295,6 +301,7 @@ class Sniffer:
         self.rules = (
             self.dicom,
             self.nifti,
+            self.physio,
             self.image_files,
             self.rda,
             self.matlab,
@@ -721,6 +728,41 @@ class Sniffer:
                 )
         return None
 
+    def physio(self, path: Path, head: bytes) -> Sniff | None:
+        """Physiological logs: Siemens PMU files (by extension and their four header values),
+        CMRR physio logs (LogDataType and UUID lines), Philips SCANPHYSLOG files (the "# v1raw"
+        column line), GE PPGData/RESPData/ECGData files (by name, numbers only) and BIDS physio
+        tables (a JSON sidecar with SamplingFrequency and Columns)."""
+        suffix, name = path.suffix.lower(), path.name
+        if suffix in (".puls", ".resp", ".ecg", ".ext", ".ext2") and re.match(
+            rb"\s*\d+ \d+ \d+ \d+\s", head
+        ):
+            return Sniff(path, Format.SIEMENS_PMU, Kind.PHYSIO, vendor="siemens", confidence=1.0,
+                         evidence=(f"{suffix} file", "PMU header values"))
+        if suffix == ".log" and b"LogDataType" in head and b"UUID" in head:
+            return Sniff(path, Format.CMRR_PHYSIO, Kind.PHYSIO, vendor="siemens", confidence=1.0,
+                         evidence=("LogDataType and UUID lines",))
+        if head.startswith(b"##") and re.search(rb"^# v1raw", head, re.M):
+            return Sniff(path, Format.PHILIPS_PHYSLOG, Kind.PHYSIO, vendor="philips",
+                         confidence=1.0, evidence=("# v1raw column line",))
+        if re.match(r"(PPG|RESP|ECG)Data_", name) and re.fullmatch(
+            rb"[\s\d-]*", head[: head.rfind(b"\n") + 1] if b"\n" in head else head
+        ):
+            return Sniff(path, Format.GE_PHYSIO, Kind.PHYSIO, vendor="ge", confidence=0.9,
+                         evidence=("GE physio file name", "numbers only"))
+        if name.endswith((".tsv", ".tsv.gz")):
+            sidecar = path.with_name(name.removesuffix(".gz").removesuffix(".tsv") + ".json")
+            if sidecar.is_file():
+                try:
+                    info = json.loads(sidecar.read_text())
+                except (json.JSONDecodeError, UnicodeDecodeError):
+                    return None
+                if isinstance(info, dict) and {"SamplingFrequency", "Columns"} <= set(info):
+                    return Sniff(path, Format.BIDS_PHYSIO, Kind.PHYSIO, confidence=1.0,
+                                 evidence=("JSON sidecar with SamplingFrequency and Columns",),
+                                 companions=(sidecar,))
+        return None
+
     def yardl(self, path: Path, head: bytes) -> Sniff | None:
         """MRD (version 2) files: yardl binary ("yardl" magic) or NDJSON (a first line
         {"yardl": ...}) whose embedded schema names the protocol Mrd (a stream) or
@@ -1124,7 +1166,10 @@ class Sniffer:
             "software_versions": str(ds.get("SoftwareVersions", "")),
             "protocol_name": str(ds.get("ProtocolName", "")),
         }
-        if sop in self.DICOM_SOP_MRS:
+        if "PHYSIO" in [str(v) for v in (ds.get("ImageType") or [])]:
+            fmt, kind, confidence = Format.CMRR_PHYSIO, Kind.PHYSIO, 1.0
+            sop_name = f"{sop} with image type PHYSIO"
+        elif sop in self.DICOM_SOP_MRS:
             fmt, kind, confidence = Format.DICOM_MRS, Kind.SPECTROSCOPY, 1.0
             sop_name = self.DICOM_SOP_MRS[sop]
         elif sop in self.DICOM_SOP_IMAGE:
