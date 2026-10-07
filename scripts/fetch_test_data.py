@@ -132,6 +132,9 @@ class DataFetcher:
             [f"bidsphysio.{m}/tests/data" for m in ("acq2bids", "base", "dcm2bids", "edf2bids",
                                                      "physio2bids", "pmu2bids")],
         ),
+        "bioread": (  # BIOPAC AcqKnowledge files of versions 3.8.1 to 5.0.1 (MIT)
+            "https://github.com/uwmadison-chm/bioread.git", ["test/data", "test/fixtures"],
+        ),
         "mri_protocol": (  # one Siemens Vida protocol as .exar1, printed .xml and .pdf (MIT)
             "https://github.com/lrq3000/mri_protocol.git", ["SiemensVidaProtocol"],
         ),

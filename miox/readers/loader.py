@@ -36,6 +36,7 @@ from miox.data import (
 from miox.readers.bart_cfl import BartReader
 from miox.readers.base import IncompleteError, Reader, ReaderError
 from miox.readers.basis_folder import BasisFolderReader
+from miox.readers.biopac_acq import AcqKnowledgeReader
 from miox.readers.bruker import BrukerReader
 from miox.readers.dicom_image import DicomImageReader
 from miox.readers.dicom_mrs import DicomMrsReader
@@ -115,6 +116,7 @@ class Loader:
         self.sniffer = Sniffer()
         self.readers: dict[Format, Reader] = {}
         for reader in (
+            AcqKnowledgeReader(),
             BartReader(),
             BidsPhysioReader(),
             BasisFolderReader(self),

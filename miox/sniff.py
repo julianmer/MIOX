@@ -127,6 +127,7 @@ class Format(StrEnum):
     PHILIPS_PHYSLOG = "philips_physlog"
     GE_PHYSIO = "ge_physio"
     BIDS_PHYSIO = "bids_physio"
+    BIOPAC_ACQ = "biopac_acq"
     SIEMENS_PRO = "siemens_pro"
     SIEMENS_EXAR = "siemens_exar"
     SIEMENS_PRINTPROT = "siemens_printprot"
@@ -736,8 +737,9 @@ class Sniffer:
     def physio(self, path: Path, head: bytes) -> Sniff | None:
         """Physiological logs: Siemens PMU files (by extension and their four header values),
         CMRR physio logs (LogDataType and UUID lines), Philips SCANPHYSLOG files (the "# v1raw"
-        column line), GE PPGData/RESPData/ECGData files (by name, numbers only) and BIDS physio
-        tables (a JSON sidecar with SamplingFrequency and Columns)."""
+        column line), GE PPGData/RESPData/ECGData files (by name, numbers only), BIOPAC
+        AcqKnowledge files (.acq with a plausible file revision and channel count) and BIDS
+        physio tables (a JSON sidecar with SamplingFrequency and Columns)."""
         suffix, name = path.suffix.lower(), path.name
         if suffix in (".puls", ".resp", ".ecg", ".ext", ".ext2") and re.match(
             rb"\s*\d+ \d+ \d+ \d+\s", head
@@ -755,6 +757,12 @@ class Sniffer:
         ):
             return Sniff(path, Format.GE_PHYSIO, Kind.PHYSIO, vendor="ge", confidence=0.9,
                          evidence=("GE physio file name", "numbers only"))
+        if suffix == ".acq" and len(head) >= 12 and any(
+            30 <= struct.unpack_from(f"{o}I", head, 2)[0] <= 1000
+            and 0 < struct.unpack_from(f"{o}h", head, 10)[0] <= 1024 for o in "<>"
+        ):
+            return Sniff(path, Format.BIOPAC_ACQ, Kind.PHYSIO, vendor="biopac", confidence=1.0,
+                         evidence=(".acq file", "AcqKnowledge graph header"))
         if name.endswith((".tsv", ".tsv.gz")):
             sidecar = path.with_name(name.removesuffix(".gz").removesuffix(".tsv") + ".json")
             if sidecar.is_file():

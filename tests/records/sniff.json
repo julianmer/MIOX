@@ -1175,9 +1175,9 @@
   "kind": "physio"
  },
  "bidsphysio/bidsphysio.acq2bids/tests/data/sample.acq": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
  },
  "bidsphysio/bidsphysio.base/tests/data/test_nan_TR_physio.tsv.gz": {
   "format": "bids_physio",
@@ -1260,9 +1260,9 @@
   "kind": "unknown"
  },
  "bidsphysio/bidsphysio.physio2bids/tests/data/sample.acq": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
  },
  "bidsphysio/bidsphysio.physio2bids/tests/data/samplePhysioCMRR.dcm": {
   "format": "cmrr_physio",
@@ -1315,9 +1315,9 @@
   "kind": "physio"
  },
  "bidsphysio/bidsphysio.pmu2bids/tests/data/sample.acq": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
  },
  "bidsphysio/bidsphysio.pmu2bids/tests/data/sample_VB15A.puls": {
   "format": "siemens_pmu",
@@ -1343,6 +1343,176 @@
   "format": "siemens_pmu",
   "vendor": "siemens",
   "kind": "physio"
+ },
+ "bioread/test/data/misc/iso_8859_1.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/misc/r35_test.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/misc/r42_test.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-3.8.1-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-3.8.1.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-3.9.1-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-3.9.1.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-4.1.0-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-4.1.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-4.2.0-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-4.2.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-4.3.0-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-4.3.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-4.4.0-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-4.4.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-5.0.1-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/nojournal/nojournal-5.0.1.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-3.8.1-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-3.8.1.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-3.9.1-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-3.9.1.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-4.1.0-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-4.1.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-4.2.0-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-4.2.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-4.3.0-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-4.3.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-4.4.0-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-4.4.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-5.0.1-c.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/physio/physio-5.0.1.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/data/unicode/small-unicode-4.4.0.acq": {
+  "format": "biopac_acq",
+  "vendor": "biopac",
+  "kind": "physio"
+ },
+ "bioread/test/fixtures/journal.html": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bioread/test/fixtures/journal.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "dcm_qa/.gitignore": {
   "format": "unknown",
