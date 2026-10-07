@@ -12,8 +12,9 @@
 #          the test folders of further public repositories, single files by URL (ITK's GE images   #
 #          through an IPFS gateway, ISMRMRD and Gadgetron k-space samples, one M4Raw file, the GE  #
 #          P-files and ScanArchives of ge_to_ismrmrd, a Philips raw/lab/sin export), NEMA's        #
-#          spectroscopy DICOM examples, and MRD (version 2) streams made from fetched files by the #
-#          MRD project's own tools.                                                                #
+#          spectroscopy DICOM examples, MRD (version 2) streams made from fetched files by the     #
+#          MRD project's own tools, and single members of large Zenodo archives (Varian imaging    #
+#          scans) read through HTTP range requests.                                                #
 #                                                                                                  #
 ####################################################################################################
 
@@ -24,6 +25,7 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import os
 import shutil
@@ -33,7 +35,19 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import zipfile
 from pathlib import Path
+
+
+#**************************************************************************************************#
+#                                            fid_folder                                            #
+#**************************************************************************************************#
+#                                                                                                  #
+# The files of a VnmrJ .fid folder inside an archive, by their target paths.                       #
+#                                                                                                  #
+#**************************************************************************************************#
+def fid_folder(target: str, member: str) -> dict[str, str]:
+    return {f"{target}/{name}": f"{member}/{name}" for name in ("fid", "procpar", "text", "log")}
 
 
 #**************************************************************************************************#
@@ -253,6 +267,26 @@ class DataFetcher:
             GADGETRON, dict(zip(GADGETRON_FILES_ALL, GADGETRON_FILES_ALL, strict=True))
         ),
     }
+    STRAWBERRY = "zenodo_repo_strawberry_mri"  # zenodo 7442381 (CC BY 4.0), one 13 GB zip
+    STRAWBERRY_SCANS = f"{STRAWBERRY}/hydroref/s_20220824_strawberry_stol01_day01_hydroref_01"
+    ZIP_MEMBERS = {  # folder: (Zenodo record, archive, {target: member})
+        "varian_strawberry": ("7442381", f"{STRAWBERRY}.zip", {
+            **fid_folder("mems.fid", f"{STRAWBERRY_SCANS}/mems_T2_MESE_strawberries_ms_T2_MESE_"
+                         "sagittal_01.fid"),
+            **fid_folder("fsems.fid", f"{STRAWBERRY_SCANS}/fsems_varianIR_prep_strawb_varianIR_"
+                         "strawberry_sagittal_01.fid"),
+            "t2_map.MAT": f"{STRAWBERRY}/qmaps/sb_href/s0_t2_2par_s01d01_hydroref.MAT",
+            "readme.txt": f"{STRAWBERRY}/readme.txt",
+        }),
+    }
+    ZIP_MEMBERS_ALL = {  # with --all
+        "varian_strawberry": ("7442381", f"{STRAWBERRY}.zip", {
+            **fid_folder("mge3d.fid", f"{STRAWBERRY_SCANS}/mge3d_qsm_strawberry_lowres_mge_"
+                         "6echo_qsm_01.fid"),
+            "t2star_map.MAT":
+                f"{STRAWBERRY}/qmaps/sb_href/s0_t2star_2par_s01d01_href_intmaskautoset.MAT",
+        }),
+    }
     MRD_PYTHON = "mrd-python==2.2.1"  # the MRD project's tools (MIT), run through uv only here
     MRD_CONVERSIONS = {  # MRD stream: ISMRMRD file it is converted from (ismrmrd_to_mrd)
         "generic_gre.mrd": "gadgetron/generic/meas_MID01095_FID40115/meas_MID01095_FID40115.mrd",
@@ -311,6 +345,11 @@ class DataFetcher:
             for name, (base, files) in group.items():
                 self.files(self.dest / name, base, files)
         self.nema(self.dest / "nema_wg16")
+        groups = (self.ZIP_MEMBERS, self.ZIP_MEMBERS_ALL) if self.everything else (
+            self.ZIP_MEMBERS,)
+        for group in groups:
+            for name, (record, archive, members) in group.items():
+                self.zip_members(self.dest / name, record, archive, members)
         self.mrd(self.dest / "mrd")
 
     def repository(self, dest: Path, url: str, paths: list[str] | None) -> None:
@@ -392,6 +431,25 @@ class DataFetcher:
             partial.replace(target)
         print(f"MRD streams in {dest}")
 
+    def zip_members(self, dest: Path, record: str, archive: str, members: dict[str, str]) -> None:
+        """Extract single members of a Zenodo zip archive without downloading the archive: the
+        central directory and the members are read through HTTP range requests."""
+        missing = {t: m for t, m in members.items() if not (dest / t).is_file()}
+        if not missing:
+            print(f"{dest.name}: {len(members)} files")
+            return
+        url = f"https://zenodo.org/api/records/{record}/files/{archive}/content"
+        with zipfile.ZipFile(io.BufferedReader(RangeFile(url), buffer_size=1 << 20)) as zf:
+            for target, member in missing.items():
+                path = dest / target
+                path.parent.mkdir(parents=True, exist_ok=True)
+                partial = path.with_name(path.name + ".part")
+                print(f"extracting {dest.name}/{target}")
+                with zf.open(member) as source, open(partial, "wb") as out:
+                    shutil.copyfileobj(source, out, 1 << 20)
+                partial.replace(path)
+        print(f"{dest.name}: {len(members)} files")
+
     def nema(self, dest: Path) -> None:
         """Download the selected files of the NEMA FTP folders, skipping those already present."""
         for folder, prefix in self.NEMA_FILES.items():
@@ -451,6 +509,47 @@ class DataFetcher:
             if target.suffix == ".zip":
                 shutil.unpack_archive(target, target.with_suffix(""))
         print(f"Zenodo record {record} in {dest}")
+
+
+#**************************************************************************************************#
+#                                            RangeFile                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# A remote file as a seekable read-only stream; every read is one HTTP range request.              #
+#                                                                                                  #
+#**************************************************************************************************#
+class RangeFile(io.RawIOBase):
+    def __init__(self, url: str):
+        with urllib.request.urlopen(urllib.request.Request(url, method="HEAD")) as response:
+            self.size = int(response.headers["Content-Length"])
+            self.url = response.url
+        self.position = 0
+
+    def readable(self) -> bool:
+        return True
+
+    def seekable(self) -> bool:
+        return True
+
+    def tell(self) -> int:
+        return self.position
+
+    def seek(self, offset: int, whence: int = 0) -> int:
+        base = {0: 0, 1: self.position, 2: self.size}[whence]
+        self.position = base + offset
+        return self.position
+
+    def readinto(self, buffer) -> int:
+        count = min(len(buffer), self.size - self.position)
+        if count <= 0:
+            return 0
+        span = f"bytes={self.position}-{self.position + count - 1}"
+        request = urllib.request.Request(self.url, headers={"Range": span})
+        with urllib.request.urlopen(request) as response:
+            data = response.read()
+        buffer[: len(data)] = data
+        self.position += len(data)
+        return len(data)
 
 
 #**************************************************************************************************#

@@ -12619,6 +12619,71 @@
   "vendor": null,
   "kind": "unknown"
  },
+ "varian_strawberry/fsems.fid/fid": {
+  "format": "varian",
+  "vendor": "varian",
+  "kind": "raw"
+ },
+ "varian_strawberry/fsems.fid/log": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "varian_strawberry/fsems.fid/procpar": {
+  "format": "varian",
+  "vendor": "varian",
+  "kind": "raw"
+ },
+ "varian_strawberry/fsems.fid/text": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "varian_strawberry/mems.fid/fid": {
+  "format": "varian",
+  "vendor": "varian",
+  "kind": "raw"
+ },
+ "varian_strawberry/mems.fid/log": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "varian_strawberry/mems.fid/procpar": {
+  "format": "varian",
+  "vendor": "varian",
+  "kind": "raw"
+ },
+ "varian_strawberry/mems.fid/text": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "varian_strawberry/mge3d.fid/fid": {
+  "format": "varian",
+  "vendor": "varian",
+  "kind": "raw"
+ },
+ "varian_strawberry/mge3d.fid/log": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "varian_strawberry/mge3d.fid/procpar": {
+  "format": "varian",
+  "vendor": "varian",
+  "kind": "raw"
+ },
+ "varian_strawberry/mge3d.fid/text": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "varian_strawberry/readme.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "vespa_io/docs/user_manuals/files/tutorial_data_analysis/tutorial_analysis/tutorial_01_import-file/press_cp0.rsd": {
   "format": "vasf",
   "vendor": null,

@@ -6,8 +6,9 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Reader for Varian/Agilent spectroscopy (.fid directory with fid and procpar). spec2nii  #
-#          converts; the vendor header keeps every procpar parameter, the text file and the log.   #
+# Purpose: Reader for Varian/Agilent .fid directories (fid and procpar): spectroscopy through      #
+#          spec2nii, imaging scans as raw k-space; the vendor header keeps every procpar           #
+#          parameter, the text file and the log.                                                   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -27,6 +28,7 @@ from spec2nii.varian_importer import read_varian
 # own
 from miox.data import MRSData
 from miox.readers.base import Spec2niiReader
+from miox.readers.varian_raw import VarianRaw
 from miox.sniff import Format, Sniff
 
 
@@ -35,7 +37,8 @@ from miox.sniff import Format, Sniff
 #**************************************************************************************************#
 #                                                                                                  #
 # Reads one .fid directory. procpar values stay the strings written in the file; times in procpar  #
-# are in s (delays, te, tr) or µs (pulses, alfa).                                                  #
+# are in s (delays, te, tr) or µs (pulses, alfa). Imaging scans (apptype im2D* or im3D*, or phase  #
+# encoding without an apptype) go to VarianRaw, everything else to spec2nii.                       #
 #                                                                                                  #
 #**************************************************************************************************#
 class VarianReader(Spec2niiReader):
@@ -55,6 +58,13 @@ class VarianReader(Spec2niiReader):
         "RxCoil": "procpar/rfcoil",
         "DwellTime": "procpar/sw",
     }
+
+    def read(self, sniff: Sniff) -> list:
+        folder = sniff.path if sniff.path.is_dir() else sniff.path.parent
+        header = self._header(folder)
+        if VarianRaw.is_imaging(header["procpar"]):
+            return VarianRaw(folder, header, self.provenance(sniff)).datasets()
+        return super().read(sniff)
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         folder = sniff.path if sniff.path.is_dir() else sniff.path.parent
