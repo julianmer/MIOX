@@ -612,10 +612,42 @@ def test_mrd_ndjson_equals_binary(tmp_path):
 
 
 def test_other_yardl_protocols_are_not_mrd(tmp_path):
-    schema = {"protocol": {"name": "MrdNoiseCovariance", "sequence": [
+    schema = {"protocol": {"name": "Petsird", "sequence": [
         {"name": "value", "type": "int32"}]}, "types": []}
     path = tmp_path / "noise.bin"
     YardlWriter(schema).write(path, {"value": 3})
     assert gu.sniff(path).format != gu.Format.MRD
     with pytest.raises(gu.ReaderError, match="not Mrd"):
         gu.Loader().readers[gu.Format.MRD].read(gu.Sniff(path, gu.Format.MRD))
+
+
+def test_mrd_noise_covariance(tmp_path):
+    schema = {
+        "protocol": {"name": "MrdNoiseCovariance", "sequence": [
+            {"name": "noiseCovariance", "type": "Mrd.NoiseCovariance"}]},
+        "types": [
+            _record("CoilLabelType", ("coilNumber", "uint32"), ("coilName", "string")),
+            _record("NoiseCovariance", ("coilLabels", _vec("Mrd.CoilLabelType")),
+                    ("receiverNoiseBandwidth", "float32"), ("noiseDwellTimeNs", "uint64"),
+                    ("sampleCount", "size"),
+                    ("matrix", {"array": {"items": "complexfloat32", "dimensions": 2}})),
+        ],
+    }
+    matrix = np.array([[2, 0.5 + 0.25j], [0.5 - 0.25j, 3]], dtype=np.complex64)
+    labels = [{"coilNumber": 1, "coilName": "H1"}, {"coilNumber": 2, "coilName": "H2"}]
+    value = {"coilLabels": labels, "receiverNoiseBandwidth": 0.793, "noiseDwellTimeNs": 2500,
+             "sampleCount": 4096, "matrix": matrix}
+    path = tmp_path / "noise.mrd"
+    YardlWriter(schema).write(path, {"noiseCovariance": value})
+    sniff = gu.sniff(path)
+    assert sniff.format == gu.Format.MRD and sniff.evidence[1] == "protocol MrdNoiseCovariance"
+    [covariance] = gu.load(path)
+    assert isinstance(covariance, gu.NoiseCovariance) and covariance.n_coils == 2
+    assert np.array_equal(covariance.matrix, matrix) and covariance.matrix[0, 1] == 0.5 + 0.25j
+    assert covariance.coil_labels == [{"number": 1, "name": "H1"}, {"number": 2, "name": "H2"}]
+    assert covariance.bandwidth == 0.793 and covariance.sample_count == 4096
+    assert covariance.dwell_time == pytest.approx(2.5e-6) and covariance.name == "noise"
+    assert covariance.meta["NumberOfReceiveChannels"] == 2
+    assert covariance.meta["DwellTime"] == pytest.approx(2.5e-6)
+    assert covariance.meta.vendor["coilLabels"][1]["coilName"] == "H2"
+    assert covariance.to_dict()["shape"] == [2, 2]

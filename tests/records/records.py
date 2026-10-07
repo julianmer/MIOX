@@ -32,6 +32,7 @@ from miox import (
     Format,
     Loader,
     MRImage,
+    NoiseCovariance,
     PriorSet,
     PulseSequence,
     RawData,
@@ -124,6 +125,18 @@ class ReadRecords:
         return math.isclose(a, b, rel_tol=self.RTOL, abs_tol=1e-12)
 
     def _dataset(self, d) -> dict:
+        if isinstance(d, NoiseCovariance):
+            record = {
+                "name": d.name,
+                "shape": list(d.matrix.shape),
+                "coil_labels": d.coil_labels,
+                "bandwidth": d.bandwidth,
+                "dwell_time": d.dwell_time,
+                "sample_count": d.sample_count,
+                "trace": float(np.trace(d.matrix).real),
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
         if isinstance(d, PulseSequence):
             record = {
                 "name": d.name,

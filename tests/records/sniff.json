@@ -5459,6 +5459,11 @@
   "vendor": null,
   "kind": "raw"
  },
+ "mrd/simple_gre_noise_covariance.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
  "mrs_fitting_challenge/Cr_water_scaling_JMRUI/Cr_10mM_test_water_scaling_WS.txt": {
   "format": "jmrui_text",
   "vendor": null,

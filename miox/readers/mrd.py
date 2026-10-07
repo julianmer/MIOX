@@ -6,8 +6,9 @@
 #                                                                                                  #
 # Created: 07/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Reader for MRD (version 2) streams, binary or NDJSON: the header, the acquisitions with #
-#          their waveforms, the images and the Pulseq sequence items.                              #
+# Purpose: Reader for MRD (version 2) files, binary or NDJSON: the header, the acquisitions with   #
+#          their waveforms, the images and the Pulseq sequence items of a stream, and noise        #
+#          covariance matrices.                                                                    #
 #                                                                                                  #
 ####################################################################################################
 
@@ -23,7 +24,7 @@ from typing import Any
 import numpy as np
 
 # own
-from miox.data import MRImage, PulseSequence, RawData
+from miox.data import MRImage, NoiseCovariance, PulseSequence, RawData
 from miox.meta import Meta
 from miox.readers.base import ReaderError
 from miox.readers.ismrmrd import IsmrmrdReader
@@ -46,7 +47,8 @@ from miox.yardl import YardlError, YardlFile
 # ns become ns // 10^6 (the converters take the ISMRMRD stamps as ms), sample times in ns µs; the  #
 # exact ns values, phase arrays, channel orders and user values beyond eight are kept in the       #
 # vendor header. Trajectories are (basis, samples) per readout; a trajectory stored (samples,      #
-# basis), as ismrmrd_to_mrd writes it, is recognised by its sample count and transposed.           #
+# basis), as ismrmrd_to_mrd writes it, is recognised by its sample count and transposed. A file of #
+# the protocol "MrdNoiseCovariance" becomes one NoiseCovariance.                                   #
 #                                                                                                  #
 #**************************************************************************************************#
 class MrdReader(IsmrmrdReader):
@@ -117,11 +119,13 @@ class MrdReader(IsmrmrdReader):
     RF_USE = {"undefined": "u", "excitation": "e", "refocusing": "r", "inversion": "i",
               "saturation": "s", "preparation": "p", "other": "o"}  # Pulseq's one-letter codes
 
-    def read(self, sniff: Sniff) -> list[RawData | MRImage | PulseSequence]:
+    def read(self, sniff: Sniff) -> list[RawData | MRImage | PulseSequence | NoiseCovariance]:
         try:
             stream = YardlFile(sniff.path)
         except YardlError as error:
             raise ReaderError(f"{sniff.path.name}: {error}") from error
+        if stream.schema.name == "MrdNoiseCovariance":
+            return [self._noise_covariance(sniff, stream)]
         if stream.schema.name != "Mrd":
             raise ReaderError(f"{sniff.path.name}: yardl protocol {stream.schema.name}, not Mrd")
         header = self._header(stream.steps.get("header"))
@@ -150,6 +154,29 @@ class MrdReader(IsmrmrdReader):
         if not datasets:
             raise ReaderError(f"{sniff.path.name}: no acquisitions, images or sequence items")
         return datasets
+
+    # --- noise covariance ------------------------------------------------------------------------
+
+    def _noise_covariance(self, sniff: Sniff, stream: YardlFile) -> NoiseCovariance:
+        value = stream.steps["noiseCovariance"]
+        matrix = value["matrix"]
+        if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
+            raise ReaderError(f"{sniff.path.name}: noise covariance of shape {matrix.shape}")
+        labels = [{"number": c["coilNumber"], "name": c["coilName"]} for c in value["coilLabels"]]
+        notes = [f"MRD noise covariance, {stream.encoding} encoding"]
+        if labels and len(labels) != matrix.shape[0]:
+            notes.append(f"{len(labels)} coil labels for {matrix.shape[0]} channels")
+        meta = Meta({k: self._plain_value(v) for k, v in value.items() if k != "matrix"})
+        meta.set("NumberOfReceiveChannels", int(matrix.shape[0]), "noise covariance: matrix size",
+                 "matrix")
+        dwell = value["noiseDwellTimeNs"] / 1e9 or None
+        if dwell:
+            meta.set("DwellTime", dwell, "noise covariance: noiseDwellTimeNs", "noiseDwellTimeNs")
+        provenance = self.provenance(sniff, tuple(notes))
+        return NoiseCovariance(
+            matrix, labels, value["receiverNoiseBandwidth"], dwell, value["sampleCount"], meta,
+            provenance, sniff.path.stem,
+        )
 
     # --- header ----------------------------------------------------------------------------------
 

@@ -10,8 +10,8 @@
 #          evidence: ISMRMRD files converted by ismrmrd_to_mrd against the same files read as      #
 #          ISMRMRD (readouts, every header field, trajectories, keys, images and their geometry),  #
 #          a Pulseq file converted by seq_to_mrd against the .seq file, the phantom's k-space      #
-#          against the reconstruction of stream_recon, and the NDJSON copies against the binary    #
-#          streams.                                                                                #
+#          against the reconstruction of stream_recon, the NDJSON copies against the binary        #
+#          streams, and a noise covariance written by MRD's writer against the noise readouts.     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -148,3 +148,20 @@ def test_ndjson_copies_equal_the_binary_streams(stem):
             assert np.array_equal(a.data, b.data) and np.array_equal(a.affine, b.affine)
         else:
             assert np.array_equal(a.blocks, b.blocks) and a.events == b.events
+
+
+def test_noise_covariance_equals_the_streams_noise_readouts():
+    """MRD's own writer stored the covariance of the stream's noise readout; it equals the one
+    computed from those readouts as read here, with the stream's bandwidth and noise dwell time."""
+    _need(MRD / "simple_gre.mrd", MRD / "simple_gre_noise_covariance.mrd")
+    [raw] = load(MRD / "simple_gre.mrd")
+    [covariance] = load(MRD / "simple_gre_noise_covariance.mrd")
+    noise = raw.data[raw.flagged("IS_NOISE_MEASUREMENT")]  # (readouts, coils, samples)
+    samples = np.concatenate(list(noise), axis=1)
+    expected = samples @ samples.conj().T / samples.shape[1]
+    assert covariance.matrix.shape == (32, 32) and covariance.sample_count == samples.shape[1]
+    assert np.allclose(covariance.matrix, expected, rtol=1e-5, atol=1e-6 * np.abs(expected).max())
+    stated = raw.meta.vendor["acquisitionSystemInformation"]["relativeReceiverNoiseBandwidth"]
+    assert covariance.bandwidth == stated
+    first = int(np.argmax(raw.flagged("IS_NOISE_MEASUREMENT")))
+    assert covariance.dwell_time == raw.meta.vendor["acquisitions"]["sample_time_ns"][first] / 1e9

@@ -22,7 +22,15 @@ from pathlib import Path
 from typing import Any
 
 # own
-from miox.data import FitResult, MRImage, MRSData, PriorSet, PulseSequence, RawData
+from miox.data import (
+    FitResult,
+    MRImage,
+    MRSData,
+    NoiseCovariance,
+    PriorSet,
+    PulseSequence,
+    RawData,
+)
 from miox.readers.bart_cfl import BartReader
 from miox.readers.base import IncompleteError, Reader, ReaderError
 from miox.readers.basis_folder import BasisFolderReader
@@ -73,7 +81,7 @@ from miox.readers.vespa_prior import VespaPriorReader
 from miox.readers.vespa_viff import VespaViffReader
 from miox.sniff import Format, Sniff, Sniffer
 
-Dataset = MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence
+Dataset = MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | NoiseCovariance
 
 
 #**************************************************************************************************#
@@ -151,8 +159,8 @@ class Loader:
         given: dict[str, Any] | None = None,
         complete: bool = False,
     ) -> list[Dataset]:
-        """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet, FitResult or
-        PulseSequence each.
+        """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet, FitResult,
+        PulseSequence or NoiseCovariance each.
 
         ``given`` maps standard keys to values for what the file does not state
         (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated

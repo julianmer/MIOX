@@ -269,6 +269,23 @@ class DataFetcher:
         "    w.write_header(r.read_header())\n"
         "    w.write_data(r.read_data())\n"
     )
+    MRD_NOISE = (  # the noise covariance of a stream's noise readouts, by MRD's own writer
+        "import sys, numpy as np, mrd\n"
+        "with mrd.BinaryMrdReader(sys.argv[1]) as r:\n"
+        "    head = r.read_header()\n"
+        "    noise = [item.value for item in r.read_data()\n"
+        "             if isinstance(item, mrd.StreamItem.Acquisition)\n"
+        "             and item.value.head.flags & mrd.AcquisitionFlags.IS_NOISE_MEASUREMENT]\n"
+        "data = np.concatenate([a.data for a in noise], axis=1)\n"
+        "info = head.acquisition_system_information\n"
+        "covariance = mrd.NoiseCovariance(\n"
+        "    coil_labels=list(info.coil_label),\n"
+        "    receiver_noise_bandwidth=info.relative_receiver_noise_bandwidth or 1.0,\n"
+        "    noise_dwell_time_ns=noise[0].head.sample_time_ns or 0, sample_count=data.shape[1],\n"
+        "    matrix=(data @ data.conj().T / data.shape[1]).astype(np.complex64))\n"
+        "with mrd.BinaryMrdNoiseCovarianceWriter(sys.argv[2]) as w:\n"
+        "    w.write_noise_covariance(covariance)\n"
+    )
     NEMA = "ftp://medical.nema.org/medical/dicom/DataSets/WG16"
     NEMA_FILES = {  # spectroscopy DICOM examples of the DICOM working group 16
         "Siemens/Siemens_spectroEnhDICOM": None,  # None: every file in the folder
@@ -336,9 +353,9 @@ class DataFetcher:
         print(f"{dest.name}: {len(files)} files")
 
     def mrd(self, dest: Path) -> None:
-        """MRD streams written by the MRD project's tools: conversions of fetched ISMRMRD files,
-        a phantom (noise scans, trajectories) with its reconstruction, a Pulseq file, and NDJSON
-        copies; streams already present are skipped."""
+        """MRD files written by the MRD project's tools: conversions of fetched ISMRMRD files,
+        a phantom (noise scans, trajectories) with its reconstruction, a Pulseq file, NDJSON
+        copies and a noise covariance; files already present are skipped."""
         python = ["uv", "run", "--no-project", "--quiet", "--with", self.MRD_PYTHON, "python"]
         jobs = [
             (name, ["-m", "mrd.tools.ismrmrd_to_mrd", "-d", str(self.dest / source), "-o"],
@@ -359,6 +376,8 @@ class DataFetcher:
              dest / f"{stem}.mrd")
             for stem in ("phantom", "phantom_recon", "haste")
         ]
+        jobs.append(("simple_gre_noise_covariance.mrd",
+                     ["-c", self.MRD_NOISE, str(dest / "simple_gre.mrd")], dest / "simple_gre.mrd"))
         dest.mkdir(parents=True, exist_ok=True)
         for name, args, source in jobs:
             target = dest / name

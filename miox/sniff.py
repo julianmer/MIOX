@@ -722,15 +722,16 @@ class Sniffer:
         return None
 
     def yardl(self, path: Path, head: bytes) -> Sniff | None:
-        """MRD (version 2) streams: yardl binary ("yardl" magic) or NDJSON (a first line
-        {"yardl": ...}) whose embedded schema names the protocol Mrd."""
+        """MRD (version 2) files: yardl binary ("yardl" magic) or NDJSON (a first line
+        {"yardl": ...}) whose embedded schema names the protocol Mrd (a stream) or
+        MrdNoiseCovariance (a noise covariance matrix)."""
         protocol = YardlFile.protocol_name(head)
-        if protocol != "Mrd":
+        if protocol not in ("Mrd", "MrdNoiseCovariance"):
             return None
         encoding = "binary" if head.startswith(YardlFile.MAGIC) else "NDJSON"
         return Sniff(
             path, Format.MRD, Kind.RAW, confidence=1.0,
-            evidence=(f"yardl {encoding}", "protocol Mrd"),
+            evidence=(f"yardl {encoding}", f"protocol {protocol}"),
         )
 
     def text_formats(self, path: Path, head: bytes) -> Sniff | None:

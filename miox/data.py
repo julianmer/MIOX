@@ -8,7 +8,8 @@
 #                                                                                                  #
 # Purpose: The objects every reader returns: spectroscopy (complex FIDs in NIfTI-MRS dimension     #
 #          order, dwell time, geometry, tagged higher dimensions), images, raw k-space readouts,   #
-#          basis sets, priors and fit results, each with metadata and the provenance of the read.  #
+#          basis sets, priors, fit results, pulse sequences and noise covariances, each with       #
+#          metadata and the provenance of the read.                                                #
 #                                                                                                  #
 ####################################################################################################
 
@@ -611,3 +612,64 @@ class PulseSequence:
         name = f" {self.name}" if self.name else ""
         duration = f", {self.duration:.4g} s" if self.duration is not None else ""
         return f"<PulseSequence{name} v{self.version}: {self.n_blocks} blocks{duration}>"
+
+
+#**************************************************************************************************#
+#                                         NoiseCovariance                                          #
+#**************************************************************************************************#
+#                                                                                                  #
+# The noise covariance of the receive channels: ``matrix`` (channels x channels, complex), the     #
+# ``coil_labels`` of its rows (number and name, as far as the file names them), the relative       #
+# receiver noise ``bandwidth``, the ``dwell_time`` of the noise samples in seconds and the         #
+# ``sample_count`` the matrix was estimated from.                                                  #
+#                                                                                                  #
+#**************************************************************************************************#
+class NoiseCovariance:
+    def __init__(
+        self,
+        matrix: np.ndarray,
+        coil_labels: list[dict],
+        bandwidth: float | None,
+        dwell_time: float | None,
+        sample_count: int | None,
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+    ):
+        self.matrix = matrix
+        self.coil_labels = coil_labels
+        self.bandwidth = bandwidth
+        self.dwell_time = dwell_time
+        self.sample_count = sample_count
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    @property
+    def n_coils(self) -> int:
+        return self.matrix.shape[0]
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the matrix and the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "shape": list(self.matrix.shape),
+            "coil_labels": self.coil_labels,
+            "bandwidth": self.bandwidth,
+            "dwell_time": self.dwell_time,
+            "sample_count": self.sample_count,
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        return (
+            f"<NoiseCovariance{name} {self.provenance.format}: {self.n_coils} x {self.n_coils}, "
+            f"{self.sample_count} samples>"
+        )
