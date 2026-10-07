@@ -131,6 +131,10 @@ class Format(StrEnum):
     KOMA_PHANTOM = "koma_phantom"
     JEMRIS_PHANTOM = "jemris_phantom"
     JEMRIS_SIGNAL = "jemris_signal"
+    TOPPE_ENTRY = "toppe_entry"
+    TOPPE_MODULES = "toppe_modules"
+    TOPPE_LOOP = "toppe_loop"
+    TOPPE_MOD = "toppe_mod"
     SIEMENS_PRO = "siemens_pro"
     SIEMENS_EXAR = "siemens_exar"
     SIEMENS_PRINTPROT = "siemens_printprot"
@@ -311,6 +315,7 @@ class Sniffer:
             self.dicom,
             self.nifti,
             self.physio,
+            self.toppe,
             self.protocols,
             self.image_files,
             self.rda,
@@ -798,6 +803,30 @@ class Sniffer:
         if head.startswith(b"SQLite format 3\0") and path.suffix.lower().startswith(".exar"):
             return Sniff(path, Format.SIEMENS_EXAR, Kind.PROTOCOL, vendor="siemens",
                          confidence=1.0, evidence=("SQLite database", f"{path.suffix} extension"))
+        return None
+
+    def toppe(self, path: Path, head: bytes) -> Sniff | None:
+        """TOPPE files: the module list (first line "Total number of unique cores"), the scan
+        loop (first line "nt<tab>maxslice"), toppe<N>.entry files (by name, the module list on
+        the second line) and .mod files (a big-endian description length, the description and
+        the "b1max:" line)."""
+        lines = head.splitlines()
+        first = lines[0].strip() if lines else b""
+        if first.startswith(b"Total number of unique cores"):
+            return Sniff(path, Format.TOPPE_MODULES, Kind.SEQUENCE, vendor="ge", confidence=1.0,
+                         evidence=("Total number of unique cores line",))
+        if first.startswith(b"nt\tmaxslice"):
+            return Sniff(path, Format.TOPPE_LOOP, Kind.SEQUENCE, vendor="ge", confidence=1.0,
+                         evidence=("nt, maxslice, ... header line",))
+        if re.fullmatch(r"toppe\w*\.entry", path.name, re.I) and len(lines) > 2 and lines[
+                1].strip().endswith(b".txt"):
+            return Sniff(path, Format.TOPPE_ENTRY, Kind.SEQUENCE, vendor="ge", confidence=1.0,
+                         evidence=("toppe entry file name", "module list on line 2"))
+        if path.suffix.lower() == ".mod" and len(head) > 2:
+            size = struct.unpack_from(">h", head, 0)[0]
+            if 0 < size < len(head) - 8 and b"b1max:" in head[2 + size : 2 + size + 32]:
+                return Sniff(path, Format.TOPPE_MOD, Kind.SEQUENCE, vendor="ge", confidence=1.0,
+                             evidence=(".mod file", "description and b1max line"))
         return None
 
     def yardl(self, path: Path, head: bytes) -> Sniff | None:

@@ -236,3 +236,57 @@ def test_bart_cfl_and_ra(tmp_path):
     [ra] = gu.load(tmp_path / "ksp.ra")
     assert np.array_equal(ra.data, image.data)
     assert ra.meta.vendor["header"]["data_bytes"] == values.nbytes
+
+
+def _mod(path, rho, gz, b1max=0.25, gmax=4.0, floats=(1.0,)):
+    """A .mod file as TOPPE's writemod.m writes it: one coil, one waveform."""
+    description = b"test module\n"
+    blob = struct.pack(">h", len(description)) + description
+    blob += struct.pack(">hhh", 1, len(rho), 1)
+    blob += f"b1max:  {b1max:f}\ngmax:   {gmax:f}\n".encode()
+    blob += struct.pack(">h", 3) + struct.pack(">3h", 0, len(rho), 7)
+    blob += struct.pack(">h", len(floats)) + "".join(f"{v:f}\n" for v in floats).encode()
+    zeros = [0] * len(rho)
+    for wave in (rho, zeros, zeros, zeros, gz):
+        blob += struct.pack(f">{len(rho)}h", *wave)
+    path.write_bytes(blob)
+
+
+def test_toppe_sequence(tmp_path):
+    _mod(tmp_path / "ex.mod", [0, 32766, 16382, 0], [16382, 16382, 16382, 16382])
+    _mod(tmp_path / "ro.mod", [0, 0, 0, 0], [0, 32766, -32766, 0])
+    (tmp_path / "modules.txt").write_text(
+        "Total number of unique cores\n2\nwavfile_name\tduration(us)\thasRF?\thasDAQ?\n"
+        "ex.mod\t0\t1\t0\nro.mod\t100\t0\t1\t-1\n")
+    row = [1, 32766, 32766, 0, 0, 16382, 0, 0, 1, 0, 0, 100, 100, 0, 250, 1,
+           32766, 0, 0, 0, 32766, 0, 0, 0, 32766, 0, 0, 3]
+    (tmp_path / "scanloop.txt").write_text(
+        "nt\tmaxslice\tmaxecho\tmaxview\tscandur\tversion\n2\t1\t0\t1\t5000\t6\n"
+        "Core a_rf a_th a_gx a_gy a_gz dabslice dabecho dabview dabmode rot rfphase recphase "
+        "textra freq waveform rotmat...\n"
+        + "\n".join("\t".join(str(v) for v in r) for r in (row, [2] + row[1:])) + "\n")
+    (tmp_path / "toppe1.entry").write_text(
+        "/usr/g/research/pulseq/test/\nmodules.txt\nscanloop.txt\nex.mod\nro.mod\n"
+        "seqstamp.txt\n")
+    formats = {p.name: gu.sniff(p).format for p in tmp_path.iterdir()}
+    assert formats == {"ex.mod": gu.Format.TOPPE_MOD, "ro.mod": gu.Format.TOPPE_MOD,
+                       "modules.txt": gu.Format.TOPPE_MODULES,
+                       "scanloop.txt": gu.Format.TOPPE_LOOP,
+                       "toppe1.entry": gu.Format.TOPPE_ENTRY}
+    [seq] = gu.load(tmp_path / "toppe1.entry")
+    assert seq.version == "6" and seq.n_blocks == 2
+    assert seq.blocks.dtype.names[-3:] == ("trigger", "trigger_out", "core")
+    assert seq.blocks["module"].tolist() == [1, 2] and seq.blocks["core"].tolist() == [3, 3]
+    assert seq.blocks["rotation_0"][0] == 32766 and seq.blocks["frequency_hz"][0] == 250
+    assert seq.definitions["entry"]["b1_scaling_module"] == "ex.mod"
+    assert seq.meta["ScanDuration"] == pytest.approx(5e-3)
+    assert "sequence_stamp" not in seq.definitions and seq.provenance.notes == ()
+    ex, ro = seq.events["modules"][1], seq.events["modules"][2]
+    assert ex["has_rf"] and not ex["has_daq"] and ro["duration_us"] == 100
+    assert ro["trigger_position"] == -1
+    assert ex["rf"][:, 0, 0].real == pytest.approx([0, 0.25e-4, 0.25e-4 * 16382 / 32766, 0])
+    assert ex["gz"][:, 0] == pytest.approx([4e-2 * 16382 / 32766] * 4)
+    assert ro["gz"][:, 0] == pytest.approx([0, 4e-2, -4e-2, 0])
+    assert ex["discarded_samples"] == 0 and ex["rf_samples"] == 4 and ex["int_parameters"] == [7]
+    [loop] = gu.load(tmp_path / "scanloop.txt")
+    assert loop.n_blocks == 2 and loop.events["modules"] == {}

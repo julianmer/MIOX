@@ -11,7 +11,8 @@
 #          field of view of the sequence must match the acquired readouts; the block durations     #
 #          must add up to the declared total. KomaMRI's comparison files (Pulseq 1.2 to 1.5) hold  #
 #          MATLAB Pulseq's reading of every block as sampled waveforms: the events read here must  #
-#          give the same amplitudes, timing and ADC samples.                                       #
+#          give the same amplitudes, timing and ADC samples. TOPPE's public RF module against what #
+#          its writer guarantees and the flip angle its waveform gives.                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -33,6 +34,7 @@ OSI2ONE = sorted(set(p.parent for p in (PUBLIC_DATA / "osi2one").glob("**/sequen
 KOMA = PUBLIC_DATA / "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison"
 KOMA_FILES = sorted(KOMA.glob("v*/*.seq"))
 GAMMA = 42577468.8  # Hz/T, as the comparison files convert Hz to T
+TOPPE = PUBLIC_DATA / "toppe"
 
 
 @pytest.mark.parametrize("folder", OSI2ONE[:6], ids=lambda p: p.name[:40])
@@ -122,3 +124,19 @@ def test_pulseq_blocks_equal_matlab_pulseq(path):
                 assert np.abs(a).max() * GAMMA == pytest.approx(peak, rel=1e-6)
         if timed:
             start += block["duration"] * raster
+
+
+def test_toppe_rf_module():
+    """TOPPE's writer (writemod.m) stores every sample as an even int16 and the file must hold
+    exactly the declared waveforms; the RF module's 608 samples of 4 us last 2.432 ms (its first
+    float parameter), and the integral of its B1 gives a flip angle of 15.00 degrees, a round
+    angle that a wrong amplitude scale or a shifted waveform would not give."""
+    path = TOPPE / "tipdown.mod"
+    if not path.is_file():
+        pytest.skip("toppe/tipdown.mod not fetched")
+    [seq] = load(path)
+    module = seq.events["modules"][1]
+    assert (module["raw"] % 2 == 0).all()
+    assert module["points"] * 4e-6 == pytest.approx(module["float_parameters"][0] * 1e-3)
+    flip = np.degrees(2 * np.pi * GAMMA * abs(module["rf"][:, 0, 0].sum()) * 4e-6)
+    assert flip == pytest.approx(15.0, abs=0.01)

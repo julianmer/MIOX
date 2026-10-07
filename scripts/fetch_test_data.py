@@ -11,10 +11,10 @@
 #          server's rate limit), the NIfTI-MRS examples and the OSI2ONE k-space data from Zenodo,  #
 #          the test folders of further public repositories, single files by URL (ITK's GE images   #
 #          through an IPFS gateway, ISMRMRD and Gadgetron k-space samples, one M4Raw file, the GE  #
-#          P-files and ScanArchives of ge_to_ismrmrd, a Philips raw/lab/sin export), NEMA's        #
-#          spectroscopy DICOM examples, MRD (version 2) streams made from fetched files by the     #
-#          MRD project's own tools, and single members of large Zenodo archives (Varian imaging    #
-#          scans) read through HTTP range requests.                                                #
+#          P-files and ScanArchives of ge_to_ismrmrd, a Philips raw/lab/sin export, TOPPE files),  #
+#          NEMA's spectroscopy DICOM examples, MRD (version 2) streams made from fetched files by  #
+#          the MRD project's own tools, and single members of large Zenodo archives (Varian        #
+#          imaging scans) read through HTTP range requests.                                        #
 #                                                                                                  #
 ####################################################################################################
 
@@ -280,6 +280,14 @@ class DataFetcher:
         "PPGData_epiRT_0000000000_00_00_000": "u9wsr/download",
         "RESPData_epiRT_0000000000_00_00_000": "49xpw/download",
     }
+    TOPPE = "https://raw.githubusercontent.com/toppeMRI/toppe/main"  # MIT
+    TOPPE_FILES = {  # the public TOPPE files: one .mod, a module list, two entry files
+        "tipdown.mod": "attic/c++/tipdown.mod",
+        "modules.txt": "attic/examples/ISMRM2019_SoftwareDemo/modules.txt",
+        "toppe0.entry": "attic/examples/3DGRE/toppe0.entry",
+        "toppeN.entry": "attic/examples/MRITogether2021_PulseqOnGE/EPI/toppeN.entry",
+        "LICENSE": "LICENSE",
+    }
     MRD_REPOSITORY = "https://raw.githubusercontent.com/ismrmrd/mrd/main"  # MIT
     MRD_FILES = {  # a Pulseq file the MRD tools convert, and the licence
         "haste.seq": "test/test_data/pulseq/1.4.2/haste.seq", "LICENSE": "LICENSE",
@@ -295,6 +303,7 @@ class DataFetcher:
         "labrawsin": (LABRAWSIN, LABRAWSIN_FILES),
         "mrd": (MRD_REPOSITORY, MRD_FILES),
         "phys2bids_ge": (OSF, OSF_FILES),
+        "toppe": (TOPPE, TOPPE_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),
