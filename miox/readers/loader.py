@@ -29,6 +29,7 @@ from miox.data import (
     NoiseCovariance,
     PhysioData,
     PriorSet,
+    Protocol,
     PulseSequence,
     RawData,
 )
@@ -62,6 +63,7 @@ from miox.readers.nrrd import NrrdReader
 from miox.readers.osprey_basis import OspreyBasisReader
 from miox.readers.osprey_container import OspreyContainerReader
 from miox.readers.philips_data_list import PhilipsDataListReader
+from miox.readers.philips_examcard import PhilipsExamCardReader
 from miox.readers.philips_raw_lab import PhilipsRawLabReader
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.readers.physio import (
@@ -75,6 +77,7 @@ from miox.readers.profit_basis import ProfitBasisReader
 from miox.readers.pulseq import PulseqReader
 from miox.readers.pyamares_prior import PyamaresPriorReader
 from miox.readers.pyamares_result import PyamaresResultReader
+from miox.readers.siemens_protocol import SiemensPrintedProtocolReader, SiemensProtocolReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
 from miox.readers.sivic_ddf import SivicDdfReader
@@ -91,7 +94,7 @@ from miox.sniff import Format, Sniff, Sniffer
 
 Dataset = (
     MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | NoiseCovariance
-    | PhysioData
+    | PhysioData | Protocol
 )
 
 
@@ -145,6 +148,7 @@ class Loader:
             OspreyContainerReader(),
             PhilipsDataListReader(),
             PhilipsRawLabReader(),
+            PhilipsExamCardReader(),
             PhilipsPhyslogReader(),
             PhilipsSparSdatReader(),
             ProfitBasisReader(),
@@ -152,6 +156,8 @@ class Loader:
             PyamaresPriorReader(),
             PyamaresResultReader(),
             SiemensPmuReader(),
+            SiemensPrintedProtocolReader(),
+            SiemensProtocolReader(),
             SiemensRdaReader(),
             SiemensTwixReader(),
             SivicDdfReader(),
@@ -176,7 +182,7 @@ class Loader:
         complete: bool = False,
     ) -> list[Dataset]:
         """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet, FitResult,
-        PulseSequence, NoiseCovariance or PhysioData each.
+        PulseSequence, NoiseCovariance, PhysioData or Protocol each.
 
         ``given`` maps standard keys to values for what the file does not state
         (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated

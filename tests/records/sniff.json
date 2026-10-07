@@ -1,4 +1,14 @@
 {
+ "abcd_protocols/ABCD  V_EMS_20OCT2016_RawData.ExamCard": {
+  "format": "philips_examcard",
+  "vendor": "philips",
+  "kind": "protocol"
+ },
+ "abcd_protocols/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "agilent_fdf/LICENSE": {
   "format": "unknown",
   "vendor": null,
@@ -5269,6 +5279,56 @@
   "vendor": null,
   "kind": "unknown"
  },
+ "dicompare/DUAL_ECHO_EPI.ExamCard": {
+  "format": "philips_examcard",
+  "vendor": "philips",
+  "kind": "protocol"
+ },
+ "dicompare/SSdense_July2024.ExamCard": {
+  "format": "philips_examcard",
+  "vendor": "philips",
+  "kind": "protocol"
+ },
+ "dicompare/dicompare/tests/fixtures/exar/spine-generic_CimaX_XA61_ZOOMit.exar1": {
+  "format": "siemens_exar",
+  "vendor": "siemens",
+  "kind": "protocol"
+ },
+ "dicompare/dicompare/tests/fixtures/gradients/DiffusionVectors_AxonDiameter_ERJV.dvs": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "dicompare/dicompare/tests/fixtures/printprot/AxonDiameterProtocol.txt": {
+  "format": "siemens_printprot",
+  "vendor": "siemens",
+  "kind": "protocol"
+ },
+ "dicompare/dicompare/tests/fixtures/printprot/axcal_forJelle.xml": {
+  "format": "siemens_printprot",
+  "vendor": "siemens",
+  "kind": "protocol"
+ },
+ "dicompare/dicompare/tests/fixtures/pro_files/C2P__cmrr_mbep2d_bold__p3_mb2.pro": {
+  "format": "siemens_pro",
+  "vendor": "siemens",
+  "kind": "protocol"
+ },
+ "dicompare/dicompare/tests/fixtures/pro_files/PRODUCT__ep2d_bold__p2_sms1.pro": {
+  "format": "siemens_pro",
+  "vendor": "siemens",
+  "kind": "protocol"
+ },
+ "dicompare/dicompare/tests/fixtures/pro_files/PRODUCT__ep2d_diff__p3_sms1.pro": {
+  "format": "siemens_pro",
+  "vendor": "siemens",
+  "kind": "protocol"
+ },
+ "dicompare/dicompare/tests/fixtures/ref_dicom.dcm": {
+  "format": "dicom_other",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "gadgetron/T2W/generic_grappa_T2W_ref_20220817_klk.mrd": {
   "format": "ismrmrd",
   "vendor": null,
@@ -5638,6 +5698,21 @@
   "format": "mrd",
   "vendor": null,
   "kind": "raw"
+ },
+ "mri_protocol/SiemensVidaProtocol/Coma Science Group.exar1": {
+  "format": "siemens_exar",
+  "vendor": "siemens",
+  "kind": "protocol"
+ },
+ "mri_protocol/SiemensVidaProtocol/Coma Science Group.xml": {
+  "format": "siemens_printprot",
+  "vendor": "siemens",
+  "kind": "protocol"
+ },
+ "mri_protocol/SiemensVidaProtocol/printprot_apply.xsl": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "mrs_fitting_challenge/Cr_water_scaling_JMRUI/Cr_10mM_test_water_scaling_WS.txt": {
   "format": "jmrui_text",

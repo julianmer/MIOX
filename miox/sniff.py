@@ -127,6 +127,10 @@ class Format(StrEnum):
     PHILIPS_PHYSLOG = "philips_physlog"
     GE_PHYSIO = "ge_physio"
     BIDS_PHYSIO = "bids_physio"
+    SIEMENS_PRO = "siemens_pro"
+    SIEMENS_EXAR = "siemens_exar"
+    SIEMENS_PRINTPROT = "siemens_printprot"
+    PHILIPS_EXAMCARD = "philips_examcard"
     UNKNOWN = "unknown"
 
 
@@ -302,6 +306,7 @@ class Sniffer:
             self.dicom,
             self.nifti,
             self.physio,
+            self.protocols,
             self.image_files,
             self.rda,
             self.matlab,
@@ -761,6 +766,26 @@ class Sniffer:
                     return Sniff(path, Format.BIDS_PHYSIO, Kind.PHYSIO, confidence=1.0,
                                  evidence=("JSON sidecar with SamplingFrequency and Columns",),
                                  companions=(sidecar,))
+        return None
+
+    def protocols(self, path: Path, head: bytes) -> Sniff | None:
+        """Siemens protocols: XProtocol text (a .pro file), exam trees (.exar1, SQLite) and
+        printed protocols (PrintOut XML or its text form); Philips ExamCards (SOAP XML)."""
+        if head.lstrip().startswith(b"<XProtocol>"):
+            return Sniff(path, Format.SIEMENS_PRO, Kind.PROTOCOL, vendor="siemens",
+                         confidence=1.0, evidence=("XProtocol text",))
+        text = head.removeprefix(b"\xef\xbb\xbf")
+        if text.lstrip().startswith(b"<SOAP-ENV:Envelope") and b"ExamCards" in text:
+            return Sniff(path, Format.PHILIPS_EXAMCARD, Kind.PROTOCOL, vendor="philips",
+                         confidence=1.0, evidence=("SOAP envelope of an ExamCard",))
+        printed_xml = b"<PrintOut>" in text and (b"SIEMENS" in text or b"Siemens" in text)
+        printed_text = b"SIEMENS MAGNETOM" in text[:400] and b"-----" in text[:800]
+        if printed_xml or printed_text:
+            return Sniff(path, Format.SIEMENS_PRINTPROT, Kind.PROTOCOL, vendor="siemens",
+                         confidence=0.9, evidence=("printed protocol",))
+        if head.startswith(b"SQLite format 3\0") and path.suffix.lower().startswith(".exar"):
+            return Sniff(path, Format.SIEMENS_EXAR, Kind.PROTOCOL, vendor="siemens",
+                         confidence=1.0, evidence=("SQLite database", f"{path.suffix} extension"))
         return None
 
     def yardl(self, path: Path, head: bytes) -> Sniff | None:

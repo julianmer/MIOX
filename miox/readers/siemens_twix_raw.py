@@ -126,6 +126,8 @@ class SiemensTwixRaw:
         "SliceThickness": ("Phoenix", "sSliceArray.asSlice[0].dThickness", None),
     }
     QUOTED = ("tNucleus", "tProtocolName", "tSequenceFileName")
+    INVERSION = "sPrepPulses.ucInversion"  # 1 slice-selective, 2 volume, 4 off, 16 double
+    INVERSION_OFF = 4  # alTI[0] keeps a value with the inversion off
 
     def __init__(self, path: Path, twix, vendor: dict, provenance: Provenance):
         self.path = path
@@ -219,6 +221,9 @@ class SiemensTwixRaw:
             value = self.vendor.get(buffer, {}).get(field)
             if value is None or value == "":
                 continue
+            inversion = self.vendor.get("Phoenix", {}).get(self.INVERSION)
+            if key == "InversionTime" and inversion == self.INVERSION_OFF:
+                continue
             if isinstance(value, str) and field.split(".")[-1] in self.QUOTED:
                 value = value.strip('"')
             if divisor is not None:
@@ -232,6 +237,13 @@ class SiemensTwixRaw:
             if key == "PatientSex":
                 value = self.SEX.get(int(value), str(value))
             meta.set(key, value, f"{self.SOURCE}: {buffer}/{field}", f"{buffer}/{field}")
+        phoenix = self.vendor.get("Phoenix", {})
+        slab, images = phoenix.get("sSliceArray.asSlice[0].dThickness"), phoenix.get(
+            "sKSpace.lImagesPerSlab")
+        if phoenix.get("sKSpace.ucDimension") == 4 and isinstance(slab, (int, float)) and images:
+            meta.set("SliceThickness", slab / images, f"{self.SOURCE}: Phoenix/sSliceArray."
+                     "asSlice[0].dThickness / sKSpace.lImagesPerSlab (3D: the slab per image)",
+                     "Phoenix/sKSpace.lImagesPerSlab")
         n, channels, samples = shape
         meta.set("NumberOfPoints", int(samples), "readout length, oversampling included")
         meta.set("NumberOfReceiveChannels", int(channels), "channels per readout")

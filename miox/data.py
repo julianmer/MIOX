@@ -8,8 +8,9 @@
 #                                                                                                  #
 # Purpose: The objects every reader returns: spectroscopy (complex FIDs in NIfTI-MRS dimension     #
 #          order, dwell time, geometry, tagged higher dimensions), images, raw k-space readouts,   #
-#          basis sets, priors, fit results, pulse sequences, noise covariances and physiological   #
-#          recordings, each with metadata and the provenance of the read.                          #
+#          basis sets, priors, fit results, pulse sequences, noise covariances, physiological      #
+#          recordings and measurement protocols, each with metadata and the provenance of the      #
+#          read.                                                                                   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -753,3 +754,40 @@ class PhysioData:
             f"<PhysioData{name} {self.provenance.format}: {self.n_samples} samples x "
             f"{', '.join(self.channels)}{rate}>"
         )
+
+
+#**************************************************************************************************#
+#                                             Protocol                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# One measurement protocol as a protocol file (an exported exam tree, a single protocol, a printed #
+# protocol) holds it: its ``name``, its ``location`` in the exam tree (directories, program), the  #
+# standard keys in ``meta`` and every parameter in the vendor header.                              #
+#                                                                                                  #
+#**************************************************************************************************#
+class Protocol:
+    def __init__(
+        self, name: str, location: tuple[str, ...], meta: Meta, provenance: Provenance,
+    ):
+        self.name = name
+        self.location = tuple(location)
+        self.meta = meta
+        self.provenance = provenance
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the vendor header itself."""
+        return {
+            "name": self.name,
+            "location": list(self.location),
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        where = f" in {' / '.join(self.location)}" if self.location else ""
+        return f"<Protocol {self.name}{where} {self.provenance.format}>"

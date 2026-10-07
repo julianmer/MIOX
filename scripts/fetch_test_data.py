@@ -132,6 +132,16 @@ class DataFetcher:
             [f"bidsphysio.{m}/tests/data" for m in ("acq2bids", "base", "dcm2bids", "edf2bids",
                                                      "physio2bids", "pmu2bids")],
         ),
+        "mri_protocol": (  # one Siemens Vida protocol as .exar1, printed .xml and .pdf (MIT)
+            "https://github.com/lrq3000/mri_protocol.git", ["SiemensVidaProtocol"],
+        ),
+        "dicompare": (  # protocol fixtures: .exar1, .pro, printed protocols, ExamCards (MIT)
+            "https://github.com/astewartau/dicompare.git",
+            ["dicompare/tests/fixtures", "DUAL_ECHO_EPI.ExamCard", "SSdense_July2024.ExamCard"],
+        ),
+        "abcd_protocols": (  # ABCD study protocols: a Philips ExamCard and printed PDFs (Unlicense)
+            "https://github.com/nih-fmrif/abcd_protocols.git", None,
+        ),
         "scanphyslog2bids": (  # Philips SCANPHYSLOG files with their scans (MIT)
             "https://github.com/lukassnoek/scanphyslog2bids.git", ["scanphyslog2bids/data"],
         ),

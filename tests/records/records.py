@@ -35,6 +35,7 @@ from miox import (
     NoiseCovariance,
     PhysioData,
     PriorSet,
+    Protocol,
     PulseSequence,
     RawData,
     Sniffer,
@@ -126,6 +127,13 @@ class ReadRecords:
         return math.isclose(a, b, rel_tol=self.RTOL, abs_tol=1e-12)
 
     def _dataset(self, d) -> dict:
+        if isinstance(d, Protocol):
+            record = {
+                "name": d.name,
+                "location": list(d.location),
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
         if isinstance(d, PhysioData):
             record = {
                 "name": d.name,

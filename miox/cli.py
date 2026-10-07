@@ -32,6 +32,7 @@ from miox.data import (
     NoiseCovariance,
     PhysioData,
     PriorSet,
+    Protocol,
     PulseSequence,
     RawData,
 )
@@ -100,6 +101,9 @@ class CLI:
             lines.append(f"  {d.name}: {dims}, {d.data.dtype}, voxels {sizes} mm")
         elif isinstance(d, PriorSet):
             lines.append(f"  {d.name}: {len(d.metabolites)} metabolites, {len(d.lines)} lines")
+        elif isinstance(d, Protocol):
+            where = f" in {' / '.join(d.location)}" if d.location else ""
+            lines.append(f"  protocol {d.name}{where}")
         elif isinstance(d, PhysioData):
             rate = f" at {d.sampling_frequency:g} Hz" if d.sampling_frequency else ""
             events = "".join(f", {len(v)} {k}" for k, v in d.events.items())
