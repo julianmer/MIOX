@@ -11,8 +11,9 @@
 #          server's rate limit), the NIfTI-MRS examples and the OSI2ONE k-space data from Zenodo,  #
 #          the test folders of further public repositories, single files by URL (ITK's GE images   #
 #          through an IPFS gateway, ISMRMRD and Gadgetron k-space samples, one M4Raw file, the GE  #
-#          P-files and ScanArchives of ge_to_ismrmrd, a Philips raw/lab/sin export), and NEMA's    #
-#          spectroscopy DICOM examples.                                                            #
+#          P-files and ScanArchives of ge_to_ismrmrd, a Philips raw/lab/sin export), NEMA's        #
+#          spectroscopy DICOM examples, and MRD (version 2) streams made from fetched files by the #
+#          MRD project's own tools.                                                                #
 #                                                                                                  #
 ####################################################################################################
 
@@ -231,6 +232,10 @@ class DataFetcher:
         "ScanArchive_FSE.h5": "sampleData/ScanArchive_FSE.h5",
         "ScanArchive_EPI.h5": "sampleData/ScanArchive_EPI.h5", "LICENSE": "LICENSE",
     }
+    MRD_REPOSITORY = "https://raw.githubusercontent.com/ismrmrd/mrd/main"  # MIT
+    MRD_FILES = {  # a Pulseq file the MRD tools convert, and the licence
+        "haste.seq": "test/test_data/pulseq/1.4.2/haste.seq", "LICENSE": "LICENSE",
+    }
     FILES = {
         "pynrrd": (PYNRRD, dict(zip(PYNRRD_FILES, PYNRRD_FILES, strict=True))),
         "agilent_fdf": (SWELLING, dict(zip(SWELLING_FILES, SWELLING_FILES, strict=True))),
@@ -240,6 +245,7 @@ class DataFetcher:
         "m4raw": (M4RAW, dict(zip(M4RAW_FILES, M4RAW_FILES, strict=True))),
         "ge_to_ismrmrd": (GE_TO_ISMRMRD, GE_TO_ISMRMRD_FILES),
         "labrawsin": (LABRAWSIN, LABRAWSIN_FILES),
+        "mrd": (MRD_REPOSITORY, MRD_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),
@@ -247,6 +253,22 @@ class DataFetcher:
             GADGETRON, dict(zip(GADGETRON_FILES_ALL, GADGETRON_FILES_ALL, strict=True))
         ),
     }
+    MRD_PYTHON = "mrd-python==2.2.1"  # the MRD project's tools (MIT), run through uv only here
+    MRD_CONVERSIONS = {  # MRD stream: ISMRMRD file it is converted from (ismrmrd_to_mrd)
+        "generic_gre.mrd": "gadgetron/generic/meas_MID01095_FID40115/meas_MID01095_FID40115.mrd",
+        "simple_gre.mrd": "gadgetron/simple_gre/simple_gre_in_20220831.mrd",
+        "kidney_spiral.mrd": "gadgetron/matlab/Kidney4cmSlice.mrd",
+        "simple_gre_images.mrd": "gadgetron/simple_gre/simple_gre_out_20210909_klk.mrd",
+        "epi_images.mrd": "gadgetron/epi/epi_2d_out_20161020_pjv.mrd",
+        "radial_images.mrd": "gadgetron/radial_phantom/fixed_radial_mode1_20210923_klk.mrd",
+        "hyper_images.mrd": "gadgetron/hyper/Kidney4cmSlice_sb_outV4.mrd",
+    }
+    MRD_NDJSON = (  # binary streams also written as NDJSON
+        "import sys, mrd\n"
+        "with mrd.BinaryMrdReader(sys.argv[1]) as r, mrd.NDJsonMrdWriter(sys.argv[2]) as w:\n"
+        "    w.write_header(r.read_header())\n"
+        "    w.write_data(r.read_data())\n"
+    )
     NEMA = "ftp://medical.nema.org/medical/dicom/DataSets/WG16"
     NEMA_FILES = {  # spectroscopy DICOM examples of the DICOM working group 16
         "Siemens/Siemens_spectroEnhDICOM": None,  # None: every file in the folder
@@ -272,6 +294,7 @@ class DataFetcher:
             for name, (base, files) in group.items():
                 self.files(self.dest / name, base, files)
         self.nema(self.dest / "nema_wg16")
+        self.mrd(self.dest / "mrd")
 
     def repository(self, dest: Path, url: str, paths: list[str] | None) -> None:
         """Shallow clone; with ``paths`` only those are checked out."""
@@ -311,6 +334,44 @@ class DataFetcher:
                 sys.exit(f"could not fetch {url}")
             time.sleep(0.5)  # the gateways rate-limit bursts
         print(f"{dest.name}: {len(files)} files")
+
+    def mrd(self, dest: Path) -> None:
+        """MRD streams written by the MRD project's tools: conversions of fetched ISMRMRD files,
+        a phantom (noise scans, trajectories) with its reconstruction, a Pulseq file, and NDJSON
+        copies; streams already present are skipped."""
+        python = ["uv", "run", "--no-project", "--quiet", "--with", self.MRD_PYTHON, "python"]
+        jobs = [
+            (name, ["-m", "mrd.tools.ismrmrd_to_mrd", "-d", str(self.dest / source), "-o"],
+             self.dest / source)
+            for name, source in self.MRD_CONVERSIONS.items()
+        ]
+        phantom = ["-m", "mrd.tools.phantom", "-c", "4", "-m", "32", "-r", "2", "-s", "2",
+                   "-n", "0", "-C", "-K", "-o"]
+        jobs += [
+            ("phantom.mrd", phantom, None),
+            ("phantom_recon.mrd", ["-m", "mrd.tools.stream_recon", "-i", str(dest / "phantom.mrd"),
+                                   "-o"], dest / "phantom.mrd"),
+            ("haste.mrd", ["-m", "mrd.tools.seq_to_mrd", "-i", str(dest / "haste.seq"), "-o"],
+             dest / "haste.seq"),
+        ]
+        jobs += [
+            (f"{stem}.ndjson", ["-c", self.MRD_NDJSON, str(dest / f"{stem}.mrd")],
+             dest / f"{stem}.mrd")
+            for stem in ("phantom", "phantom_recon", "haste")
+        ]
+        dest.mkdir(parents=True, exist_ok=True)
+        for name, args, source in jobs:
+            target = dest / name
+            if target.is_file():
+                continue
+            if source is not None and not source.is_file():
+                print(f"mrd/{name}: {source.name} not fetched, skipped")
+                continue
+            partial = target.with_name(name + ".part")
+            print(f"writing mrd/{name}")
+            subprocess.run(python + args + [str(partial)], check=True)
+            partial.replace(target)
+        print(f"MRD streams in {dest}")
 
     def nema(self, dest: Path) -> None:
         """Download the selected files of the NEMA FTP folders, skipping those already present."""

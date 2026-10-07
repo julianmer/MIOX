@@ -44,6 +44,7 @@ from miox.readers.lcmodel_output import LcmodelOutputReader
 from miox.readers.lcmodel_raw import LcmodelRawReader
 from miox.readers.marss_basis import MarssBasisReader
 from miox.readers.metaimage import MetaImageReader
+from miox.readers.mrd import MrdReader
 from miox.readers.mrtrix import MrtrixReader
 from miox.readers.nibabel_image import NibabelImageReader
 from miox.readers.nifti_mrs import NiftiMrsReader
@@ -112,6 +113,7 @@ class Loader:
             LcmodelRawReader(),
             MarssBasisReader(),
             MetaImageReader(),
+            MrdReader(),
             MrtrixReader(),
             NibabelImageReader(),
             NrrdReader(),

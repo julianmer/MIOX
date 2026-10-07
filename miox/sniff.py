@@ -36,6 +36,7 @@ import pydicom
 
 # own
 from miox.matfile import MatFile
+from miox.yardl import YardlFile
 
 GZIP_MAGIC = b"\x1f\x8b"
 SIGNA_4X_STUDY_START = 1536  # GE Signa 4.x: study header block, in 16-bit words
@@ -120,6 +121,7 @@ class Format(StrEnum):
     GE_SCANARCHIVE = "ge_scanarchive"
     PULSEQ = "pulseq"
     BART_CFL = "bart_cfl"
+    MRD = "mrd"
     UNKNOWN = "unknown"
 
 
@@ -308,6 +310,7 @@ class Sniffer:
             self.varian,
             self.pulseq,
             self.bart,
+            self.yardl,
             self.text_formats,
             self.hdf5,
             self.extension_only,
@@ -717,6 +720,18 @@ class Sniffer:
                     companions=(hdr,),
                 )
         return None
+
+    def yardl(self, path: Path, head: bytes) -> Sniff | None:
+        """MRD (version 2) streams: yardl binary ("yardl" magic) or NDJSON (a first line
+        {"yardl": ...}) whose embedded schema names the protocol Mrd."""
+        protocol = YardlFile.protocol_name(head)
+        if protocol != "Mrd":
+            return None
+        encoding = "binary" if head.startswith(YardlFile.MAGIC) else "NDJSON"
+        return Sniff(
+            path, Format.MRD, Kind.RAW, confidence=1.0,
+            evidence=(f"yardl {encoding}", "protocol Mrd"),
+        )
 
     def text_formats(self, path: Path, head: bytes) -> Sniff | None:
         if head.startswith(b"NRRD000"):

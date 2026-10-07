@@ -54,15 +54,22 @@ class IsmrmrdReader(Reader):
     KEYS = {
         "PatientName": ("subjectInformation/patientName", None),
         "PatientWeight": ("subjectInformation/patientWeight_kg", None),
+        "PatientHeight": ("subjectInformation/patientHeight_m", None),
         "PatientID": ("subjectInformation/patientID", None),
         "PatientDoB": ("subjectInformation/patientBirthdate", None),
         "PatientSex": ("subjectInformation/patientGender", None),
+        "StudyID": ("studyInformation/studyID", None),
+        "AccessionNumber": ("studyInformation/accessionNumber", None),
+        "ReferringPhysicianName": ("studyInformation/referringPhysicianName", None),
         "StudyDescription": ("studyInformation/studyDescription", None),
+        "StudyInstanceUID": ("studyInformation/studyInstanceUID", None),
+        "BodyPart": ("studyInformation/bodyPartExamined", None),
         "ProtocolName": ("measurementInformation/protocolName", None),
         "SequenceName": ("measurementInformation/sequenceName", None),
         "SeriesDescription": ("measurementInformation/seriesDescription", None),
         "SeriesNumber": ("measurementInformation/initialSeriesNumber", None),
         "PatientPosition": ("measurementInformation/patientPosition", None),
+        "FrameOfReferenceUID": ("measurementInformation/frameOfReferenceUID", None),
         "Manufacturer": ("acquisitionSystemInformation/systemVendor", None),
         "ManufacturersModelName": ("acquisitionSystemInformation/systemModel", None),
         "FieldStrength": ("acquisitionSystemInformation/systemFieldStrength_T", None),
@@ -91,6 +98,13 @@ class IsmrmrdReader(Reader):
         "ParallelReductionFactorOutOfPlane":
             ("parallelImaging/accelerationFactor/kspace_encoding_step_2", None),
     }
+    TEXT_KEYS = {  # keys the header schema types as text, even when the text is a number
+        "PatientName", "PatientID", "StudyID", "ReferringPhysicianName", "StudyDescription",
+        "StudyInstanceUID", "BodyPart", "ProtocolName", "SequenceName", "SeriesDescription",
+        "FrameOfReferenceUID", "Manufacturer", "ManufacturersModelName", "InstitutionName",
+        "StationName", "DeviceSerialNumber", "PulseSequenceType", "DiffusionScheme",
+    }
+    MULTIBAND_FACTOR = "multiband_factor"
     IMAGE_TYPES = {1: "MAGNITUDE", 2: "PHASE", 3: "REAL", 4: "IMAG", 5: "COMPLEX"}
     NOISE_BIT = 19  # ACQ_IS_NOISE_MEASUREMENT
     ACQUISITION_FLAGS = {  # bit number (from 1): name, as in ismrmrd.h
@@ -161,12 +175,15 @@ class IsmrmrdReader(Reader):
         if text is None:
             return None
         text = text.strip()
-        for cast in (int, float):
-            try:
-                return cast(text)
-            except ValueError:
-                continue
-        return text
+        try:
+            number = int(text)
+            return number if str(number) == text else text  # leading zeros stay text
+        except ValueError:
+            pass
+        try:
+            return float(text)
+        except ValueError:
+            return text
 
     @staticmethod
     def _lookup(header: dict, path: str) -> Any:
@@ -178,23 +195,26 @@ class IsmrmrdReader(Reader):
         return node
 
     def _meta(self, header: dict, notes: list[str]) -> Meta:
-        meta = Meta(header)
+        meta = Meta(dict(header))  # a copy: datasets of one header add their own entries
         for key, (path, divisor) in self.KEYS.items():
             self._set(meta, key, header, path, divisor)
         encodings = header.get("encoding")
         encoding = encodings[0] if isinstance(encodings, list) else encodings
         if isinstance(encoding, dict):
+            prefix = "encoding/"
             if isinstance(encodings, list):
                 notes.append(f"{len(encodings)} encoding spaces; the keys describe the first")
+                prefix = "encoding/0/"
             for key, (path, divisor) in self.ENCODING_KEYS.items():
-                self._set(meta, key, encoding, path, divisor, prefix="encoding/")
+                self._set(meta, key, encoding, path, divisor, prefix=prefix)
             limits = encoding.get("encodingLimits")
             if isinstance(limits, dict):
-                meta.set("EncodingLimits", limits, self.SOURCE, "encoding/encodingLimits")
+                field = f"{prefix}encodingLimits"
+                meta.set("EncodingLimits", self._limits(limits), self.SOURCE, field)
             multiband = self._lookup(encoding, "parallelImaging/multiband")
-            if isinstance(multiband, dict) and "multiband_factor" in multiband:
-                field = "encoding/parallelImaging/multiband/multiband_factor"
-                meta.set("MultibandAccelerationFactor", multiband["multiband_factor"],
+            if isinstance(multiband, dict) and self.MULTIBAND_FACTOR in multiband:
+                field = f"{prefix}parallelImaging/multiband/{self.MULTIBAND_FACTOR}"
+                meta.set("MultibandAccelerationFactor", multiband[self.MULTIBAND_FACTOR],
                          self.SOURCE, field)
         self._datetime(meta, header)
         self._diffusion(meta, header, notes)
@@ -204,10 +224,16 @@ class IsmrmrdReader(Reader):
             meta.set("FieldStrength", field, "H1ResonanceFrequency / 42.577478518 MHz/T")
         return meta
 
+    @staticmethod
+    def _limits(limits: dict) -> dict:
+        return limits
+
     def _set(self, meta: Meta, key: str, header: dict, path: str, divisor, prefix: str = ""):
         value = self._lookup(header, path)
-        if value is None or isinstance(value, dict) and not value:
+        if value is None or isinstance(value, (dict, list)) and not value:
             return
+        if key in self.TEXT_KEYS and not isinstance(value, str):
+            value = str(value)
         if isinstance(value, dict):  # x, y, z triplets
             if set(value) == {"x", "y", "z"}:
                 value = [value["x"], value["y"], value["z"]]
@@ -223,13 +249,15 @@ class IsmrmrdReader(Reader):
         meta.set(key, self.plain(value), f"{self.SOURCE}: {prefix}{path}", prefix + path)
 
     def _datetime(self, meta: Meta, header: dict) -> None:
-        info = header.get("measurementInformation")
-        if not isinstance(info, dict):
-            return
-        date, time = info.get("seriesDate"), info.get("seriesTime")
-        if date is not None and time is not None:
-            field = "measurementInformation/seriesDate, seriesTime"
-            meta.set("AcquisitionDateTime", f"{date}T{time}", f"{self.SOURCE}: {field}", field)
+        for key, group, prefix in (("AcquisitionDateTime", "measurementInformation", "series"),
+                                   ("StudyDateTime", "studyInformation", "study")):
+            info = header.get(group)
+            if not isinstance(info, dict):
+                continue
+            date, time = info.get(f"{prefix}Date"), info.get(f"{prefix}Time")
+            if date is not None and time is not None:
+                field = f"{group}/{prefix}Date, {prefix}Time"
+                meta.set(key, f"{date}T{time}", f"{self.SOURCE}: {field}", field)
 
     def _diffusion(self, meta: Meta, header: dict, notes: list[str]) -> None:
         entries = self._lookup(header, "sequenceParameters/diffusion")

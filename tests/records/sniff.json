@@ -5384,6 +5384,81 @@
   "vendor": null,
   "kind": "raw"
  },
+ "mrd/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrd/epi_images.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/generic_gre.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/haste.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/haste.ndjson": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/haste.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "mrd/hyper_images.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/kidney_spiral.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/phantom.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/phantom.ndjson": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/phantom_recon.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/phantom_recon.ndjson": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/radial_images.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/simple_gre.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "mrd/simple_gre_images.mrd": {
+  "format": "mrd",
+  "vendor": null,
+  "kind": "raw"
+ },
  "mrs_fitting_challenge/Cr_water_scaling_JMRUI/Cr_10mM_test_water_scaling_WS.txt": {
   "format": "jmrui_text",
   "vendor": null,

@@ -227,6 +227,24 @@ class KeyTable(dict):
             "(e.g. 040Y) when a sidecar states it that way.",
             "miox",
         ),
+        Key("PatientHeight", "m", (float,), "Height of the patient.", "miox"),
+        Key(
+            "StudyDateTime", None, (str,), "Date and time the study started (ISO 8601).", "miox"
+        ),
+        Key("StudyInstanceUID", None, (str,), "DICOM UID of the study.", "miox", anon=True),
+        Key(
+            "AccessionNumber", None, (int, str), "Accession number of the study order.",
+            "miox", anon=True,
+        ),
+        Key(
+            "ReferringPhysicianName", None, (str,), "Name of the referring physician.", "miox",
+            anon=True,
+        ),
+        Key(
+            "FrameOfReferenceUID", None, (str,),
+            "DICOM UID of the spatial frame of reference the positions are given in.", "miox",
+            anon=True,
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning
