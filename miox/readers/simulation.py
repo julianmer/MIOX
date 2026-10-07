@@ -7,7 +7,7 @@
 # Created: 07/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Readers for MR simulation files: KomaMRI phantoms (.phantom, and spin lists in HDF5),   #
-#          JEMRIS phantoms (a voxel grid in HDF5) and JEMRIS simulated signals.                    #
+#          JEMRIS phantoms (a voxel grid in HDF5), JEMRIS simulated signals and MRiLab phantoms.   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -22,6 +22,7 @@ import numpy as np
 
 # own
 from miox.data import Phantom, RawData
+from miox.matfile import MatFile
 from miox.meta import Meta
 from miox.readers.base import Reader, ReaderError
 from miox.sniff import Format, Sniff
@@ -185,3 +186,47 @@ class JemrisSignalReader(Reader):
         provenance = self.provenance(sniff, tuple(notes))
         return [RawData(data, headers, meta, provenance, sniff.path.stem, None, lengths, {},
                         waveforms, {})]
+
+
+#**************************************************************************************************#
+#                                       MrilabPhantomReader                                        #
+#**************************************************************************************************#
+#                                                                                                  #
+# An MRiLab phantom (.mat) holds the struct VObj: the voxel grid of Rho, T1, T2, T2Star (s), the   #
+# electrical conductivity ECon (3 values per voxel), mass density MassDen, the initial Mx, My, Mz, #
+# and scalars (XDim, YDim, ZDim, the resolutions XDimRes, YDimRes, ZDimRes in m, Gyro in rad/s/T,  #
+# ChemShift in Hz/T, Type, TypeNum, SpinNum). Every voxel with Rho not zero is a spin. Positions   #
+# follow MRiLab's own field grids (VMag.Gxgrid, ...): the first array axis is x, the second y, the #
+# third z, at (index - n/2) x resolution from 0. The scalars go to the vendor header.              #
+#                                                                                                  #
+#**************************************************************************************************#
+class MrilabPhantomReader(Reader):
+    FORMATS = (Format.MRILAB_PHANTOM,)
+    PACKAGES = ("miox", "mat-io")
+    MAPS = {"Rho": "rho", "T1": "T1", "T2": "T2", "T2Star": "T2s", "MassDen": "mass_density",
+            "ECon": "conductivity", "Mx": "Mx", "My": "My", "Mz": "Mz"}
+    UNITS = {"rho": "", "T1": "s", "T2": "s", "T2s": "s"}
+
+    def read(self, sniff: Sniff) -> list[Phantom]:
+        vobj = MatFile.load(sniff.path).get("VObj")
+        if not isinstance(vobj, dict) or "Rho" not in vobj:
+            raise ReaderError(f"{sniff.path.name}: no VObj struct with Rho")
+        rho = np.asarray(vobj["Rho"], dtype=np.float64)
+        if rho.ndim != 3:
+            raise ReaderError(f"{sniff.path.name}: Rho has {rho.ndim} dimensions, not 3")
+        mask = rho != 0
+        indices = np.argwhere(mask)
+        resolution = np.array([float(vobj[f"{a}DimRes"]) for a in "XYZ"])
+        positions = (indices - np.array(rho.shape) // 2) * resolution
+        properties = {name: np.asarray(vobj[key])[mask] for key, name in self.MAPS.items()
+                      if key in vobj and np.shape(vobj[key])[:3] == rho.shape}
+        scalars = {k: (v.item() if isinstance(v, np.ndarray) and v.ndim == 0 else v)
+                   for k, v in vobj.items() if k not in self.MAPS}
+        notes = ("positions as MRiLab's field grids place them: first axis x, (index - n/2) x "
+                 "resolution; KomaMRI centres the grid half a voxel apart",)
+        grid = {"shape": list(rho.shape), "resolution": resolution.tolist(),
+                "offset": [0.0, 0.0, 0.0], "indices": indices}
+        units = {k: self.UNITS[k] for k in properties if k in self.UNITS}
+        meta = Meta({"VObj": scalars})
+        return [Phantom(positions, properties, units, [], meta, self.provenance(sniff, notes),
+                        sniff.path.stem, grid)]

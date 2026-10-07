@@ -135,6 +135,7 @@ class Format(StrEnum):
     TOPPE_MODULES = "toppe_modules"
     TOPPE_LOOP = "toppe_loop"
     TOPPE_MOD = "toppe_mod"
+    MRILAB_PHANTOM = "mrilab_phantom"
     SIEMENS_PRO = "siemens_pro"
     SIEMENS_EXAR = "siemens_exar"
     SIEMENS_PRINTPROT = "siemens_printprot"
@@ -277,6 +278,7 @@ class Sniffer:
     BRIK = re.compile(r"\.brik(\.gz)?$", re.I)
     MATLAB_VARIABLES = (  # (variable name, format, kind); first match wins
         (re.compile(r"^MRSCont$"), Format.OSPREY_MRSCONT, Kind.SPECTROSCOPY),
+        (re.compile(r"^VObj$"), Format.MRILAB_PHANTOM, Kind.PHANTOM),
         (re.compile(r"^BASIS$"), Format.OSPREY_BASIS, Kind.BASIS_SET),
         (re.compile(r"^lcmBasis$"), Format.INSPECTOR_BASIS, Kind.BASIS_SET),
         (re.compile(r"^exptDat$"), Format.MARSS_BASIS, Kind.BASIS_SET),

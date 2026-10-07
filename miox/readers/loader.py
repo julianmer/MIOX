@@ -87,6 +87,7 @@ from miox.readers.simulation import (
     JemrisPhantomReader,
     JemrisSignalReader,
     KomaPhantomReader,
+    MrilabPhantomReader,
 )
 from miox.readers.sivic_ddf import SivicDdfReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
@@ -153,6 +154,7 @@ class Loader:
             MarssBasisReader(),
             MetaImageReader(),
             MrdReader(),
+            MrilabPhantomReader(),
             MrtrixReader(),
             NibabelImageReader(),
             NrrdReader(),

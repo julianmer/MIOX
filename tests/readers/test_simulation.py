@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Simulation readers on synthetic files: a KomaMRI .phantom with motion and a spin list,  #
 #          a 3D JEMRIS phantom grid with offset, a JEMRIS signal of two channels with readouts of  #
-#          unequal length.                                                                         #
+#          unequal length, an MRiLab phantom.                                                      #
 #                                                                                                  #
 ####################################################################################################
 
@@ -21,6 +21,7 @@ from __future__ import annotations
 import h5py
 import numpy as np
 import pytest
+import scipy.io
 
 # own
 import miox as gu
@@ -100,3 +101,19 @@ def test_jemris_signal(tmp_path):
     assert mz["data"][0, 0].tolist() == [2.0, 5.0, 8.0, 11.0]
     assert time["data"][1, :3].tolist() == pytest.approx([2e-3, 2.01e-3, 2.02e-3])
     assert raw.meta["DwellTime"] == 1e-5
+
+
+def test_mrilab_phantom(tmp_path):
+    rho = np.zeros((4, 2, 2))
+    rho[3, 1, 0] = 0.8
+    vobj = {"Rho": rho, "T1": rho * 2, "T2": rho * 0.1, "T2Star": rho * 0.05, "Mz": rho,
+            "XDimRes": 0.002, "YDimRes": 0.001, "ZDimRes": 0.003, "XDim": 2.0, "YDim": 4.0,
+            "ZDim": 2.0, "Gyro": 267538030.38, "ChemShift": 0.0, "Type": "Water"}
+    scipy.io.savemat(tmp_path / "obj.mat", {"VObj": vobj})
+    sniff = gu.sniff(tmp_path / "obj.mat")
+    assert (sniff.format, sniff.kind) == (gu.Format.MRILAB_PHANTOM, gu.Kind.PHANTOM)
+    [phantom] = gu.load(tmp_path / "obj.mat")
+    assert phantom.n_spins == 1
+    assert np.allclose(phantom.positions, [[(3 - 2) * 0.002, (1 - 1) * 0.001, (0 - 1) * 0.003]])
+    assert phantom.properties["T1"].tolist() == pytest.approx([1.6])
+    assert phantom.meta.vendor["VObj"]["Type"] == "Water"
