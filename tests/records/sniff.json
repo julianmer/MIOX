@@ -5739,6 +5739,256 @@
   "vendor": null,
   "kind": "imaging"
  },
+ "komamri/KomaMRICore/test/test_files/jemris_signals_epi_brain_motion.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/KomaMRICore/test/test_files/jemris_signals_epi_sphere_cs.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/KomaMRICore/test/test_files/phantom_sphere.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/KomaMRICore/test/test_files/utils.jl": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/KomaMRIFiles/test/test_files/phantom/column1d.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.2/epi_JEMRIS.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.2/radial_JEMRIS.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.4/epi.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.4/label_test.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.4/spiral.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.5/gre_rad.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.5/rotation_radial_tiny.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.5/unknown_ext.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.2/epi_JEMRIS.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.2/fid.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.3/epi.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.3/fid.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.3/gre.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.3/gre_lbl.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.3/spiral.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/epi.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/fid-gammaSTAR.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/fid.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/gr-time-shaped.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/gr-trapezoidal.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/gr-uniformly-shaped.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/gre.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/rf-pulse.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/rf-time-shaped.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/rf-uniformly-shaped.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.4/spiral.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/epi.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/fid.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/gr-time-shaped.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/gr-trapezoidal.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/gr-uniformly-shaped.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/gre.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/rf-pulse.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/rf-time-shaped.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/rf-uniformly-shaped.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIFiles/test/test_files/pulseq/read_comparison/v1.5/spiral.seq": {
+  "format": "pulseq",
+  "vendor": null,
+  "kind": "sequence"
+ },
+ "komamri/KomaMRIPlots/test/test_files/Koma_signal.mrd": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "komamri/examples/2.phantoms/brain.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/examples/2.phantoms/brain_motion.phantom": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/examples/2.phantoms/brain_susceptibility.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/examples/2.phantoms/column1d.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/examples/2.phantoms/contracting_ring.phantom": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/examples/2.phantoms/motion_jemris.dat": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/examples/2.phantoms/shepplogan.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "komamri/examples/2.phantoms/sphere_chemical_shift.h5": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "labrawsin/20250617_210621_COR_GRE.lab": {
   "format": "philips_raw_lab",
   "vendor": "philips",

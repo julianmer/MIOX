@@ -40,10 +40,11 @@ from miox.sniff import Format, Sniff
 # from 1.5; gradients: 4, 5 and 7; ADC: 6 up to 1.4, 9 from 1.5; blocks: a delay event id up to    #
 # 1.3, the duration in units of BlockDurationRaster from 1.4); the columns are named as the        #
 # specification names them. Shapes are stored compressed (the derivative, run-length encoded: two  #
-# equal values followed by the number of further repeats) unless the stored sample count equals    #
-# the declared one. Extensions are a linked list of (id, type, ref, next) entries and one          #
-# specification per extension name with the rows kept as given. The definitions give the keys:     #
-# Name as the sequence name, TE, TR and TotalDuration in seconds, FOV in metres.                   #
+# equal values followed by the number of further repeats); from 1.4 a shape whose stored sample    #
+# count equals the declared one is stored as it is, up to 1.3 every shape is compressed.           #
+# Extensions are a linked list of (id, type, ref, next) entries and one specification per          #
+# extension name with the rows kept as given. The definitions give the keys: Name as the sequence  #
+# name, TE, TR and TotalDuration in seconds, FOV in metres.                                        #
 #                                                                                                  #
 #**************************************************************************************************#
 class PulseqReader(Reader):
@@ -98,7 +99,7 @@ class PulseqReader(Reader):
             if name in sections
         }
         extensions = self._extensions(sections.get("EXTENSIONS", []), notes)
-        shapes = self._shapes(sections.get("SHAPES", []), notes)
+        shapes = self._shapes(sections.get("SHAPES", []), self._at_least(version, (1, 4)), notes)
         signature = self._definitions(sections.get("SIGNATURE", []))
         meta = self._meta(definitions, version, signature)
         provenance = self.provenance(sniff, tuple(notes))
@@ -204,7 +205,8 @@ class PulseqReader(Reader):
                 specs[current]["rows"].append(values)
         return {"list": entries, "specifications": specs}
 
-    def _shapes(self, lines: list[str], notes: list[str]) -> dict[int, np.ndarray]:
+    def _shapes(self, lines: list[str], raw_allowed: bool, notes: list[str]
+                ) -> dict[int, np.ndarray]:
         shapes: dict[int, np.ndarray] = {}
         shape_id = None
         count = 0
@@ -214,7 +216,7 @@ class PulseqReader(Reader):
             if shape_id is None:
                 return
             values = np.array(samples, dtype=np.float64)
-            if len(values) != count:
+            if len(values) != count or not raw_allowed:
                 values = self.decompress(values)
                 if len(values) != count:
                     notes.append(

@@ -127,7 +127,7 @@ Name old
 shape_id 1
 num_samples 2
 1
-1
+0
 
 shape_id 2
 num_samples 4
@@ -138,8 +138,8 @@ num_samples 4
 shape_id 3
 num_samples 3
 0.1
-0.2
-0.3
+0.1
+1
 """
 
 
@@ -190,7 +190,7 @@ def test_pulseq_13_delays(tmp_path):
     assert seq.events["rf"][1] == rf
     assert seq.events["gradients"][4] == {"amp": 1000, "shape_id": 3, "delay": 0}
     assert seq.shapes[1].tolist() == [1.0, 1.0] and seq.shapes[2].tolist() == [0.0] * 4
-    assert seq.shapes[3].tolist() == pytest.approx([0.1, 0.2, 0.3])  # stored uncompressed
+    assert seq.shapes[3].tolist() == pytest.approx([0.1, 0.2, 0.3])  # compressed, same count
     assert seq.to_dict()["duration"] is None
 
 
