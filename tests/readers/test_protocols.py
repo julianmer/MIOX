@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Protocol files on synthetic files: a Siemens single protocol (XProtocol with ASCCONV),  #
 #          exam tree database (.exar1) and printed protocols as XML and as text, and a Philips     #
-#          ExamCard.                                                                               #
+#          ExamCard; LCModel control and MakeBasis input files.                                    #
 #                                                                                                  #
 ####################################################################################################
 
@@ -240,3 +240,38 @@ def test_philips_examcard(tmp_path):
     assert m["ResonantNucleus"] == "1H" and m["PatientPosition"] == "HFS"
     assert m.vendor["parameters"]["EX_ACQ_ffe_rep_time_enum"] == "USER_DEF"
     assert m.vendor["choices"]["EX_ACQ_nucleus"] == ["H1", "P31"]
+
+
+def test_lcmodel_control(tmp_path):
+    path = tmp_path / "fit.control"
+    path.write_text(
+        " &LCMODL\n title='PRESS TE 30', hzpppm=1.2325D+02, deltat=2.5e-04, nunfil=2048,\n"
+        " echot=30., chomit(1)='Lip13a', chomit(2)='MM09', shifmx= 0.3 0.3, dows=T\n /\n"
+    )
+    [protocol] = gu.load(path)
+    assert protocol.name == "fit"
+    values = protocol.meta.vendor["namelists"]["lcmodl"]
+    assert values["chomit"] == ["Lip13a", "MM09"]
+    assert values["shifmx"] == [0.3, 0.3]
+    assert values["dows"] is True
+    assert protocol.meta["SpectrometerFrequency"] == [123.25]
+    assert protocol.meta["DwellTime"] == 2.5e-4
+    assert protocol.meta["EchoTime"] == pytest.approx(0.03)
+    assert protocol.meta["NumberOfPoints"] == 2048
+
+
+def test_makebasis_input(tmp_path):
+    path = tmp_path / "makebasis.in"
+    path.write_text(
+        " $SEQPAR\n hzpppm=297.2, echot=8.5, seq='SPECIAL'\n $END\n"
+        " $NMALL\n badelt=1.25e-4, ndatab=8192, filbas='press.basis'\n $END\n"
+        " $NMEACH\n filraw='naa.raw', metabo='NAA'\n $END\n"
+        " $NMEACH\n filraw='cr.raw', metabo='Cr'\n $END\n"
+    )
+    [protocol] = gu.load(path)
+    namelists = protocol.meta.vendor["namelists"]
+    assert [m["metabo"] for m in namelists["nmeach"]] == ["NAA", "Cr"]
+    assert namelists["nmall"]["filbas"] == "press.basis"
+    assert protocol.meta["SpectrometerFrequency"] == [297.2]
+    assert protocol.meta["EchoTime"] == pytest.approx(0.0085)
+    assert "DwellTime" not in protocol.meta

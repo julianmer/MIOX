@@ -51,6 +51,7 @@ from miox.readers.inspector_basis import InspectorBasisReader
 from miox.readers.ismrmrd import IsmrmrdReader
 from miox.readers.jmrui import JmruiReader
 from miox.readers.lcmodel_basis import LcmodelBasisReader
+from miox.readers.lcmodel_control import LcmodelControlReader
 from miox.readers.lcmodel_output import LcmodelOutputReader
 from miox.readers.lcmodel_raw import LcmodelRawReader
 from miox.readers.marss_basis import MarssBasisReader
@@ -136,6 +137,7 @@ class Loader:
             IsmrmrdReader(),
             JmruiReader(),
             LcmodelBasisReader(),
+            LcmodelControlReader(),
             LcmodelOutputReader(),
             LcmodelRawReader(),
             MarssBasisReader(),

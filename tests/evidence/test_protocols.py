@@ -9,7 +9,8 @@
 # Purpose: Protocol files against independent evidence: one Siemens exam exported as an exam tree  #
 #          (.exar1) and printed by the scanner (XML), every protocol's keys from the ASCCONV block #
 #          against the printed values; Philips ExamCards against gt-examcard-parser's expectations #
-#          and their computed TR against the set TR.                                               #
+#          and their computed TR against the set TR; an LCModel control file against the inputs    #
+#          LCModel printed in the report of its run.                                               #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,6 +20,7 @@
 #*************#
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 
 import pytest
@@ -28,6 +30,7 @@ from miox import load
 from tests.conftest import PUBLIC_DATA
 
 COMA = PUBLIC_DATA / "mri_protocol/SiemensVidaProtocol"
+LCMODEL = PUBLIC_DATA / "lcmodel/test_lcm"
 KEYS = (
     "RepetitionTime", "EchoTime", "InversionTime", "ExcitationFlipAngle", "SliceThickness",
     "BaseResolution", "NumberOfAverages", "ParallelReductionFactorInPlane",
@@ -92,3 +95,21 @@ def test_examcards_match_gt_examcard_parser_and_their_computed_values():
                 assert scan.meta["RepetitionTime"] == pytest.approx(parameters[name] / 1000)
                 checked += 1
     assert checked > 20
+
+
+def test_lcmodel_control_equals_the_inputs_of_its_run():
+    """LCModel ran test_lcm's control file and printed the inputs it read in its report: every
+    printed input equals the namelist value (the licence key is not printed), and HZPPPM,
+    DELTAT and NUNFIL give the standard keys."""
+    _need(LCMODEL / "control.file", LCMODEL / "out_ref_build.ps")
+    [protocol] = load(LCMODEL / "control.file")
+    report = (LCMODEL / "out_ref_build.ps").read_text()
+    printed = dict(re.findall(r"\{\((\w+)=(.*?)\)s\}lst", report))
+    values = protocol.meta.vendor["namelists"]["lcmodl"]
+    assert set(printed) == set(values) - {"key"}
+    for name, text in printed.items():
+        expected = text.strip("'") if text.startswith("'") else float(text)
+        assert values[name] == expected, name
+    assert protocol.meta["SpectrometerFrequency"] == [float(printed["hzpppm"])]
+    assert protocol.meta["DwellTime"] == float(printed["deltat"])
+    assert protocol.meta["NumberOfPoints"] == int(printed["nunfil"])
