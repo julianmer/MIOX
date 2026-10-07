@@ -12,7 +12,8 @@
 #          the public ISMRMRD files of UIH, OSI2ONE and Gadgetron reconstructions, and GE: the     #
 #          P-files of ge_to_ismrmrd against the ScanArchives of the same scans frame for frame,    #
 #          their slice geometry against the image header, and a spectroscopy P-file read through   #
-#          the imaging frame layout against spec2nii.                                              #
+#          the imaging frame layout against spec2nii, and the Philips raw export against the       #
+#          published reading of Philips' reader and its random phase as a ramp along the readout.  #
 #                                                                                                  #
 ####################################################################################################
 
@@ -296,3 +297,39 @@ def test_philips_raw_export_matches_the_published_reading():
     off = np.abs(covariance - np.diag(np.diag(covariance))).max() / diagonal
     assert off < 0.5  # channels mostly independent, as the published covariance picture shows
     assert any("skipped before label 19" in note for note in image.provenance.notes)
+
+
+def _philips_image(kspace: np.ndarray) -> np.ndarray:
+    coils = np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(kspace, axes=(1, 2))), axes=(1, 2))
+    return np.sqrt((np.abs(coils) ** 2).sum(axis=0))
+
+
+def _entropy(image: np.ndarray) -> float:
+    p = image / image.sum()
+    return float(-(p * np.log(p + 1e-30)).sum())
+
+
+def test_philips_random_phase_is_a_ramp_along_the_readout():
+    """Philips' own reader (run locally on the sample) removes the random phase r of each readout
+    as exp(i·π·r·(s + 10)/327680) along its samples s, r read as a signed 16-bit number; its
+    corrected k-space equals ours corrected so to 0.6 % of the maximum. With that ramp the image
+    sharpens (its entropy drops); the constant per-profile phase π·r/32767 of philips_to_ismrmrd
+    leaves it as blurred as without a correction."""
+    _need(PHILIPS)
+    image = load(PHILIPS)[0]
+    lines = image.counters("kspace_encode_step_1")
+    r = image.headers["user_int"][:, 1].astype(np.int64)
+    r = np.where(r > 32767, r - 65536, r)
+    samples = np.arange(image.data.shape[-1])
+    variants = {
+        "none": np.ones((len(r), 1)),
+        "ramp": np.exp(1j * np.pi * r[:, None] * (samples + 10) / 327680),
+        "constant": np.exp(-1j * np.pi * r[:, None] / 32767) * np.ones(len(samples)),
+    }
+    entropy = {}
+    for name, factor in variants.items():
+        kspace = np.zeros((image.n_coils, len(lines), len(samples)), dtype=np.complex128)
+        kspace[:, lines] = np.transpose(image.data * factor[:, None, :], (1, 0, 2))
+        entropy[name] = _entropy(_philips_image(kspace))
+    assert entropy["ramp"] < entropy["none"] - 0.1
+    assert abs(entropy["constant"] - entropy["none"]) < 0.02

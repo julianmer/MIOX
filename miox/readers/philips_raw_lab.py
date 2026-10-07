@@ -125,7 +125,10 @@ class MiraDecoder:
 # noise data; mix, extra attribute, e3 profile, RF echo and gradient echo in the user counters;    #
 # control, random phase, measurement phase and sign, gain index, raw format, active channels and   #
 # encoding time in the user integers, the normalization factor in the first user float. Nothing is #
-# corrected: the random phase and the chop the converter applies are left to the reconstruction.   #
+# corrected; a reconstruction needs the random phase r (a signed 16-bit number, though the label   #
+# stores it unsigned), which Philips' own reader removes from sample s of a readout as             #
+# exp(i·π·r·(s + 10)/327680) - a phase ramp along the readout, not the constant π·r/32767 the      #
+# converter applies - and the chop (every other e1 profile negated).                               #
 # The slice position comes from the location's offcentres (AP, RL, FH to LPS), its normal from the #
 # image orientation rows; which image axis is the readout is not stated, so the read and phase     #
 # directions stay zero.                                                                            #
