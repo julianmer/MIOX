@@ -13200,124 +13200,124 @@
   "kind": "unknown"
  },
  "jcamp_data_test/data/nmr/aspirin/1h.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/aspirin/1h.fid.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/bruker/dosy-1d-ledbpgp2s1d.fid.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/13c.fid.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/13c.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/1h.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/1h.molecule.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/cosy.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/dept135.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/dept45.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/dept90.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/deptq.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/hmbc.fid.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/hmbc.full.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/hmbc.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/hmqc-hn.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/hsqc.full.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/hsqc.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/j-resolv.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/cytisine/noesy.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/indometacin/1h.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/indometacin/cosy.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/indometacin/hmbc.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/indometacin/hsqc.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/indometacin/structure.mol": {
   "format": "unknown",
@@ -13325,114 +13325,114 @@
   "kind": "unknown"
  },
  "jcamp_data_test/data/nmr/jeol/1h.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/nanalysis/1h.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/nanalysis/pseudoT1.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/naphtoicAcid/1h.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/naphtoicAcid/1h.fid.dx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/oxfordInstruments/1h.jdx": {
-  "format": "unknown",
+  "format": "jcamp_nmr",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/oxfordInstruments/cosy.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/oxfordInstruments/hsqc-me.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/qmagnetics/ibuprofen_j_ave_qmagnetics.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/rutin/13c.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/rutin/cosy.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/rutin/hmbc.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/rutin/hsqc.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/rutin/qH.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/simulated/d1-1.2_j7.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/simulated/d1-2-3-4-5-6-7-8.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/simulated/d1-2-3-4-5-6-7-8HR.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/simulated/d1-2-3-4-5-6-7-8_baseline.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/simulated/d1-2-3_j16-10-2.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/simulated/d1-2_j7.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/simulated/d1-7_j7.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jcamp_data_test/data/nmr/varian/1h.jdx": {
-  "format": "bruker",
-  "vendor": "bruker",
-  "kind": "unknown"
+  "format": "jcamp_nmr",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/11_pm033220_400JEOL_278Kcarbon_.jdf": {
   "format": "unknown",

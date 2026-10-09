@@ -9,7 +9,9 @@
 # Purpose: NMR spectrometer files against independent evidence: Bruker FIDs against TopSpin's own  #
 #          processing of them (the spectrum of the FID read lies on the chemical shift axis of the #
 #          processed spectrum), an acquisition stopped early against its audit trail, Varian FIDs  #
-#          against the tabulated shifts of their solvent and reference signals.                    #
+#          against the tabulated shifts of their solvent and reference signals, TopSpin's JCAMP-DX #
+#          exports against the TopSpin files they were written from, a Nanalysis JCAMP-DX FID      #
+#          against the shift of its compound's tallest signal.                                     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -32,6 +34,11 @@ BRUKER = PUBLIC_DATA / "bruker_data_test/data"
 COFFEE = BRUKER / "flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR"
 ZIPPED = BRUKER / "zipped"
 MTBLS1 = PUBLIC_DATA / "nmrml/examples/MTBLS1/FIDs"
+JCAMP = PUBLIC_DATA / "jcamp_data_test/data/nmr"
+EXPORTS = [  # (TopSpin's JCAMP-DX FID export, the experiment; the same acquisition by data hash)
+    (JCAMP / "aspirin/1h.fid.dx", ZIPPED / "aspirin-1h/1"),
+    (JCAMP / "naphtoicAcid/1h.fid.dx", ZIPPED / "naphtoicAcid-1h/1"),
+]
 HOPS = PUBLIC_DATA / "nmrml/examples/IPB_HopExample/FIDs"
 HMDB = PUBLIC_DATA / "nmrml/examples/reference_spectra_examples/hmdb"
 SIGNALS = [  # (Varian .fid folder, window in ppm, shift of its tallest signal, tolerance)
@@ -116,3 +123,46 @@ def test_varian_signal_at_its_tabulated_shift(folder, window, shift, tolerance):
         pytest.skip("not fetched")
     [d] = load(folder)
     assert tallest(d, *window) == pytest.approx(shift, abs=tolerance)
+
+
+@pytest.mark.parametrize("export,folder", EXPORTS, ids=[e[0].parent.name for e in EXPORTS])
+def test_jcamp_fid_export_equals_topspin_fid(export, folder):
+    """TopSpin wrote the FID of the experiment to JCAMP-DX: both reads give the same samples,
+    dwell time, carrier shift and digital filter delay."""
+    if not (export.is_file() and folder.is_dir()):
+        pytest.skip("not fetched")
+    jcamp, topspin = load(export)[0], load(folder)[0]
+    assert np.array_equal(jcamp.data, topspin.data)
+    assert jcamp.dwelltime == pytest.approx(topspin.dwelltime, rel=1e-12)
+    for key in ("ReferencePPM", "GroupDelay", "SpectrometerFrequency"):
+        assert jcamp.meta[key] == pytest.approx(topspin.meta[key], abs=1e-9), key
+
+
+def test_jcamp_spectrum_export_matches_topspin_processing():
+    """TopSpin's JCAMP-DX export of the aspirin spectrum (X in Hz from the spectral width down
+    to 0, .SHIFT REFERENCE placing point 1) and the processed spectrum of the same acquisition
+    in pdata (OFFSET, SW_p, SI; another phase correction) lie on the same axis within a quarter
+    point and match in magnitude."""
+    export, pdata = JCAMP / "aspirin/1h.dx", ZIPPED / "aspirin-1h-processed/1/pdata/1"
+    if not (export.is_file() and pdata.is_dir()):
+        pytest.skip("not fetched")
+    jcamp, topspin = load(export)[0], load(pdata)[0]
+    assert jcamp.shape == topspin.shape
+    width = topspin.meta["SpectralWidth"]
+    step = width / topspin.shape[3] / topspin.meta["SpectrometerFrequency"][0]
+    assert jcamp.meta["SpectralWidth"] == pytest.approx(width, rel=1e-9)
+    assert jcamp.meta["ReferencePPM"] == pytest.approx(topspin.meta["ReferencePPM"],
+                                                       abs=step / 4)
+    magnitudes = np.abs(jcamp.data.ravel()), np.abs(topspin.data.ravel())
+    assert np.corrcoef(*magnitudes)[0, 1] > 0.9999
+
+
+def test_nanalysis_fid_shows_ibuprofen_at_its_shift():
+    """Ibuprofen in CDCl3 at 60 MHz: the tallest signal, the isobutyl methyl doublet at 0.89 ppm
+    (lines 0.055 ppm apart at 60 MHz), lies there on the stated axis; conjugation into the
+    NIfTI-MRS convention is needed (as stored, it would lie near 11.1 ppm)."""
+    path = JCAMP / "nanalysis/1h.jdx"
+    if not path.is_file():
+        pytest.skip("not fetched")
+    [d] = load(path)
+    assert tallest(d, -1.0, 13.0) == pytest.approx(0.89, abs=0.07)

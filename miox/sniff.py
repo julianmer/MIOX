@@ -85,6 +85,7 @@ class Format(StrEnum):
     BRUKER = "bruker"
     TOPSPIN = "topspin"  # Bruker TopSpin experiment: fid or ser with acqus
     TOPSPIN_PROCESSED = "topspin_processed"  # TopSpin processed spectra: pdata/<n> with procs
+    JCAMP_NMR = "jcamp_nmr"  # JCAMP-DX NMR FIDs and spectra
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
     LCMODEL_BASIS = "lcmodel_basis"
@@ -313,6 +314,8 @@ class Sniffer:
     BRUKER_MRS_METHODS = (
         "press", "steam", "csi", "svs", "slaser", "laser", "isis", "fid", "nspect"
     )
+    JCAMP_NMR_TYPE = re.compile(rb"##DATA\s*TYPE=\s*(n?D\s*)?NMR\s*(FID|SPECTRUM)", re.I)
+    JCAMP_LINK = re.compile(rb"##DATA\s*TYPE=\s*LINK", re.I)
     TOPSPIN_SPECTRA = re.compile(r"^(1[ri]|2[ri]{2}|3[ri]{3}|4[ri]{4})$")  # 1r, 2rr, 3rrr, ...
     PARAVISION_FILES = ("acqp", "method", "visu_pars", "reco")  # beside a ParaVision scan's data
 
@@ -334,6 +337,7 @@ class Sniffer:
             self.data_list,
             self.twix,
             self.pfile,
+            self.jcamp,
             self.topspin,
             self.bruker,
             self.varian,
@@ -707,6 +711,18 @@ class Sniffer:
                 return self._bruker_scan(
                     path, scan_dir, f"Bruker data file {path.name} with parameters"
                 )
+        return None
+
+    def jcamp(self, path: Path, head: bytes) -> Sniff | None:
+        """JCAMP-DX files with an NMR FID or spectrum (DATA TYPE NMR FID, NMR SPECTRUM, nD NMR
+        ..., also within a compound LINK file)."""
+        if not head.lstrip().startswith(b"##TITLE"):
+            return None
+        if self.JCAMP_NMR_TYPE.search(head):
+            linked = bool(self.JCAMP_LINK.search(head))
+            what = "compound file with an NMR block" if linked else "NMR data type"
+            return Sniff(path, Format.JCAMP_NMR, Kind.SPECTROSCOPY, confidence=1.0,
+                         evidence=(f"JCAMP-DX {what}",))
         return None
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:

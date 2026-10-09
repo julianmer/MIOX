@@ -50,6 +50,7 @@ from miox.readers.ge_scanarchive import GeScanArchiveReader
 from miox.readers.ge_signa import GeSignaReader
 from miox.readers.inspector_basis import InspectorBasisReader
 from miox.readers.ismrmrd import IsmrmrdReader
+from miox.readers.jcamp import JcampReader
 from miox.readers.jmrui import JmruiReader
 from miox.readers.lcmodel_basis import LcmodelBasisReader
 from miox.readers.lcmodel_control import LcmodelControlReader
@@ -146,6 +147,7 @@ class Loader:
             IsmrmrdReader(),
             JemrisPhantomReader(),
             JemrisSignalReader(),
+            JcampReader(),
             JmruiReader(),
             KomaPhantomReader(),
             LcmodelBasisReader(),
