@@ -14,7 +14,8 @@
 #          P-files and ScanArchives of ge_to_ismrmrd, a Philips raw/lab/sin export, TOPPE files),  #
 #          NEMA's spectroscopy DICOM examples, MRD (version 2) streams made from fetched files by  #
 #          the MRD project's own tools, and single members of large Zenodo archives (Varian        #
-#          imaging scans) read through HTTP range requests.                                        #
+#          imaging scans) read through HTTP range requests, and zip archives (nmrglue's NMR test   #
+#          data).                                                                                  #
 #                                                                                                  #
 ####################################################################################################
 
@@ -185,6 +186,23 @@ class DataFetcher:
         "mrtrix_test_data": (
             "https://github.com/MRtrix3/test_data.git",
             ["dwi.mif", "mask.mif", "template.mif.gz", "mrmath", "mrconvert"],
+        ),
+        "bruker_data_test": (  # Bruker TopSpin experiments, folders and zip exports (MIT)
+            "https://github.com/cheminfo/bruker-data-test.git", ["data"],
+        ),
+        "jeol_data_test": (  # JEOL Delta .jdf files, 1D and 2D (MIT)
+            "https://github.com/cheminfo/jeol-data-test.git", ["data"],
+        ),
+        "jcamp_data_test": (  # NMR spectra and FIDs as JCAMP-DX, several vendors (MIT)
+            "https://github.com/cheminfo/jcamp-data-test.git", ["data/nmr", "LICENSE"],
+        ),
+        "nmrml": (  # Bruker and Varian FIDs with their nmrML conversions (MIT)
+            "https://github.com/nmrML/nmrML.git", ["examples", "LICENSE"],
+        ),
+    }
+    ARCHIVES = {  # folder: zip archive unpacked into it
+        "nmrglue": (  # nmrglue's test data: Agilent, Bruker, Tecmag, SIMPSON inputs (BSD-3 project)
+            "https://github.com/jjhelmus/nmrglue/releases/download/v0.5/test_data_v0.5-dev.zip"
         ),
     }
     # single files: folder -> (base URL, {relative path: name or content id under the base})
@@ -388,6 +406,8 @@ class DataFetcher:
         for group in groups:
             for name, (base, files) in group.items():
                 self.files(self.dest / name, base, files)
+        for name, url in self.ARCHIVES.items():
+            self.archive(self.dest / name, url)
         self.nema(self.dest / "nema_wg16")
         groups = (self.ZIP_MEMBERS, self.ZIP_MEMBERS_ALL) if self.everything else (
             self.ZIP_MEMBERS,)
@@ -434,6 +454,19 @@ class DataFetcher:
                 sys.exit(f"could not fetch {url}")
             time.sleep(0.5)  # the gateways rate-limit bursts
         print(f"{dest.name}: {len(files)} files")
+
+    def archive(self, dest: Path, url: str) -> None:
+        """Download a zip archive and unpack it into ``dest``, once."""
+        if dest.is_dir() and any(dest.iterdir()):
+            print(f"{dest.name} already present")
+            return
+        dest.mkdir(parents=True, exist_ok=True)
+        partial = dest.with_name(dest.name + ".zip.part")
+        print(f"downloading {url}")
+        urllib.request.urlretrieve(url, partial)
+        shutil.unpack_archive(partial, dest, "zip")
+        partial.unlink()
+        print(f"{dest.name} unpacked")
 
     def mrd(self, dest: Path) -> None:
         """MRD files written by the MRD project's tools: conversions of fetched ISMRMRD files,
