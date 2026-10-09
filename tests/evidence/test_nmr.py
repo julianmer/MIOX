@@ -8,7 +8,8 @@
 #                                                                                                  #
 # Purpose: NMR spectrometer files against independent evidence: Bruker FIDs against TopSpin's own  #
 #          processing of them (the spectrum of the FID read lies on the chemical shift axis of the #
-#          processed spectrum), an acquisition stopped early against its audit trail.              #
+#          processed spectrum), an acquisition stopped early against its audit trail, Varian FIDs  #
+#          against the tabulated shifts of their solvent and reference signals.                    #
 #                                                                                                  #
 ####################################################################################################
 
@@ -31,6 +32,17 @@ BRUKER = PUBLIC_DATA / "bruker_data_test/data"
 COFFEE = BRUKER / "flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR"
 ZIPPED = BRUKER / "zipped"
 MTBLS1 = PUBLIC_DATA / "nmrml/examples/MTBLS1/FIDs"
+HOPS = PUBLIC_DATA / "nmrml/examples/IPB_HopExample/FIDs"
+HMDB = PUBLIC_DATA / "nmrml/examples/reference_spectra_examples/hmdb"
+SIGNALS = [  # (Varian .fid folder, window in ppm, shift of its tallest signal, tolerance)
+    # residual CHD2OD and HOD in methanol-d4 (Gottlieb, Kotlyar, Nudelman 1997)
+    (HOPS / "FAM013_AHTM.PROTON_04.fid", (3.2, 3.4), 3.31, 0.02),
+    (HOPS / "FAM013_AHTM.PROTON_04.fid", (4.7, 5.0), 4.87, 0.03),
+    (HOPS / "FAM013_CZAG.PROTON_02.fid", (3.2, 3.4), 3.31, 0.02),
+    (HOPS / "FAM013_TPE.PROTON_02.fid", (3.2, 3.4), 3.31, 0.02),
+    # the DSS reference of an HMDB spectrum in water
+    (HMDB / "HMDB00005.fid", (-0.2, 0.2), 0.0, 0.01),
+]
 EXPERIMENTS = [  # 1D experiments with a fid and TopSpin's processed spectrum in pdata/1
     COFFEE / "20", COFFEE / "21", COFFEE / "22",
     ZIPPED / "cyclosporin/cyclosporin_1h/cyclosporin_1h/1",
@@ -39,6 +51,14 @@ EXPERIMENTS = [  # 1D experiments with a fid and TopSpin's processed spectrum in
     ZIPPED / "topspin365/topspin365/10",
     MTBLS1 / "ADG10003u_007/10", MTBLS1 / "ADG10003u_051/10",
 ]
+
+
+def tallest(d: MRSData, low: float, high: float) -> float:
+    """Shift of the tallest point of the magnitude spectrum between ``low`` and ``high``."""
+    spectrum = np.abs(np.fft.fftshift(np.fft.fft(d.data[0, 0, 0])))
+    ppm = ppm_axis(d.shape[3], d.spectral_width, d.spectrometer_frequency, d.meta["ReferencePPM"])
+    window = (ppm > low) & (ppm < high)
+    return float(ppm[window][np.argmax(spectrum[window])])
 
 
 def ppm_axis(n: int, width: float, frequency: float, reference: float) -> np.ndarray:
@@ -84,3 +104,15 @@ def test_stopped_acquisition_keeps_the_rows_of_its_audit_trail():
     d = load(folder)[0]
     assert rows == 101 and d.shape[3:] == (1024, rows)
     assert (folder / "ser").stat().st_size == 256 * 2048 * 4
+
+
+@pytest.mark.parametrize("folder,window,shift,tolerance", SIGNALS,
+                         ids=[f"{s[0].name}-{s[2]}" for s in SIGNALS])
+def test_varian_signal_at_its_tabulated_shift(folder, window, shift, tolerance):
+    """On the axis stated by rfl, rfp and sfrq the solvent and reference signals lie at their
+    tabulated shifts; the FIDs are not conjugated (mirrored, the methanol signal of the hop
+    extracts would lie near 12.7 ppm)."""
+    if not folder.is_dir():
+        pytest.skip("not fetched")
+    [d] = load(folder)
+    assert tallest(d, *window) == pytest.approx(shift, abs=tolerance)
