@@ -57,6 +57,7 @@ class ReadRecords:
     VOLATILE = {"ConversionTime", "ConversionMethod"}  # change with every run or version
     RTOL = 1e-6
     BRUKER_DATA = {"fid", "fid_proc.64", "2dseq", "rawdata.job0"}  # Bruker files that hold data
+    TOPSPIN_DATA = {"fid", "ser", "1r", "2rr", "3rrr"}  # one file per experiment or pdata folder
 
     def __init__(self):
         self.loader = Loader()
@@ -86,6 +87,8 @@ class ReadRecords:
                 continue
             if fmt == Format.BRUKER and path.name not in self.BRUKER_DATA:
                 continue
+            if fmt in (Format.TOPSPIN, Format.TOPSPIN_PROCESSED) and not self._topspin_data(path):
+                continue
             if fmt == Format.DICOM_IMAGE:  # single slices; series are checked against dcm2niix
                 continue
             yield path
@@ -107,6 +110,16 @@ class ReadRecords:
         elif expected == got:
             return []
         return [f"{where or '/'}: expected {expected!r}, got {got!r}"]
+
+    def _topspin_data(self, path: Path) -> bool:
+        """A TopSpin data file, or the acqus of an experiment without data."""
+        if path.name in self.TOPSPIN_DATA:
+            return True
+        if path.name != "acqus":
+            return False
+        processed = (p for n in self.TOPSPIN_DATA for p in path.parent.glob(f"pdata/*/{n}"))
+        acquired = any((path.parent / n).is_file() for n in ("fid", "ser"))
+        return not acquired and not any(processed)
 
     @staticmethod
     def is_lfs_pointer(path: Path) -> bool:

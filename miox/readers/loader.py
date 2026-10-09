@@ -95,6 +95,7 @@ from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.tarquin_output import TarquinOutputReader
 from miox.readers.text_fid import TextFidReader
 from miox.readers.toppe import ToppeReader
+from miox.readers.topspin import TopSpinReader
 from miox.readers.varian import VarianReader
 from miox.readers.varian_fdf import VarianFdfReader
 from miox.readers.vasf import VasfReader
@@ -182,6 +183,7 @@ class Loader:
             TarquinOutputReader(),
             TextFidReader(),
             ToppeReader(),
+            TopSpinReader(),
             VarianReader(),
             VarianFdfReader(),
             VasfReader(),

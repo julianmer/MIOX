@@ -83,6 +83,8 @@ class Format(StrEnum):
     VARIAN_FDF = "varian_fdf"  # Varian/Agilent VnmrJ image
     GE_SIGNA = "ge_signa"  # GE Signa 4.x, Genesis 5.x and Advantage Windows images
     BRUKER = "bruker"
+    TOPSPIN = "topspin"  # Bruker TopSpin experiment: fid or ser with acqus
+    TOPSPIN_PROCESSED = "topspin_processed"  # TopSpin processed spectra: pdata/<n> with procs
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
     LCMODEL_BASIS = "lcmodel_basis"
@@ -311,6 +313,8 @@ class Sniffer:
     BRUKER_MRS_METHODS = (
         "press", "steam", "csi", "svs", "slaser", "laser", "isis", "fid", "nspect"
     )
+    TOPSPIN_SPECTRA = re.compile(r"^(1[ri]|2[ri]{2}|3[ri]{3}|4[ri]{4})$")  # 1r, 2rr, 3rrr, ...
+    PARAVISION_FILES = ("acqp", "method", "visu_pars", "reco")  # beside a ParaVision scan's data
 
     def __init__(self):
         self.rules = (
@@ -330,6 +334,7 @@ class Sniffer:
             self.data_list,
             self.twix,
             self.pfile,
+            self.topspin,
             self.bruker,
             self.varian,
             self.pulseq,
@@ -361,6 +366,15 @@ class Sniffer:
         names = {p.name for p in path.iterdir()}
         if names & set(self.BRUKER_PARAM_FILES):
             return self._bruker_scan(path, path, "directory with Bruker parameter files")
+        if "acqus" in names:
+            return self._topspin(path, Format.TOPSPIN, "directory with acqus")
+        if "procs" in names and not self._paravision(path):
+            return self._topspin(path, Format.TOPSPIN_PROCESSED, "directory with procs")
+        experiments = [c for c in sorted(path.iterdir()) if (c / "acqus").is_file()]
+        if experiments and not any(self._paravision(e) for e in experiments):
+            return Sniff(path, Format.TOPSPIN, Kind.SPECTROSCOPY, vendor="bruker",
+                         confidence=1.0, evidence=(f"{len(experiments)} TopSpin experiments",),
+                         companions=tuple(experiments))
         if fdfs := sorted(p for p in path.iterdir() if p.suffix.lower() == ".fdf"):
             return self._image(path, Format.VARIAN_FDF, f"directory with {len(fdfs)} fdf files")
         if "procpar" in names:
@@ -693,6 +707,22 @@ class Sniffer:
                 return self._bruker_scan(
                     path, scan_dir, f"Bruker data file {path.name} with parameters"
                 )
+        return None
+
+    def topspin(self, path: Path, head: bytes) -> Sniff | None:
+        """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter
+        files (acqu, acqus, ...) of an experiment folder with acqus; processed spectra (1r, 2rr,
+        ...) and the parameter files of a pdata/<n> folder with procs."""
+        name, folder = path.name, path.parent
+        if self._paravision(folder):
+            return None
+        parameters = head.startswith(b"##TITLE=")
+        if (folder / "acqus").is_file() and (name in ("fid", "ser") or parameters):
+            what = f"{name} with acqus" if not parameters else f"JCAMP-DX parameter file {name}"
+            return self._topspin(path, Format.TOPSPIN, what)
+        if (folder / "procs").is_file() and (self.TOPSPIN_SPECTRA.match(name) or parameters):
+            what = f"{name} with procs" if not parameters else f"JCAMP-DX parameter file {name}"
+            return self._topspin(path, Format.TOPSPIN_PROCESSED, what)
         return None
 
     def varian(self, path: Path, head: bytes) -> Sniff | None:
@@ -1305,6 +1335,28 @@ class Sniffer:
         if any(m in method.lower() for m in self.BRUKER_MRS_METHODS):
             return Kind.SPECTROSCOPY
         return Kind.IMAGING
+
+    def _paravision(self, folder: Path) -> bool:
+        """A ParaVision scan folder or one of its pdata/<n> folders."""
+        folders = (folder, folder.parent.parent) if folder.parent.name == "pdata" else (folder,)
+        return any((f / name).is_file() for f in folders for name in self.PARAVISION_FILES)
+
+    @staticmethod
+    def _topspin(path: Path, fmt: Format, evidence: str) -> Sniff:
+        """A TopSpin experiment (folder of fid or ser with acqus) or processed data set (folder
+        pdata/<n> with procs); a file stands for its folder. A folder of experiments is a
+        TOPSPIN sniff of the folder with the experiments as companions."""
+        folder = path if path.is_dir() else path.parent
+        companions = tuple(p for p in sorted(folder.iterdir()) if p.is_file() and p != path)
+        return Sniff(
+            path,
+            fmt,
+            Kind.SPECTROSCOPY,
+            vendor="bruker",
+            confidence=1.0,
+            evidence=(evidence,),
+            companions=companions,
+        )
 
     def _varian_scan(self, path: Path, folder: Path, evidence: str) -> Sniff:
         companions = tuple(

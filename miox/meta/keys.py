@@ -245,6 +245,14 @@ class KeyTable(dict):
             "DICOM UID of the spatial frame of reference the positions are given in.", "miox",
             anon=True,
         ),
+        Key(
+            "GroupDelay", None, (float,),
+            "Delay of the receiver's digital filter, in sampled points: the FID as acquired "
+            "starts with these points before the signal.",
+            "miox",
+        ),
+        Key("Solvent", None, (str,), "Solvent of the sample (NMR).", "miox"),
+        Key("SampleTemperature", "K", (float,), "Temperature of the sample.", "miox"),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning
