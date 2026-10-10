@@ -68,6 +68,7 @@ class DataFetcher:
         "nifti_mrs_examples": ("5085449", None),
         "osi2one": ("21807140", ("OSIIONE_Reference_System_Data_v1.zip",)),
         "osi2one_lumc": ("19661402", ()),
+        "dsistudio_templates": ("6324701", ("CMU60.2mm.fib.gz",)),  # DSI Studio FIB, CC BY 4.0
     }
     ZENODO_ALL = {  # with --all: further files of large records (CC BY 4.0)
         "osi2one_lumc": ("partial_fourier.zip",),
@@ -110,6 +111,35 @@ class DataFetcher:
     ]
 
     # further public sets: folder -> (git URL, paths to check out, or None for the whole repo)
+    NIIVUE_FILES = [f"packages/niivue/demos/images/{name}" for name in (  # tracts, meshes, ...
+        "dsistudio.src.gz",
+        "dsistudio.fib.gz",
+        "TR_S_R.tt.gz",
+        "colby.trx",
+        "colby.trk",
+        "tract.SLF1_R.tck",
+        "tract.FAT_R.vtk",
+        "mni152.SLF1_R.tsf",
+        "mz3/3Mesh.mz3",
+        "mz3/11ScalarMesh.mz3",
+        "mz3/cortex_5124.mz3",
+        "Lobules.label.gii",
+        "trix/mask_1bit.mif",
+        "trix/fa.mif",
+    )] + ["LICENSE"]
+    FREESURFER_FILES = [  # fsaverage surfaces, morphometry, annotation, label
+        "fsaverage/surf/lh.white",
+        "fsaverage/surf/lh.pial",
+        "fsaverage/surf/lh.inflated",
+        "fsaverage/surf/lh.curv",
+        "fsaverage/surf/lh.sulc",
+        "fsaverage/surf/lh.thickness",
+        "fsaverage/label/lh.aparc.annot",
+        "fsaverage/label/lh.V1.label",
+        "LICENSE.rst",
+        "README.rst",
+        "subjects/bert/surf/lh.inflated.nofix",
+    ]
     REPOSITORIES = {
         "mrs_fitting_challenge": ("https://github.com/wtclarke/mrs_fitting_challenge.git", None),
         "suspect": ("https://github.com/openmrslab/suspect.git", ["tests/test_data"]),
@@ -160,7 +190,7 @@ class DataFetcher:
         "profit": ("https://gitlab.tuebingen.mpg.de/AG_Henning/ProFit-1D.git", ["sampleBasisSet"]),
         "nibabel": (
             "https://github.com/nipy/nibabel.git",
-            ["nibabel/tests/data", "nibabel/nicom/tests/data"],
+            ["nibabel/tests/data", "nibabel/nicom/tests/data", "nibabel/gifti/tests/data"],
         ),
         "dcm_qa_nih": ("https://github.com/neurolabusc/dcm_qa_nih.git", None),
         "dcm_qa_enh": ("https://github.com/neurolabusc/dcm_qa_enh.git", None),
@@ -200,6 +230,34 @@ class DataFetcher:
         "nmrml": (  # Bruker and Varian FIDs with their nmrML conversions (MIT)
             "https://github.com/nmrML/nmrML.git", ["examples", "LICENSE"],
         ),
+        "bvbabel": (  # BrainVoyager files (MIT)
+            "https://github.com/ofgulban/bvbabel.git", ["test_data", "LICENSE"],
+        ),
+        "niivue": (  # tractography, mesh, DSI Studio and MRtrix demo files (BSD-2 repository)
+            "https://github.com/niivue/niivue.git", NIIVUE_FILES,
+        ),
+        "pyvista_vtk_data": (  # VTK legacy and XML images (Apache-2.0 repository)
+            "https://github.com/pyvista/vtk-data.git",
+            ["Data/brain.vtk", "Data/head.vti", "LICENSE"],
+        ),
+        "jnifti": (  # JNIfTI samples (Apache-2.0)
+            "https://github.com/NeuroJSON/jnifti.git", ["samples", "LICENSE_Apache-2.0.txt"],
+        ),
+        "i2nii": (  # Stimulate .spr/.sdt (BSD-2)
+            "https://github.com/rordenlab/i2nii.git", ["test", "LICENSE"],
+        ),
+        "lipsia": (  # Vista .v images (Apache-2.0)
+            "https://github.com/lipsia-fmri/lipsia.git", ["data", "LICENSE"],
+        ),
+        "nifti_zarr_py": (  # NIfTI-Zarr examples with their NIfTI sources (MIT)
+            "https://github.com/neuroscales/nifti-zarr-py.git", ["tests/data", "LICENSE"],
+        ),
+        "nitest_freesurfer": (  # fsaverage surfaces, annot, label (FreeSurfer licence, kept)
+            "https://github.com/effigies/nitest-freesurfer.git", FREESURFER_FILES,
+        ),
+        "nitransforms": (  # one affine as AFNI, LTA, FSL, ITK and X5 files, warps (MIT)
+            "https://github.com/nipy/nitransforms.git", ["nitransforms/tests/data", "LICENSE"],
+        ),
         "nmrglue_repo": (  # NMRPipe files written by NMRPipe from a known recipe (BSD-3)
             "https://github.com/jjhelmus/nmrglue.git", ["nmrglue/fileio/tests/data", "LICENSE.txt"],
         ),
@@ -218,6 +276,9 @@ class DataFetcher:
     ARCHIVES = {  # folder: zip archive unpacked into it
         "nmrglue": (  # nmrglue's test data: Agilent, Bruker, Tecmag, SIMPSON inputs (BSD-3 project)
             "https://github.com/jjhelmus/nmrglue/releases/download/v0.5/test_data_v0.5-dev.zip"
+        ),
+        "trx_test_data": (  # one tractogram as .trx/.trk/.tck/.vtk (no licence: local only)
+            "https://github.com/tee-ar-ex/trx-test-data/releases/download/v0.1.0/gold_standard.zip"
         ),
         "spinsolve_zenodo": (  # Spinsolve inversion recovery of formic acid, CC BY 4.0
             "https://zenodo.org/records/15131439/files/SIR-SWAPE_data.zip?download=1"
@@ -451,31 +512,47 @@ class DataFetcher:
         socket.setdefaulttimeout(self.TIMEOUT)
 
     def run(self) -> None:
+        """Every source; one that fails (network, server) is reported and the others go on."""
         self.dest.mkdir(parents=True, exist_ok=True)
-        self.spec2nii(self.dest / "spec2nii_test_data")
+        self.failed: list[str] = []
+        self._step("spec2nii", self.spec2nii, self.dest / "spec2nii_test_data")
         for name, (record, keys) in self.ZENODO.items():
             more = self.ZENODO_ALL.get(name, ()) if self.everything else ()
-            self.zenodo(self.dest / name, record, None if keys is None else keys + more)
+            self._step(name, self.zenodo, self.dest / name, record,
+                       None if keys is None else keys + more)
         for name, (url, paths) in self.REPOSITORIES.items():
-            self.repository(self.dest / name, url, paths)
+            self._step(name, self.repository, self.dest / name, url, paths)
         groups = (self.FILES, self.FILES_ALL) if self.everything else (self.FILES,)
         for group in groups:
             for name, (base, files) in group.items():
-                self.files(self.dest / name, base, files)
+                self._step(name, self.files, self.dest / name, base, files)
         for name, url in self.ARCHIVES.items():
-            self.archive(self.dest / name, url)
-        self.nema(self.dest / "nema_wg16")
+            self._step(name, self.archive, self.dest / name, url)
+        self._step("nema_wg16", self.nema, self.dest / "nema_wg16")
         groups = (self.ZIP_MEMBERS, self.ZIP_MEMBERS_ALL) if self.everything else (
             self.ZIP_MEMBERS,)
         for group in groups:
             for name, (record, archive, members) in group.items():
-                self.zip_members(self.dest / name, record, archive, members)
-        self.mrd(self.dest / "mrd")
-        self.rnmrtk(self.dest / "rnmrtk")
+                self._step(name, self.zip_members, self.dest / name, record, archive, members)
+        self._step("mrd", self.mrd, self.dest / "mrd")
+        self._step("rnmrtk", self.rnmrtk, self.dest / "rnmrtk")
+        if self.failed:
+            sys.exit("not fetched (rerun later): " + ", ".join(self.failed))
+
+    def _step(self, name: str, fetch, *args) -> None:
+        try:
+            fetch(*args)
+        except (OSError, subprocess.CalledProcessError, zipfile.BadZipFile) as e:
+            print(f"{name}: failed ({e})")
+            self.failed.append(name)
 
     def repository(self, dest: Path, url: str, paths: list[str] | None) -> None:
-        """Shallow clone; with ``paths`` only those are checked out."""
+        """Shallow clone; with ``paths`` only those are checked out (an existing sparse clone gets
+        the current list of paths)."""
         if (dest / ".git").is_dir():
+            if paths is not None:
+                subprocess.run(["git", "sparse-checkout", "set", "--no-cone", *paths], cwd=dest,
+                               check=True)
             print(f"{dest.name} already present")
             return
         if paths is None:
