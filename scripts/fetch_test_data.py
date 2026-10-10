@@ -15,7 +15,7 @@
 #          NEMA's spectroscopy DICOM examples, MRD (version 2) streams made from fetched files by  #
 #          the MRD project's own tools, and single members of large Zenodo archives (Varian        #
 #          imaging scans) read through HTTP range requests, and zip archives (nmrglue's NMR test   #
-#          data).                                                                                  #
+#          data, Spinsolve sets); NMR samples of BMRB entries, NMRPipe, SIMPSON and RS2D files.    #
 #                                                                                                  #
 ####################################################################################################
 
@@ -199,10 +199,33 @@ class DataFetcher:
         "nmrml": (  # Bruker and Varian FIDs with their nmrML conversions (MIT)
             "https://github.com/nmrML/nmrML.git", ["examples", "LICENSE"],
         ),
+        "nmrglue_repo": (  # NMRPipe files written by NMRPipe from a known recipe (BSD-3)
+            "https://github.com/jjhelmus/nmrglue.git", ["nmrglue/fileio/tests/data", "LICENSE.txt"],
+        ),
+        "simpyson": (  # one SIMPSON run: input, FID, spectrum and a CSV of the FID (MIT)
+            "https://github.com/nuts-org/simpyson.git", ["examples/read", "LICENSE.md"],
+        ),
+        "mrsimulator": (  # SIMPSON FIDs with their inputs and spin systems (BSD-3)
+            "https://github.com/deepanshs/mrsimulator.git",
+            ["tests/spectral_integration_tests/simpson_simulated_lineshapes", "LICENSE"],
+        ),
+        "quadsystems_data_test": (  # RS2D proton and HSQC sets (no licence file: local only)
+            "https://github.com/cheminfo/quadsystems-data-test.git",
+            ["data/sample1/sample1-proton.zip", "data/sample3/sample3-hsqc.zip"],
+        ),
     }
     ARCHIVES = {  # folder: zip archive unpacked into it
         "nmrglue": (  # nmrglue's test data: Agilent, Bruker, Tecmag, SIMPSON inputs (BSD-3 project)
             "https://github.com/jjhelmus/nmrglue/releases/download/v0.5/test_data_v0.5-dev.zip"
+        ),
+        "spinsolve_zenodo": (  # Spinsolve inversion recovery of formic acid, CC BY 4.0
+            "https://zenodo.org/records/15131439/files/SIR-SWAPE_data.zip?download=1"
+        ),
+        "spinsolve_ethanol": (  # Spinsolve ethanol 1H with its JCAMP-DX twin (no licence: local)
+            "https://github.com/jjhelmus/nmrglue/files/7077567/092237-1D.EXTENDED%2B-EtOH.zip"
+        ),
+        "spinsolve_examples": (  # Spinsolve urea 13C and an Expert set (no licence: local)
+            "https://github.com/jjhelmus/nmrglue/files/7083773/Data.Examples.zip"
         ),
     }
     # single files: folder -> (base URL, {relative path: name or content id under the base})
@@ -310,6 +333,21 @@ class DataFetcher:
     MRD_FILES = {  # a Pulseq file the MRD tools convert, and the licence
         "haste.seq": "test/test_data/pulseq/1.4.2/haste.seq", "LICENSE": "LICENSE",
     }
+    BMRB = "https://bmrb.io/ftp/pub/bmrb/entry_directories"  # BMRB: public domain statement
+    BMRB_FILES = {  # Varian FIDs beside their NMRPipe and Sparky files, and the assigned shifts
+        f"{entry}/{name}": f"bmr{entry}/{folder}/{name}"
+        for entry, folder, names in (
+            ("15089", "timedomain_data/JMA.I.2803_StR65_gNhsqc.fid",
+             ("fid", "procpar", "fid.com", "test.fid", "Process_N15_HSQC.csh")),
+            ("17169", "timedomain_data/v600/chsqc_ct28",
+             ("fid", "procpar", "C13_hsqc.pipe", "C13_hsqcB.ft", "Convert_C13_hsqc.csh",
+              "Process_C13_hsqc.csh")),
+            ("18465", "timedomain_data/v6/NHSQC",
+             ("fid", "procpar", "o157_nhsqcv6.ucsf", "Convert_N15_HSQC.csh",
+              "Process_N15_HSQC.csh")),
+        )
+        for name in names
+    } | {f"{e}/bmr{e}_3.str": f"bmr{e}/bmr{e}_3.str" for e in ("15089", "17169", "18465")}
     FILES = {
         "pynrrd": (PYNRRD, dict(zip(PYNRRD_FILES, PYNRRD_FILES, strict=True))),
         "agilent_fdf": (SWELLING, dict(zip(SWELLING_FILES, SWELLING_FILES, strict=True))),
@@ -322,6 +360,7 @@ class DataFetcher:
         "mrd": (MRD_REPOSITORY, MRD_FILES),
         "phys2bids_ge": (OSF, OSF_FILES),
         "toppe": (TOPPE, TOPPE_FILES),
+        "bmrb": (BMRB, BMRB_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),
