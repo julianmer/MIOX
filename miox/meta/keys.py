@@ -253,6 +253,17 @@ class KeyTable(dict):
         ),
         Key("Solvent", None, (str,), "Solvent of the sample (NMR).", "miox"),
         Key("SampleTemperature", "K", (float,), "Temperature of the sample.", "miox"),
+        Key(
+            "IndirectReferencePPM", "ppm", (list, float),
+            "Chemical shift at point N / 2 of each indirect frequency axis of a spectrum "
+            "(frequency_indirect_0, 1, ...), as ReferencePPM is for the direct axis.",
+            "miox",
+        ),
+        Key(
+            "IndirectSpectralWidth", "Hz", (list, float),
+            "Spectral width of each indirect frequency axis of a spectrum, in axis order.",
+            "miox",
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning

@@ -238,8 +238,14 @@ class TopSpinReader(Reader):
         if "acqus" in dic:
             for key, (value, field) in self._core(dic["acqus"], "acqus").items():
                 meta.set(key, value, f"TopSpin acquisition parameters: {field}", field)
-        if len(procs) > 1:
-            notes.append("indirect axes in the vendor header (proc2s, ...: SF, SW_p, OFFSET)")
+        indirect = procs[1:data.ndim - 3]
+        if indirect:
+            shifts = [float(p["OFFSET"]) - float(p["SW_p"]) / (2 * float(p["SF"]))
+                      for p in indirect]
+            meta.set("IndirectReferencePPM", shifts,
+                     f"{source}: proc2s, ... OFFSET - SW_p / (2 SF)", "proc2s/OFFSET")
+            meta.set("IndirectSpectralWidth", [float(p["SW_p"]) for p in indirect],
+                     f"{source}: proc2s, ... SW_p", "proc2s/SW_p")
         experiment = folder.parent.parent
         name = f"{experiment.parent.name}_{experiment.name}_pdata{folder.name}"
         return MRImage(data, self.NO_GEOMETRY, meta, self.provenance(sniff, tuple(notes)), name,

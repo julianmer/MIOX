@@ -78,9 +78,14 @@ class SparkyReader(Reader):
         meta.set("DwellTime", 1 / (step * frequency * n), "derived: 1 / SpectralWidth")
         meta.set("ReferencePPM", float(ppm[n // 2]), f"{source}: shift of point N / 2",
                  "xmtr_freq")
-        notes = ("the last axis is taken as the acquired one (not stated in the file)",
-                 "indirect axes in the vendor header (w1, w2: spectrometer_freq, "
-                 "spectral_width, xmtr_freq)")
+        if values.ndim > 1:
+            meta.set("IndirectReferencePPM", [float(a[a.size // 2]) for a in axes[1:]],
+                     f"{source}: shift of point N / 2 of each indirect axis", "xmtr_freq")
+            meta.set("IndirectSpectralWidth",
+                     [float(abs(a[1] - a[0])) * float(h["spectrometer_freq"]) * a.size
+                      for a, h in zip(axes[1:], headers[1:], strict=True)],
+                     f"{source}: axis spacing * points of each indirect axis", "spectral_width")
+        notes = ("the last axis is taken as the acquired one (not stated in the file)",)
         names = ("frequency",) + tuple(f"frequency_indirect_{i}" for i in range(values.ndim - 1))
         return [MRImage(values.reshape((1, 1, 1) + values.shape), self.NO_GEOMETRY, meta,
                         self.provenance(sniff, notes), path.stem, names)]

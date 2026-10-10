@@ -18,7 +18,10 @@
 #          exports against their unpacked copies, NMRPipe FIDs against the Varian FIDs they were   #
 #          converted from and against NMRPipe's own processing of them, a Sparky 15N-HSQC against #
 #          the amide shifts assigned in its BMRB entry, SIMPSON output against the spin system it  #
-#          simulates and against SIMPSON's own transform.                                          #
+#          simulates and against SIMPSON's own transform, Spinsolve FIDs against their JCAMP-DX   #
+#          exports, Spinsolve's own spectrum and the carbonyl shift of urea, RS2D FIDs against     #
+#          the vendor's processed spectra, RNMRTK conversions against the Bruker FIDs they were    #
+#          written from, a processed TopSpin HSQC against ibuprofen's (1H, 13C) pairs.             #
 #                                                                                                  #
 ####################################################################################################
 
@@ -235,6 +238,14 @@ def image_axis(image: MRImage) -> np.ndarray:
     return image.meta["ReferencePPM"] - (np.arange(n) - n // 2) * step
 
 
+def indirect_axis(image: MRImage, i: int) -> np.ndarray:
+    """Shift of each point of indirect axis ``i`` from IndirectReferencePPM and
+    IndirectSpectralWidth (point N / 2, the shift falling with the index)."""
+    n = image.shape[4 + i]
+    step = image.meta["IndirectSpectralWidth"][i] / image.meta["SpectrometerFrequency"][1 + i] / n
+    return image.meta["IndirectReferencePPM"][i] - (np.arange(n) - n // 2) * step
+
+
 def test_jeol_fid_shows_the_peaks_of_the_spectrum_mestrenova_processed():
     """The eight tallest lines of the Rutin proton FID's spectrum lie within 0.003 ppm of
     those in the spectrum MestReNova exported from the same .jdf, with the FID as read; the
@@ -446,11 +457,7 @@ def test_nmrpipe_fid_transforms_to_nmrpipes_spectrum():
     if not (fid_path.is_file() and spectrum_path.is_file()):
         pytest.skip("not fetched")
     [fid], [image] = load(fid_path), load(spectrum_path)
-    header = image.meta.vendor
-    direct = image_axis(image)
-    rows = image.shape[4]
-    indirect = (float(header["FDF1ORIG"]) + float(header["FDF1SW"]) * (
-        1 - (np.arange(rows) + 1) / rows)) / float(header["FDF1OBS"])  # NMRPipe's F1 axis
+    direct, indirect = image_axis(image), indirect_axis(image, 0)
     v = fid.meta.vendor
     x_axis = fid_axis(fid)
     n1 = fid.shape[4] // 2
@@ -502,12 +509,9 @@ def test_sparky_hsqc_peaks_lie_on_the_assigned_amides():
     pairs = np.array([(a["H"], a["N"]) for a in assigned_shifts(star).values()
                       if "H" in a and "N" in a])
     [image] = load(path)
-    proton = image_axis(image)
-    w1 = image.meta.vendor["w1"]
+    proton, nitrogen = image_axis(image), indirect_axis(image, 0)
     rows = image.shape[4]
-    nitrogen = float(w1["xmtr_freq"]) + (rows // 2 - np.arange(rows)) * float(
-        w1["spectral_width"]) / float(w1["spectrometer_freq"]) / rows
-    width = float(w1["spectral_width"]) / float(w1["spectrometer_freq"])
+    width = image.meta["IndirectSpectralWidth"][0] / image.meta["SpectrometerFrequency"][1]
     magnitude = np.abs(image.data[0, 0, 0])
     maxima = np.argwhere(magnitude == maximum_filter(magnitude, size=9))
     tallest = maxima[np.argsort(magnitude[tuple(maxima.T)])[::-1][:60]]
@@ -564,3 +568,119 @@ def test_simpson_spectrum_is_the_transform_of_its_fid():
     expected = np.fft.fftshift(np.fft.fft(samples))
     assert np.allclose(image.data[0, 0, 0], expected, atol=1e-4 * np.abs(expected).max())
 
+
+SPINSOLVE = PUBLIC_DATA / "spinsolve_ethanol/092237-1D EXTENDED+-EtOH"
+UREA = PUBLIC_DATA / "spinsolve_examples/Data Examples/Spinsolve/132112-Urea 1 M-1D CARBON+ WALTZ"
+
+
+@pytest.mark.parametrize("folder", [SPINSOLVE, UREA], ids=["ethanol", "urea"])
+def test_spinsolve_fid_equals_its_jcamp_export(folder):
+    """data.1d and the JCAMP-DX export nmr_fid.dx beside it (read by the JCAMP-DX reader) agree
+    point by point in phase after one constant zero-order phase (within 1 degree wherever the
+    signal is above 5 % of its maximum); the urea export is apodized, so only the phase is
+    compared, the ethanol export is equal to 1e-6."""
+    if not (folder / "nmr_fid.dx").is_file():
+        pytest.skip("not fetched")
+    [fid] = load(folder / "data.1d")
+    [export] = load(folder / "nmr_fid.dx")
+    a, b = fid.data[0, 0, 0], export.data[0, 0, 0]
+    phase = np.vdot(a[:64], b[:64]) / abs(np.vdot(a[:64], b[:64]))
+    strong = np.abs(a) > 0.05 * np.abs(a).max()
+    assert np.abs(np.angle(b[strong] / (phase * a[strong]), deg=True)).max() < 1.0
+    if folder == SPINSOLVE:
+        assert np.linalg.norm(b - phase * a) / np.linalg.norm(b) < 1e-6
+
+
+def test_spinsolve_fid_lies_on_spinsolves_spectrum():
+    """The transform of the ethanol FID on the axis acqu.par states (carrier at (lowestFrequency +
+    bandwidth / 2) / b1Freq) matches Spinsolve's spectrum.1d on its own ppm axis (correlation
+    above 0.99); the mirrored FID does not (below 0.3)."""
+    if not (SPINSOLVE / "spectrum.1d").is_file():
+        pytest.skip("not fetched")
+    [fid], [image] = load(SPINSOLVE / "data.1d"), load(SPINSOLVE / "spectrum.1d")
+    axis, reference = fid_axis(fid), np.abs(image.data.ravel())
+    order = np.argsort(axis)
+    for samples, low in ((fid.data[0, 0, 0], False), (fid.data[0, 0, 0].conj(), True)):
+        spectrum = np.abs(np.fft.fftshift(np.fft.fft(samples)))
+        resampled = np.interp(image_axis(image), axis[order], spectrum[order])
+        correlation = np.corrcoef(resampled, reference)[0, 1]
+        assert correlation < 0.3 if low else correlation > 0.99
+
+
+def test_spinsolve_carbon_fid_shows_urea():
+    """1 M urea, 13C with WALTZ decoupling at 15 MHz: the only line, the carbonyl, lies within
+    1.5 ppm of 161.5 ppm (160-163 ppm in the usual solvents) on the stated axis."""
+    if not (UREA / "data.1d").is_file():
+        pytest.skip("not fetched")
+    [fid] = load(UREA / "data.1d")
+    assert fid.meta["ResonantNucleus"] == ["13C"]
+    assert tallest(fid, 100.0, 220.0) == pytest.approx(161.5, abs=1.5)
+
+
+QUAD = PUBLIC_DATA / "quadsystems_data_test/data"
+
+
+@pytest.mark.parametrize("folder,limit", [
+    (QUAD / "sample1/sample1-proton/proton/1", 0.9),
+    (QUAD / "sample3/sample3-hsqc/hsqc/17", 0.75),
+], ids=["proton", "hsqc"])
+def test_rs2d_fid_lies_on_the_processed_spectrum(folder, limit):
+    """The FID read (conjugated), transformed along the direct dimension and summed over rows,
+    matches the vendor's processed spectrum in Proc/0 summed over its rows (correlation above
+    ``limit``) on the axes the headers state; mirrored it does not (below 0.2)."""
+    if not folder.is_dir():
+        pytest.skip("not fetched")
+    fid, image = load(folder)
+    samples = fid.data[0, 0, 0].reshape(fid.shape[3], -1)
+    axis = ppm_axis(fid.shape[3], fid.spectral_width, fid.meta["SpectrometerFrequency"][0],
+                    fid.meta["ReferencePPM"])
+    reference = np.abs(image.data[0, 0, 0]).reshape(image.shape[3], -1).sum(axis=1)
+    order = np.argsort(axis)
+    for data, expected in ((samples, limit), (samples.conj(), None)):
+        summed = np.abs(np.fft.fftshift(np.fft.fft(data, axis=0), axes=0)).sum(axis=1)
+        resampled = np.interp(image_axis(image), axis[order], summed[order])
+        correlation = np.corrcoef(resampled, reference)[0, 1]
+        assert correlation > expected if expected else correlation < 0.2
+
+
+@pytest.mark.parametrize("name", ["bruker_1d", "bruker_2d"])
+def test_rnmrtk_conversion_keeps_the_samples_it_was_written_from(name):
+    """nmrglue's converter wrote nmrglue's Bruker samples to RNMRTK: read as stored they are the
+    conjugate of the TopSpin read (which conjugates Bruker FIDs), point for point where both
+    hold data, with the same carrier shift and dwell time; this is why RNMRTK samples are kept
+    as stored and their sign is left unverified."""
+    path, source = PUBLIC_DATA / "rnmrtk" / f"{name}.sec", PUBLIC_DATA / "nmrglue" / name
+    if not (path.is_file() and source.is_dir()):
+        pytest.skip("not fetched")
+    [d], topspin = load(path), load(source)[0]
+    a, b = d.data[0, 0, 0], topspin.data[0, 0, 0]
+    common = tuple(slice(0, min(x, y)) for x, y in zip(a.shape, b.shape, strict=True))
+    assert np.allclose(a[common], np.conj(b[common]), rtol=1e-6, atol=1e-6 * np.abs(b).max())
+    assert d.meta["ReferencePPM"] == pytest.approx(topspin.meta["ReferencePPM"], abs=1e-3)
+    assert d.dwelltime == pytest.approx(topspin.dwelltime, rel=1e-6)
+
+
+def test_topspin_hsqc_axes_place_ibuprofens_cross_peaks():
+    """Ibuprofen in CDCl3, HSQC processed by TopSpin (2rr): on the axes ReferencePPM and
+    IndirectReferencePPM / IndirectSpectralWidth state, at least 6 of the 10 tallest peaks lie
+    within 0.06 / 1 ppm of its (1H, 13C) pairs; with either axis mirrored none does."""
+    folder = ZIPPED / "ibuprofen/processed/hsqc/4"
+    if not folder.is_dir():
+        pytest.skip("not fetched")
+    image = load(folder)[1]
+    magnitude = np.abs(image.data[0, 0, 0, :, :, 0])
+    proton, carbon = image_axis(image), indirect_axis(image, 0)
+    pairs = np.array([(0.90, 22.4), (1.85, 30.2), (2.45, 45.0), (3.71, 45.0), (1.50, 18.1),
+                      (7.10, 129.4), (7.21, 127.3)])
+    maxima = np.argwhere(magnitude == maximum_filter(magnitude, size=7))
+    tallest = maxima[np.argsort(magnitude[tuple(maxima.T)])[::-1][:10]]
+    h, c = proton[tallest[:, 0]], carbon[tallest[:, 1]]
+
+    def hits(h: np.ndarray, c: np.ndarray) -> int:
+        near = (np.abs(pairs[:, 0][None] - h[:, None]) < 0.06) & (
+            np.abs(pairs[:, 1][None] - c[:, None]) < 1.0)
+        return int(np.any(near, axis=1).sum())
+
+    centre_h, centre_c = proton[proton.size // 2], carbon[carbon.size // 2]
+    assert hits(h, c) >= 6
+    assert hits(2 * centre_h - h, c) == 0 and hits(h, 2 * centre_c - c) == 0

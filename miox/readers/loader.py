@@ -88,6 +88,8 @@ from miox.readers.profit_basis import ProfitBasisReader
 from miox.readers.pulseq import PulseqReader
 from miox.readers.pyamares_prior import PyamaresPriorReader
 from miox.readers.pyamares_result import PyamaresResultReader
+from miox.readers.rnmrtk import RnmrtkReader
+from miox.readers.rs2d import Rs2dReader
 from miox.readers.siemens_protocol import SiemensPrintedProtocolReader, SiemensProtocolReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
@@ -100,6 +102,7 @@ from miox.readers.simulation import (
 )
 from miox.readers.sivic_ddf import SivicDdfReader
 from miox.readers.sparky import SparkyReader
+from miox.readers.spinsolve import SpinsolveReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.tarquin_output import TarquinOutputReader
@@ -191,6 +194,8 @@ class Loader:
             PulseqReader(),
             PyamaresPriorReader(),
             PyamaresResultReader(),
+            RnmrtkReader(),
+            Rs2dReader(),
             SiemensPmuReader(),
             SiemensPrintedProtocolReader(),
             SiemensProtocolReader(),
@@ -199,6 +204,7 @@ class Loader:
             SimpsonReader(),
             SivicDdfReader(),
             SparkyReader(),
+            SpinsolveReader(),
             SpinwizardBasisReader(),
             TarquinDptReader(),
             TarquinOutputReader(),

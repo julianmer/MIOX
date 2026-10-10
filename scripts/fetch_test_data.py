@@ -15,7 +15,8 @@
 #          NEMA's spectroscopy DICOM examples, MRD (version 2) streams made from fetched files by  #
 #          the MRD project's own tools, and single members of large Zenodo archives (Varian        #
 #          imaging scans) read through HTTP range requests, and zip archives (nmrglue's NMR test   #
-#          data, Spinsolve sets); NMR samples of BMRB entries, NMRPipe, SIMPSON and RS2D files.    #
+#          data, Spinsolve sets); NMR samples of BMRB entries, NMRPipe, SIMPSON and RS2D files;    #
+#          RNMRTK files written by nmrglue's converter from its Bruker samples.                    #
 #                                                                                                  #
 ####################################################################################################
 
@@ -454,6 +455,7 @@ class DataFetcher:
             for name, (record, archive, members) in group.items():
                 self.zip_members(self.dest / name, record, archive, members)
         self.mrd(self.dest / "mrd")
+        self.rnmrtk(self.dest / "rnmrtk")
 
     def repository(self, dest: Path, url: str, paths: list[str] | None) -> None:
         """Shallow clone; with ``paths`` only those are checked out."""
@@ -506,6 +508,22 @@ class DataFetcher:
         shutil.unpack_archive(partial, dest, "zip")
         partial.unlink()
         print(f"{dest.name} unpacked")
+
+    def rnmrtk(self, dest: Path) -> None:
+        """RNMRTK files (.sec + .par) written by nmrglue's converter from nmrglue's Bruker
+        samples (no public RNMRTK files exist); files already present are skipped."""
+        import nmrglue as ng
+
+        dest.mkdir(parents=True, exist_ok=True)
+        for name in ("bruker_1d", "bruker_2d"):
+            target = dest / f"{name}.sec"
+            if target.is_file():
+                continue
+            dic, data = ng.bruker.read(str(self.dest / "nmrglue" / name))
+            converter = ng.convert.converter()
+            converter.from_bruker(dic, data, ng.bruker.guess_udic(dic, data))
+            ng.rnmrtk.write(str(target), *converter.to_rnmrtk(), overwrite=True)
+        print(f"RNMRTK conversions in {dest}")
 
     def mrd(self, dest: Path) -> None:
         """MRD files written by the MRD project's tools: conversions of fetched ISMRMRD files,

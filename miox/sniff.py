@@ -93,6 +93,9 @@ class Format(StrEnum):
     NMRPIPE = "nmrpipe"  # NMRPipe data files
     SPARKY = "sparky"  # Sparky (UCSF) spectra
     SIMPSON = "simpson"  # SIMPSON simulation output
+    SPINSOLVE = "spinsolve"  # Magritek Spinsolve (Prospa) data files and experiment folders
+    RS2D = "rs2d"  # RS2D experiment folders (header.xml + data.dat)
+    RNMRTK = "rnmrtk"  # Rowland NMR Toolkit .sec data with .par parameters
     ZIP_ARCHIVE = "zip_archive"  # zip archive of files MIOX reads
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
@@ -353,6 +356,9 @@ class Sniffer:
             self.nmrpipe,
             self.sparky,
             self.simpson,
+            self.spinsolve,
+            self.rs2d,
+            self.rnmrtk,
             self.topspin,
             self.bruker,
             self.varian,
@@ -381,8 +387,9 @@ class Sniffer:
         return Sniff(path, Format.UNKNOWN)
 
     def directory(self, path: Path) -> Sniff:
-        """A Bruker scan, a Varian .fid folder, a basis set of one file per metabolite, a DICOM
-        series, or a study folder of DICOM series folders (a DICOMDIR at its top is passed over)."""
+        """A Bruker scan, a Varian .fid folder, a Spinsolve experiment, a basis set of one file per
+        metabolite, a DICOM series, or a study folder of DICOM series folders (a DICOMDIR at its
+        top is passed over)."""
         names = {p.name for p in path.iterdir()}
         if names & set(self.BRUKER_PARAM_FILES):
             return self._bruker_scan(path, path, "directory with Bruker parameter files")
@@ -399,6 +406,12 @@ class Sniffer:
             return self._image(path, Format.VARIAN_FDF, f"directory with {len(fdfs)} fdf files")
         if "procpar" in names:
             return self._varian_scan(path, path, "directory with procpar")
+        if self._rs2d_folder(path):
+            return Sniff(path, Format.RS2D, Kind.SPECTROSCOPY, vendor="rs2d", confidence=1.0,
+                         evidence=("RS2D header.xml with data.dat",))
+        if "acqu.par" in names and names & {"data.1d", "fid.1d", "spectrum.1d"}:
+            return Sniff(path, Format.SPINSOLVE, Kind.SPECTROSCOPY, confidence=1.0,
+                         evidence=("Spinsolve experiment folder (acqu.par with .1d data)",))
         files = [c for c in sorted(path.iterdir()) if c.is_file() and c.name != ".DS_Store"]
         if "BasisSetParameters.txt" in names:
             evidence = ("SpinWizard BasisSetParameters.txt",)
@@ -788,6 +801,44 @@ class Sniffer:
             return None
         return Sniff(path, Format.SIMPSON, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=("SIMP header with NP",))
+
+    def spinsolve(self, path: Path, head: bytes) -> Sniff | None:
+        """Spinsolve data: Prospa data files (magic SORPATAD; plot files .pt1 differ)."""
+        if not head.startswith(b"SORPATAD"):
+            return None
+        return Sniff(path, Format.SPINSOLVE, Kind.SPECTROSCOPY, confidence=1.0,
+                     evidence=("Prospa data magic",))
+
+    def rs2d(self, path: Path, head: bytes) -> Sniff | None:
+        """The header.xml and data.dat of an RS2D experiment (or of its Proc/<n> folders)."""
+        if path.name not in ("header.xml", "data.dat") or not self._rs2d_folder(path.parent):
+            return None
+        return Sniff(path, Format.RS2D, Kind.SPECTROSCOPY, vendor="rs2d", confidence=1.0,
+                     evidence=(f"RS2D {path.name} beside its partner",))
+
+    @staticmethod
+    def _rs2d_folder(folder: Path) -> bool:
+        """header.xml (root header with params) and data.dat in ``folder``."""
+        header = folder / "header.xml"
+        if not (header.is_file() and (folder / "data.dat").is_file()):
+            return False
+        with open(header, "rb") as fh:
+            head = fh.read(512)
+        return b"<header>" in head and b"<params>" in head
+
+    def rnmrtk(self, path: Path, head: bytes) -> Sniff | None:
+        """RNMRTK data: a .sec file and its .par (Dom and Layout lines), either of the two."""
+        if path.suffix.lower() not in (".sec", ".par"):
+            return None
+        sec, par = path.with_suffix(".sec"), path.with_suffix(".par")
+        if not (sec.is_file() and par.is_file()):
+            return None
+        with open(par, "rb") as fh:
+            text = fh.read(4096)
+        if b"\nDom" not in text or b"\nLayout" not in text:
+            return None
+        return Sniff(path, Format.RNMRTK, Kind.SPECTROSCOPY, confidence=1.0,
+                     evidence=(f"{path.suffix} with its RNMRTK partner",))
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter

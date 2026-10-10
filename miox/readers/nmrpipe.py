@@ -134,7 +134,12 @@ class NmrPipeReader(Reader):
         meta.set("ReferencePPM", float(ppm[n // 2]), "NMRPipe header: shift of point N / 2",
                  "FDF2ORIG")
         if values.ndim > 1:
-            notes.append("indirect axes in the vendor header (FDF1/3/4 ORIG, SW, OBS)")
+            meta.set("IndirectReferencePPM", [float(a[a.size // 2]) for a in axes[1:]],
+                     "NMRPipe header: shift of point N / 2 of each indirect axis", "FDF1ORIG")
+            meta.set("IndirectSpectralWidth",
+                     [float(abs(a[1] - a[0])) * float(dic[f"FDF{f}OBS"]) * a.size
+                      for a, f in zip(axes[1:], header[1:], strict=True)],
+                     "NMRPipe header: axis spacing * points of each indirect axis", "FDF1SW")
         names = ("frequency",) + tuple(f"frequency_indirect_{i}" for i in range(values.ndim - 1))
         return MRImage(values.reshape((1, 1, 1) + values.shape), self.NO_GEOMETRY, meta,
                        self.provenance(sniff, tuple(notes)), Path(sniff.path).stem, names)
