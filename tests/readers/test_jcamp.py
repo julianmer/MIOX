@@ -8,7 +8,8 @@
 #                                                                                                  #
 # Purpose: NMR JCAMP-DX reader on synthetic files: a 1D FID as NTUPLES pages, an XYDATA spectrum   #
 #          in Hz written from low to high shift, a 2D FID with page times, an XY table spectrum,   #
-#          and the sniffing of JCAMP-DX NMR files apart from TopSpin parameter files.              #
+#          an FID kept as stored under $REVERSE= yes, and the sniffing of JCAMP-DX NMR files apart #
+#          from TopSpin parameter files.                                                           #
 #                                                                                                  #
 ####################################################################################################
 
@@ -49,9 +50,8 @@ def write(path: Path, text: str) -> Path:
     return path
 
 
-def test_fid_pages(tmp_path):
-    real, imag = [10, 8, 6, 4, 2, 1, 0, -1], [0, 1, 2, 3, 4, 5, 6, 7]
-    text = HEADER.format(kind="NMR FID", cls="NTUPLES") + f"""\
+def fid_text(real, imag, extra: str = "") -> str:
+    return HEADER.format(kind="NMR FID", cls="NTUPLES") + extra + f"""\
 ##.SHIFT REFERENCE= INTERNAL, TMS, 1, 10.0
 ##NTUPLES= NMR FID
 ##VAR_NAME= TIME, FID/REAL, FID/IMAG
@@ -68,7 +68,11 @@ def test_fid_pages(tmp_path):
 ##DATA TABLE= (X++(I..I)), XYDATA
 {lines(imag)}
 ##END NTUPLES= NMR FID"""
-    path = write(tmp_path / "fid.jdx", text)
+
+
+def test_fid_pages(tmp_path):
+    real, imag = [10, 8, 6, 4, 2, 1, 0, -1], [0, 1, 2, 3, 4, 5, 6, 7]
+    path = write(tmp_path / "fid.jdx", fid_text(real, imag))
     sniff = gu.sniff(path)
     assert (sniff.format, sniff.kind) == (gu.Format.JCAMP_NMR, gu.Kind.SPECTROSCOPY)
     [d] = gu.load(path)
@@ -79,6 +83,12 @@ def test_fid_pages(tmp_path):
     assert d.meta["ReferencePPM"] == pytest.approx(10.0 - 4 * 125.0 / 100.0)
     assert d.meta["ResonantNucleus"] == ["1H"] and d.meta["Solvent"] == "CDCl3"
     assert d.meta["NumberOfAverages"] == 8
+
+
+def test_reversed_fid_is_kept_as_stored(tmp_path):
+    real, imag = [10, 8, 6, 4, 2, 1, 0, -1], [0, 1, 2, 3, 4, 5, 6, 7]
+    [d] = gu.load(write(tmp_path / "fid.jdx", fid_text(real, imag, "##$REVERSE= yes\n")))
+    assert np.array_equal(d.data[0, 0, 0], 2 * (np.array(real) + 1j * np.array(imag)))
 
 
 def test_xydata_spectrum_in_hz_rising(tmp_path):

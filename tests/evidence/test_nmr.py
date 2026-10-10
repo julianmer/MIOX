@@ -13,7 +13,8 @@
 #          exports against the TopSpin files they were written from, a Nanalysis JCAMP-DX FID      #
 #          against the shift of its compound's tallest signal, nmrML files against the vendor      #
 #          files they were converted from, JEOL Delta files against spectra other software made    #
-#          of them, a Tecmag file against TNMR's own text export of it.                            #
+#          of them, a Tecmag file against TNMR's own text export of it, Oxford Instruments and Q   #
+#          Magnetics JCAMP-DX FIDs against the line patterns of their compounds.                   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -344,3 +345,54 @@ def test_tecmag_fid_equals_tnmr_text_export():
     assert np.array_equal(d.data[0, 0, 0], table[:, 0] + 1j * table[:, 1])
     assert d.dwelltime == pytest.approx((table[1, 2] - table[0, 2]) * 1e-6, rel=1e-12)
     assert d.meta["ResonantNucleus"] == ["7Li"]
+
+
+def fid_lines(d: MRSData, count: int, conjugate: bool = False) -> np.ndarray:
+    """Shifts of the ``count`` tallest lines of the FID's magnitude spectrum, sorted."""
+    samples = d.data[0, 0, 0]
+    samples = samples.conj() if conjugate else samples
+    spectrum = np.abs(np.fft.fftshift(np.fft.fft(samples)))
+    return peak_shifts(fid_axis(d), spectrum, count, max(3, d.shape[3] // 2000))
+
+
+def matches(found: np.ndarray, expected: list[float], tolerance: float) -> bool:
+    return bool(np.all(np.abs(found[:, None] - np.asarray(expected)[None, :]).min(axis=1)
+                       < tolerance))
+
+
+def test_oxford_fid_is_stored_in_the_convention():
+    """Ethyl crotonate in CDCl3 at 60 MHz ($REVERSE= yes): the seven tallest lines, shifted by one
+    common offset below 0.15 ppm (the file's SF is not calibrated on a reference), fall within
+    0.02 ppm of the lines of its ethyl triplet (1.28 ppm, J 7.1 Hz), crotyl CH3 doublet of
+    doublets (1.87 ppm, J 6.9 and 1.7 Hz) and the inner lines of the OCH2 quartet (4.18 ppm); the
+    FID conjugated mirrors them to 5.8 - 8.6 ppm."""
+    path = JCAMP / "oxfordInstruments/1h.jdx"
+    if not path.is_file():
+        pytest.skip("not fetched")
+    [d] = load(path)
+    hz = 1 / d.spectrometer_frequency
+    expected = [1.28, 1.28 + 7.1 * hz] + [1.87 + a * 6.9 * hz / 2 + b * 1.7 * hz / 2
+                                          for a in (-1, 1) for b in (-1, 1)] + \
+        [4.18 - 7.1 * hz / 2, 4.18 + 7.1 * hz / 2]
+    offsets = np.arange(-0.15, 0.15, 0.002)
+    assert any(matches(fid_lines(d, 7) - o, expected, 0.02) for o in offsets)
+    assert not any(matches(fid_lines(d, 7, conjugate=True) - o, expected, 0.02) for o in offsets)
+
+
+def test_q_magnetics_fid_shows_ibuprofen_from_its_tms_line():
+    """Ibuprofen with TMS in CDCl3 at 124 MHz, conjugated: measured from the TMS line (the lowest
+    of the seven tallest), the lines lie within 0.03 ppm of the CH3 doublet (0.89 ppm), the
+    CH-CH3 doublet (1.49 ppm, J 7.2 Hz) and the inner aromatic lines (7.10, 7.20 ppm); as stored
+    they do not. The file's .SHIFT REFERENCE puts the TMS line at -13.38 ppm."""
+    path = JCAMP / "qmagnetics/ibuprofen_j_ave_qmagnetics.jdx"
+    if not path.is_file():
+        pytest.skip("not fetched")
+    [d] = load(path)
+    hz = 1 / d.spectrometer_frequency
+    expected = [0.0, 0.89 - 6.6 * hz / 2, 0.89 + 6.6 * hz / 2, 1.49 - 7.2 * hz / 2,
+                1.49 + 7.2 * hz / 2, 7.10, 7.20]
+    lines = fid_lines(d, 7)
+    assert matches(lines - lines.min(), expected, 0.03)
+    assert lines.min() == pytest.approx(-13.38, abs=0.02)
+    stored = fid_lines(d, 7, conjugate=True)
+    assert not matches(stored - stored.min(), expected, 0.03)

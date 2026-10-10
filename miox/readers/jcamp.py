@@ -38,15 +38,16 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # Labels are compared as nmrglue keeps them: upper case without spaces, dashes or slashes (DATA    #
 # TYPE is DATATYPE, Bruker's ##$SW_h is $SWH). An FID gives an MRSData: R + iI conjugated into the #
-# NIfTI-MRS convention (Bruker and Nanalysis FIDs then show their known signals at their shifts),  #
-# the pages of an nD FID as rows on DIM_INDIRECT_0 with their page values as IndirectTime. A       #
-# spectrum gives an MRImage whose chemical shift falls with the index, as TopSpin stores spectra;  #
-# the shift of each point comes from X in ppm, or in Hz divided by the observe frequency, where    #
-# .SHIFT REFERENCE (type, compound, point counted from 1, shift) places the point when X is not    #
-# counted from 0 ppm (Bruker's NTUPLES run X from the spectral width down to 0). The carrier of an #
-# FID lies at (SFO1 - SF) / SF when the export carries those parameters (their $OFFSET and $SW_p   #
-# may belong to another processing), else at the centre of its spectrum (point N / 2 + 1) on the   #
-# .SHIFT REFERENCE axis.                                                                           #
+# NIfTI-MRS convention (Bruker, Nanalysis and Q Magnetics FIDs then show their known signals at    #
+# their shifts), except when $REVERSE of the direct axis is yes (Oxford Instruments FIDs are in    #
+# the convention as stored); the pages of an nD FID as rows on DIM_INDIRECT_0 with their page      #
+# values as IndirectTime. A spectrum gives an MRImage whose chemical shift falls with the index,   #
+# as TopSpin stores spectra; the shift of each point comes from X in ppm, or in Hz divided by the  #
+# observe frequency, where .SHIFT REFERENCE (type, compound, point counted from 1, shift) places   #
+# the point when X is not counted from 0 ppm (Bruker's NTUPLES run X from the spectral width down  #
+# to 0). The carrier of an FID lies at (SFO1 - SF) / SF when the export carries those parameters   #
+# (their $OFFSET and $SW_p may belong to another processing), else at the centre of its spectrum   #
+# (point N / 2 + 1) on the .SHIFT REFERENCE axis.                                                  #
 #                                                                                                  #
 #**************************************************************************************************#
 class JcampReader(Reader):
@@ -91,7 +92,9 @@ class JcampReader(Reader):
 
     def _fid(self, sniff: Sniff, block: dict, name: str, notes: list[str]) -> MRSData:
         rows, pages = self._rows(block)
-        data = np.conj(np.asarray([r + 1j * i for r, i in rows])).T
+        data = np.asarray([r + 1j * i for r, i in rows]).T
+        if (self._first(block, "$REVERSE") or "").lower() != "yes":
+            data = np.conj(data)
         symbols = self._columns(block, "SYMBOL")
         direct = symbols[1] if pages else symbols[0]  # T2 of (T1, T2, R, I), X of (X, R, I)
         n = data.shape[0]
