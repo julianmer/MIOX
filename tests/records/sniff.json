@@ -9069,6 +9069,176 @@
   "vendor": null,
   "kind": "unknown"
  },
+ "bvbabel/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test01_fileversion-2.vmr.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test01_hemisphere-left.srf.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test02_left_hemisphere.srf.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test02_left_hemisphere_4_curvature_maps.smp.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test03.vmr.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test03.voi": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test03.vtc.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test03_cube.mtc.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test03_cube.poi": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test03_cube.srf.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test03_cube.vmr.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test04.sdm": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test05.prt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test05_v2_msec.prt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test05_v2_vols_deconvolution.prt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test05_v3_msec_parametric_weights.prt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test05_v3_tabs.prt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test05_v3_vols.prt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test06.prt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test07_partial_coverage.glm.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test07_partial_coverage.vmp.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test07_partial_coverage.vmr.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test08_lag_correlation_maps_on_512x512x512.vmp.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/sub-test09.ssm": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-5_IA.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-7_extravmrtrf_FA.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-7_extravmrtrf_IA.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-8_FA.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-8_IA.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-8_ToMSP.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-8_aACPC.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-8_transformationtype2_cMNI_a12.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bvbabel/test_data/trf/sub-test06_fileversion-8_transformationtype3_cMNI_a12_adjBBX.trf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "dcm_qa/.gitignore": {
   "format": "unknown",
   "vendor": null,
@@ -13054,6 +13224,11 @@
   "vendor": null,
   "kind": "unknown"
  },
+ "dsistudio_templates/CMU60.2mm.fib.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "gadgetron/T2W/generic_grappa_T2W_ref_20220817_klk.mrd": {
   "format": "ismrmrd",
   "vendor": null,
@@ -13183,6 +13358,71 @@
   "format": "sivic_ddf",
   "vendor": null,
   "kind": "spectroscopy"
+ },
+ "i2nii/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "i2nii/test/DICOM/DICOM/001.dcm": {
+  "format": "dicom_image",
+  "vendor": "ge",
+  "kind": "imaging"
+ },
+ "i2nii/test/DICOM/__MACOSX/DICOM/._.DS_Store": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "i2nii/test/afni.BRIK+orig.BRIK": {
+  "format": "afni",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "i2nii/test/afni.BRIK+orig.HEAD": {
+  "format": "afni",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "i2nii/test/mgh.mgz": {
+  "format": "mgh",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "i2nii/test/mha.mha": {
+  "format": "metaimage",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "i2nii/test/nrrd.nhdr": {
+  "format": "nrrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "i2nii/test/nrrd.raw.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "i2nii/test/sivic.idf": {
+  "format": "sivic_idf",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "i2nii/test/sivic.int2": {
+  "format": "sivic_idf",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "i2nii/test/spr.sdt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "i2nii/test/spr.spr": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "ismrmrd/simple_gre.h5": {
   "format": "ismrmrd",
@@ -13724,6 +13964,121 @@
   "vendor": null,
   "kind": "spectroscopy"
  },
+ "jnifti/LICENSE_Apache-2.0.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/basic/create_mouse_jnii.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/basic/mousehead.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/basic/mousehead.jnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/basic/mousehead_gzip.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/basic/mousehead_lzma.jnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/colin27/colin27_zlib.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/colin27/colin27_zlib.jnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/colin27/create_jnii.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/digimouse/create_jnii.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/digimouse/digimouse_lzma.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/digimouse/digimouse_lzma.jnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/digimouse/digimouse_zlib.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/digimouse/digimouse_zlib.jnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/headct/create_headct_jnii.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/headct/headct.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "jnifti/samples/headct/headct_lzma.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/headct/headct_lzma.jnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/headct/headct_zlib.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/nifti2/avg152T1_LR_nifti2.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "jnifti/samples/nifti2/avg152T1_LR_nifti2_lzma.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/nifti2/avg152T1_LR_nifti2_zlib.bnii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "jnifti/samples/nifti2/create_avg152_jnii.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "komamri/KomaMRICore/test/test_files/jemris_signals_epi_brain_motion.h5": {
   "format": "jemris_signal",
   "vendor": null,
@@ -14013,6 +14368,71 @@
   "format": "lcmodel_ps",
   "vendor": null,
   "kind": "report"
+ },
+ "lipsia/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/README.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/ana_Ding.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/ana_vaso.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/mask_Ding.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/metric_Ding.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/metric_M.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/metric_vaso.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/rim_Ding.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/rim_M.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/rim_vaso.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/zmap_M.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "lipsia/data/zmap_vaso.v": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "m4raw/LICENSE": {
   "format": "unknown",
@@ -16164,6 +16584,66 @@
   "vendor": "siemens",
   "kind": "spectroscopy"
  },
+ "nibabel/nibabel/gifti/tests/data/ascii.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/ascii_flat_data.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/base64bin.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/external.dat": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/external.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/external.gii.bz2": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/external.gii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/gzipbase64.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/label.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/rh.aparc.annot.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/rh.shape.curv.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nibabel/nibabel/gifti/tests/data/task.func.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "nibabel/nibabel/nicom/tests/data/0.dcm": {
   "format": "dicom_image",
   "vendor": "siemens",
@@ -16668,6 +17148,541 @@
   "format": "nifti_mrs",
   "vendor": null,
   "kind": "spectroscopy"
+ },
+ "nifti_zarr_py/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/.zattrs": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/.zgroup": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0.npy": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/.zarray": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/.zattrs": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/0/0/0/0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/0/0/0/1": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/0/0/1/0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/0/0/1/1": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/1/0/0/0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/1/0/0/1": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/1/0/1/0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/0/1/0/1/1": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/1.npy": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/1/.zarray": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/1/.zattrs": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/1/0/0/0/0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/1/1/0/0/0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/nifti.npy": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/nifti/.zarray": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/nifti/.zattrs": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example4d.nii.zarr/nifti/0": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/.zattrs": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/.zgroup": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/0.npy": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/0/.zarray": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/0/.zattrs": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/0/0/0/0/0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/0/1/0/0/0": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/nifti.npy": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/nifti/.zarray": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/nifti/.zattrs": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/nifti/0": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "niivue/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/Lobules.label.gii": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/TR_S_R.tt.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/colby.trk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/colby.trx": {
+  "format": "zip_archive",
+  "vendor": null,
+  "kind": "archive"
+ },
+ "niivue/packages/niivue/demos/images/dsistudio.fib.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/dsistudio.src.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/mni152.SLF1_R.tsf": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/mz3/11ScalarMesh.mz3": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/mz3/3Mesh.mz3": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/mz3/cortex_5124.mz3": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/tract.FAT_R.vtk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/tract.SLF1_R.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "niivue/packages/niivue/demos/images/trix/fa.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "niivue/packages/niivue/demos/images/trix/mask_1bit.mif": {
+  "format": "mrtrix",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "niivue/packages/vox-loader/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/LICENSE.rst": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/README.rst": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/fsaverage/label/lh.V1.label": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/fsaverage/label/lh.aparc.annot": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/fsaverage/surf/lh.curv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/fsaverage/surf/lh.inflated": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/fsaverage/surf/lh.pial": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/fsaverage/surf/lh.sulc": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/fsaverage/surf/lh.thickness": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/fsaverage/surf/lh.white": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/subjects/bert/surf/README.rst": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitest_freesurfer/subjects/bert/surf/lh.inflated.nofix": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitransforms/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LAS.afni": {
+  "format": "transform_afni",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LAS.afni-array": {
+  "format": "transform_afni",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LAS.fs.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LAS.fsl": {
+  "format": "transform_fsl",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LAS.itk.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LPS.afni": {
+  "format": "transform_afni",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LPS.afni-array": {
+  "format": "transform_afni",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LPS.fs.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LPS.fsl": {
+  "format": "transform_fsl",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-LPS.itk.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-RAS.afni": {
+  "format": "transform_afni",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-RAS.afni-array": {
+  "format": "transform_afni",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-RAS.fs.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-RAS.fs.v2v.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-RAS.fsl": {
+  "format": "transform_fsl",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-RAS.itk.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-antsComposite.h5": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-oblique.afni": {
+  "format": "transform_afni",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-oblique.afni-array": {
+  "format": "transform_afni",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-oblique.fs.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-oblique.fsl": {
+  "format": "transform_fsl",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/affine-oblique.itk.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/bold-to-t1w.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/bold-to-t1w.v2v.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/ds-005_sub-01_from-OASIS_to-T1_warp_fsl.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "nitransforms/nitransforms/tests/data/hmc-itk.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/itktflist.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/itktflist2.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-fsnative_to-bold_mode-image.fsl": {
+  "format": "transform_fsl",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-fsnative_to-bold_mode-image.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-fsnative_to-bold_mode-image.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-fsnative_to-bold_mode-image_type-ras2ras.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-fsnative_to-scanner_mode-image.fsl": {
+  "format": "transform_fsl",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-fsnative_to-scanner_mode-image.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-fsnative_to-scanner_mode-image.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-scanner_to-bold_mode-image.fsl": {
+  "format": "transform_fsl",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-scanner_to-bold_mode-image.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-scanner_to-bold_mode-image.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-scanner_to-bold_mode-image_type-ras2ras.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-scanner_to-fsnative_mode-image.fsl": {
+  "format": "transform_fsl",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-scanner_to-fsnative_mode-image.lta": {
+  "format": "transform_lta",
+  "vendor": null,
+  "kind": "transform"
+ },
+ "nitransforms/nitransforms/tests/data/regressions/from-scanner_to-fsnative_mode-image.tfm": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
  },
  "nmrglue/README": {
   "format": "unknown",
@@ -45359,6 +46374,66 @@
   "vendor": null,
   "kind": "imaging"
  },
+ "pyvista_vtk_data/Data/ExportBunny/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/ParallelExodus/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/Victorian_Goblet_face_illusion/License": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/brain.vtk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/cow/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/great_white_shark/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/grey_nurse_shark/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/head.vti": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/lincoln_life_mask/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/skybox/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/Data/washington_bust/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "pyvista_vtk_data/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "quadsystems_data_test/data/sample1/sample1-proton/__MACOSX/proton/._1": {
   "format": "unknown",
   "vendor": null,
@@ -58303,6 +59378,91 @@
   "format": "toppe_entry",
   "vendor": "ge",
   "kind": "sequence"
+ },
+ "trx_test_data/gs.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "trx_test_data/gs.tck": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs.trk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs.trx": {
+  "format": "zip_archive",
+  "vendor": null,
+  "kind": "archive"
+ },
+ "trx_test_data/gs.vtk": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs_3mm.nii": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "trx_test_data/gs_fldr.trx/dps/random_coord.3.float32": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "trx_test_data/gs_fldr.trx/dpv/color_x.float32": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs_fldr.trx/dpv/color_y.float32": {
+  "format": "ge_pfile",
+  "vendor": "ge",
+  "kind": "raw"
+ },
+ "trx_test_data/gs_fldr.trx/dpv/color_z.float32": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs_fldr.trx/offsets.uint32": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs_fldr.trx/positions.3.float32": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs_rasmm_space.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs_vox_space.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/gs_voxmm_space.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/points_data.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "trx_test_data/streamlines_data.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "varian_strawberry/fsems.fid/fid": {
   "format": "varian",

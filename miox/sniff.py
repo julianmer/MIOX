@@ -96,6 +96,10 @@ class Format(StrEnum):
     SPINSOLVE = "spinsolve"  # Magritek Spinsolve (Prospa) data files and experiment folders
     RS2D = "rs2d"  # RS2D experiment folders (header.xml + data.dat)
     RNMRTK = "rnmrtk"  # Rowland NMR Toolkit .sec data with .par parameters
+    TRANSFORM_LTA = "transform_lta"  # FreeSurfer linear transform array
+    TRANSFORM_ITK = "transform_itk"  # ITK transform (.tfm text, .h5)
+    TRANSFORM_AFNI = "transform_afni"  # AFNI affine matrices (12 numbers per row)
+    TRANSFORM_FSL = "transform_fsl"  # FSL FLIRT 4 x 4 matrix
     ZIP_ARCHIVE = "zip_archive"  # zip archive of files MIOX reads
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
@@ -178,6 +182,9 @@ class Kind(StrEnum):
     SEQUENCE = "sequence"  # pulse sequence timing: RF, gradients, ADC events
     PHYSIO = "physio"  # physiological recordings: cardiac, respiratory, triggers
     PHANTOM = "phantom"  # simulation phantoms: spins and their properties
+    TRACTOGRAM = "tractogram"  # streamlines from diffusion tractography
+    SURFACE = "surface"  # surface meshes and per-vertex data
+    TRANSFORM = "transform"  # spatial transforms between image spaces
     REPORT = "report"  # graphics for reading, no data
     ARCHIVE = "archive"  # a container of other files (zip)
     UNKNOWN = "unknown"
@@ -364,6 +371,7 @@ class Sniffer:
             self.rs2d,
             self.rnmrtk,
             self.jemris_motion,
+            self.transforms,
             self.topspin,
             self.bruker,
             self.varian,
@@ -856,6 +864,36 @@ class Sniffer:
             return None
         return Sniff(path, Format.JEMRIS_MOTION, Kind.PHANTOM, confidence=0.9,
                      evidence=("motion .dat: 3 numbers, then rows of 7",))
+
+    def transforms(self, path: Path, head: bytes) -> Sniff | None:
+        """Linear transforms: FreeSurfer LTA (type and nxforms lines), ITK (.tfm text header,
+        or HDF5 with TransformGroup), AFNI (non-comment rows of 12 numbers), FSL FLIRT (four
+        rows of four numbers, the last 0 0 0 1 to
+        single precision)."""
+        found = None
+        if b"nxforms" in head and re.search(rb"^\s*type\s*=\s*\d", head, re.M):
+            found = Format.TRANSFORM_LTA, "LTA type and nxforms lines"
+        elif head.startswith(b"#Insight Transform File"):
+            found = Format.TRANSFORM_ITK, "ITK transform file header"
+        elif head.startswith(b"\x89HDF") and path.suffix.lower() == ".h5":
+            try:
+                with h5py.File(path, "r") as fh:
+                    if "TransformGroup" in fh:
+                        found = Format.TRANSFORM_ITK, "HDF5 with TransformGroup"
+            except OSError:
+                return None
+        elif self._is_text(head) and len(head) < self.HEAD_BYTES:
+            rows = [line.split() for line in head.decode("ascii", "replace").splitlines()
+                    if line.strip() and not line.lstrip().startswith("#")]
+            numbers = all(self.NUMBER.fullmatch(v) for row in rows for v in row) and rows
+            if numbers and all(len(row) == 12 for row in rows):
+                found = Format.TRANSFORM_AFNI, "rows of 12 numbers"
+            elif numbers and len(rows) == 4 and all(len(row) == 4 for row in rows) and all(
+                    abs(float(v) - w) < 1e-4 for v, w in zip(rows[3], (0, 0, 0, 1), strict=True)):
+                found = Format.TRANSFORM_FSL, "4 x 4 matrix ending 0 0 0 1"
+        if found is None:
+            return None
+        return Sniff(path, found[0], Kind.TRANSFORM, confidence=0.9, evidence=(found[1],))
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter

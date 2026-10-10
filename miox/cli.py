@@ -36,6 +36,9 @@ from miox.data import (
     Protocol,
     PulseSequence,
     RawData,
+    Surface,
+    Tractogram,
+    Transform,
 )
 from miox.readers import Loader, ReaderError
 from miox.sniff import Format, Sniffer
@@ -107,6 +110,15 @@ class CLI:
             lines.append(f"  protocol {d.name}{where}")
         elif isinstance(d, Phantom):
             lines.append(f"  {d.name}: {d.n_spins} spins, {', '.join(d.properties)}")
+        elif isinstance(d, Tractogram):
+            lines.append(f"  {d.name}: {d.n_streamlines} streamlines, {d.points.shape[0]} "
+                         f"points ({d.space})")
+        elif isinstance(d, Surface):
+            faces = f", {d.faces.shape[0]} faces" if d.faces is not None else ""
+            data = ", ".join(list(d.vertex_data) + list(d.labels))
+            lines.append(f"  {d.name}: {d.n_vertices} vertices{faces}{', ' + data if data else ''}")
+        elif isinstance(d, Transform):
+            lines.append(f"  {d.name}: {d.kind} transform ({d.convention})")
         elif isinstance(d, PhysioData):
             rate = f" at {d.sampling_frequency:g} Hz" if d.sampling_frequency else ""
             events = "".join(f", {len(v)} {k}" for k, v in d.events.items())

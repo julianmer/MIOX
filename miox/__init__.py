@@ -29,6 +29,9 @@ from miox.data import (
     Provenance,
     PulseSequence,
     RawData,
+    Surface,
+    Tractogram,
+    Transform,
 )
 from miox.readers import IncompleteError, Loader, ReaderError, load
 from miox.sniff import Format, Kind, Sniff, Sniffer, sniff
@@ -54,6 +57,9 @@ __all__ = [
     "ReaderError",
     "Sniff",
     "Sniffer",
+    "Surface",
+    "Tractogram",
+    "Transform",
     "__version__",
     "load",
     "sniff",

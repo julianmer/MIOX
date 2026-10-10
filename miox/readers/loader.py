@@ -37,6 +37,9 @@ from miox.data import (
     Protocol,
     PulseSequence,
     RawData,
+    Surface,
+    Tractogram,
+    Transform,
 )
 from miox.readers.bart_cfl import BartReader
 from miox.readers.base import IncompleteError, Reader, ReaderError
@@ -112,6 +115,7 @@ from miox.readers.tecmag import TecmagReader
 from miox.readers.text_fid import TextFidReader
 from miox.readers.toppe import ToppeReader
 from miox.readers.topspin import TopSpinReader
+from miox.readers.transforms import AfniReader, FslReader, ItkReader, LtaReader
 from miox.readers.varian import VarianReader
 from miox.readers.varian_fdf import VarianFdfReader
 from miox.readers.vasf import VasfReader
@@ -122,7 +126,7 @@ from miox.sniff import Format, Sniff, Sniffer
 
 Dataset = (
     MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | NoiseCovariance
-    | PhysioData | Protocol | Phantom
+    | PhysioData | Protocol | Phantom | Tractogram | Surface | Transform
 )
 
 
@@ -148,6 +152,7 @@ class Loader:
         self.readers: dict[Format, Reader] = {}
         for reader in (
             AcqKnowledgeReader(),
+            AfniReader(),
             BartReader(),
             BidsPhysioReader(),
             BasisFolderReader(self),
@@ -158,6 +163,7 @@ class Loader:
             FastMriReader(),
             FidaReader(),
             FslMrsBasisReader(),
+            FslReader(),
             GavaMidasPriorReader(),
             GePfileReader(),
             GePhysioReader(),
@@ -166,6 +172,7 @@ class Loader:
             HcpPhysioReader(),
             InspectorBasisReader(),
             IsmrmrdReader(),
+            ItkReader(),
             JemrisPhantomReader(),
             JemrisSignalReader(),
             JeolReader(),
@@ -177,6 +184,7 @@ class Loader:
             LcmodelControlReader(),
             LcmodelOutputReader(),
             LcmodelRawReader(),
+            LtaReader(),
             MarssBasisReader(),
             MetaImageReader(),
             MrdReader(),
@@ -235,7 +243,8 @@ class Loader:
         complete: bool = False,
     ) -> list[Dataset]:
         """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet, FitResult,
-        PulseSequence, NoiseCovariance, PhysioData, Protocol or Phantom each.
+        PulseSequence, NoiseCovariance, PhysioData, Protocol, Phantom, Tractogram, Surface or
+        Transform each.
 
         ``given`` maps standard keys to values for what the file does not state
         (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated

@@ -850,3 +850,193 @@ class Phantom:
         name = f" {self.name}" if self.name else ""
         return (f"<Phantom{name} {self.provenance.format}: {self.n_spins} spins, "
                 f"{', '.join(self.properties)}>")
+
+
+#**************************************************************************************************#
+#                                            Tractogram                                            #
+#**************************************************************************************************#
+#                                                                                                  #
+# Streamlines as one array of ``points`` (all points, 3) in mm with ``offsets`` (streamlines + 1): #
+# streamline i runs over points[offsets[i]:offsets[i + 1]]. ``space`` names the frame the points   #
+# are in (RAS world mm unless the reader says otherwise). ``point_data`` holds arrays with one row #
+# per point, ``streamline_data`` one row per streamline; ``reference`` the image geometry the file #
+# states (dimensions, voxel sizes, affine), when it does.                                          #
+#                                                                                                  #
+#**************************************************************************************************#
+class Tractogram:
+    def __init__(
+        self,
+        points: np.ndarray,
+        offsets: np.ndarray,
+        space: str,
+        point_data: dict[str, np.ndarray],
+        streamline_data: dict[str, np.ndarray],
+        reference: dict | None,
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+    ):
+        self.points = points
+        self.offsets = offsets
+        self.space = space
+        self.point_data = point_data
+        self.streamline_data = streamline_data
+        self.reference = reference
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    @property
+    def n_streamlines(self) -> int:
+        return len(self.offsets) - 1
+
+    def streamline(self, i: int) -> np.ndarray:
+        return self.points[self.offsets[i]:self.offsets[i + 1]]
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the point arrays and the vendor header."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "n_streamlines": self.n_streamlines,
+            "n_points": int(self.points.shape[0]),
+            "space": self.space,
+            "point_data": list(self.point_data),
+            "streamline_data": list(self.streamline_data),
+            "reference": self.reference,
+            "meta": dict(self.meta),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        return (f"<Tractogram{name} {self.provenance.format}: {self.n_streamlines} streamlines, "
+                f"{self.points.shape[0]} points>")
+
+
+#**************************************************************************************************#
+#                                             Surface                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# A surface mesh: ``vertices`` (n, 3) in mm and ``faces`` (m, 3) vertex indices, both None for a   #
+# file that holds only per-vertex data. ``space`` names the frame of the vertices as the file      #
+# states it (e.g. scanner RAS, or FreeSurfer's tkr RAS with the c_ras offset in ``meta``).         #
+# ``vertex_data`` holds arrays with one row per vertex; ``labels`` per-vertex label arrays by name #
+# with their tables {value: (name, rgba)}.                                                         #
+#                                                                                                  #
+#**************************************************************************************************#
+class Surface:
+    def __init__(
+        self,
+        vertices: np.ndarray | None,
+        faces: np.ndarray | None,
+        space: str,
+        vertex_data: dict[str, np.ndarray],
+        labels: dict[str, dict],
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+    ):
+        self.vertices = vertices
+        self.faces = faces
+        self.space = space
+        self.vertex_data = vertex_data
+        self.labels = labels
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    @property
+    def n_vertices(self) -> int | None:
+        if self.vertices is not None:
+            return int(self.vertices.shape[0])
+        arrays = list(self.vertex_data.values()) + [v["values"] for v in self.labels.values()]
+        return int(arrays[0].shape[0]) if arrays else None
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the arrays and the vendor header."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "n_vertices": self.n_vertices,
+            "n_faces": None if self.faces is None else int(self.faces.shape[0]),
+            "space": self.space,
+            "vertex_data": list(self.vertex_data),
+            "labels": list(self.labels),
+            "meta": dict(self.meta),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        faces = f", {self.faces.shape[0]} faces" if self.faces is not None else ""
+        return f"<Surface{name} {self.provenance.format}: {self.n_vertices} vertices{faces}>"
+
+
+#**************************************************************************************************#
+#                                            Transform                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# A spatial transform as the file states it: ``kind`` "affine" (``matrix`` 4 x 4) or               #
+# "displacement" (``field`` (i, j, k, 3) on a grid with ``grid_affine``), in the file's            #
+# ``convention`` (e.g. "FSL scaled voxel", "ITK LPS physical", "LTA RAS"); ``ras_matrix`` is the   #
+# same affine as a map between RAS world coordinates in mm, when the file states enough to derive  #
+# it. ``source`` and ``target`` hold what the file says about the two spaces (file names, image    #
+# geometry).                                                                                       #
+#                                                                                                  #
+#**************************************************************************************************#
+class Transform:
+    def __init__(
+        self,
+        kind: str,
+        convention: str,
+        matrix: np.ndarray | None,
+        field: np.ndarray | None,
+        grid_affine: np.ndarray | None,
+        ras_matrix: np.ndarray | None,
+        source: dict,
+        target: dict,
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+    ):
+        self.kind = kind
+        self.convention = convention
+        self.matrix = matrix
+        self.field = field
+        self.grid_affine = grid_affine
+        self.ras_matrix = ras_matrix
+        self.source = source
+        self.target = target
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except a displacement field and the vendor header."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "kind": self.kind,
+            "convention": self.convention,
+            "matrix": None if self.matrix is None else self.matrix.tolist(),
+            "field_shape": None if self.field is None else list(self.field.shape),
+            "ras_matrix": None if self.ras_matrix is None else self.ras_matrix.tolist(),
+            "source": self.source,
+            "target": self.target,
+            "meta": dict(self.meta),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        return f"<Transform{name} {self.provenance.format}: {self.kind}, {self.convention}>"

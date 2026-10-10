@@ -40,6 +40,9 @@ from miox import (
     PulseSequence,
     RawData,
     Sniffer,
+    Surface,
+    Tractogram,
+    Transform,
 )
 from tests.conftest import PUBLIC_DATA, RECORDS
 
@@ -158,6 +161,47 @@ class ReadRecords:
                 "positions_head": d.positions[:2].tolist(),
                 "property_sums": {k: float(np.nansum(np.where(np.isinf(v), 0, v)))
                                   for k, v in d.properties.items()},
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
+        if isinstance(d, Tractogram):
+            record = {
+                "name": d.name,
+                "n_streamlines": d.n_streamlines,
+                "n_points": int(d.points.shape[0]),
+                "space": d.space,
+                "points_head": d.points[:2].tolist(),
+                "points_sum": float(np.sum(d.points)),
+                "point_data": {k: list(v.shape) for k, v in d.point_data.items()},
+                "streamline_data": {k: list(v.shape) for k, v in d.streamline_data.items()},
+                "reference": d.reference,
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
+        if isinstance(d, Surface):
+            record = {
+                "name": d.name,
+                "n_vertices": d.n_vertices,
+                "n_faces": None if d.faces is None else int(d.faces.shape[0]),
+                "space": d.space,
+                "vertices_head": None if d.vertices is None else d.vertices[:2].tolist(),
+                "vertices_sum": None if d.vertices is None else float(np.sum(d.vertices)),
+                "vertex_data": {k: [list(v.shape), float(np.nansum(v))]
+                                for k, v in d.vertex_data.items()},
+                "labels": {k: len(v["table"]) for k, v in d.labels.items()},
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
+        if isinstance(d, Transform):
+            record = {
+                "name": d.name,
+                "kind": d.kind,
+                "convention": d.convention,
+                "matrix": None if d.matrix is None else d.matrix.tolist(),
+                "ras_matrix": None if d.ras_matrix is None else d.ras_matrix.tolist(),
+                "field_shape": None if d.field is None else list(d.field.shape),
+                "source": d.source,
+                "target": d.target,
                 "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
             }
             return json.loads(json.dumps(record, default=str))
