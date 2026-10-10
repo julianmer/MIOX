@@ -16305,9 +16305,9 @@
   "kind": "unknown"
  },
  "nmrglue/tecmag/LiCl_ref1.tnt": {
-  "format": "unknown",
+  "format": "tecmag_tnt",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrglue/tecmag/LiCl_ref1.txt": {
   "format": "unknown",

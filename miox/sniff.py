@@ -88,6 +88,7 @@ class Format(StrEnum):
     JCAMP_NMR = "jcamp_nmr"  # JCAMP-DX NMR FIDs and spectra
     NMRML = "nmrml"  # nmrML XML files
     JEOL_JDF = "jeol_jdf"  # JEOL Delta data files
+    TECMAG_TNT = "tecmag_tnt"  # Tecmag TNMR data files
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
     LCMODEL_BASIS = "lcmodel_basis"
@@ -342,6 +343,7 @@ class Sniffer:
             self.jcamp,
             self.nmrml,
             self.jeol,
+            self.tecmag,
             self.topspin,
             self.bruker,
             self.varian,
@@ -742,6 +744,13 @@ class Sniffer:
             return None
         return Sniff(path, Format.JEOL_JDF, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=("JEOL.NMR file identifier",))
+
+    def tecmag(self, path: Path, head: bytes) -> Sniff | None:
+        """Tecmag TNMR data files: the magic TNT1.nnn at the start."""
+        if not re.match(rb"TNT1\.\d{3}", head[:8]):
+            return None
+        return Sniff(path, Format.TECMAG_TNT, Kind.SPECTROSCOPY, confidence=1.0,
+                     evidence=("TNT1 magic",))
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter

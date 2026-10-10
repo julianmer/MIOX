@@ -96,6 +96,7 @@ from miox.readers.sivic_ddf import SivicDdfReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.tarquin_output import TarquinOutputReader
+from miox.readers.tecmag import TecmagReader
 from miox.readers.text_fid import TextFidReader
 from miox.readers.toppe import ToppeReader
 from miox.readers.topspin import TopSpinReader
@@ -187,6 +188,7 @@ class Loader:
             SpinwizardBasisReader(),
             TarquinDptReader(),
             TarquinOutputReader(),
+            TecmagReader(),
             TextFidReader(),
             ToppeReader(),
             TopSpinReader(),

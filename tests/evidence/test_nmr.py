@@ -12,8 +12,8 @@
 #          against the tabulated shifts of their solvent and reference signals, TopSpin's JCAMP-DX #
 #          exports against the TopSpin files they were written from, a Nanalysis JCAMP-DX FID      #
 #          against the shift of its compound's tallest signal, nmrML files against the vendor      #
-#          files they were converted from, JEOL Delta files against spectra other software made  #
-#          of them.                                                                                #
+#          files they were converted from, JEOL Delta files against spectra other software made    #
+#          of them, a Tecmag file against TNMR's own text export of it.                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -330,3 +330,17 @@ def test_jeol_increment_times_follow_the_indirect_sweep():
     assert times.size == d.shape[4] == 512
     assert np.array_equal(times[0::2], times[1::2])
     assert np.diff(times[0::2]).mean() == pytest.approx(1 / 17099.86, rel=1e-5)
+
+
+def test_tecmag_fid_equals_tnmr_text_export():
+    """TNMR listed the FID of LiCl_ref1.tnt as text (real, imaginary, time in us): the samples
+    read equal the listing and the dwell time equals its time step."""
+    path = PUBLIC_DATA / "nmrglue/tecmag/LiCl_ref1.tnt"
+    listing = path.with_suffix(".txt")
+    if not (path.is_file() and listing.is_file()):
+        pytest.skip("not fetched")
+    [d] = load(path)
+    table = np.loadtxt(listing, skiprows=3)
+    assert np.array_equal(d.data[0, 0, 0], table[:, 0] + 1j * table[:, 1])
+    assert d.dwelltime == pytest.approx((table[1, 2] - table[0, 2]) * 1e-6, rel=1e-12)
+    assert d.meta["ResonantNucleus"] == ["7Li"]
