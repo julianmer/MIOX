@@ -24,6 +24,7 @@ import json
 import re
 import struct
 import warnings
+import zipfile
 import zlib
 from dataclasses import KW_ONLY, dataclass, field
 from enum import StrEnum
@@ -89,6 +90,7 @@ class Format(StrEnum):
     NMRML = "nmrml"  # nmrML XML files
     JEOL_JDF = "jeol_jdf"  # JEOL Delta data files
     TECMAG_TNT = "tecmag_tnt"  # Tecmag TNMR data files
+    ZIP_ARCHIVE = "zip_archive"  # zip archive of files MIOX reads
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
     LCMODEL_BASIS = "lcmodel_basis"
@@ -167,6 +169,7 @@ class Kind(StrEnum):
     PHYSIO = "physio"  # physiological recordings: cardiac, respiratory, triggers
     PHANTOM = "phantom"  # simulation phantoms: spins and their properties
     REPORT = "report"  # graphics for reading, no data
+    ARCHIVE = "archive"  # a container of other files (zip)
     UNKNOWN = "unknown"
 
 
@@ -352,6 +355,7 @@ class Sniffer:
             self.yardl,
             self.text_formats,
             self.hdf5,
+            self.archive,
             self.extension_only,
             self.dicom_no_preamble,
         )
@@ -1229,6 +1233,22 @@ class Sniffer:
             evidence=("HDF5 container, unknown layout",),
             detail={"names": names},
         )
+
+    def archive(self, path: Path, head: bytes) -> Sniff | None:
+        """Zip archives (local file header or, when empty, end-of-directory record first) that
+        no format rule claimed: their members are sniffed when the archive is loaded. Office
+        documents (Office Open XML, OpenDocument) are zips too and are passed over."""
+        if not head.startswith((b"PK\x03\x04", b"PK\x05\x06")):
+            return None
+        try:
+            with zipfile.ZipFile(path) as archive:
+                names = archive.namelist()
+        except (zipfile.BadZipFile, OSError):
+            return None
+        if "[Content_Types].xml" in names or names[:1] == ["mimetype"]:
+            return None
+        return Sniff(path, Format.ZIP_ARCHIVE, Kind.ARCHIVE, confidence=1.0,
+                     evidence=("zip signature",))
 
     def extension_only(self, path: Path, head: bytes) -> Sniff | None:
         if path.suffix.lower() == ".mrui":

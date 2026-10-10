@@ -14,7 +14,8 @@
 #          against the shift of its compound's tallest signal, nmrML files against the vendor      #
 #          files they were converted from, JEOL Delta files against spectra other software made    #
 #          of them, a Tecmag file against TNMR's own text export of it, Oxford Instruments and Q   #
-#          Magnetics JCAMP-DX FIDs against the line patterns of their compounds.                   #
+#          Magnetics JCAMP-DX FIDs against the line patterns of their compounds, TopSpin zip       #
+#          exports against their unpacked copies.                                                  #
 #                                                                                                  #
 ####################################################################################################
 
@@ -396,3 +397,19 @@ def test_q_magnetics_fid_shows_ibuprofen_from_its_tms_line():
     assert lines.min() == pytest.approx(-13.38, abs=0.02)
     stored = fid_lines(d, 7, conjugate=True)
     assert not matches(stored - stored.min(), expected, 0.03)
+
+
+ZIPS = sorted(ZIPPED.rglob("*.zip")) if ZIPPED.is_dir() else []
+
+
+@pytest.mark.parametrize("path", ZIPS, ids=lambda p: str(p.relative_to(ZIPPED)))
+def test_topspin_zip_equals_its_unpacked_copy(path):
+    """A zip export reads to the datasets of the folder the fetch script unpacked it into: same
+    names, data and header; provenance paths point into the archive."""
+    datasets = load(path)
+    assert datasets
+    for d in datasets:
+        member = d.provenance.paths[0].relative_to(path)
+        [twin] = [t for t in load(path.with_suffix("") / member) if t.name == d.name]
+        assert np.array_equal(d.data, twin.data)
+        assert dict(d.meta) == dict(twin.meta)

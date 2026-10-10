@@ -16,7 +16,11 @@
 #*************#
 from __future__ import annotations
 
+import atexit
 import dataclasses
+import shutil
+import tempfile
+import zipfile
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -120,7 +124,11 @@ Dataset = (
 # Holds one instance of every reader, keyed by the formats it handles. ``load`` returns what a     #
 # file states; ``given`` fills standard keys it lacks and ``complete`` demands the keys NIfTI-MRS  #
 # requires. A DICOM folder (one series or a whole study) is split by SOP class first, so its       #
-# image series and its spectroscopy series each reach their own reader.                            #
+# image series and its spectroscopy series each reach their own reader. A zip archive is unpacked  #
+# into a folder named after it in a temporary folder (removed when the interpreter exits, as some  #
+# readers map their files) and read like a folder whose format is unknown: every entry of a known  #
+# format is loaded, other folders are searched further; provenance paths name the archive and the  #
+# member.                                                                                          #
 #                                                                                                  #
 #**************************************************************************************************#
 class Loader:
@@ -231,12 +239,63 @@ class Loader:
         return datasets
 
     def _read(self, sniff: Sniff) -> list[Dataset]:
+        if sniff.format == Format.ZIP_ARCHIVE:
+            return self._archive(sniff)
         if sniff.path.is_dir() and sniff.format in self.DICOM_FORMATS:
             return self._dicom_folder(sniff)
         reader = self.readers.get(sniff.format)
         if reader is None:
             raise ReaderError(f"no reader for {sniff.format}: {sniff.path}")
         return reader.read(sniff)
+
+    def _archive(self, sniff: Sniff) -> list[Dataset]:
+        """Every dataset in a zip archive. Members that would land outside the unpacked folder
+        are refused; members that fail to read are noted on the other datasets, and the error is
+        raised only when nothing could be read."""
+        temporary = Path(tempfile.mkdtemp(prefix="miox-zip-")).resolve()
+        atexit.register(shutil.rmtree, temporary, ignore_errors=True)
+        folder = temporary / sniff.path.stem  # names taken from folders match an unpacked copy
+        try:
+            with zipfile.ZipFile(sniff.path) as archive:
+                for member in archive.namelist():
+                    if not (folder / member).resolve().is_relative_to(folder):
+                        raise ReaderError(f"{sniff.path}: member {member!r} lies outside the "
+                                          "archive")
+                archive.extractall(folder)
+        except zipfile.BadZipFile as e:
+            raise ReaderError(f"{sniff.path}: not a readable zip archive ({e})") from e
+        failed: list[str] = []
+        datasets = self._entries(folder, folder, failed)
+        if not datasets:
+            raise ReaderError("; ".join(failed) or f"{sniff.path.name}: nothing readable inside")
+        member = lambda p: sniff.path / p.relative_to(folder) if p.is_relative_to(folder) else p  # noqa: E731
+        for d in datasets:
+            d.provenance = dataclasses.replace(
+                d.provenance,
+                paths=tuple(member(Path(p)) for p in d.provenance.paths),
+                notes=d.provenance.notes + (f"read from the zip archive {sniff.path.name}",)
+                + tuple(failed),
+            )
+        return datasets
+
+    def _entries(self, path: Path, folder: Path, failed: list[str]) -> list[Dataset]:
+        """The datasets of ``path`` if its format is known, else of the entries of a folder."""
+        sniff = self.sniffer.sniff(path)
+        if sniff.format != Format.UNKNOWN:
+            if sniff.format not in self.readers and sniff.format != Format.ZIP_ARCHIVE:
+                return []
+            try:
+                return self._read(sniff)
+            except ReaderError as e:
+                failed.append(f"{path.relative_to(folder)} not read: {e}")
+                return []
+        if not path.is_dir():
+            return []
+        datasets = []
+        for child in sorted(path.iterdir()):
+            if not child.name.startswith((".", "__MACOSX")):
+                datasets += self._entries(child, folder, failed)
+        return datasets
 
     def _dicom_folder(self, sniff: Sniff) -> list[MRSData | MRImage]:
         """Every series of a DICOM folder: the files of each format go to its reader together,
