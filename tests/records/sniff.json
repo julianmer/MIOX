@@ -13435,194 +13435,194 @@
   "kind": "spectroscopy"
  },
  "jeol_data_test/data/11_pm033220_400JEOL_278Kcarbon_.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/12_pm033236_400JEOL_278k carbon_C.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/13_pm032839_400JEOL_278k carbon_C.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/14_400JEOL_PM033228 278K_C.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/16_pm031642_400JEOL_278k_C.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/8PA_SynLK_5360u150uDMSO_snc1811_qH_SpinOn-1-2.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/8PA_SynLK_5360u150uDMSO_snc1811_qH_spinOff-1-2.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8C_5m200u_MeOD_bzhou21_20190228_HMBCabs-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8C_5m200u_MeOD_bzhou21_20190228__HSQC-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8C_5m200u_MeOD_bzhou21_20190228_qCarbon-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8C_5m200u_MeOD_bzhou21_20190228_qH-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8EC_2m200u_MeOD_bzhou21_20190328_HMBC-ABS-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8EC_2m200u_MeOD_bzhou21_20190328_HSQC-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8EC_2m200u_MeOD_bzhou21_20190328_qC-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8EC_2m200u_MeOD_bzhou21_20190328_qH-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8eC_10m150u_MeOD_bzhou21_qH-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8eC_2m150u_MeOD_bzhou21_20190328_HMBC-ABS-2-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8eC_2m150u_MeOD_bzhou21_20190328_HSQC-3-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8eC_2m150u_MeOD_bzhou21_20190328_qC-2-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8eEC_10m150u_MeOD_bzhou21_201802_qH-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8eEC_10m150u_MeOD_bzhou21_HMBC-ABS-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8eEC_10m150u_MeOD_bzhou21_HSQC-2-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC=8eEC_10m150u_MeOD_bzhou21_qC-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/EC_10m200u_400_298K_bzhou_qH-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/PM031528 255K_400JEOL_C.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/PM032109_5000u200u_01172018bzhou_qH-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/PM032220_3000U200U_Bin_180218_qH-1-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/PM032220_3000U200U_Bin_180218_qH-1-4.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/PM032220_3000U200U_MeOD_18224Bin_HSQC-2-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/PM032220_3000U200U_MeOD_18224Bin_qC-2-1.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/Resveratrol1_11280u600u_MeOD.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/Rutin_3080ug200uL_DMSOd6_13CNMR_400MHz_Jeol.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/Rutin_3080ug200uL_DMSOd6_COSY_400MHz_Jeol.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/Rutin_3080ug200uL_DMSOd6_HMBC_400MHz_Jeol.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/Rutin_3080ug200uL_DMSOd6_HSQC_400MHz_Jeol.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/Rutin_3080ug200uL_DMSOd6_qHNMR_400MHz_Jeol.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/fluorine.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "jeol_data_test/data/phosphorus.jdf": {
-  "format": "unknown",
+  "format": "jeol_jdf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "komamri/KomaMRICore/test/test_files/jemris_signals_epi_brain_motion.h5": {
   "format": "jemris_signal",

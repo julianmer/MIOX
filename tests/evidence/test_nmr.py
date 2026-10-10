@@ -12,7 +12,8 @@
 #          against the tabulated shifts of their solvent and reference signals, TopSpin's JCAMP-DX #
 #          exports against the TopSpin files they were written from, a Nanalysis JCAMP-DX FID      #
 #          against the shift of its compound's tallest signal, nmrML files against the vendor      #
-#          files they were converted from.                                                         #
+#          files they were converted from, JEOL Delta files against spectra other software made  #
+#          of them.                                                                                #
 #                                                                                                  #
 ####################################################################################################
 
@@ -26,6 +27,7 @@ import re
 
 import numpy as np
 import pytest
+from scipy.ndimage import maximum_filter
 
 # own
 from miox import MRImage, MRSData, load
@@ -204,3 +206,127 @@ def test_nmrml_bruker_fid_and_spectrum_equal_the_topspin_files():
     ours, theirs = np.abs(spectrum.data.ravel()), np.abs(processed.data.ravel())
     assert abs(int(np.argmax(ours)) - int(np.argmax(theirs))) <= 1
     assert np.corrcoef(ours, theirs)[0, 1] > 0.85
+
+
+JEOL = PUBLIC_DATA / "jeol_data_test/data"
+RUTIN = "Rutin_3080ug200uL_DMSOd6_{}_400MHz_Jeol.jdf"
+
+
+def peak_shifts(ppm: np.ndarray, spectrum: np.ndarray, count: int, size: int) -> np.ndarray:
+    """Shifts of the ``count`` tallest local maxima (within ``size`` points), sorted."""
+    maxima = np.flatnonzero(spectrum == maximum_filter(spectrum, size=size))
+    return np.sort(ppm[maxima[np.argsort(spectrum[maxima])[::-1][:count]]])
+
+
+def fid_axis(d: MRSData) -> np.ndarray:
+    return ppm_axis(d.shape[3], d.spectral_width, d.spectrometer_frequency, d.meta["ReferencePPM"])
+
+
+def image_axis(image: MRImage) -> np.ndarray:
+    """Shift of each point of a spectrum from ReferencePPM (point N / 2) and SpectralWidth."""
+    n = image.shape[3]
+    step = image.meta["SpectralWidth"] / image.meta["SpectrometerFrequency"][0] / n
+    return image.meta["ReferencePPM"] - (np.arange(n) - n // 2) * step
+
+
+def test_jeol_fid_shows_the_peaks_of_the_spectrum_mestrenova_processed():
+    """The eight tallest lines of the Rutin proton FID's spectrum lie within 0.003 ppm of
+    those in the spectrum MestReNova exported from the same .jdf, with the FID as read; the
+    FID as nmrglue returns it (conjugated) puts the tallest line at 2.58 ppm instead of 2.46."""
+    path, export = JEOL / RUTIN.format("qHNMR"), JCAMP / "rutin/qH.jdx"
+    if not (path.is_file() and export.is_file()):
+        pytest.skip("not fetched")
+    [fid], [spectrum] = load(path), load(export)
+    ours = peak_shifts(fid_axis(fid), np.abs(np.fft.fftshift(np.fft.fft(fid.data[0, 0, 0]))), 8,
+                       201)
+    theirs = peak_shifts(image_axis(spectrum), np.abs(spectrum.data.ravel()), 8, 801)
+    shared = [t for t in theirs if np.min(np.abs(ours - t)) < 0.003]
+    assert len(shared) >= 7 and tallest(fid, 0.0, 12.0) == pytest.approx(2.461, abs=0.003)
+    flipped = np.abs(np.fft.fftshift(np.fft.fft(fid.data[0, 0, 0].conj())))
+    assert abs(fid_axis(fid)[np.argmax(flipped)] - 2.461) > 0.05
+
+
+def test_jeol_fid_spectrum_lies_on_the_axis_of_its_processed_spectrum():
+    """The same proton experiment as an FID and as a spectrum processed by Delta: three of the four
+    tallest lines of the spectrum lie at shifts of the FID's eight tallest, and the magnitude spectra
+    correlate."""
+    fid_path = JEOL / "PM032220_3000U200U_Bin_180218_qH-1-1.jdf"
+    spectrum_path = JEOL / "PM032220_3000U200U_Bin_180218_qH-1-4.jdf"
+    if not (fid_path.is_file() and spectrum_path.is_file()):
+        pytest.skip("not fetched")
+    [fid], [image] = load(fid_path), load(spectrum_path)
+    axis, mine = fid_axis(fid), np.abs(np.fft.fftshift(np.fft.fft(fid.data[0, 0, 0])))
+    theirs = np.abs(image.data.ravel())
+    ours = peak_shifts(axis, mine, 8, 201)
+    reference = peak_shifts(image_axis(image), theirs, 4, 401)
+    assert (np.abs(reference[:, None] - ours[None, :]).min(axis=1) < 0.005).sum() >= 3
+    order = np.argsort(axis)
+    resampled = np.interp(image_axis(image), axis[order], mine[order])
+    assert np.corrcoef(resampled, theirs)[0, 1] > 0.8
+
+
+def test_jeol_spectrum_axis_is_that_of_the_points_kept():
+    """Two proton spectra of one sample, processed with different carriers (6 and 5 ppm), show
+    their lines at the same shifts only if the header's axis range is taken as spanning the
+    points kept; the water line in DMSO-d6 lies at 3.33 ppm (Gottlieb et al. 1997)."""
+    on = JEOL / "8PA_SynLK_5360u150uDMSO_snc1811_qH_SpinOn-1-2.jdf"
+    off = JEOL / "8PA_SynLK_5360u150uDMSO_snc1811_qH_spinOff-1-2.jdf"
+    if not (on.is_file() and off.is_file()):
+        pytest.skip("not fetched")
+    [a], [b] = load(on), load(off)
+    lines = [peak_shifts(image_axis(x), np.abs(x.data.ravel()), 5, 801) for x in (a, b)]
+    for shift in (1.581, 1.712, 6.239, 6.709):
+        assert all(np.min(np.abs(found - shift)) < 0.003 for found in lines)
+    assert np.min(np.abs(peak_shifts(image_axis(b), np.abs(b.data.ravel()), 6, 801) - 3.33)) < 0.01
+
+
+def test_jeol_carbon_fid_shows_dmso_and_the_temperatures_follow_the_file_names():
+    """The DMSO-d6 septet of the carbon FID lies within 0.6 ppm of 39.52 ppm; temp_get is in
+    degrees Celsius: the files named 278k and 255K state 4.8 and -18.1 degrees."""
+    path = JEOL / RUTIN.format("13CNMR")
+    cold = ((JEOL / "12_pm033236_400JEOL_278k carbon_C.jdf", 278.0),
+            (JEOL / "PM031528 255K_400JEOL_C.jdf", 255.0))
+    if not (path.is_file() and all(p.is_file() for p, _ in cold)):
+        pytest.skip("not fetched")
+    [carbon] = load(path)
+    assert tallest(carbon, 30.0, 50.0) == pytest.approx(39.52, abs=0.6)
+    for file, kelvin in cold:
+        assert load(file)[0].meta["SampleTemperature"] == pytest.approx(kelvin, abs=0.3)
+
+
+@pytest.mark.parametrize("name", ["HSQC", "HMBC", "COSY"])
+def test_jeol_2d_rows_are_direct_fids_in_the_same_convention(name):
+    """The rows of a 2D FID, transformed along the direct dimension and summed, resemble the
+    proton spectrum of the same sample (correlation above 0.3, in the even and in the odd rows);
+    mirrored about the carrier they do not (below 0.1). The other pairing of the sections
+    mirrors the direct axis."""
+    path, proton = JEOL / RUTIN.format(name), JEOL / RUTIN.format("qHNMR")
+    if not (path.is_file() and proton.is_file()):
+        pytest.skip("not fetched")
+    [d], [q] = load(path), load(proton)
+    assert d.meta["ResonantNucleus"][0] == "1H" and len(d.meta["SpectrometerFrequency"]) == 2
+    reference = np.argsort(fid_axis(q))
+    q_axis, q_spectrum = fid_axis(q)[reference], np.abs(np.fft.fftshift(np.fft.fft(
+        q.data[0, 0, 0])))[reference]
+    carrier = d.meta["ReferencePPM"]
+    axis = ppm_axis(d.shape[3], d.spectral_width, d.meta["SpectrometerFrequency"][0], carrier)
+    rows = d.data[0, 0, 0]
+    window = (axis > -0.5) & (axis < 11.0)
+    for part in ((rows[:, 0::2], rows[:, 1::2]) if name == "HSQC" else (rows,)):
+        summed = np.abs(np.fft.fftshift(np.fft.fft(part, axis=0), axes=0)).sum(axis=1)
+        same = np.interp(axis, q_axis, q_spectrum)
+        mirrored = np.interp(2 * carrier - axis, q_axis, q_spectrum)
+        assert np.corrcoef(summed[window], same[window])[0, 1] > 0.3
+        assert np.corrcoef(summed[window], mirrored[window])[0, 1] < 0.1
+
+
+def test_jeol_increment_times_follow_the_indirect_sweep():
+    """Increment times come from the header: 256 increments at 1 / y_sweep, two rows each."""
+    path = JEOL / RUTIN.format("HSQC")
+    if not path.is_file():
+        pytest.skip("not fetched")
+    [d] = load(path)
+    times = np.asarray(d.dim_info[5]["header"]["IndirectTime"]["Value"])
+    assert times.size == d.shape[4] == 512
+    assert np.array_equal(times[0::2], times[1::2])
+    assert np.diff(times[0::2]).mean() == pytest.approx(1 / 17099.86, rel=1e-5)

@@ -87,6 +87,7 @@ class Format(StrEnum):
     TOPSPIN_PROCESSED = "topspin_processed"  # TopSpin processed spectra: pdata/<n> with procs
     JCAMP_NMR = "jcamp_nmr"  # JCAMP-DX NMR FIDs and spectra
     NMRML = "nmrml"  # nmrML XML files
+    JEOL_JDF = "jeol_jdf"  # JEOL Delta data files
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
     LCMODEL_BASIS = "lcmodel_basis"
@@ -340,6 +341,7 @@ class Sniffer:
             self.pfile,
             self.jcamp,
             self.nmrml,
+            self.jeol,
             self.topspin,
             self.bruker,
             self.varian,
@@ -733,6 +735,13 @@ class Sniffer:
             return None
         return Sniff(path, Format.NMRML, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=("XML root element nmrML",))
+
+    def jeol(self, path: Path, head: bytes) -> Sniff | None:
+        """JEOL Delta data files: the file identifier JEOL.NMR at the start."""
+        if not head.startswith(b"JEOL.NMR"):
+            return None
+        return Sniff(path, Format.JEOL_JDF, Kind.SPECTROSCOPY, confidence=1.0,
+                     evidence=("JEOL.NMR file identifier",))
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter
