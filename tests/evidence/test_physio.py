@@ -10,7 +10,7 @@
 #          bidsphysio's BIDS conversions of them, Siemens PMU files against bidsphysio's samples   #
 #          and their own logged durations, Philips SCANPHYSLOG volume markers against the TR and   #
 #          volume count of the scans they were recorded with, GE PPG and respiration files of one  #
-#          scan against each other.                                                                #
+#          scan against each other, an HCP physio log against the HCP's TR and volume count.       #
 #                                                                                                  #
 ####################################################################################################
 
@@ -103,3 +103,18 @@ def test_ge_ppg_and_respiration_of_one_scan_cover_the_same_time():
     assert abs(ppg.duration - resp.duration) <= 1 / resp.sampling_frequency
     [gep] = load(GE / "PPGData_epiRT_0000000000_00_00_000.gep")
     assert np.array_equal(gep.data, ppg.data)
+
+
+def test_hcp_physio_trigger_follows_the_hcp_tr():
+    """The HCP motor task (tfMRI_MOTOR_LR: 284 volumes, TR 0.72 s): at the 400 Hz the reader
+    sets, the trigger rises every 288 samples (0.72 s), it starts high and rises 283 more times
+    (284 volumes), and the log lasts 284 TRs to within one TR."""
+    path = PUBLIC_DATA / "physio_examples/Siemens_HCP/PPU3T/tfMRI_MOTOR_LR_Physio_log.txt"
+    if not path.is_file():
+        pytest.skip("not fetched")
+    [d] = load(path)
+    trigger = d.data[:, d.channels.index("trigger")]
+    rises = np.flatnonzero(np.diff(trigger) > 0)
+    assert trigger[0] == 1 and rises.size + 1 == 284
+    assert np.median(np.diff(rises)) / d.sampling_frequency == pytest.approx(0.72, abs=1e-9)
+    assert d.data.shape[0] / d.sampling_frequency == pytest.approx(284 * 0.72, abs=0.72)

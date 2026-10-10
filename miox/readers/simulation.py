@@ -7,7 +7,8 @@
 # Created: 07/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Readers for MR simulation files: KomaMRI phantoms (.phantom, and spin lists in HDF5),   #
-#          JEMRIS phantoms (a voxel grid in HDF5), JEMRIS simulated signals and MRiLab phantoms.   #
+#          JEMRIS phantoms (a voxel grid in HDF5), JEMRIS motion trajectories, JEMRIS simulated    #
+#          signals and MRiLab phantoms.                                                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -186,6 +187,42 @@ class JemrisSignalReader(Reader):
         provenance = self.provenance(sniff, tuple(notes))
         return [RawData(data, headers, meta, provenance, sniff.path.stem, None, lengths, {},
                         waveforms, {})]
+
+
+#**************************************************************************************************#
+#                                       JemrisMotionReader                                         #
+#**************************************************************************************************#
+#                                                                                                  #
+# A JEMRIS motion trajectory (text): the first line holds the rotation origin x, y, z in mm, every #
+# further line a time in ms, a translation x, y, z in mm and rotations about x, y and z in         #
+# degrees, as JEMRIS's TrajectoryMotion loads it. It becomes a Phantom without spins whose motion  #
+# is that trajectory in s and m (angles stay in degrees, as KomaMRI's rotations are given).        #
+#                                                                                                  #
+#**************************************************************************************************#
+class JemrisMotionReader(Reader):
+    FORMATS = (Format.JEMRIS_MOTION,)
+    PACKAGES = ("miox",)
+
+    def read(self, sniff: Sniff) -> list[Phantom]:
+        try:
+            values = np.array(sniff.path.read_text().split(), dtype=np.float64)
+        except ValueError as e:
+            raise ReaderError(f"{sniff.path}: not a JEMRIS motion file ({e})") from e
+        if values.size < 3 or (values.size - 3) % 7:
+            raise ReaderError(f"{sniff.path}: {values.size} numbers, 3 + 7 per row expected")
+        origin, rows = values[:3], values[3:].reshape(-1, 7)
+        motion = [{
+            "type": "JEMRIS trajectory",
+            "origin": origin * 1e-3,
+            "time": rows[:, 0] * 1e-3,
+            "translation": rows[:, 1:4] * 1e-3,
+            "rotation": rows[:, 4:7],
+            "units": {"origin": "m", "time": "s", "translation": "m", "rotation": "degree"},
+        }]
+        meta = Meta({"origin_mm": origin.tolist(), "rows": int(rows.shape[0])})
+        notes = ("motion only: the spins come from the phantom the simulation pairs it with",)
+        return [Phantom(np.zeros((0, 3)), {}, {}, motion, meta, self.provenance(sniff, notes),
+                        sniff.path.stem)]
 
 
 #**************************************************************************************************#

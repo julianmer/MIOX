@@ -81,6 +81,7 @@ from miox.readers.physio import (
     BidsPhysioReader,
     CmrrPhysioReader,
     GePhysioReader,
+    HcpPhysioReader,
     PhilipsPhyslogReader,
     SiemensPmuReader,
 )
@@ -95,6 +96,7 @@ from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
 from miox.readers.simpson import SimpsonReader
 from miox.readers.simulation import (
+    JemrisMotionReader,
     JemrisPhantomReader,
     JemrisSignalReader,
     KomaPhantomReader,
@@ -115,6 +117,7 @@ from miox.readers.varian_fdf import VarianFdfReader
 from miox.readers.vasf import VasfReader
 from miox.readers.vespa_prior import VespaPriorReader
 from miox.readers.vespa_viff import VespaViffReader
+from miox.readers.yarra import YarraReader
 from miox.sniff import Format, Sniff, Sniffer
 
 Dataset = (
@@ -160,12 +163,14 @@ class Loader:
             GePhysioReader(),
             GeScanArchiveReader(),
             GeSignaReader(),
+            HcpPhysioReader(),
             InspectorBasisReader(),
             IsmrmrdReader(),
             JemrisPhantomReader(),
             JemrisSignalReader(),
             JeolReader(),
             JcampReader(),
+            JemrisMotionReader(),
             JmruiReader(),
             KomaPhantomReader(),
             LcmodelBasisReader(),
@@ -217,6 +222,7 @@ class Loader:
             VasfReader(),
             VespaPriorReader(),
             VespaViffReader(),
+            YarraReader(),
         ):
             for fmt in reader.FORMATS:
                 self.readers[fmt] = reader

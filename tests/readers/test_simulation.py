@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Simulation readers on synthetic files: a KomaMRI .phantom with motion and a spin list,  #
 #          a 3D JEMRIS phantom grid with offset, a JEMRIS signal of two channels with readouts of  #
-#          unequal length, an MRiLab phantom.                                                      #
+#          unequal length, an MRiLab phantom, a JEMRIS motion trajectory (units to s and m).       #
 #                                                                                                  #
 ####################################################################################################
 
@@ -117,3 +117,18 @@ def test_mrilab_phantom(tmp_path):
     assert np.allclose(phantom.positions, [[(3 - 2) * 0.002, (1 - 1) * 0.001, (0 - 1) * 0.003]])
     assert phantom.properties["T1"].tolist() == pytest.approx([1.6])
     assert phantom.meta.vendor["VObj"]["Type"] == "Water"
+
+
+def test_jemris_motion_trajectory(tmp_path):
+    path = tmp_path / "motion.dat"
+    path.write_text("1 2 3\n" + "".join(
+        f"{t} {t / 10} 0 0 0 0 {t}\n" for t in (0.0, 10.0, 20.0)))
+    sniff = gu.sniff(path)
+    assert (sniff.format, sniff.kind) == (gu.Format.JEMRIS_MOTION, gu.Kind.PHANTOM)
+    [phantom] = gu.load(path)
+    motion = phantom.motion[0]
+    assert phantom.n_spins == 0
+    assert np.allclose(motion["origin"], [1e-3, 2e-3, 3e-3])
+    assert np.allclose(motion["time"], [0.0, 0.01, 0.02])
+    assert np.allclose(motion["translation"][:, 0], [0.0, 1e-3, 2e-3])
+    assert np.allclose(motion["rotation"][:, 2], [0.0, 10.0, 20.0])  # degrees as written

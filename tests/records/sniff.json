@@ -13960,9 +13960,9 @@
   "kind": "phantom"
  },
  "komamri/examples/2.phantoms/motion_jemris.dat": {
-  "format": "unknown",
+  "format": "jemris_motion",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "phantom"
  },
  "komamri/examples/2.phantoms/shepplogan.h5": {
   "format": "jemris_phantom",
@@ -45224,6 +45224,11 @@
   "vendor": "ge",
   "kind": "physio"
  },
+ "physio_examples/Siemens_HCP/PPU3T/tfMRI_MOTOR_LR_Physio_log.txt": {
+  "format": "hcp_physio",
+  "vendor": "siemens",
+  "kind": "physio"
+ },
  "pyamares/pyAMARES/examples/fid.txt": {
   "format": "text_fid",
   "vendor": null,
@@ -45420,14 +45425,14 @@
   "kind": "unknown"
  },
  "quadsystems_data_test/data/sample1/sample1-proton/proton/1/Proc/0/data.dat": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "rs2d",
+  "vendor": "rs2d",
+  "kind": "spectroscopy"
  },
  "quadsystems_data_test/data/sample1/sample1-proton/proton/1/Proc/0/header.xml": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "rs2d",
+  "vendor": "rs2d",
+  "kind": "spectroscopy"
  },
  "quadsystems_data_test/data/sample1/sample1-proton/proton/1/PulseAcquisition.sxml": {
   "format": "unknown",
@@ -45440,14 +45445,14 @@
   "kind": "unknown"
  },
  "quadsystems_data_test/data/sample1/sample1-proton/proton/1/data.dat": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "rs2d",
+  "vendor": "rs2d",
+  "kind": "spectroscopy"
  },
  "quadsystems_data_test/data/sample1/sample1-proton/proton/1/header.xml": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "rs2d",
+  "vendor": "rs2d",
+  "kind": "spectroscopy"
  },
  "quadsystems_data_test/data/sample3/sample3-hsqc/__MACOSX/._hsqc": {
   "format": "unknown",
@@ -45530,14 +45535,14 @@
   "kind": "unknown"
  },
  "quadsystems_data_test/data/sample3/sample3-hsqc/hsqc/17/Proc/0/data.dat": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "rs2d",
+  "vendor": "rs2d",
+  "kind": "spectroscopy"
  },
  "quadsystems_data_test/data/sample3/sample3-hsqc/hsqc/17/Proc/0/header.xml": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "rs2d",
+  "vendor": "rs2d",
+  "kind": "spectroscopy"
  },
  "quadsystems_data_test/data/sample3/sample3-hsqc/hsqc/17/Serie.xml": {
   "format": "unknown",
@@ -45545,14 +45550,34 @@
   "kind": "unknown"
  },
  "quadsystems_data_test/data/sample3/sample3-hsqc/hsqc/17/data.dat": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "rs2d",
+  "vendor": "rs2d",
+  "kind": "spectroscopy"
  },
  "quadsystems_data_test/data/sample3/sample3-hsqc/hsqc/17/header.xml": {
-  "format": "unknown",
+  "format": "rs2d",
+  "vendor": "rs2d",
+  "kind": "spectroscopy"
+ },
+ "rnmrtk/bruker_1d.par": {
+  "format": "rnmrtk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
+ },
+ "rnmrtk/bruker_1d.sec": {
+  "format": "rnmrtk",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "rnmrtk/bruker_2d.par": {
+  "format": "rnmrtk",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "rnmrtk/bruker_2d.sec": {
+  "format": "rnmrtk",
+  "vendor": null,
+  "kind": "spectroscopy"
  },
  "scanphyslog2bids/scanphyslog2bids/data/example_for_gradient_log.nii.gz": {
   "format": "nifti",
@@ -49505,9 +49530,9 @@
   "kind": "unknown"
  },
  "spinsolve_ethanol/092237-1D EXTENDED+-EtOH/Enhanced/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_ethanol/092237-1D EXTENDED+-EtOH/Enhanced/processing.script": {
   "format": "unknown",
@@ -49520,9 +49545,9 @@
   "kind": "unknown"
  },
  "spinsolve_ethanol/092237-1D EXTENDED+-EtOH/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_ethanol/092237-1D EXTENDED+-EtOH/nmr_fid.dx": {
   "format": "jcamp_nmr",
@@ -49540,14 +49565,14 @@
   "kind": "unknown"
  },
  "spinsolve_ethanol/092237-1D EXTENDED+-EtOH/spectrum.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_ethanol/092237-1D EXTENDED+-EtOH/spectrum_processed.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_examples/Data Examples/Spinsolve Expert/210318-104158 Proton ()/acqu.par": {
   "format": "unknown",
@@ -49560,14 +49585,14 @@
   "kind": "unknown"
  },
  "spinsolve_examples/Data Examples/Spinsolve Expert/210318-104158 Proton ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_examples/Data Examples/Spinsolve Expert/210318-104158 Proton ()/fid.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_examples/Data Examples/Spinsolve Expert/210318-104158 Proton ()/fid.pt1": {
   "format": "unknown",
@@ -49585,9 +49610,9 @@
   "kind": "unknown"
  },
  "spinsolve_examples/Data Examples/Spinsolve Expert/210318-104158 Proton ()/spectrum.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_examples/Data Examples/Spinsolve Expert/210318-104158 Proton ()/spectrum.pt1": {
   "format": "unknown",
@@ -49600,9 +49625,9 @@
   "kind": "unknown"
  },
  "spinsolve_examples/Data Examples/Spinsolve/132112-Urea 1 M-1D CARBON+ WALTZ/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_examples/Data Examples/Spinsolve/132112-Urea 1 M-1D CARBON+ WALTZ/nmr_fid.dx": {
   "format": "jcamp_nmr",
@@ -49620,14 +49645,14 @@
   "kind": "unknown"
  },
  "spinsolve_examples/Data Examples/Spinsolve/132112-Urea 1 M-1D CARBON+ WALTZ/spectrum.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_examples/Data Examples/Spinsolve/132112-Urea 1 M-1D CARBON+ WALTZ/spectrum_processed.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102617 T1_mincodeSAVE ()/acqu.par": {
   "format": "unknown",
@@ -49640,9 +49665,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102617 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102617 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -49680,9 +49705,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102728 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102728 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -49720,9 +49745,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102840 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102840 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -49760,9 +49785,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102951 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-102951 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -49800,9 +49825,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103103 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103103 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -49840,9 +49865,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103214 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103214 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -49880,9 +49905,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103326 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103326 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -49920,9 +49945,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103437 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103437 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -49960,9 +49985,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103549 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103549 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50000,9 +50025,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103700 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103700 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50040,9 +50065,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103812 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103812 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50080,9 +50105,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103923 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-103923 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50120,9 +50145,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104035 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104035 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50160,9 +50185,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104146 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104146 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50200,9 +50225,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104258 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104258 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50240,9 +50265,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104409 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104409 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50280,9 +50305,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104521 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_1/241220-104521 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50320,9 +50345,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-112656 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-112656 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50360,9 +50385,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-112807 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-112807 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50400,9 +50425,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-112919 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-112919 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50440,9 +50465,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113030 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113030 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50480,9 +50505,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113142 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113142 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50520,9 +50545,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113253 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113253 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50560,9 +50585,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113405 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113405 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50600,9 +50625,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113516 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113516 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50640,9 +50665,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113628 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113628 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50680,9 +50705,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113739 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113739 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50720,9 +50745,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113851 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-113851 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50760,9 +50785,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114002 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114002 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50800,9 +50825,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114114 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114114 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50840,9 +50865,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114225 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114225 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50880,9 +50905,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114337 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114337 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50920,9 +50945,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114448 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114448 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -50960,9 +50985,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114600 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_2/241220-114600 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51010,9 +51035,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120052 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120052 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51050,9 +51075,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120204 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120204 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51090,9 +51115,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120315 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120315 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51130,9 +51155,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120427 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120427 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51170,9 +51195,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120538 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120538 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51210,9 +51235,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120650 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120650 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51250,9 +51275,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120802 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120802 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51290,9 +51315,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120913 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-120913 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51330,9 +51355,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121025 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121025 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51370,9 +51395,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121136 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121136 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51410,9 +51435,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121247 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121247 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51450,9 +51475,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121359 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121359 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51490,9 +51515,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121510 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121510 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51530,9 +51555,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121621 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121621 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51570,9 +51595,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121733 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121733 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51610,9 +51635,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121844 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121844 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51650,9 +51675,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121955 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_3/241220-121955 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51690,9 +51715,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124112 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124112 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51730,9 +51755,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124224 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124224 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51770,9 +51795,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124335 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124335 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51810,9 +51835,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124447 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124447 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51850,9 +51875,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124558 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124558 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51890,9 +51915,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124710 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124710 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51930,9 +51955,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124822 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124822 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -51970,9 +51995,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124933 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-124933 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52010,9 +52035,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125045 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125045 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52050,9 +52075,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125156 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125156 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52090,9 +52115,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125307 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125307 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52130,9 +52155,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125419 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125419 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52170,9 +52195,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125530 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125530 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52210,9 +52235,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125641 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125641 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52250,9 +52275,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125753 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125753 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52290,9 +52315,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125904 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-125904 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52330,9 +52355,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-130016 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_4/241220-130016 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52370,9 +52395,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131106 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131106 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52410,9 +52435,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131217 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131217 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52450,9 +52475,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131329 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131329 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52490,9 +52515,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131440 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131440 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52530,9 +52555,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131552 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131552 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52570,9 +52595,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131703 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131703 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52610,9 +52635,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131815 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131815 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52650,9 +52675,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131926 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-131926 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52690,9 +52715,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132038 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132038 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52730,9 +52755,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132149 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132149 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52770,9 +52795,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132301 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132301 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52810,9 +52835,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132412 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132412 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52850,9 +52875,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132524 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132524 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52890,9 +52915,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132635 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132635 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52930,9 +52955,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132747 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132747 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -52970,9 +52995,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132858 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-132858 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -53010,9 +53035,9 @@
   "kind": "unknown"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-133010 T1_mincodeSAVE ()/data.1d": {
-  "format": "unknown",
+  "format": "spinsolve",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spinsolve_zenodo/Conventional_InvRec/20Dec2024_5/241220-133010 T1_mincodeSAVE ()/ppCode/T1_mincodeSAVE.mac": {
   "format": "unknown",
@@ -58438,5 +58463,30 @@
   "format": "vespa_viff",
   "vendor": null,
   "kind": "spectroscopy"
+ },
+ "yarra/BartSample/BartSample.ymf": {
+  "format": "yarra_module",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "yarra/BartSample/modes/BartSample.mode": {
+  "format": "yarra_mode",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "yarra/MatlabSample/MatlabSample.ymf": {
+  "format": "yarra_module",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "yarra/MatlabSample/modes/MatlabSample_Drive.mode": {
+  "format": "yarra_mode",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "yarra/MatlabSample/modes/MatlabSample_PACS.mode": {
+  "format": "yarra_mode",
+  "vendor": null,
+  "kind": "protocol"
  }
 }

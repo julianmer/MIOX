@@ -9,7 +9,8 @@
 # Purpose: Simulation files against independent evidence: a JEMRIS phantom grid against the spin   #
 #          list KomaMRI made of it, JEMRIS signals against the EPI they were simulated with (as    #
 #          KomaMRI's tests define it), KomaMRI phantoms against their own attributes, an MRiLab    #
-#          phantom against MRiLab's field grids of the same object.                                #
+#          phantom against MRiLab's field grids of the same object, a JEMRIS motion trajectory     #
+#          against KomaMRI's definition of the same motion.                                        #
 #                                                                                                  #
 ####################################################################################################
 
@@ -94,3 +95,20 @@ def test_mrilab_positions_equal_its_field_grids():
     grids = np.stack([field.Gxgrid[at], field.Gygrid[at], field.Gzgrid[at]], axis=1)
     assert np.allclose(phantom.positions, grids, atol=1e-12)
     assert phantom.n_spins == int((phantom.properties["rho"] != 0).sum())
+
+
+def test_jemris_motion_equals_komamris_simple_motion():
+    """KomaMRI simulates the JEMRIS brain-motion signal with phantom_brain_simple_motion,
+    translate(0, 1.0, 0, TimeRange(0, 10)): 0.1 m/s along y. motion_jemris.dat read in s and m
+    moves along y at that speed throughout, and not along x or z, nor rotates."""
+    path = PUBLIC_DATA / "komamri/examples/2.phantoms/motion_jemris.dat"
+    utils = PUBLIC_DATA / "komamri/KomaMRICore/test/test_files/utils.jl"
+    if not (path.is_file() and utils.is_file()):
+        pytest.skip("not fetched")
+    assert "translate(0.0, 1.0, 0.0, TimeRange(0.0, 10.0))" in utils.read_text()
+    [phantom] = load(path)
+    motion = phantom.motion[0]
+    assert phantom.n_spins == 0
+    speed = np.gradient(motion["translation"][:, 1], motion["time"])
+    assert np.allclose(speed, 1.0 / 10.0)
+    assert not motion["translation"][:, [0, 2]].any() and not motion["rotation"].any()

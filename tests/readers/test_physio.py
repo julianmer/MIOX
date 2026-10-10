@@ -8,7 +8,8 @@
 #                                                                                                  #
 # Purpose: Physiological logs on synthetic files: Siemens PMU (markers, text sections, stated and  #
 #          derived rates), CMRR logs as files and inside a DICOM file (tic grid, gaps, triggers,   #
-#          volume starts), Philips SCANPHYSLOG (mark bits), GE PPG/RESP files and BIDS physio.     #
+#          volume starts), Philips SCANPHYSLOG (mark bits), GE PPG/RESP files, BIDS physio and an  #
+#          HCP physio log.                                                                         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -165,3 +166,14 @@ def test_ge_physio_and_bids_physio(tmp_path):
     assert bids.channels == ("cardiac", "trigger") and bids.start_time == -1.5
     assert np.array_equal(bids.data[:, 0], [1.5, np.nan, 2.5], equal_nan=True)
     assert bids.name == "sub-1_task-rest_physio" and bids.meta.vendor["sidecar"]["Manufacturer"]
+
+
+def test_hcp_physio(tmp_path):
+    path = tmp_path / "rfMRI_REST1_LR_Physio_log.txt"
+    path.write_text("".join(f"{int(i % 4 == 0)}\t{1900 + i}\t{1750 - i}\n" for i in range(8)))
+    sniff = gu.sniff(path)
+    assert (sniff.format, sniff.kind) == (gu.Format.HCP_PHYSIO, gu.Kind.PHYSIO)
+    [d] = gu.load(path)
+    assert d.channels == ("trigger", "respiratory", "cardiac")
+    assert d.sampling_frequency == 400.0 and d.data.shape == (8, 3)
+    assert d.data[4, 0] == 1 and d.data[2, 1] == 1902

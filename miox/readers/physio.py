@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Readers for physiological logs recorded with MR scans: Siemens PMU files, CMRR physio   #
 #          logs (as files or inside a DICOM file), Philips SCANPHYSLOG files, GE PPG/RESP/ECG      #
-#          files and BIDS physio recordings.                                                       #
+#          files, HCP physio logs and BIDS physio recordings.                                      #
 #                                                                                                  #
 ####################################################################################################
 
@@ -376,6 +376,35 @@ class GePhysioReader(Reader):
         return [PhysioData(
             data, (channel,), rate, -30.0, "s relative to the scan start", {}, Meta({}),
             self.provenance(sniff, tuple(notes)), sniff.path.name.removesuffix(".gep"),
+        )]
+
+
+#**************************************************************************************************#
+#                                         HcpPhysioReader                                          #
+#**************************************************************************************************#
+#                                                                                                  #
+# A Human Connectome Project physio log (*_Physio_log.txt): one row per sample, three integer      #
+# columns: the scanner's trigger (1 while high), respiration and pulse oximetry. The file states   #
+# no sampling frequency; it is 400 Hz as the HCP documents it, which puts the trigger's rising     #
+# edges exactly one HCP TR (0.72 s, 288 samples) apart. Which edge starts a volume is not stated:  #
+# the trigger stays a channel.                                                                     #
+#                                                                                                  #
+#**************************************************************************************************#
+class HcpPhysioReader(Reader):
+    FORMATS = (Format.HCP_PHYSIO,)
+    PACKAGES = ("miox",)
+    RATE = 400.0
+    CHANNELS = ("trigger", "respiratory", "cardiac")
+
+    def read(self, sniff: Sniff) -> list[PhysioData]:
+        data = np.loadtxt(sniff.path, ndmin=2).astype(np.float64)
+        if data.shape[1] != len(self.CHANNELS):
+            raise ReaderError(f"{sniff.path.name}: {data.shape[1]} columns, 3 expected")
+        notes = [f"sampling frequency {self.RATE:g} Hz: the HCP's documented value, not stated in "
+                 "the file", "start time not stated"]
+        return [PhysioData(
+            data, self.CHANNELS, self.RATE, None, "not stated", {}, Meta({}),
+            self.provenance(sniff, tuple(notes)), sniff.path.name.removesuffix(".txt"),
         )]
 
 

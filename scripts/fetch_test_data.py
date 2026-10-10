@@ -349,6 +349,20 @@ class DataFetcher:
         )
         for name in names
     } | {f"{e}/bmr{e}_3.str": f"bmr{e}/bmr{e}_3.str" for e in ("15089", "17169", "18465")}
+    YARRA = "https://raw.githubusercontent.com/yarra-framework/yarramodules-examples/master"
+    YARRA_FILES = {  # Yarra mode and module files (README says GPL: local test data only)
+        name: name for name in (
+            "BartSample/modes/BartSample.mode", "BartSample/BartSample.ymf",
+            "MatlabSample/modes/MatlabSample_Drive.mode",
+            "MatlabSample/modes/MatlabSample_PACS.mode", "MatlabSample/MatlabSample.ymf",
+            "README.md",
+        )
+    }
+    PHYSIO_EXAMPLES = "https://raw.githubusercontent.com/ComputationalPsychiatry/PhysIO-Examples/main"
+    PHYSIO_EXAMPLES_FILES = {  # the HCP physio log (GPL repository: local test data only)
+        "Siemens_HCP/PPU3T/tfMRI_MOTOR_LR_Physio_log.txt":
+            "Siemens_HCP/PPU3T/tfMRI_MOTOR_LR_Physio_log.txt",
+    }
     FILES = {
         "pynrrd": (PYNRRD, dict(zip(PYNRRD_FILES, PYNRRD_FILES, strict=True))),
         "agilent_fdf": (SWELLING, dict(zip(SWELLING_FILES, SWELLING_FILES, strict=True))),
@@ -362,6 +376,8 @@ class DataFetcher:
         "phys2bids_ge": (OSF, OSF_FILES),
         "toppe": (TOPPE, TOPPE_FILES),
         "bmrb": (BMRB, BMRB_FILES),
+        "yarra": (YARRA, YARRA_FILES),
+        "physio_examples": (PHYSIO_EXAMPLES, PHYSIO_EXAMPLES_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),

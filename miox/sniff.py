@@ -141,10 +141,14 @@ class Format(StrEnum):
     PHILIPS_PHYSLOG = "philips_physlog"
     GE_PHYSIO = "ge_physio"
     BIDS_PHYSIO = "bids_physio"
+    HCP_PHYSIO = "hcp_physio"  # Human Connectome Project *_Physio_log.txt
+    YARRA_MODE = "yarra_mode"  # Yarra reconstruction mode (.mode)
+    YARRA_MODULE = "yarra_module"  # Yarra module manifest (.ymf)
     BIOPAC_ACQ = "biopac_acq"
     KOMA_PHANTOM = "koma_phantom"
     JEMRIS_PHANTOM = "jemris_phantom"
     JEMRIS_SIGNAL = "jemris_signal"
+    JEMRIS_MOTION = "jemris_motion"  # JEMRIS motion trajectory (.dat text)
     TOPPE_ENTRY = "toppe_entry"
     TOPPE_MODULES = "toppe_modules"
     TOPPE_LOOP = "toppe_loop"
@@ -359,6 +363,7 @@ class Sniffer:
             self.spinsolve,
             self.rs2d,
             self.rnmrtk,
+            self.jemris_motion,
             self.topspin,
             self.bruker,
             self.varian,
@@ -840,6 +845,18 @@ class Sniffer:
         return Sniff(path, Format.RNMRTK, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=(f"{path.suffix} with its RNMRTK partner",))
 
+    JEMRIS_MOTION_ROWS = re.compile(rb"\A\s*(\S+\s+){2}\S+\s*\n(\s*(\S+\s+){6}\S+\s*\n){2}")
+
+    def jemris_motion(self, path: Path, head: bytes) -> Sniff | None:
+        """JEMRIS motion trajectories: a .dat file named motion..., one line of three numbers
+        (the rotation origin) and then lines of seven (time, translation, rotation)."""
+        if path.suffix.lower() != ".dat" or "motion" not in path.name.lower():
+            return None
+        if not self.JEMRIS_MOTION_ROWS.match(head):
+            return None
+        return Sniff(path, Format.JEMRIS_MOTION, Kind.PHANTOM, confidence=0.9,
+                     evidence=("motion .dat: 3 numbers, then rows of 7",))
+
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter
         files (acqu, acqus, ...) of an experiment folder with acqus; processed spectra (1r, 2rr,
@@ -910,8 +927,9 @@ class Sniffer:
         """Physiological logs: Siemens PMU files (by extension and their four header values),
         CMRR physio logs (LogDataType and UUID lines), Philips SCANPHYSLOG files (the "# v1raw"
         column line), GE PPGData/RESPData/ECGData files (by name, numbers only), BIOPAC
-        AcqKnowledge files (.acq with a plausible file revision and channel count) and BIDS
-        physio tables (a JSON sidecar with SamplingFrequency and Columns)."""
+        AcqKnowledge files (.acq with a plausible file revision and channel count), HCP physio
+        logs (*_Physio_log.txt, three integer columns) and BIDS physio tables (a JSON sidecar
+        with SamplingFrequency and Columns)."""
         suffix, name = path.suffix.lower(), path.name
         if suffix in (".puls", ".resp", ".ecg", ".ext", ".ext2") and re.match(
             rb"\s*\d+ \d+ \d+ \d+\s", head
@@ -935,6 +953,9 @@ class Sniffer:
         ):
             return Sniff(path, Format.BIOPAC_ACQ, Kind.PHYSIO, vendor="biopac", confidence=1.0,
                          evidence=(".acq file", "AcqKnowledge graph header"))
+        if name.endswith("_Physio_log.txt") and re.match(rb"(\d+\s+\d+\s+\d+\s*\n){3}", head):
+            return Sniff(path, Format.HCP_PHYSIO, Kind.PHYSIO, vendor="siemens", confidence=1.0,
+                         evidence=("HCP physio file name", "three integer columns"))
         if name.endswith((".tsv", ".tsv.gz")):
             sidecar = path.with_name(name.removesuffix(".gz").removesuffix(".tsv") + ".json")
             if sidecar.is_file():
@@ -950,7 +971,15 @@ class Sniffer:
 
     def protocols(self, path: Path, head: bytes) -> Sniff | None:
         """Siemens protocols: XProtocol text (a .pro file), exam trees (.exar1, SQLite) and
-        printed protocols (PrintOut XML or its text form); Philips ExamCards (SOAP XML)."""
+        printed protocols (PrintOut XML or its text form); Philips ExamCards (SOAP XML); Yarra
+        reconstruction modes (.mode) and module manifests (.ymf)."""
+        suffix = path.suffix.lower()
+        if suffix == ".mode" and re.search(rb"^\[(ClientConfig|Reconstruction)\]", head, re.M):
+            return Sniff(path, Format.YARRA_MODE, Kind.PROTOCOL, confidence=1.0,
+                         evidence=(".mode file with Yarra sections",))
+        if suffix == ".ymf" and re.search(rb"^\[YarraModule\]", head, re.M):
+            return Sniff(path, Format.YARRA_MODULE, Kind.PROTOCOL, confidence=1.0,
+                         evidence=(".ymf file with [YarraModule]",))
         if head.lstrip().startswith(b"<XProtocol>"):
             return Sniff(path, Format.SIEMENS_PRO, Kind.PROTOCOL, vendor="siemens",
                          confidence=1.0, evidence=("XProtocol text",))
