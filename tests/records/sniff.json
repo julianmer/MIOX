@@ -15300,9 +15300,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test00/test00.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test00/test00.txt": {
   "format": "unknown",
@@ -15310,9 +15310,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test01/test01.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test01/test01.txt": {
   "format": "unknown",
@@ -15320,9 +15320,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test02/test02.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test02/test02.txt": {
   "format": "unknown",
@@ -15330,9 +15330,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test03/test03.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test03/test03.txt": {
   "format": "unknown",
@@ -15340,9 +15340,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test04/test04.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test04/test04.txt": {
   "format": "unknown",
@@ -15350,9 +15350,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test05/test05.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test05/test05.txt": {
   "format": "unknown",
@@ -15360,9 +15360,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test06/test06.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test06/test06.txt": {
   "format": "unknown",
@@ -15370,9 +15370,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test07/test07.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test07/test07.txt": {
   "format": "unknown",
@@ -15380,9 +15380,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test08/test08.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test08/test08.txt": {
   "format": "unknown",
@@ -15390,9 +15390,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test09/test09.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/csa_quad/test09/test09.txt": {
   "format": "unknown",
@@ -15400,9 +15400,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test00/test00.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test00/test00.txt": {
   "format": "unknown",
@@ -15410,9 +15410,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test01/test01.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test01/test01.txt": {
   "format": "unknown",
@@ -15420,9 +15420,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test02/test02.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test02/test02.txt": {
   "format": "unknown",
@@ -15430,9 +15430,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test03/test03.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test03/test03.txt": {
   "format": "unknown",
@@ -15440,9 +15440,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test04/test04.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test04/test04.txt": {
   "format": "unknown",
@@ -15450,9 +15450,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test05/test05.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test05/test05.txt": {
   "format": "unknown",
@@ -15460,9 +15460,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test06/test06.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/dipolar-coupling/test06/test06.txt": {
   "format": "unknown",
@@ -15470,9 +15470,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test00/test00.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test00/test00.txt": {
   "format": "unknown",
@@ -15480,9 +15480,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test01/test01.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test01/test01.txt": {
   "format": "unknown",
@@ -15490,9 +15490,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test02/test02.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test02/test02.txt": {
   "format": "unknown",
@@ -15500,9 +15500,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test03/test03.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test03/test03.txt": {
   "format": "unknown",
@@ -15510,9 +15510,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test04/test04.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test04/test04.txt": {
   "format": "unknown",
@@ -15520,9 +15520,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test05/test05.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test05/test05.txt": {
   "format": "unknown",
@@ -15530,9 +15530,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test06/test06.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test06/test06.txt": {
   "format": "unknown",
@@ -15540,9 +15540,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test07/test07.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test07/test07.txt": {
   "format": "unknown",
@@ -15550,9 +15550,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test08/test08.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test08/test08.txt": {
   "format": "unknown",
@@ -15560,9 +15560,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test09/test09.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test09/test09.txt": {
   "format": "unknown",
@@ -15570,9 +15570,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test10/test10.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test10/test10.txt": {
   "format": "unknown",
@@ -15580,9 +15580,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test11/test11.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test11/test11.txt": {
   "format": "unknown",
@@ -15590,9 +15590,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test12/test12.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test12/test12.txt": {
   "format": "unknown",
@@ -15600,9 +15600,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test13/test13.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test13/test13.txt": {
   "format": "unknown",
@@ -15610,9 +15610,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test14/test14.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test14/test14.txt": {
   "format": "unknown",
@@ -15620,9 +15620,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test15/test15.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test15/test15.txt": {
   "format": "unknown",
@@ -15630,9 +15630,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test16/test16.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test16/test16.txt": {
   "format": "unknown",
@@ -15640,9 +15640,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test17/test17.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test17/test17.txt": {
   "format": "unknown",
@@ -15650,9 +15650,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test18/test18.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test18/test18.txt": {
   "format": "unknown",
@@ -15660,9 +15660,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test19/test19.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/j-coupling/test19/test19.txt": {
   "format": "unknown",
@@ -15670,9 +15670,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/quad_1st_order/test00/test00.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/quad_1st_order/test00/test00.txt": {
   "format": "unknown",
@@ -15680,9 +15680,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/quad_1st_order/test01/test01.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/quad_1st_order/test01/test01.txt": {
   "format": "unknown",
@@ -15690,9 +15690,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/quad_sidebands/test00/test00.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/quad_sidebands/test00/test00.txt": {
   "format": "unknown",
@@ -15700,9 +15700,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/quad_sidebands/test01/test01.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/quad_sidebands/test01/test01.txt": {
   "format": "unknown",
@@ -15710,9 +15710,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test00/test00.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test00/test00.txt": {
   "format": "unknown",
@@ -15720,9 +15720,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test01/test01.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test01/test01.txt": {
   "format": "unknown",
@@ -15730,9 +15730,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test02/test02.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test02/test02.txt": {
   "format": "unknown",
@@ -15740,9 +15740,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test03/test03.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test03/test03.txt": {
   "format": "unknown",
@@ -15750,9 +15750,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test04/test04.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test04/test04.txt": {
   "format": "unknown",
@@ -15760,9 +15760,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test05/test05.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test05/test05.txt": {
   "format": "unknown",
@@ -15770,9 +15770,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test06/test06.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test06/test06.txt": {
   "format": "unknown",
@@ -15780,9 +15780,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test07/test07.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/shielding_sidebands/test07/test07.txt": {
   "format": "unknown",
@@ -45570,9 +45570,9 @@
   "kind": "imaging"
  },
  "simpyson/examples/read/ethanol.fid": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "simpyson/examples/read/ethanol.in": {
   "format": "unknown",
@@ -45580,9 +45580,9 @@
   "kind": "unknown"
  },
  "simpyson/examples/read/ethanol.spe": {
-  "format": "unknown",
+  "format": "simpson",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "spec2nii_test_data/.gitattributes": {
   "format": "unknown",

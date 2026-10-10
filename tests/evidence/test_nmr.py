@@ -17,7 +17,8 @@
 #          Magnetics JCAMP-DX FIDs against the line patterns of their compounds, TopSpin zip       #
 #          exports against their unpacked copies, NMRPipe FIDs against the Varian FIDs they were   #
 #          converted from and against NMRPipe's own processing of them, a Sparky 15N-HSQC against #
-#          the amide shifts assigned in its BMRB entry.                                            #
+#          the amide shifts assigned in its BMRB entry, SIMPSON output against the spin system it  #
+#          simulates and against SIMPSON's own transform.                                          #
 #                                                                                                  #
 ####################################################################################################
 
@@ -527,3 +528,39 @@ def test_sparky_hsqc_peaks_lie_on_the_assigned_amides():
     assert best(h, n) >= 0.75
     assert best(2 * centre_h - h, n) < 0.4
     assert best(h, 2 * centre_n - n) < 0.4
+
+
+SIMPYSON = PUBLIC_DATA / "simpyson/examples/read"
+
+
+def test_simpson_fid_shows_ethanol_at_its_simulated_shifts():
+    """ethanol.in simulates CH3, CH2 and OH at 1, 3.5 and 7 ppm (3:2:1, J 30 Hz between CH3 and
+    CH2) at 400 MHz relative to the carrier: the FID read (conjugated) puts its tallest line at
+    -400 Hz in the transform, i.e. at +1 ppm on the NIfTI-MRS axis (ppm = -f / 400 MHz), the OH
+    singlet at +7 ppm; SIMPSON's CSV export of the same FID equals the samples as stored."""
+    path = SIMPYSON / "ethanol.fid"
+    if not path.is_file():
+        pytest.skip("not fetched")
+    [d] = load(path)
+    samples = d.data[0, 0, 0]
+    spectrum = np.abs(np.fft.fftshift(np.fft.fft(samples)))
+    ppm = -np.fft.fftshift(np.fft.fftfreq(samples.size, d.dwelltime)) / 400.0
+    lines = peak_shifts(ppm, spectrum, 2, 21)
+    assert lines == pytest.approx([1.0, 7.0], abs=0.01)
+    assert ppm[np.argmax(spectrum)] == pytest.approx(1.0, abs=0.01)
+    table = np.loadtxt(SIMPYSON / "fid.csv", delimiter=",", skiprows=1)
+    assert np.allclose(samples, table[:, 0] - 1j * table[:, 1], rtol=1e-6, atol=1e-6)
+
+
+def test_simpson_spectrum_is_the_transform_of_its_fid():
+    """ethanol.spe is SIMPSON's transform of ethanol.fid (saved after it): read, it equals the
+    transform of the FID read with its first point halved, to single precision."""
+    fid_path, spe_path = SIMPYSON / "ethanol.fid", SIMPYSON / "ethanol.spe"
+    if not (fid_path.is_file() and spe_path.is_file()):
+        pytest.skip("not fetched")
+    [d], [image] = load(fid_path), load(spe_path)
+    samples = d.data[0, 0, 0].copy()
+    samples[0] /= 2
+    expected = np.fft.fftshift(np.fft.fft(samples))
+    assert np.allclose(image.data[0, 0, 0], expected, atol=1e-4 * np.abs(expected).max())
+

@@ -92,6 +92,7 @@ class Format(StrEnum):
     TECMAG_TNT = "tecmag_tnt"  # Tecmag TNMR data files
     NMRPIPE = "nmrpipe"  # NMRPipe data files
     SPARKY = "sparky"  # Sparky (UCSF) spectra
+    SIMPSON = "simpson"  # SIMPSON simulation output
     ZIP_ARCHIVE = "zip_archive"  # zip archive of files MIOX reads
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
@@ -351,6 +352,7 @@ class Sniffer:
             self.tecmag,
             self.nmrpipe,
             self.sparky,
+            self.simpson,
             self.topspin,
             self.bruker,
             self.varian,
@@ -778,6 +780,14 @@ class Sniffer:
             return None
         return Sniff(path, Format.SPARKY, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=("UCSF NMR identifier",))
+
+    def simpson(self, path: Path, head: bytes) -> Sniff | None:
+        """SIMPSON output (fsave): a first line SIMP and an NP= line in the header."""
+        lines = head.split(b"\n", 12)
+        if lines[0].strip() != b"SIMP" or not any(x.strip().startswith(b"NP=") for x in lines):
+            return None
+        return Sniff(path, Format.SIMPSON, Kind.SPECTROSCOPY, confidence=1.0,
+                     evidence=("SIMP header with NP",))
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter

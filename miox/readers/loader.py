@@ -91,6 +91,7 @@ from miox.readers.pyamares_result import PyamaresResultReader
 from miox.readers.siemens_protocol import SiemensPrintedProtocolReader, SiemensProtocolReader
 from miox.readers.siemens_rda import SiemensRdaReader
 from miox.readers.siemens_twix import SiemensTwixReader
+from miox.readers.simpson import SimpsonReader
 from miox.readers.simulation import (
     JemrisPhantomReader,
     JemrisSignalReader,
@@ -195,6 +196,7 @@ class Loader:
             SiemensProtocolReader(),
             SiemensRdaReader(),
             SiemensTwixReader(),
+            SimpsonReader(),
             SivicDdfReader(),
             SparkyReader(),
             SpinwizardBasisReader(),
