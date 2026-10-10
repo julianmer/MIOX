@@ -42,9 +42,10 @@ from miox.sniff import Format, Sniff
 # Reads one .fid directory. procpar values stay the strings written in the file; times in procpar  #
 # are in s (delays, te, tr) or µs (pulses, alfa). Imaging scans (apptype im2D* or im3D*, or phase  #
 # encoding without an apptype) go to VarianRaw, NMR spectrometer data (an apptype not of an        #
-# imaging console) to nmrglue, everything else to spec2nii. On a spectrometer the carrier lies at  #
-# (sw / 2 - rfl + rfp) / sfrq ppm: rfl is the frequency of the reference line from the low end of  #
-# the spectrum, rfp the frequency it is assigned.                                                  #
+# imaging console, or none: older VNMR liquids data) to nmrglue, imaging-console spectroscopy      #
+# (im1D...) to spec2nii. On a spectrometer the carrier lies at (sw / 2 - rfl + rfp) / sfrq ppm:    #
+# rfl is the frequency of the reference line from the low end of the spectrum, rfp the frequency   #
+# it is assigned.                                                                                  #
 #                                                                                                  #
 #**************************************************************************************************#
 class VarianReader(Spec2niiReader):
@@ -80,9 +81,10 @@ class VarianReader(Spec2niiReader):
 
     @staticmethod
     def is_spectrometer(procpar: dict[str, list[str]]) -> bool:
-        """NMR spectrometer data: an apptype that is not an imaging console's (im1D, im2D, ...)."""
+        """NMR spectrometer data: no apptype (older VNMR), or one that is not an imaging
+        console's (im1D, im2D, ...); imaging scans are sorted out before."""
         apptype = (procpar.get("apptype") or [""])[0]
-        return bool(apptype) and not apptype.startswith("im")
+        return not apptype.startswith("im")
 
     def _spectrometer(self, sniff: Sniff, folder: Path, header: dict) -> MRSData:
         """The FIDs as nmrglue lays them out (already in the NIfTI-MRS convention), the direct

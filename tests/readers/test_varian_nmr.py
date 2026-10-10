@@ -80,4 +80,4 @@ def test_spectrometer_2d_rows_as_acquired(tmp_path):
 def test_imaging_console_is_not_spectrometer():
     assert gu.readers.varian.VarianReader.is_spectrometer({"apptype": ["std1D"]})
     assert not gu.readers.varian.VarianReader.is_spectrometer({"apptype": ["im1Dglobal"]})
-    assert not gu.readers.varian.VarianReader.is_spectrometer({})
+    assert gu.readers.varian.VarianReader.is_spectrometer({})  # older VNMR: no apptype
