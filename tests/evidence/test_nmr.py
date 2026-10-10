@@ -247,9 +247,9 @@ def test_jeol_fid_shows_the_peaks_of_the_spectrum_mestrenova_processed():
 
 
 def test_jeol_fid_spectrum_lies_on_the_axis_of_its_processed_spectrum():
-    """The same proton experiment as an FID and as a spectrum processed by Delta: three of the four
-    tallest lines of the spectrum lie at shifts of the FID's eight tallest, and the magnitude spectra
-    correlate."""
+    """The same proton experiment as an FID and as a spectrum processed by Delta: three of the
+    four tallest lines of the spectrum lie at shifts of the FID's eight tallest, and the magnitude
+    spectra correlate."""
     fid_path = JEOL / "PM032220_3000U200U_Bin_180218_qH-1-1.jdf"
     spectrum_path = JEOL / "PM032220_3000U200U_Bin_180218_qH-1-4.jdf"
     if not (fid_path.is_file() and spectrum_path.is_file()):
