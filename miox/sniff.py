@@ -91,6 +91,7 @@ class Format(StrEnum):
     JEOL_JDF = "jeol_jdf"  # JEOL Delta data files
     TECMAG_TNT = "tecmag_tnt"  # Tecmag TNMR data files
     NMRPIPE = "nmrpipe"  # NMRPipe data files
+    SPARKY = "sparky"  # Sparky (UCSF) spectra
     ZIP_ARCHIVE = "zip_archive"  # zip archive of files MIOX reads
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
@@ -349,6 +350,7 @@ class Sniffer:
             self.jeol,
             self.tecmag,
             self.nmrpipe,
+            self.sparky,
             self.topspin,
             self.bruker,
             self.varian,
@@ -769,6 +771,13 @@ class Sniffer:
                 return Sniff(path, Format.NMRPIPE, Kind.SPECTROSCOPY, confidence=1.0,
                              evidence=("NMRPipe header (FDFLTORDER 2.345)",))
         return None
+
+    def sparky(self, path: Path, head: bytes) -> Sniff | None:
+        """Sparky spectra: the identifier UCSF NMR at the start of the 180-byte header."""
+        if not head.startswith(b"UCSF NMR"):
+            return None
+        return Sniff(path, Format.SPARKY, Kind.SPECTROSCOPY, confidence=1.0,
+                     evidence=("UCSF NMR identifier",))
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter

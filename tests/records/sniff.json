@@ -1605,9 +1605,9 @@
   "kind": "raw"
  },
  "bmrb/18465/o157_nhsqcv6.ucsf": {
-  "format": "unknown",
+  "format": "sparky",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "bmrb/18465/procpar": {
   "format": "varian",
@@ -43155,9 +43155,9 @@
   "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/MTBLS1_DiagramUseCase/MTBLS1/ADG19007u_436-10_1.ucsf": {
-  "format": "unknown",
+  "format": "sparky",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/MTBLS1_DiagramUseCase/MTBLS1/ADG19007u_436/ADG19007u_436/10/acqu": {
   "format": "topspin",

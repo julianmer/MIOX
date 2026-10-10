@@ -16,7 +16,8 @@
 #          of them, a Tecmag file against TNMR's own text export of it, Oxford Instruments and Q   #
 #          Magnetics JCAMP-DX FIDs against the line patterns of their compounds, TopSpin zip       #
 #          exports against their unpacked copies, NMRPipe FIDs against the Varian FIDs they were   #
-#          converted from and against NMRPipe's own processing of them.                            #
+#          converted from and against NMRPipe's own processing of them, a Sparky 15N-HSQC against #
+#          the amide shifts assigned in its BMRB entry.                                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -468,3 +469,61 @@ def test_nmrpipe_fid_transforms_to_nmrpipes_spectrum():
 
     assert correlation(fid.data[0, 0, 0]) > 0.5
     assert correlation(fid.data[0, 0, 0].conj()) < 0.4
+
+
+def assigned_shifts(path) -> dict[tuple[str, str], dict[str, float]]:
+    """The assigned shifts of a BMRB NMR-STAR 3 entry by (entity, residue) and atom name."""
+    lines = path.read_text().splitlines()
+    i = next(k for k, line in enumerate(lines) if line.strip() == "_Atom_chem_shift.ID")
+    columns = []
+    while lines[i].strip().startswith("_Atom_chem_shift."):
+        columns.append(lines[i].strip().split(".")[1])
+        i += 1
+    shifts: dict[tuple[str, str], dict[str, float]] = {}
+    while lines[i].strip() != "stop_":
+        fields = lines[i].split()
+        if len(fields) == len(columns):
+            row = dict(zip(columns, fields, strict=True))
+            key = (row["Entity_ID"], row["Comp_index_ID"])
+            shifts.setdefault(key, {})[row["Atom_ID"]] = float(row["Val"])
+        i += 1
+    return shifts
+
+
+def test_sparky_hsqc_peaks_lie_on_the_assigned_amides():
+    """The 15N-HSQC of BMRB 18465 as a Sparky file: with one referencing offset (within 0.1 ppm
+    for 1H, 1 ppm for 15N), at least 75 % of its 60 tallest peaks lie within 0.03 / 0.3 ppm of
+    an assigned amide (H, N) pair of the entry; with either axis mirrored no offset brings
+    more than 40 %."""
+    path, star = BMRB / "18465/o157_nhsqcv6.ucsf", BMRB / "18465/bmr18465_3.str"
+    if not (path.is_file() and star.is_file()):
+        pytest.skip("not fetched")
+    pairs = np.array([(a["H"], a["N"]) for a in assigned_shifts(star).values()
+                      if "H" in a and "N" in a])
+    [image] = load(path)
+    proton = image_axis(image)
+    w1 = image.meta.vendor["w1"]
+    rows = image.shape[4]
+    nitrogen = float(w1["xmtr_freq"]) + (rows // 2 - np.arange(rows)) * float(
+        w1["spectral_width"]) / float(w1["spectrometer_freq"]) / rows
+    width = float(w1["spectral_width"]) / float(w1["spectrometer_freq"])
+    magnitude = np.abs(image.data[0, 0, 0])
+    maxima = np.argwhere(magnitude == maximum_filter(magnitude, size=9))
+    tallest = maxima[np.argsort(magnitude[tuple(maxima.T)])[::-1][:60]]
+    h, n = proton[tallest[:, 0]], nitrogen[tallest[:, 1]]
+
+    def best(h: np.ndarray, n: np.ndarray) -> float:
+        """The largest fraction of peaks on an amide pair over the offsets (15N folded)."""
+        fractions = []
+        for dh in np.arange(-0.1, 0.101, 0.01):
+            for dn in np.arange(-1.0, 1.01, 0.1):
+                near_h = np.abs(pairs[:, 0][None, :] - (h + dh)[:, None]) < 0.03
+                dn_folded = (pairs[:, 1][None, :] - (n + dn)[:, None] + width / 2) % width
+                near_n = np.abs(dn_folded - width / 2) < 0.3
+                fractions.append(np.mean(np.any(near_h & near_n, axis=1)))
+        return max(fractions)
+
+    centre_h, centre_n = proton[proton.size // 2], nitrogen[rows // 2]
+    assert best(h, n) >= 0.75
+    assert best(2 * centre_h - h, n) < 0.4
+    assert best(h, 2 * centre_n - n) < 0.4

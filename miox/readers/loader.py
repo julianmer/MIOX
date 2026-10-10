@@ -98,6 +98,7 @@ from miox.readers.simulation import (
     MrilabPhantomReader,
 )
 from miox.readers.sivic_ddf import SivicDdfReader
+from miox.readers.sparky import SparkyReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
 from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.tarquin_output import TarquinOutputReader
@@ -195,6 +196,7 @@ class Loader:
             SiemensRdaReader(),
             SiemensTwixReader(),
             SivicDdfReader(),
+            SparkyReader(),
             SpinwizardBasisReader(),
             TarquinDptReader(),
             TarquinOutputReader(),
