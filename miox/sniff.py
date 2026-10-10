@@ -90,6 +90,7 @@ class Format(StrEnum):
     NMRML = "nmrml"  # nmrML XML files
     JEOL_JDF = "jeol_jdf"  # JEOL Delta data files
     TECMAG_TNT = "tecmag_tnt"  # Tecmag TNMR data files
+    NMRPIPE = "nmrpipe"  # NMRPipe data files
     ZIP_ARCHIVE = "zip_archive"  # zip archive of files MIOX reads
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
@@ -347,6 +348,7 @@ class Sniffer:
             self.nmrml,
             self.jeol,
             self.tecmag,
+            self.nmrpipe,
             self.topspin,
             self.bruker,
             self.varian,
@@ -755,6 +757,18 @@ class Sniffer:
             return None
         return Sniff(path, Format.TECMAG_TNT, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=("TNT1 magic",))
+
+    def nmrpipe(self, path: Path, head: bytes) -> Sniff | None:
+        """NMRPipe files: a 2048-byte header of floats whose third (FDFLTORDER) is 2.345 in the
+        byte order of the file and whose first (FDMAGIC) is 0."""
+        if len(head) < 2048:
+            return None
+        for order in "<>":
+            magic, _, check = struct.unpack(f"{order}3f", head[:12])
+            if magic == 0.0 and abs(check - 2.345) < 1e-6:
+                return Sniff(path, Format.NMRPIPE, Kind.SPECTROSCOPY, confidence=1.0,
+                             evidence=("NMRPipe header (FDFLTORDER 2.345)",))
+        return None
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter

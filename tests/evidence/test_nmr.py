@@ -15,7 +15,8 @@
 #          files they were converted from, JEOL Delta files against spectra other software made    #
 #          of them, a Tecmag file against TNMR's own text export of it, Oxford Instruments and Q   #
 #          Magnetics JCAMP-DX FIDs against the line patterns of their compounds, TopSpin zip       #
-#          exports against their unpacked copies.                                                  #
+#          exports against their unpacked copies, NMRPipe FIDs against the Varian FIDs they were   #
+#          converted from and against NMRPipe's own processing of them.                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -29,6 +30,7 @@ import re
 
 import numpy as np
 import pytest
+from scipy.interpolate import RegularGridInterpolator
 from scipy.ndimage import maximum_filter
 
 # own
@@ -413,3 +415,56 @@ def test_topspin_zip_equals_its_unpacked_copy(path):
         [twin] = [t for t in load(path.with_suffix("") / member) if t.name == d.name]
         assert np.array_equal(d.data, twin.data)
         assert dict(d.meta) == dict(twin.meta)
+
+
+BMRB = PUBLIC_DATA / "bmrb"
+
+
+def test_nmrpipe_fid_is_the_varian_fid_converted():
+    """var2pipe converted the Rance-Kay 15N-HSQC of BMRB 15089: the first NMRPipe row read
+    (conjugated) equals the difference of the first two Varian rows exactly (the echo and
+    anti-echo combination), with the Varian frequency and spectral width."""
+    pipe, folder = BMRB / "15089/test.fid", BMRB / "15089"
+    if not pipe.is_file():
+        pytest.skip("not fetched")
+    [p], [v] = load(pipe), load(folder)
+    rows, raw = p.data[0, 0, 0], v.data[0, 0, 0]
+    assert np.array_equal(rows[:, 0], raw[:512, 0] - raw[:512, 1])
+    assert p.spectrometer_frequency == pytest.approx(v.spectrometer_frequency, rel=1e-7)
+    assert p.spectral_width == pytest.approx(v.spectral_width, rel=1e-6)
+
+
+def test_nmrpipe_fid_transforms_to_nmrpipes_spectrum():
+    """BMRB 17169 holds a 13C-HSQC both as converted by var2pipe and as processed by NMRPipe:
+    transformed in both dimensions (States pairs as even - i odd) and resampled onto the axes
+    of the processed spectrum, the FID read correlates with it (outside the water line) above
+    0.5; with the direct dimension mirrored it does not reach 0.4."""
+    fid_path = BMRB / "17169/pipe_conversion/C13_hsqc.fid"
+    spectrum_path = BMRB / "17169/C13_hsqcB.ft"
+    if not (fid_path.is_file() and spectrum_path.is_file()):
+        pytest.skip("not fetched")
+    [fid], [image] = load(fid_path), load(spectrum_path)
+    header = image.meta.vendor
+    direct = image_axis(image)
+    rows = image.shape[4]
+    indirect = (float(header["FDF1ORIG"]) + float(header["FDF1SW"]) * (
+        1 - (np.arange(rows) + 1) / rows)) / float(header["FDF1OBS"])  # NMRPipe's F1 axis
+    v = fid.meta.vendor
+    x_axis = fid_axis(fid)
+    n1 = fid.shape[4] // 2
+    y_axis = float(v["FDF1CAR"]) - np.fft.fftshift(np.fft.fftfreq(n1, 1 / float(v["FDF1SW"]))) / \
+        float(v["FDF1OBS"])
+    keep = (direct < 4.4) | (direct > 5.1)
+    reference = np.abs(image.data[0, 0, 0])
+
+    def correlation(samples: np.ndarray) -> float:
+        f2 = np.fft.fftshift(np.fft.fft(samples, axis=0), axes=0)
+        spectrum = np.abs(np.fft.fftshift(np.fft.fft(f2[:, 0::2] - 1j * f2[:, 1::2], axis=1),
+                                          axes=1))
+        grid = RegularGridInterpolator((x_axis[::-1], y_axis[::-1]), spectrum[::-1, ::-1],
+                                       bounds_error=False, fill_value=0.0)
+        resampled = grid(np.stack(np.meshgrid(direct, indirect, indexing="ij"), axis=-1))
+        return np.corrcoef(resampled[keep].ravel(), reference[keep].ravel())[0, 1]
+
+    assert correlation(fid.data[0, 0, 0]) > 0.5
+    assert correlation(fid.data[0, 0, 0].conj()) < 0.4

@@ -69,6 +69,7 @@ from miox.readers.nibabel_image import NibabelImageReader
 from miox.readers.nifti_mrs import NiftiMrsReader
 from miox.readers.nifti_sidecar_mrs import NiftiSidecarMrsReader
 from miox.readers.nmrml import NmrmlReader
+from miox.readers.nmrpipe import NmrPipeReader
 from miox.readers.nrrd import NrrdReader
 from miox.readers.osprey_basis import OspreyBasisReader
 from miox.readers.osprey_container import OspreyContainerReader
@@ -173,6 +174,7 @@ class Loader:
             MrtrixReader(),
             NibabelImageReader(),
             NmrmlReader(),
+            NmrPipeReader(),
             NrrdReader(),
             NiftiMrsReader(),
             NiftiSidecarMrsReader(),
