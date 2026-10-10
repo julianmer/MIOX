@@ -16585,134 +16585,134 @@
   "kind": "unknown"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_AHTM.PROTON_04.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_ATPE.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_CZAG.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_EHM.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_ENB.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_HHE.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_HHM.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_HHS.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_HHT.PROTON_04.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_HPE.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_HSE.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_HTU.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs.v2/FAM013_TPE.PROTON_02.fid.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_AHTM.PROTON_04.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_ATPE.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_CZAG.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_EHM.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_ENB.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_HHE.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_HHM.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_HHS.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_HHT.PROTON_04.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_HPE.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_HSE.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_HTU.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/nmrMLs/FAM013_TPE.PROTON_02.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/IPB_HopExample/readme.txt": {
   "format": "unknown",
@@ -29505,19 +29505,19 @@
   "kind": "spectroscopy"
  },
  "nmrml/examples/MTBLS1/nmrMLs/ADG10003u_007-fid-jnmrML.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/MTBLS1/nmrMLs/ADG10003u_007-full-jnmrML.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/MTBLS1/nmrMLs/ADG10003u_007.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/Makefile": {
   "format": "unknown",
@@ -29530,14 +29530,14 @@
   "kind": "unknown"
  },
  "nmrml/examples/quantification_example/biosample_quantification.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/reference_spectra_examples/MMBBI/MMBBI_10M12-CE01-1a.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/reference_spectra_examples/MMBBI/MMBBI_10M12-CE01-1a/1/acqu": {
   "format": "topspin",
@@ -29745,14 +29745,14 @@
   "kind": "spectroscopy"
  },
  "nmrml/examples/reference_spectra_examples/bmrb/bmse000325.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/reference_spectra_examples/bmrb/cq_00075_1.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/reference_spectra_examples/hmdb/HMDB00005.fid/HMDB00005.cnx": {
   "format": "unknown",
@@ -29780,9 +29780,9 @@
   "kind": "unknown"
  },
  "nmrml/examples/reference_spectra_examples/hmdb/HMDB00005.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/reference_spectra_examples/hmdb/README": {
   "format": "unknown",
@@ -30015,14 +30015,14 @@
   "kind": "spectroscopy"
  },
  "nmrml/examples/reference_spectra_examples/metabohub/VZBBI_13R03_GABA_13C.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/reference_spectra_examples/metabohub/VZBBI_13R03_GABA_1H.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/BirminghamMSIExamples/BML_Analysis_2085_Raw_Experiment_Directory/2085/acqu": {
   "format": "topspin",
@@ -43600,9 +43600,9 @@
   "kind": "unknown"
  },
  "nmrml/examples/working.tmp/Parser_and_Converters/Java_nmrMLreader_UnitTest/HMDB00005.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/Parser_and_Converters/Java_nmrMLreader_UnitTest/HMDB00005_fid.txt": {
   "format": "text_fid",
@@ -43610,9 +43610,9 @@
   "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/Parser_and_Converters/Java_nmrMLreader_UnitTest/MMBBI_10M12-CE01-1a.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/Parser_and_Converters/Java_nmrMLreader_UnitTest/MMBBI_10M12-CE01-1a_1r.txt": {
   "format": "text_fid",
@@ -43625,9 +43625,9 @@
   "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/Parser_and_Converters/Java_nmrMLreader_UnitTest/bmse000325.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/Parser_and_Converters/Java_nmrMLreader_UnitTest/bmse000325_fid.txt": {
   "format": "text_fid",
@@ -43725,14 +43725,14 @@
   "kind": "unknown"
  },
  "nmrml/examples/working.tmp/SteffensMTBL_MetaboquantConverterExamples/mtbls1/ADG10003u_007.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/SteffensMTBL_MetaboquantConverterExamples/mtbls1/ADG10003u_008.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/SteffensMTBL_MetaboquantConverterExamples/mtbls1/a_live_mtbl1_rms_metabolite profiling_NMR spectroscopy.txt": {
   "format": "unknown",
@@ -43795,14 +43795,14 @@
   "kind": "unknown"
  },
  "nmrml/examples/working.tmp/nmrML/instance1.xml": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/nmrML/instance1modifiedToBiosample-concentrations.xml": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/nmrML/readme.txt": {
   "format": "unknown",
@@ -43905,14 +43905,14 @@
   "kind": "unknown"
  },
  "nmrml/tools/Parser_and_Converters/R/nmRIO/inst/examples/HMDB00005.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/tools/Parser_and_Converters/R/nmRIO/inst/examples/MMBBI_10M12-CE01-1a.nmrML": {
-  "format": "unknown",
+  "format": "nmrml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "nmrml/tools/Parser_and_Converters/python/pynmrml/examples/.gitignore": {
   "format": "unknown",

@@ -86,6 +86,7 @@ class Format(StrEnum):
     TOPSPIN = "topspin"  # Bruker TopSpin experiment: fid or ser with acqus
     TOPSPIN_PROCESSED = "topspin_processed"  # TopSpin processed spectra: pdata/<n> with procs
     JCAMP_NMR = "jcamp_nmr"  # JCAMP-DX NMR FIDs and spectra
+    NMRML = "nmrml"  # nmrML XML files
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
     LCMODEL_BASIS = "lcmodel_basis"
@@ -338,6 +339,7 @@ class Sniffer:
             self.twix,
             self.pfile,
             self.jcamp,
+            self.nmrml,
             self.topspin,
             self.bruker,
             self.varian,
@@ -724,6 +726,13 @@ class Sniffer:
             return Sniff(path, Format.JCAMP_NMR, Kind.SPECTROSCOPY, confidence=1.0,
                          evidence=(f"JCAMP-DX {what}",))
         return None
+
+    def nmrml(self, path: Path, head: bytes) -> Sniff | None:
+        """nmrML files: an XML document whose root element is nmrML (any namespace prefix)."""
+        if b"<nmrML" not in head or not head.lstrip().startswith(b"<"):
+            return None
+        return Sniff(path, Format.NMRML, Kind.SPECTROSCOPY, confidence=1.0,
+                     evidence=("XML root element nmrML",))
 
     def topspin(self, path: Path, head: bytes) -> Sniff | None:
         """Bruker TopSpin files outside ParaVision scans: fid or ser and the JCAMP-DX parameter

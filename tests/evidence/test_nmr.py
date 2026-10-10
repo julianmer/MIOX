@@ -11,7 +11,8 @@
 #          processed spectrum), an acquisition stopped early against its audit trail, Varian FIDs  #
 #          against the tabulated shifts of their solvent and reference signals, TopSpin's JCAMP-DX #
 #          exports against the TopSpin files they were written from, a Nanalysis JCAMP-DX FID      #
-#          against the shift of its compound's tallest signal.                                     #
+#          against the shift of its compound's tallest signal, nmrML files against the vendor      #
+#          files they were converted from.                                                         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -166,3 +167,40 @@ def test_nanalysis_fid_shows_ibuprofen_at_its_shift():
         pytest.skip("not fetched")
     [d] = load(path)
     assert tallest(d, -1.0, 13.0) == pytest.approx(0.89, abs=0.07)
+
+
+NMRML = PUBLIC_DATA / "nmrml/examples"
+
+
+def test_nmrml_varian_fid_equals_the_vnmr_fid():
+    """The IPB nmrML (v2) holds the samples of the Varian fid it was converted from, with the
+    same dwell time, frequency and scans; 0 ppm agrees to 1e-4 ppm."""
+    nmrml = NMRML / "IPB_HopExample/nmrMLs.v2/FAM013_AHTM.PROTON_04.fid.nmrML"
+    folder = HOPS / "FAM013_AHTM.PROTON_04.fid"
+    if not (nmrml.is_file() and folder.is_dir()):
+        pytest.skip("not fetched")
+    [a], [b] = load(nmrml), load(folder)
+    assert np.array_equal(a.data, b.data)
+    assert a.dwelltime == pytest.approx(b.dwelltime, rel=1e-12)
+    assert a.spectrometer_frequency == pytest.approx(b.spectrometer_frequency, rel=1e-12)
+    assert a.meta["ReferencePPM"] == pytest.approx(b.meta["ReferencePPM"], abs=1e-4)
+    assert a.meta["NumberOfAverages"] == b.meta["NumberOfAverages"]
+
+
+def test_nmrml_bruker_fid_and_spectrum_equal_the_topspin_files():
+    """The MTBLS1 jnmrML FID equals the Bruker fid sample for sample (both conjugated), and its
+    spectrum lies on the axis of TopSpin's processed spectrum (same first point, same shift at
+    the centre, tallest signal within a point; the processing itself differs)."""
+    nmrml = NMRML / "MTBLS1/nmrMLs/ADG10003u_007-full-jnmrML.nmrML"
+    if not (nmrml.is_file() and (MTBLS1 / "ADG10003u_007/10").is_dir()):
+        pytest.skip("not fetched")
+    fid, spectrum = load(nmrml)
+    bruker_fid, processed = load(MTBLS1 / "ADG10003u_007/10")
+    assert np.array_equal(fid.data, bruker_fid.data)
+    assert fid.dwelltime == pytest.approx(bruker_fid.dwelltime, rel=1e-12)
+    assert spectrum.meta["ReferencePPM"] == pytest.approx(processed.meta["ReferencePPM"], abs=1e-5)
+    assert spectrum.meta["SpectralWidth"] == pytest.approx(processed.meta["SpectralWidth"],
+                                                           rel=1e-5)
+    ours, theirs = np.abs(spectrum.data.ravel()), np.abs(processed.data.ravel())
+    assert abs(int(np.argmax(ours)) - int(np.argmax(theirs))) <= 1
+    assert np.corrcoef(ours, theirs)[0, 1] > 0.85

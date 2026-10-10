@@ -63,6 +63,7 @@ from miox.readers.mrtrix import MrtrixReader
 from miox.readers.nibabel_image import NibabelImageReader
 from miox.readers.nifti_mrs import NiftiMrsReader
 from miox.readers.nifti_sidecar_mrs import NiftiSidecarMrsReader
+from miox.readers.nmrml import NmrmlReader
 from miox.readers.nrrd import NrrdReader
 from miox.readers.osprey_basis import OspreyBasisReader
 from miox.readers.osprey_container import OspreyContainerReader
@@ -160,6 +161,7 @@ class Loader:
             MrilabPhantomReader(),
             MrtrixReader(),
             NibabelImageReader(),
+            NmrmlReader(),
             NrrdReader(),
             NiftiMrsReader(),
             NiftiSidecarMrsReader(),
