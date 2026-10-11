@@ -1,44 +1,53 @@
-# MIOX
+<div align="center">
+  <img src="assets/logo.png" alt="Miox Logo" width="130"/>
+  <h1 style="margin-top: 5px; margin-bottom: 5px;">Miox</h1>
+  <p style="margin-top: 0px;"><em>Open any MR file from any vendor into one object: data, geometry, all metadata</em></p>
 
-A Python package that opens any MR file from any vendor — spectroscopy first, imaging too —
-into one well-defined object with data, geometry and all metadata, and shows it in one command.
+  [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
+  [![License](https://img.shields.io/badge/license-BSD--3--Clause-green.svg)](LICENSE)
+</div>
 
-Spectroscopy readers: Siemens twix, RDA and DICOM; Philips SPAR/SDAT and DICOM; UIH DICOM;
-GE P-file; Bruker; NIfTI-MRS; LCModel .RAW; jMRUI. Data and geometry are assembled by spec2nii;
-MIOX keeps the complete vendor header and records where every standard key came from.
+---
+
+Miox reads MR spectroscopy, images, raw k-space, sequences, protocols, physiological recordings
+and NMR data into one well-defined object each. It keeps the complete vendor header and records
+where every standard key came from.
 
 ```python
-import miox as gu
-[d] = gu.load("meas.dat")      # one MRSData per dataset in the file
-d.data, d.dims, d.dwelltime    # complex FIDs in NIfTI-MRS order
+import miox
+[d] = miox.load("meas.dat")      # one object per dataset in the file
+d.data, d.dims, d.dwelltime      # complex FIDs in NIfTI-MRS order
 d.meta["EchoTime"], d.meta.source["EchoTime"], d.meta.vendor
 ```
 
-`load` returns what a file states; a file without frequency, nucleus or dwell time (headerless
-text columns, a bare LCModel .RAW) gives a dataset whose `missing` names those keys. Pass them in
-`given` and ask for `complete=True` when everything NIfTI-MRS needs must be there:
-
-```python
-[d] = gu.load("fid.txt", given={"SpectrometerFrequency": 123.2, "ResonantNucleus": "1H",
-                                "SpectralWidth": 4000}, complete=True)   # IncompleteError if not
+```
+miox info  path/to/file      # what a file holds and where each value came from
+miox sniff path/to/file      # identify a file or folder without reading it whole
+miox audit path/to/file      # every vendor header field and whether it is read
 ```
 
-`miox info` prints what a file holds and where each value came from; `miox sniff`
-identifies a file or directory without reading it whole; `miox audit` lists every field of
-the vendor header and whether a key is read from it. `docs/coverage/` has that audit for every
-public test file, one page per format.
+## Installation
 
 ```
+git clone https://github.com/julianmer/miox.git
+cd miox
 uv sync --extra dev
-uv run miox info path/to/file.dat
-uv run miox sniff path/to/file.dat
-uv run miox audit path/to/file.dat
-uv run pytest                        # synthetic tests, no data needed
-uv run python scripts/fetch_test_data.py   # public test data (subset; --all for everything)
-uv run pytest -m data                # record tests on the fetched data       
 ```
 
-Private test sets are picked up from `MIOX_PRIVATE_DATA` (directories separated by the
-path separator); their paths never enter the repository.
+## What it loads
 
-Licence: BSD-3-Clause.
+| | Formats |
+|---|---|
+| **Spectroscopy** | Siemens twix, RDA and DICOM; Philips SPAR/SDAT, data/list and DICOM; UIH DICOM; GE P-file; Bruker; Varian; NIfTI-MRS; dcm2niix NIfTI with an MRS sidecar; LCModel .RAW; jMRUI text and binary; TARQUIN .dpt; VASF; Vespa VIFF; SIVIC DDF; FID-A .mat; text FIDs |
+| **Images** | DICOM (classic, mosaic, enhanced, study folders); NIfTI with BIDS sidecar; Analyze; MGH; MINC 1 and 2; PAR/REC; AFNI; NRRD; MetaImage; MRtrix; Bruker 2dseq; Varian fdf; GE Signa |
+| **Raw k-space** | ISMRMRD; MRD v2; Siemens twix; GE P-file and ScanArchive; Philips raw/lab/sin; Bruker fid and rawdata; Varian fid; fastMRI; BART .cfl |
+| **Basis sets and priors** | LCModel .BASIS; FSL-MRS; SpinWizard; Osprey/MRSCloud; INSPECTOR; MARSS; ProFit; metabolite folders; Vespa, GAVA, MIDAS and PyAMARES priors |
+| **Fit results** | LCModel COORD, TABLE and CSV; TARQUIN results and fit; PyAMARES; Osprey MRSCont |
+| **Sequences and protocols** | Pulseq .seq; TOPPE; Siemens .pro, .exar and printed protocols; Philips ExamCards; LCModel control files; Yarra modes and modules |
+| **Physio** | Siemens PMU; CMRR; Philips SCANPHYSLOG; GE; BIDS; HCP; BIOPAC AcqKnowledge |
+| **Simulation** | KomaMRI, JEMRIS and MRiLab phantoms; JEMRIS signals and motion; SIMPSON |
+| **NMR** | Bruker TopSpin; Varian/Agilent; JCAMP-DX; nmrML; JEOL Delta; Tecmag TNMR; NMRPipe; Sparky; Magritek Spinsolve; RS2D; RNMRTK |
+| **Transforms** | FreeSurfer LTA; ITK; AFNI; FSL FLIRT |
+
+Zip archives of any of these open as well. `docs/coverage/` lists, for every public test file,
+each vendor header field and whether it is read.

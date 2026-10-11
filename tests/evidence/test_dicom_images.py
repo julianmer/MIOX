@@ -7,7 +7,7 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: DICOM images against dcm2niix: every reference NIfTI of the dcm_qa sets must equal the  #
-#          image MIOX reads from the same DICOM, voxel by voxel in world space (dcm2niix may    #
+#          image Miox reads from the same DICOM, voxel by voxel in world space (dcm2niix may       #
 #          flip or permute axes), and every key both state must agree.                             #
 #                                                                                                  #
 ####################################################################################################
@@ -56,7 +56,7 @@ REFERENCES = sorted(
     for p in (PUBLIC_DATA / s / "Ref").glob("*.nii")
 )
 SKIPPED_FILES = (".txt", ".md", ".pdf", ".png", ".csv", ".xlsx")
-KNOWN_DIFFERENCES = {  # (set, key): why MIOX's value differs from dcm2niix's on purpose
+KNOWN_DIFFERENCES = {  # (set, key): why Miox's value differs from dcm2niix's on purpose
     ("dcm_qa_philips_asl", "RepetitionTime"):
         "dcm2niix replaces TR by the mean spacing of the label and control volumes",
     ("dcm_qa_philips_asl", "EchoTrainLength"):
@@ -77,10 +77,10 @@ KNOWN_DIFFERENCES = {  # (set, key): why MIOX's value differs from dcm2niix's on
     ("dcm_qa_philips_enh", "RepetitionTime"):
         "dcm2niix replaces TR by the mean spacing of the volumes when they differ",
 }
-KNOWN_DATA = {  # reference: (why its voxel values differ from MIOX's, what still must hold)
+KNOWN_DATA = {  # reference: (why its voxel values differ from Miox's, what still must hold)
     "dcm_qa_philips_asl/Ref/301_ASL_MultiPhase_classic.nii": (
         "Philips scale factors vary per volume; dcm2niix applies the first file's RescaleSlope on "
-        "top of each file's own, MIOX the precise scaling of each file",
+        "top of each file's own, Miox the precise scaling of each file",
         "proportional",
     ),
     "dcm_qa_philips_enh/Ref/2201_WIP_DTI_S2MB2_cl.nii": (
@@ -96,7 +96,7 @@ KNOWN_DATA = {  # reference: (why its voxel values differ from MIOX's, what stil
 
 @functools.cache
 def inputs(name: str) -> tuple[list[MRImage], list[str]]:
-    """Every image MIOX reads from a set's input (series folders or files), and the errors."""
+    """Every image Miox reads from a set's input (series folders or files), and the errors."""
     root = PUBLIC_DATA / name / "In"
     leaves = set()
     for path in root.rglob("*"):

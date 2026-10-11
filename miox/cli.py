@@ -6,7 +6,7 @@
 #                                                                                                  #
 # Created: 01/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Console entry point for the ``miox`` command: ``info`` (what a file holds: data      #
+# Purpose: Console entry point for the ``miox`` command: ``info`` (what a file holds: data         #
 #          shape, standard keys and their sources), ``sniff`` (format of files or directories) and #
 #          ``audit`` (metadata coverage table of a file).                                          #
 #                                                                                                  #
@@ -48,7 +48,7 @@ from miox.sniff import Format, Sniffer
 #                                               CLI                                                #
 #**************************************************************************************************#
 #                                                                                                  #
-# The ``miox`` command line: one method per subcommand, each returning the exit status.         #
+# The ``miox`` command line: one method per subcommand, each returning the exit status.            #
 #                                                                                                  #
 #**************************************************************************************************#
 class CLI:

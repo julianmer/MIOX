@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Pytest fixtures: test data roots. Public data lives under tests/data (fetched by        #
 #          scripts/fetch_test_data.py, never committed). Private sets are given as a path-         #
-#          separated list of directories in MIOX_PRIVATE_DATA; their paths never appear in      #
+#          separated list of directories in MIOX_PRIVATE_DATA; their paths never appear in         #
 #          committed records.                                                                      #
 #                                                                                                  #
 ####################################################################################################

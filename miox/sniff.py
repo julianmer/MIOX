@@ -100,7 +100,7 @@ class Format(StrEnum):
     TRANSFORM_ITK = "transform_itk"  # ITK transform (.tfm text, .h5)
     TRANSFORM_AFNI = "transform_afni"  # AFNI affine matrices (12 numbers per row)
     TRANSFORM_FSL = "transform_fsl"  # FSL FLIRT 4 x 4 matrix
-    ZIP_ARCHIVE = "zip_archive"  # zip archive of files MIOX reads
+    ZIP_ARCHIVE = "zip_archive"  # zip archive of files Miox reads
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
     LCMODEL_BASIS = "lcmodel_basis"

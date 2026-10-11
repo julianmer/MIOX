@@ -266,7 +266,7 @@ class KeyTable(dict):
         ),
     )
 
-    # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning
+    # BIDS MRI sidecar fields without a NIfTI-MRS or Miox counterpart: name, unit, types, meaning
     BIDS_MRI = (
         ("Modality", None, (str,), "Imaging modality, e.g. MR."),
         ("SeriesDescription", None, (str,), "Free-text description of the series."),
