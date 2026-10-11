@@ -25,7 +25,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 SAMPLES = np.arange(8) + 1j * (10 - np.arange(8))
 
@@ -67,10 +67,10 @@ def fid_element(values: np.ndarray, byte_format: str = "Complex128", compressed=
 def test_bruker_fid_is_conjugated(tmp_path):
     path = tmp_path / "bruker.nmrML"
     path.write_text(document(fid=fid_element(SAMPLES)))
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.NMRML, gu.Kind.SPECTROSCOPY)
-    [d] = gu.load(path)
-    assert isinstance(d, gu.MRSData) and d.shape == (1, 1, 1, 8)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.NMRML, miox.Kind.SPECTROSCOPY)
+    [d] = miox.load(path)
+    assert isinstance(d, miox.MRSData) and d.shape == (1, 1, 1, 8)
     assert np.array_equal(d.data[0, 0, 0], SAMPLES.conj())
     assert d.dwelltime == pytest.approx(1e-3)
     assert d.spectrometer_frequency == pytest.approx(100.0001)
@@ -85,14 +85,14 @@ def test_varian_fid_is_kept_and_int32_pairs_are_read(tmp_path):
     path = tmp_path / "varian.nmrML"
     path.write_text(document(source="Varian VNMR format",
                              fid=fid_element(pairs, "Complex64Int", compressed=False)))
-    [d] = gu.load(path)
+    [d] = miox.load(path)
     assert np.array_equal(d.data[0, 0, 0], SAMPLES)
 
 
 def test_other_source_is_kept_with_a_note(tmp_path):
     path = tmp_path / "other.nmrML"
     path.write_text(document(source="JEOL", fid=fid_element(SAMPLES)))
-    [d] = gu.load(path)
+    [d] = miox.load(path)
     assert np.array_equal(d.data[0, 0, 0], SAMPLES)
     assert any("not verified" in note for note in d.provenance.notes)
 
@@ -104,8 +104,8 @@ def test_spectrum_rising_axis_is_reversed(tmp_path):
                 f'compressed="false">{encode(values, False)}</spectrumDataArray></spectrum1D>')
     path = tmp_path / "spectrum.nmrML"
     path.write_text(document(spectrum=spectrum))
-    [image] = gu.load(path)
-    assert isinstance(image, gu.MRImage) and image.dims[3] == "frequency"
+    [image] = miox.load(path)
+    assert isinstance(image, miox.MRImage) and image.dims[3] == "frequency"
     assert np.array_equal(image.data[0, 0, 0], values[::-1])
     # the span 8 ppm over 8 points: the first point at 4 ppm falls by 1 ppm per point
     assert image.meta["ReferencePPM"] == pytest.approx(0.0)
@@ -117,7 +117,7 @@ def test_complex_spectrum_without_axis(tmp_path):
                 f'compressed="false">{encode(SAMPLES, False)}</spectrumDataArray></spectrum1D>')
     path = tmp_path / "bare.nmrML"
     path.write_text(document(spectrum=spectrum))
-    [image] = gu.load(path)
+    [image] = miox.load(path)
     assert np.array_equal(image.data[0, 0, 0], SAMPLES)
     assert "ReferencePPM" not in image.meta and image.provenance.notes
 
@@ -126,7 +126,7 @@ def test_draft_without_sweep_width_lacks_the_dwell_time(tmp_path):
     path = tmp_path / "draft.nmrML"
     path.write_text(document(fid=fid_element(SAMPLES), sweep="",
                              frequency='<irradiationFrequency value="600.0" unitName="hertz"/>'))
-    [d] = gu.load(path)
+    [d] = miox.load(path)
     assert "DwellTime" in d.missing
     assert d.spectrometer_frequency == pytest.approx(600.0)  # the draft's MHz labelled as hertz
 
@@ -134,5 +134,5 @@ def test_draft_without_sweep_width_lacks_the_dwell_time(tmp_path):
 def test_malformed_xml_is_a_reader_error(tmp_path):
     path = tmp_path / "broken.nmrML"
     path.write_text('<nmrML xmlns="http://nmrml.org/schema"><a <!--x--> /></nmrML>')
-    with pytest.raises(gu.ReaderError):
-        gu.load(path)
+    with pytest.raises(miox.ReaderError):
+        miox.load(path)

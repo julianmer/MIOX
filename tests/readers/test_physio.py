@@ -30,7 +30,7 @@ from pydicom.dataset import FileMetaDataset
 from pydicom.uid import ExplicitVRLittleEndian
 
 # own
-import miox as gu
+import miox
 
 
 def _pmu_footer(start_ms: int, stop_ms: int) -> str:
@@ -47,10 +47,10 @@ def test_siemens_pmu(tmp_path):
     text = ("1 2 40 280 5002 LOGVERSION_PULS   1 6002 " + " ".join(map(str, values)) + " 5003\n"
             + _pmu_footer(36_000_000, 36_001_000))
     (tmp_path / "scan.puls").write_text(text)
-    sniff = gu.sniff(tmp_path / "scan.puls")
-    assert (sniff.format, sniff.kind) == (gu.Format.SIEMENS_PMU, gu.Kind.PHYSIO)
-    [physio] = gu.load(tmp_path / "scan.puls")
-    assert isinstance(physio, gu.PhysioData) and physio.channels == ("cardiac",)
+    sniff = miox.sniff(tmp_path / "scan.puls")
+    assert (sniff.format, sniff.kind) == (miox.Format.SIEMENS_PMU, miox.Kind.PHYSIO)
+    [physio] = miox.load(tmp_path / "scan.puls")
+    assert isinstance(physio, miox.PhysioData) and physio.channels == ("cardiac",)
     assert physio.data[:, 0].tolist() == samples  # markers are no samples
     assert physio.events["trigger"].tolist() == [10]
     assert physio.events["marker_6000"].tolist() == [20]
@@ -64,7 +64,7 @@ def test_siemens_pmu(tmp_path):
     stated = ("1 2 20 2 5002 Logging RESP signal: RESP_SAMPLES_PER_SECOND = 50; 6002 "
               + " ".join(map(str, samples)) + " 5003\n" + _pmu_footer(1000, 9000))
     (tmp_path / "scan.resp").write_text(stated)
-    [resp] = gu.load(tmp_path / "scan.resp")
+    [resp] = miox.load(tmp_path / "scan.resp")
     assert resp.sampling_frequency == 50 and resp.channels == ("respiratory",)
 
 
@@ -86,8 +86,8 @@ def test_cmrr_logs_and_dicom(tmp_path):
             (1008, "PULS", 14), (1010, "PULS", 15)]  # first row off the grid, 1006 missing
     (tmp_path / "Physio_x_PULS.log").write_text(_cmrr_log("PULS", 2, rows))
     (tmp_path / "Physio_x_Info.log").write_text(INFO)
-    assert gu.sniff(tmp_path / "Physio_x_PULS.log").format == gu.Format.CMRR_PHYSIO
-    [puls] = gu.load(tmp_path / "Physio_x_PULS.log")
+    assert miox.sniff(tmp_path / "Physio_x_PULS.log").format == miox.Format.CMRR_PHYSIO
+    [puls] = miox.load(tmp_path / "Physio_x_PULS.log")
     assert puls.sampling_frequency == 200 and puls.channels == ("cardiac",)
     assert np.array_equal(puls.data[:, 0], [10, 11, 12, np.nan, 14, 15], equal_nan=True)
     assert puls.start_time == pytest.approx(1000 * 2.5e-3)
@@ -95,7 +95,7 @@ def test_cmrr_logs_and_dicom(tmp_path):
     assert puls.events["volume"].tolist() == [4]  # 1008; the volume at 1020 is after the samples
     notes = " ".join(puls.provenance.notes)
     assert "1 samples missing" in notes and "1 rows off the SampleTime grid" in notes
-    [info] = gu.load(tmp_path / "Physio_x_Info.log")
+    [info] = miox.load(tmp_path / "Physio_x_Info.log")
     assert info.sampling_frequency is None and info.data.shape == (4, 5)
     assert info.events["volume"].tolist() == [0, 2] and info.channels[2] == "acq_start_tics"
     # the same logs inside a DICOM file, the last line cut off
@@ -119,9 +119,9 @@ def test_cmrr_logs_and_dicom(tmp_path):
     ds.add_new(0x7FE11010, "OB", blob)
     path = tmp_path / "physio.dcm"
     ds.save_as(path, enforce_file_format=True)
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.CMRR_PHYSIO, gu.Kind.PHYSIO)
-    ecg_data, info_data = gu.load(path)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.CMRR_PHYSIO, miox.Kind.PHYSIO)
+    ecg_data, info_data = miox.load(path)
     assert ecg_data.channels == ("ecg1", "ecg2") and ecg_data.sampling_frequency == 400
     assert ecg_data.data.tolist() == [[1, 2], [3, 4]]
     assert any("last line cut off" in n for n in ecg_data.provenance.notes)
@@ -134,8 +134,8 @@ def test_philips_physlog(tmp_path):
     marks = ["0000", "0010", "0202", "0000", "0020"]
     lines += [f"0 0  1 2  {100 + i} {200 + i}  0 0 0 {m}" for i, m in enumerate(marks)]
     (tmp_path / "SCANPHYSLOG.log").write_text("\n".join(lines) + "\n")
-    assert gu.sniff(tmp_path / "SCANPHYSLOG.log").format == gu.Format.PHILIPS_PHYSLOG
-    [log] = gu.load(tmp_path / "SCANPHYSLOG.log")
+    assert miox.sniff(tmp_path / "SCANPHYSLOG.log").format == miox.Format.PHILIPS_PHYSLOG
+    [log] = miox.load(tmp_path / "SCANPHYSLOG.log")
     assert log.channels == ("v1raw", "v2raw", "v1", "v2", "cardiac", "respiratory", "gx", "gy",
                             "gz")
     assert log.data[:, 4].tolist() == [100, 101, 102, 103, 104]
@@ -146,13 +146,14 @@ def test_philips_physlog(tmp_path):
 
 
 def test_ge_physio_and_bids_physio(tmp_path):
-    (tmp_path / "PPGData_epiRT_0000000000_00_00_000").write_text(" 1\n -2\n 3\n")
-    assert gu.sniff(tmp_path / "PPGData_epiRT_0000000000_00_00_000").format == gu.Format.GE_PHYSIO
-    [ppg] = gu.load(tmp_path / "PPGData_epiRT_0000000000_00_00_000")
+    path = tmp_path / "PPGData_epiRT_0000000000_00_00_000"
+    path.write_text(" 1\n -2\n 3\n")
+    assert miox.sniff(path).format == miox.Format.GE_PHYSIO
+    [ppg] = miox.load(path)
     assert ppg.data[:, 0].tolist() == [1, -2, 3] and ppg.sampling_frequency == 100
     assert ppg.start_time == -30 and ppg.channels == ("cardiac",)
     (tmp_path / "RESPData_epiRT_0000000000_00_00_000.gep").write_text("5\n6\n")
-    [resp] = gu.load(tmp_path / "RESPData_epiRT_0000000000_00_00_000.gep")
+    [resp] = miox.load(tmp_path / "RESPData_epiRT_0000000000_00_00_000.gep")
     assert resp.sampling_frequency == 25 and resp.name == "RESPData_epiRT_0000000000_00_00_000"
     # BIDS physio
     with gzip.open(tmp_path / "sub-1_task-rest_physio.tsv.gz", "wt") as fh:
@@ -160,9 +161,9 @@ def test_ge_physio_and_bids_physio(tmp_path):
     sidecar = {"Columns": ["cardiac", "trigger"], "SamplingFrequency": 100.0, "StartTime": -1.5,
                "Manufacturer": "x"}
     (tmp_path / "sub-1_task-rest_physio.json").write_text(json.dumps(sidecar))
-    sniff = gu.sniff(tmp_path / "sub-1_task-rest_physio.tsv.gz")
-    assert sniff.format == gu.Format.BIDS_PHYSIO and len(sniff.companions) == 1
-    [bids] = gu.load(tmp_path / "sub-1_task-rest_physio.tsv.gz")
+    sniff = miox.sniff(tmp_path / "sub-1_task-rest_physio.tsv.gz")
+    assert sniff.format == miox.Format.BIDS_PHYSIO and len(sniff.companions) == 1
+    [bids] = miox.load(tmp_path / "sub-1_task-rest_physio.tsv.gz")
     assert bids.channels == ("cardiac", "trigger") and bids.start_time == -1.5
     assert np.array_equal(bids.data[:, 0], [1.5, np.nan, 2.5], equal_nan=True)
     assert bids.name == "sub-1_task-rest_physio" and bids.meta.vendor["sidecar"]["Manufacturer"]
@@ -171,9 +172,9 @@ def test_ge_physio_and_bids_physio(tmp_path):
 def test_hcp_physio(tmp_path):
     path = tmp_path / "rfMRI_REST1_LR_Physio_log.txt"
     path.write_text("".join(f"{int(i % 4 == 0)}\t{1900 + i}\t{1750 - i}\n" for i in range(8)))
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.HCP_PHYSIO, gu.Kind.PHYSIO)
-    [d] = gu.load(path)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.HCP_PHYSIO, miox.Kind.PHYSIO)
+    [d] = miox.load(path)
     assert d.channels == ("trigger", "respiratory", "cardiac")
     assert d.sampling_frequency == 400.0 and d.data.shape == (8, 3)
     assert d.data[4, 0] == 1 and d.data[2, 1] == 1902

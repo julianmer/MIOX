@@ -28,7 +28,7 @@ import zlib
 import pytest
 
 # own
-import miox as gu
+import miox
 
 ASCCONV = """<XProtocol>
 {
@@ -64,10 +64,10 @@ def _protocol(**changes) -> str:
 
 def test_siemens_pro_file(tmp_path):
     (tmp_path / "mprage.pro").write_text(ASCCONV)
-    sniff = gu.sniff(tmp_path / "mprage.pro")
-    assert (sniff.format, sniff.kind) == (gu.Format.SIEMENS_PRO, gu.Kind.PROTOCOL)
-    [protocol] = gu.load(tmp_path / "mprage.pro")
-    assert isinstance(protocol, gu.Protocol) and protocol.name == "t1 = mprage"
+    sniff = miox.sniff(tmp_path / "mprage.pro")
+    assert (sniff.format, sniff.kind) == (miox.Format.SIEMENS_PRO, miox.Kind.PROTOCOL)
+    [protocol] = miox.load(tmp_path / "mprage.pro")
+    assert isinstance(protocol, miox.Protocol) and protocol.name == "t1 = mprage"
     m = protocol.meta
     assert m["RepetitionTime"] == 2.3 and m["EchoTime"] == pytest.approx(0.00298)
     assert m["InversionTime"] == 0.9 and m["ExcitationFlipAngle"] == 9.0
@@ -77,9 +77,9 @@ def test_siemens_pro_file(tmp_path):
     assert m.vendor["xprotocol"].startswith("<XProtocol>")
     # inversion off: no inversion time; two inversion contrasts: both times
     (tmp_path / "gre.pro").write_text(_protocol(**{"sPrepPulses.ucInversion": "0x4"}))
-    assert "InversionTime" not in gu.load(tmp_path / "gre.pro")[0].meta
+    assert "InversionTime" not in miox.load(tmp_path / "gre.pro")[0].meta
     (tmp_path / "mp2rage.pro").write_text(_protocol(lInvContrasts="2"))
-    assert gu.load(tmp_path / "mp2rage.pro")[0].meta["InversionTime"] == [0.9, 1.0]
+    assert miox.load(tmp_path / "mp2rage.pro")[0].meta["InversionTime"] == [0.9, 1.0]
 
 
 def _content(kind: str, body: dict) -> bytes:
@@ -126,8 +126,8 @@ def test_siemens_exam_tree(tmp_path):
     add("Directory", {}, [], text("Neuro"), obj=folder_object)
     add("Structure", {"ParentDirectoryId": {"$id": "1", program: folder_object}})
     db.commit()
-    assert gu.sniff(path).format == gu.Format.SIEMENS_EXAR
-    first, older = gu.load(path)
+    assert miox.sniff(path).format == miox.Format.SIEMENS_EXAR
+    first, older = miox.load(path)
     assert (first.name, first.location) == ("MPRAGE", ("Neuro", "Brain"))
     assert first.meta["RepetitionTime"] == 2.3 and older.meta["RepetitionTime"] == 0.001
     steps = first.meta.vendor["program"]["steps"]
@@ -168,8 +168,8 @@ PRINTED_TEXT = (
 
 def test_siemens_printed_protocols(tmp_path):
     (tmp_path / "exam.xml").write_text(PRINTED_XML)
-    assert gu.sniff(tmp_path / "exam.xml").format == gu.Format.SIEMENS_PRINTPROT
-    [protocol] = gu.load(tmp_path / "exam.xml")
+    assert miox.sniff(tmp_path / "exam.xml").format == miox.Format.SIEMENS_PRINTPROT
+    [protocol] = miox.load(tmp_path / "exam.xml")
     assert (protocol.name, protocol.location) == ("mp2rage", ("User", "Head", "Exam", "Brain"))
     m = protocol.meta
     assert m["RepetitionTime"] == 5.0 and m["EchoTime"] == 0.00298
@@ -177,8 +177,8 @@ def test_siemens_printed_protocols(tmp_path):
     assert m["BaseResolution"] == 256 and m["SliceThickness"] == 1.0
     assert m.vendor["path"].endswith("mp2rage *") and m.vendor["header"] == "TA: 5:00"
     (tmp_path / "exam.txt").write_bytes(PRINTED_TEXT.encode())
-    assert gu.sniff(tmp_path / "exam.txt").format == gu.Format.SIEMENS_PRINTPROT
-    [text] = gu.load(tmp_path / "exam.txt")
+    assert miox.sniff(tmp_path / "exam.txt").format == miox.Format.SIEMENS_PRINTPROT
+    [text] = miox.load(tmp_path / "exam.txt")
     assert (text.name, text.location) == ("gre_fm", ("USER", "site", "exam"))
     assert text.meta["EchoTime"] == [0.00492, 0.00738] and text.meta["NumberOfAverages"] == 1
     assert text.meta["ExcitationFlipAngle"] == 60.0
@@ -230,8 +230,8 @@ def test_philips_examcard(tmp_path):
 <SOAP-ENC:Array id="ref-5">{base64.b64encode(table).decode()}</SOAP-ENC:Array>
 </SOAP-ENV:Body></SOAP-ENV:Envelope>"""
     (tmp_path / "brain.ExamCard").write_bytes(xml.encode() + b"\0" * 64)  # NUL padding
-    assert gu.sniff(tmp_path / "brain.ExamCard").format == gu.Format.PHILIPS_EXAMCARD
-    [scan] = gu.load(tmp_path / "brain.ExamCard")
+    assert miox.sniff(tmp_path / "brain.ExamCard").format == miox.Format.PHILIPS_EXAMCARD
+    [scan] = miox.load(tmp_path / "brain.ExamCard")
     assert (scan.name, scan.location) == ("rsfMRI", ("Brain",))
     m = scan.meta
     assert m["RepetitionTime"] == 0.801 and m["EchoTime"] == 0.031  # the computed values
@@ -248,7 +248,7 @@ def test_lcmodel_control(tmp_path):
         " &LCMODL\n title='PRESS TE 30', hzpppm=1.2325D+02, deltat=2.5e-04, nunfil=2048,\n"
         " echot=30., chomit(1)='Lip13a', chomit(2)='MM09', shifmx= 0.3 0.3, dows=T\n /\n"
     )
-    [protocol] = gu.load(path)
+    [protocol] = miox.load(path)
     assert protocol.name == "fit"
     values = protocol.meta.vendor["namelists"]["lcmodl"]
     assert values["chomit"] == ["Lip13a", "MM09"]
@@ -268,7 +268,7 @@ def test_makebasis_input(tmp_path):
         " $NMEACH\n filraw='naa.raw', metabo='NAA'\n $END\n"
         " $NMEACH\n filraw='cr.raw', metabo='Cr'\n $END\n"
     )
-    [protocol] = gu.load(path)
+    [protocol] = miox.load(path)
     namelists = protocol.meta.vendor["namelists"]
     assert [m["metabo"] for m in namelists["nmeach"]] == ["NAA", "Cr"]
     assert namelists["nmall"]["filbas"] == "press.basis"

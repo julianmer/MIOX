@@ -25,7 +25,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 BASES = {"second": 28, "ppm": 26, "hertz": 13}
 AXIS_TYPES = {None: 0, "real": 1, "complex": 3, "real_complex": 4}
@@ -89,10 +89,10 @@ FID = np.exp(1j * 2 * np.pi * 100.0 * np.arange(16) / 1000.0 - 0.05 * np.arange(
 def test_one_dimensional_fid(tmp_path):
     path = jdf(tmp_path / "fid.jdf", [FID.real, FID.imag], [16], [(0, 15)],
                [(0.0, 15e-3)], ["complex"], "second", PARAMETERS)
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.JEOL_JDF, gu.Kind.SPECTROSCOPY)
-    [d] = gu.load(path)
-    assert isinstance(d, gu.MRSData) and d.shape == (1, 1, 1, 16)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.JEOL_JDF, miox.Kind.SPECTROSCOPY)
+    [d] = miox.load(path)
+    assert isinstance(d, miox.MRSData) and d.shape == (1, 1, 1, 16)
     assert np.allclose(d.data[0, 0, 0], FID)  # real + i imaginary, as stored
     assert d.dwelltime == pytest.approx(1e-3)
     assert d.spectrometer_frequency == pytest.approx(400.0)
@@ -105,8 +105,8 @@ def test_spectrum_is_cut_to_the_points_kept(tmp_path):
     real = np.arange(16.0)
     path = jdf(tmp_path / "spectrum.jdf", [real, np.zeros(16)], [16], [(0, 9)],
                [(9.0, 0.0)], ["complex"], "ppm", PARAMETERS)
-    [image] = gu.load(path)
-    assert isinstance(image, gu.MRImage) and image.dims[3] == "frequency"
+    [image] = miox.load(path)
+    assert isinstance(image, miox.MRImage) and image.dims[3] == "frequency"
     assert image.shape == (1, 1, 1, 10)
     assert np.array_equal(image.data[0, 0, 0].real, real[:10])
     # 10 points over 9 ppm: 1 ppm per point, the centre point (index 5) at 4 ppm
@@ -118,7 +118,7 @@ def test_rising_spectrum_axis_is_reversed(tmp_path):
     real = np.arange(8.0)
     path = jdf(tmp_path / "rising.jdf", [real], [8], [(0, 7)], [(0.0, 7.0)], ["real"], "ppm",
                PARAMETERS)
-    [image] = gu.load(path)
+    [image] = miox.load(path)
     assert np.array_equal(image.data[0, 0, 0], real[::-1])
     assert image.meta["ReferencePPM"] == pytest.approx(3.0)
 
@@ -133,7 +133,7 @@ def test_two_complex_axes_give_two_rows_per_increment(tmp_path):
     path = jdf(tmp_path / "hsqc.jdf", sections, [32, 32], [(0, 31), (0, 7)],
                [(0.0, 0.031), (0.0, 0.0105)], ["complex", "complex"], "second", parameters,
                data_format=2)
-    [d] = gu.load(path)
+    [d] = miox.load(path)
     assert d.shape == (1, 1, 1, 32, 16)  # 8 increments, 2 rows each
     assert d.dim_tags[0] == "DIM_INDIRECT_0"
     assert np.allclose(d.data[0, 0, 0, :, 0], sections[0][0] + 1j * sections[1][0])
@@ -150,7 +150,7 @@ def test_real_indirect_axis_gives_one_row_per_increment(tmp_path):
     path = jdf(tmp_path / "hmbc.jdf", sections, [32, 32], [(0, 31), (0, 31)],
                [(0.0, 0.031), (0.0, 0.0155)], ["real_complex", "real_complex"], "second",
                dict(PARAMETERS, y_freq=100e6, y_domain="Carbon13"), data_format=2)
-    [d] = gu.load(path)
+    [d] = miox.load(path)
     assert d.shape == (1, 1, 1, 32, 32)
     assert np.allclose(d.data[0, 0, 0, :, 5], sections[0][5] + 1j * sections[1][5])
     assert d.dim_info[5]["header"]["IndirectTime"]["Value"][1] == pytest.approx(0.0005)
@@ -159,4 +159,4 @@ def test_real_indirect_axis_gives_one_row_per_increment(tmp_path):
 def test_other_files_are_not_jeol(tmp_path):
     path = tmp_path / "plain.jdf"
     path.write_bytes(b"not a JEOL file" * 100)
-    assert gu.sniff(path).format != gu.Format.JEOL_JDF
+    assert miox.sniff(path).format != miox.Format.JEOL_JDF

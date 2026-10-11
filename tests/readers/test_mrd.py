@@ -25,7 +25,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 from miox.yardl import YardlError, YardlFile, YardlSchema
 
 
@@ -468,11 +468,11 @@ def test_mrd_acquisitions_waveforms_and_keys(tmp_path):
     ]
     path = tmp_path / "scan.mrd"
     YardlWriter(MRD_SCHEMA).write(path, {"header": _header(), "data": items})
-    sniff = gu.sniff(path)
+    sniff = miox.sniff(path)
     assert (sniff.format, sniff.kind, sniff.evidence) == (
-        gu.Format.MRD, gu.Kind.RAW, ("yardl binary", "protocol Mrd"))
-    [raw] = gu.load(path)
-    assert isinstance(raw, gu.RawData) and raw.shape == (4, 2, 8) and raw.name == "data"
+        miox.Format.MRD, miox.Kind.RAW, ("yardl binary", "protocol Mrd"))
+    [raw] = miox.load(path)
+    assert isinstance(raw, miox.RawData) and raw.shape == (4, 2, 8) and raw.name == "data"
     assert raw.data[1, 1, 3] == 11 + 1j
     heads = raw.headers
     assert heads["acquisition_time_stamp"].tolist() == [100, 101, 102, 103]  # ns // 10^6
@@ -533,7 +533,7 @@ def test_mrd_images_grouped_by_series_and_set(tmp_path):
     ]
     path = tmp_path / "images.mrd"
     YardlWriter(MRD_SCHEMA).write(path, {"header": None, "data": items})
-    images = gu.load(path)
+    images = miox.load(path)
     assert [i.name for i in images] == [
         "imageUint16/series_1/1", "imageUint16/series_2", "imageComplexFloat/series_1/complex",
         "imageUint16/series_1/2"]
@@ -572,8 +572,8 @@ def test_mrd_pulseq_items(tmp_path):
     ]
     path = tmp_path / "seq.mrd"
     YardlWriter(MRD_SCHEMA).write(path, {"header": None, "data": items})
-    [sequence] = gu.load(path)
-    assert isinstance(sequence, gu.PulseSequence) and sequence.n_blocks == 2
+    [sequence] = miox.load(path)
+    assert isinstance(sequence, miox.PulseSequence) and sequence.n_blocks == 2
     assert sequence.duration == pytest.approx(0.012) and sequence.version == ""
     assert sequence.definitions["TE"] == 0.004 and sequence.definitions["Matrix"] == [64, 64, 1]
     assert sequence.definitions["FOV"] == [0.25, 0.25, 0.005]
@@ -604,8 +604,8 @@ def test_mrd_ndjson_equals_binary(tmp_path):
     ]
     text = tmp_path / "one.ndjson"
     text.write_text("\n".join(lines) + "\n")
-    assert gu.sniff(text).evidence == ("yardl NDJSON", "protocol Mrd")
-    [a], [b] = gu.load(binary), gu.load(text)
+    assert miox.sniff(text).evidence == ("yardl NDJSON", "protocol Mrd")
+    [a], [b] = miox.load(binary), miox.load(text)
     assert np.array_equal(a.data, b.data) and a.headers.tobytes() == b.headers.tobytes()
     assert a.meta.vendor["acquisitions"] == b.meta.vendor["acquisitions"]
     assert "ndjson encoding" in b.provenance.notes[0]
@@ -616,9 +616,9 @@ def test_other_yardl_protocols_are_not_mrd(tmp_path):
         {"name": "value", "type": "int32"}]}, "types": []}
     path = tmp_path / "noise.bin"
     YardlWriter(schema).write(path, {"value": 3})
-    assert gu.sniff(path).format != gu.Format.MRD
-    with pytest.raises(gu.ReaderError, match="not Mrd"):
-        gu.Loader().readers[gu.Format.MRD].read(gu.Sniff(path, gu.Format.MRD))
+    assert miox.sniff(path).format != miox.Format.MRD
+    with pytest.raises(miox.ReaderError, match="not Mrd"):
+        miox.Loader().readers[miox.Format.MRD].read(miox.Sniff(path, miox.Format.MRD))
 
 
 def test_mrd_noise_covariance(tmp_path):
@@ -639,10 +639,10 @@ def test_mrd_noise_covariance(tmp_path):
              "sampleCount": 4096, "matrix": matrix}
     path = tmp_path / "noise.mrd"
     YardlWriter(schema).write(path, {"noiseCovariance": value})
-    sniff = gu.sniff(path)
-    assert sniff.format == gu.Format.MRD and sniff.evidence[1] == "protocol MrdNoiseCovariance"
-    [covariance] = gu.load(path)
-    assert isinstance(covariance, gu.NoiseCovariance) and covariance.n_coils == 2
+    sniff = miox.sniff(path)
+    assert sniff.format == miox.Format.MRD and sniff.evidence[1] == "protocol MrdNoiseCovariance"
+    [covariance] = miox.load(path)
+    assert isinstance(covariance, miox.NoiseCovariance) and covariance.n_coils == 2
     assert np.array_equal(covariance.matrix, matrix) and covariance.matrix[0, 1] == 0.5 + 0.25j
     assert covariance.coil_labels == [{"number": 1, "name": "H1"}, {"number": 2, "name": "H2"}]
     assert covariance.bandwidth == 0.793 and covariance.sample_count == 4096

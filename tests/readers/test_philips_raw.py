@@ -23,7 +23,7 @@ import struct
 import numpy as np
 import pytest
 
-import miox as gu
+import miox
 from miox.readers.philips_raw_lab import MiraDecoder, PhilipsRawLabReader
 
 CHANNELS, SAMPLES = 2, 8
@@ -149,11 +149,11 @@ def test_decoder_roundtrip():
 def test_philips_raw_export(tmp_path):
     profiles, noise, echo = _write(tmp_path)
     for suffix in ("lab", "raw", "sin"):
-        sniff = gu.sniff(tmp_path / f"scan.{suffix}")
-        assert sniff.format == gu.Format.PHILIPS_RAW_LAB and sniff.kind == gu.Kind.RAW
+        sniff = miox.sniff(tmp_path / f"scan.{suffix}")
+        assert sniff.format == miox.Format.PHILIPS_RAW_LAB and sniff.kind == miox.Kind.RAW
         assert sniff.vendor == "philips"
         assert len(sniff.companions) == 2 and sniff.confidence == 1.0
-    image, echo_phase, noise_data = gu.load(tmp_path / "scan.lab")
+    image, echo_phase, noise_data = miox.load(tmp_path / "scan.lab")
     assert image.name == "scan" and noise_data.name == "scan_frc_noise_data"
     assert echo_phase.name == "scan_echo_phase_data"
     assert image.shape == (4, CHANNELS, SAMPLES) and image.data.dtype == np.complex128
@@ -209,7 +209,7 @@ def test_old_layout_with_plain_samples(tmp_path):
     (tmp_path / "old.lab").write_bytes(label.tobytes())
     (tmp_path / "old.raw").write_bytes(bytes(512) + values.tobytes())
     (tmp_path / "old.sin").write_text(SIN + " 00 00 00: enable_pda : 1\n")
-    [image] = gu.load(tmp_path / "old.lab")
+    [image] = miox.load(tmp_path / "old.lab")
     assert image.shape == (1, CHANNELS, SAMPLES) and image.data.dtype == np.complex64
     assert image.data[0, 1, 0] == complex(16 - 7, 17 - 7)
     assert image.counters("kspace_encode_step_1").tolist() == [3]
@@ -218,5 +218,5 @@ def test_old_layout_with_plain_samples(tmp_path):
 
 def test_missing_companion_is_an_error(tmp_path):
     (tmp_path / "x.lab").write_bytes(_label(0, 0, 0))
-    with pytest.raises(gu.ReaderError, match="no .raw file"):
-        gu.load(tmp_path / "x.lab")
+    with pytest.raises(miox.ReaderError, match="no .raw file"):
+        miox.load(tmp_path / "x.lab")

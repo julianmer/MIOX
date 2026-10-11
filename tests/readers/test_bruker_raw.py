@@ -21,7 +21,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-import miox as gu
+import miox
 
 POINTS, CHANNELS, OBJECTS, STEPS, ECHOES = 6, 2, 2, 8, 2  # 8 phase steps in trains of 2 echoes
 
@@ -91,10 +91,10 @@ def _scan(tmp_path, pv360: bool = False):
 @pytest.mark.parametrize("pv360", [False, True])
 def test_bruker_imaging_raw(tmp_path, pv360):
     path, steps1 = _scan(tmp_path, pv360)
-    sniff = gu.sniff(path)
-    assert sniff.format == gu.Format.BRUKER and sniff.kind == gu.Kind.RAW
-    [raw] = gu.load(path)
-    assert isinstance(raw, gu.RawData) and raw.shape == (OBJECTS * STEPS, CHANNELS, POINTS)
+    sniff = miox.sniff(path)
+    assert sniff.format == miox.Format.BRUKER and sniff.kind == miox.Kind.RAW
+    [raw] = miox.load(path)
+    assert isinstance(raw, miox.RawData) and raw.shape == (OBJECTS * STEPS, CHANNELS, POINTS)
     assert raw.data[5, 1, 2] == complex(5000 + 100 + 2, -5)
     assert raw.headers["scan_counter"].tolist() == list(range(16))
     # block b: echo b % 2, object (b // 2) % 2, train b // 4; line = echo + 2 * train

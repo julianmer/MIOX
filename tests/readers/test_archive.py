@@ -27,7 +27,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 FID = """##TITLE= test
 ##JCAMP-DX= 5.01
@@ -75,9 +75,9 @@ def test_datasets_inside_a_zip(tmp_path):
         "study/sample/fid.jdx": FID.encode(),
         "inner.zip": nested({"second.jdx": FID.encode()}),
     })
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.ZIP_ARCHIVE, gu.Kind.ARCHIVE)
-    datasets = gu.load(path)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.ZIP_ARCHIVE, miox.Kind.ARCHIVE)
+    datasets = miox.load(path)
     assert len(datasets) == 2
     paths = sorted(str(d.provenance.paths[0]) for d in datasets)
     assert paths == [str(path / "inner.zip" / "second.jdx"),
@@ -88,17 +88,17 @@ def test_datasets_inside_a_zip(tmp_path):
 
 def test_member_outside_the_folder_is_refused(tmp_path):
     path = archive(tmp_path / "evil.zip", {"../escape.jdx": FID.encode()})
-    with pytest.raises(gu.ReaderError, match="outside"):
-        gu.load(path)
+    with pytest.raises(miox.ReaderError, match="outside"):
+        miox.load(path)
 
 
 def test_nothing_readable(tmp_path):
     path = archive(tmp_path / "text.zip", {"readme.txt": b"hello\n"})
-    with pytest.raises(gu.ReaderError):
-        gu.load(path)
+    with pytest.raises(miox.ReaderError):
+        miox.load(path)
 
 
 def test_office_documents_are_not_archives(tmp_path):
     path = archive(tmp_path / "table.xlsx", {"[Content_Types].xml": b"<Types/>",
                                              "xl/workbook.xml": b"<workbook/>"})
-    assert gu.sniff(path).format != gu.Format.ZIP_ARCHIVE
+    assert miox.sniff(path).format != miox.Format.ZIP_ARCHIVE

@@ -24,7 +24,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 ACQU = """b1Freq = 43.5
 bandwidth = 5
@@ -53,10 +53,10 @@ FID = (np.arange(8) - 1j * np.arange(8, 0, -1)).astype(np.complex64)
 def test_fid_with_acquisition_parameters(tmp_path):
     (tmp_path / "acqu.par").write_text(ACQU)
     path = prospa(tmp_path / "data.1d", np.arange(8) * 2e-4, FID)
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.SPINSOLVE, gu.Kind.SPECTROSCOPY)
-    [d] = gu.load(path)
-    assert isinstance(d, gu.MRSData) and np.array_equal(d.data[0, 0, 0], FID)  # as stored
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.SPINSOLVE, miox.Kind.SPECTROSCOPY)
+    [d] = miox.load(path)
+    assert isinstance(d, miox.MRSData) and np.array_equal(d.data[0, 0, 0], FID)  # as stored
     assert d.dwelltime == pytest.approx(2e-4)
     assert d.spectrometer_frequency == pytest.approx(43.5)
     assert d.meta["ReferencePPM"] == pytest.approx((-2282.5 + 2500.0) / 43.5)
@@ -67,8 +67,8 @@ def test_fid_with_acquisition_parameters(tmp_path):
 def test_spectrum_is_reversed(tmp_path):
     (tmp_path / "acqu.par").write_text(ACQU)
     axis = np.linspace(-1.0, 6.0, 8)  # rising, as Spinsolve writes it
-    [image] = gu.load(prospa(tmp_path / "spectrum.1d", axis, FID))
-    assert isinstance(image, gu.MRImage) and image.dims[3] == "frequency"
+    [image] = miox.load(prospa(tmp_path / "spectrum.1d", axis, FID))
+    assert isinstance(image, miox.MRImage) and image.dims[3] == "frequency"
     assert np.array_equal(image.data[0, 0, 0], FID[::-1])
     assert image.meta["ReferencePPM"] == pytest.approx(axis[::-1][4])
     assert image.meta["SpectralWidth"] == pytest.approx(1.0 * 43.5 * 8)
@@ -78,12 +78,12 @@ def test_experiment_folder(tmp_path):
     (tmp_path / "acqu.par").write_text(ACQU)
     prospa(tmp_path / "data.1d", np.arange(8) * 2e-4, FID)
     prospa(tmp_path / "spectrum.1d", np.linspace(-1.0, 6.0, 8), FID)
-    assert gu.sniff(tmp_path).format == gu.Format.SPINSOLVE
-    datasets = gu.load(tmp_path)
+    assert miox.sniff(tmp_path).format == miox.Format.SPINSOLVE
+    datasets = miox.load(tmp_path)
     assert [type(d).__name__ for d in datasets] == ["MRSData", "MRImage"]
 
 
 def test_other_files_are_not_spinsolve(tmp_path):
     path = tmp_path / "plot.pt1"
     path.write_bytes(b"SORPD1LP" + bytes(64))
-    assert gu.sniff(path).format != gu.Format.SPINSOLVE
+    assert miox.sniff(path).format != miox.Format.SPINSOLVE

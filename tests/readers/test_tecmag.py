@@ -24,7 +24,7 @@ import pytest
 from nmrglue.fileio.tecmag import TNTTLV, TNTTMAG, TNTTMG2
 
 # own
-import miox as gu
+import miox
 
 
 def tnt(path: Path, data: np.ndarray, fft: bool = False) -> Path:
@@ -56,9 +56,9 @@ FID = (np.arange(16) - 1j * np.arange(16, 0, -1)).astype(np.complex64)
 
 def test_one_dimensional_fid(tmp_path):
     path = tnt(tmp_path / "fid.tnt", FID)
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.TECMAG_TNT, gu.Kind.SPECTROSCOPY)
-    [d] = gu.load(path)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.TECMAG_TNT, miox.Kind.SPECTROSCOPY)
+    [d] = miox.load(path)
     assert d.shape == (1, 1, 1, 16) and np.array_equal(d.data[0, 0, 0], FID)
     assert d.dwelltime == pytest.approx(1e-4)
     assert d.spectrometer_frequency == pytest.approx(117.2)
@@ -70,17 +70,17 @@ def test_one_dimensional_fid(tmp_path):
 
 def test_second_dimension_on_dim_indirect_0(tmp_path):
     data = np.stack([FID, 2 * FID, 3 * FID], axis=1)
-    [d] = gu.load(tnt(tmp_path / "2d.tnt", data))
+    [d] = miox.load(tnt(tmp_path / "2d.tnt", data))
     assert d.shape == (1, 1, 1, 16, 3) and d.dim_tags[0] == "DIM_INDIRECT_0"
     assert np.array_equal(d.data[0, 0, 0, :, 2], 3 * FID)
 
 
 def test_frequency_domain_data_are_refused(tmp_path):
-    with pytest.raises(gu.ReaderError):
-        gu.load(tnt(tmp_path / "spectrum.tnt", FID, fft=True))
+    with pytest.raises(miox.ReaderError):
+        miox.load(tnt(tmp_path / "spectrum.tnt", FID, fft=True))
 
 
 def test_other_files_are_not_tecmag(tmp_path):
     path = tmp_path / "other.tnt"
     path.write_bytes(b"TNT2.000" + bytes(64))
-    assert gu.sniff(path).format != gu.Format.TECMAG_TNT
+    assert miox.sniff(path).format != miox.Format.TECMAG_TNT

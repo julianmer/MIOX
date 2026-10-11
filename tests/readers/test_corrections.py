@@ -22,7 +22,7 @@ import pytest
 from nifti_mrs.create_nmrs import gen_nifti_mrs
 
 # own
-import miox as gu
+import miox
 from miox.data import MRSData, Provenance
 from miox.meta import Meta
 from miox.readers import (
@@ -39,7 +39,7 @@ def _dataset(vendor: dict, values: dict[str, tuple]) -> MRSData:
     meta = Meta(vendor)
     for key, (value, field) in values.items():
         meta.set(key, value, f"spec2nii test: {field}", field)
-    provenance = Provenance((), gu.Format.UNKNOWN, "test", {})
+    provenance = Provenance((), miox.Format.UNKNOWN, "test", {})
     return MRSData(np.zeros((1, 1, 1, 8), complex), 1e-3, np.eye(4), meta, provenance)
 
 
@@ -50,7 +50,7 @@ def test_float_text_and_quotes(tmp_path):
     image.add_hdr_field("RxCoil", '"Head_32"')
     path = tmp_path / "svs.nii.gz"
     image.save(path)
-    [d] = gu.load(path)
+    [d] = miox.load(path)
     assert d.meta["DeviceSerialNumber"] == "66050" and d.meta["PatientDoB"] == "19890117"
     assert d.meta["RxCoil"] == "Head_32"
     assert d.meta.source["RxCoil"].endswith("corrected: surrounding quotes removed")

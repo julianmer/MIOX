@@ -26,7 +26,7 @@ import pytest
 import scipy.io
 
 # own
-import miox as gu
+import miox
 
 
 def _fid(frequency: float = 100, n: int = 64) -> np.ndarray:
@@ -52,8 +52,8 @@ def test_lcmodel_basis(tmp_path):
                   " $END"]
         lines += [f"{z.real:15.6E}{z.imag:15.6E}" for z in spectrum]
     f.write_text("\n".join(lines) + "\n")
-    [b] = gu.load(f)
-    assert isinstance(b, gu.BasisSet) and b.metabolites == ["NAA", "Cr"]
+    [b] = miox.load(f)
+    assert isinstance(b, miox.BasisSet) and b.metabolites == ["NAA", "Cr"]
     assert b.spectrometer_frequency == pytest.approx(123.2) and b.dwelltime == pytest.approx(2.5e-4)
     assert b.meta["EchoTime"] == pytest.approx(0.03)
     assert np.allclose(b.fid("NAA"), _fid(100), atol=1e-5)
@@ -63,8 +63,8 @@ def test_lcmodel_basis(tmp_path):
 def test_fsl_mrs_json(tmp_path):
     f = tmp_path / "NAA.json"
     _fsl_json(f, "NAA", _fid())
-    [b] = gu.load(f)
-    assert isinstance(b, gu.BasisSet) and b.metabolites == ["NAA"]
+    [b] = miox.load(f)
+    assert isinstance(b, miox.BasisSet) and b.metabolites == ["NAA"]
     assert b.spectrometer_frequency == pytest.approx(123.2) and b.dwelltime == pytest.approx(2.5e-4)
     assert np.allclose(b.fid("NAA"), _fid())
     assert b.meta.vendor["meta"] == {"SimVersion": "test"}
@@ -73,7 +73,7 @@ def test_fsl_mrs_json(tmp_path):
 def test_folder_of_fsl_mrs_json(tmp_path):
     for name, frequency in (("NAA", 100), ("Cr", -50), ("GABA", 20)):
         _fsl_json(tmp_path / f"{name}.json", name, _fid(frequency))
-    [b] = gu.load(tmp_path)
+    [b] = miox.load(tmp_path)
     assert b.metabolites == ["Cr", "GABA", "NAA"] and b.shape == (1, 1, 1, 64, 3)
     assert np.allclose(b.fid("GABA"), _fid(20))
     assert set(b.meta.vendor) == {"Cr", "GABA", "NAA"}
@@ -83,8 +83,8 @@ def test_folder_of_fsl_mrs_json(tmp_path):
 def test_folder_of_mismatched_files(tmp_path):
     _fsl_json(tmp_path / "NAA.json", "NAA", _fid())
     _fsl_json(tmp_path / "Cr.json", "Cr", _fid(), dwell=5e-4)
-    with pytest.raises(gu.ReaderError, match="differs"):
-        gu.load(tmp_path)
+    with pytest.raises(miox.ReaderError, match="differs"):
+        miox.load(tmp_path)
 
 
 def test_spinwizard_folder(tmp_path):
@@ -93,7 +93,7 @@ def test_spinwizard_folder(tmp_path):
     for name, frequency in (("NAA", 100), ("Cr", -50)):
         stored = np.conj(_fid(frequency))
         (tmp_path / name).write_text("".join(f"{z.real}\t\t{z.imag}\n" for z in stored))
-    [b] = gu.load(tmp_path)
+    [b] = miox.load(tmp_path)
     assert b.metabolites == ["Cr", "NAA"]
     assert b.spectrometer_frequency == pytest.approx(123.2) and b.dwelltime == pytest.approx(2.5e-4)
     assert np.allclose(b.fid("NAA"), _fid(100))
@@ -112,7 +112,7 @@ def test_osprey_basis_with_sub_spectra(tmp_path):
     basis = {"fids": np.conj(fids), "name": _cell("NAA", "Cr"), "Bo": 2.89, "te": 30.0,
              "dwelltime": 2.5e-4, "centerFreq": 3.0}
     scipy.io.savemat(tmp_path / "basis.mat", {"BASIS": basis})
-    [b] = gu.load(tmp_path / "basis.mat")
+    [b] = miox.load(tmp_path / "basis.mat")
     assert b.metabolites == ["NAA", "Cr"] and b.shape == (1, 1, 1, 64, 2, 2)
     assert b.spectrometer_frequency == pytest.approx(2.89 * 42.577)
     assert b.meta["EchoTime"] == pytest.approx(0.03) and b.meta["ReferencePPM"] == 3.0
@@ -124,7 +124,7 @@ def test_inspector_basis(tmp_path):
                    (("NAA", 100), ("Cr", -50))))
     lcm = {"data": data, "sw_h": 4000, "sf": 123.2, "ppmCalib": 4.65}
     scipy.io.savemat(tmp_path / "inspector.mat", {"lcmBasis": lcm})
-    [b] = gu.load(tmp_path / "inspector.mat")
+    [b] = miox.load(tmp_path / "inspector.mat")
     assert b.metabolites == ["NAA", "Cr"] and b.dwelltime == pytest.approx(2.5e-4)
     assert b.spectrometer_frequency == pytest.approx(123.2) and b.meta["ReferencePPM"] == 4.65
     assert np.allclose(b.fid("NAA"), _fid(100))
@@ -135,7 +135,7 @@ def test_folder_of_marss_files(tmp_path):
         expt = {"sw_h": 4000, "sf": 123.2, "nspecC": 64, "ppmCalib": 4.65,
                 "fid": np.conj(_fid(frequency))[:, None]}
         scipy.io.savemat(tmp_path / f"{name}.mat", {"exptDat": expt})
-    [b] = gu.load(tmp_path)
+    [b] = miox.load(tmp_path)
     assert b.metabolites == ["Cr", "GABA", "NAA"] and b.provenance.format == "basis_folder"
     assert b.meta["ReferencePPM"] == 4.65 and b.meta.fields["ReferencePPM"] == "Cr/exptDat/ppmCalib"
     assert np.allclose(b.fid("Cr"), _fid(-50))
@@ -146,7 +146,7 @@ def test_profit_struct(tmp_path):
     basis = {"fid": fids, "met": _cell("NAA", "Cr"), "bw": 4000, "dt": 2.5e-4, "f0": 123.2e6,
              "pts": 64, "Bo": 2.89}
     scipy.io.savemat(tmp_path / "profit.mat", {"basis": basis})
-    [b] = gu.load(tmp_path / "profit.mat")
+    [b] = miox.load(tmp_path / "profit.mat")
     assert b.metabolites == ["NAA", "Cr"] and b.spectrometer_frequency == pytest.approx(123.2)
     assert np.allclose(b.fid("Cr"), _fid(-50))
 
@@ -157,7 +157,7 @@ def test_fida_struct_dimensions(tmp_path):
            "dwelltime": 2.5e-4, "te": 30.0, "tr": 2000.0, "nucleus": "1H",
            "dims": {"t": 1, "coils": 2, "averages": 3, "subSpecs": 0, "extras": 0}}
     scipy.io.savemat(tmp_path / "scan.mat", {"out": out})
-    [d] = gu.load(tmp_path / "scan.mat")
+    [d] = miox.load(tmp_path / "scan.mat")
     assert d.dims == ("x", "y", "z", "t", "DIM_COIL", "DIM_DYN") and d.shape == (1, 1, 1, 64, 4, 3)
     assert d.meta["EchoTime"] == pytest.approx(0.03) and d.meta["RepetitionTime"] == 2.0
     assert np.allclose(d.data[0, 0, 0, :, 2, 1], _fid(121))
@@ -178,12 +178,12 @@ def _jmrui(path, names: str, fids: list[np.ndarray]) -> None:
 
 def test_jmrui_signals_named_after_metabolites(tmp_path):
     _jmrui(tmp_path / "basis.txt", "NAA.txt;Cr.txt;GABA.txt;", [_fid(100), _fid(-50), _fid(20)])
-    [b] = gu.load(tmp_path / "basis.txt")
-    assert isinstance(b, gu.BasisSet) and b.metabolites == ["NAA", "Cr", "GABA"]
+    [b] = miox.load(tmp_path / "basis.txt")
+    assert isinstance(b, miox.BasisSet) and b.metabolites == ["NAA", "Cr", "GABA"]
     assert np.allclose(b.fid("Cr"), _fid(-50), atol=1e-5)
     _jmrui(tmp_path / "dynamics.txt", "scan.txt;", [_fid(100), _fid(100)])
-    [d] = gu.load(tmp_path / "dynamics.txt")
-    assert not isinstance(d, gu.BasisSet)
+    [d] = miox.load(tmp_path / "dynamics.txt")
+    assert not isinstance(d, miox.BasisSet)
 
 
 def test_vespa_prior(tmp_path):
@@ -195,8 +195,8 @@ def test_vespa_prior(tmp_path):
         "<line><group/><ppm>2.008</ppm><area>3.0</area><phase>0.5</phase></line>"
         "</prior_metabolite></prior></vespa_export>"
     )
-    [p] = gu.load(f)
-    assert isinstance(p, gu.PriorSet) and p.metabolites == ["NAA"]
+    [p] = miox.load(f)
+    assert isinstance(p, miox.PriorSet) and p.metabolites == ["NAA"]
     assert p.lines[0] == {"metabolite": "NAA", "line": 0, "ppm": 2.008, "area": 3.0,
                           "phase": 0.5, "group": "", "dims": [0, 1, 0], "spins": 3}
     assert p.meta["EchoTime"] == pytest.approx(0.03) and p.meta["ResonantNucleus"] == ["1H"]
@@ -216,7 +216,7 @@ def test_gava_and_midas_priors(tmp_path):
         f"</VESPA_SIMULATION_MIDAS_EXPORT><PRIOR_METABOLITE_INFORMATION>{params}"
         "</PRIOR_METABOLITE_INFORMATION></FITT_Generic_XML>"
     )
-    [g], [m] = gu.load(gava), gu.load(midas)
+    [g], [m] = miox.load(gava), miox.load(midas)
     assert g.lines == m.lines and len(g.lines) == 2 and g.lines[1]["phase"] == -10.0
     assert g.meta["EchoTime"] == m.meta["EchoTime"] == pytest.approx(0.03)
 
@@ -230,7 +230,7 @@ def test_pyamares_prior(tmp_path):
         'linewidth,"(1,80)","(1,80)","(1,80)"\nphase,"(-180, 180)","(-180, 180)","(-180, 180)"\n'
         'g,"(0,1)","(0,1)","(0,1)"\n'
     )
-    [p] = gu.load(f)
+    [p] = miox.load(f)
     assert p.metabolites == ["PCr", "ATP", "ATP2"]
     atp2 = p.lines_of("ATP2")[0]
     assert atp2["amplitude"] == "ATP/2" and atp2["ppm"] == "ATP-16Hz" and atp2["g"] == 0.0
@@ -244,10 +244,10 @@ def test_folder_of_text_fids(tmp_path):
         (tmp_path / f"{name}.txt").write_text(
             "".join(f"{z.real:.6E} {z.imag:.6E}\n" for z in _fid(frequency))
         )
-    [b] = gu.load(tmp_path)
+    [b] = miox.load(tmp_path)
     assert b.metabolites == ["Cr", "GABA", "NAA"] and b.shape == (1, 1, 1, 64, 3)
     assert b.missing == ("SpectrometerFrequency", "ResonantNucleus", "DwellTime")
     given = {"SpectrometerFrequency": 123.2, "ResonantNucleus": "1H", "DwellTime": 2.5e-4}
-    [b] = gu.load(tmp_path, given=given, complete=True)
+    [b] = miox.load(tmp_path, given=given, complete=True)
     assert b.spectrometer_frequency == 123.2 and b.dwelltime == 2.5e-4
     assert np.allclose(b.fid("GABA"), _fid(20), atol=1e-6)

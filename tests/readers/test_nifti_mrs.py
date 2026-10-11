@@ -24,7 +24,7 @@ import pytest
 from nifti_mrs.create_nmrs import gen_nifti_mrs
 
 # own
-import miox as gu
+import miox
 from miox.meta import Meta
 
 
@@ -40,7 +40,7 @@ def _write(tmp_path, data, **header):
 
 def test_nifti_mrs_reader(tmp_path):
     data = (np.arange(2048 * 4 * 3) * (1 + 1j)).reshape(1, 1, 1, 2048, 4, 3)
-    [d] = gu.load(_write(tmp_path, data, EchoTime=0.03))
+    [d] = miox.load(_write(tmp_path, data, EchoTime=0.03))
     assert d.name == "svs" and d.shape == (1, 1, 1, 2048, 4, 3)
     assert d.dims == ("x", "y", "z", "t", "DIM_COIL", "DIM_DYN")
     assert d.nucleus == "1H" and d.spectrometer_frequency == pytest.approx(123.2)
@@ -61,7 +61,7 @@ def test_invalid_header_is_read_with_a_note(tmp_path):
     header["InversionTime"] = None  # breaks the standard: must be a number
     image.header.extensions[0] = nib.nifti1.Nifti1Extension(44, json.dumps(header).encode())
     nib.save(image, path)
-    [d] = gu.load(path)
+    [d] = miox.load(path)
     assert d.meta["InversionTime"] is None
     assert any("not valid NIfTI-MRS" in note for note in d.provenance.notes)
 
@@ -73,7 +73,7 @@ def test_frequency_in_hz_is_corrected(tmp_path):
     header["SpectrometerFrequency"] = [123.2e6]
     image.header.extensions[0] = nib.nifti1.Nifti1Extension(44, json.dumps(header).encode())
     nib.save(image, path)
-    [d] = gu.load(path)
+    [d] = miox.load(path)
     assert d.spectrometer_frequency == pytest.approx(123.2)
     assert d.meta["FieldStrength"] == pytest.approx(2.894, abs=1e-3)
     assert "corrected: stored in Hz" in d.meta.source["SpectrometerFrequency"]
@@ -88,5 +88,5 @@ def test_vendor_fields_flatten_nested_headers():
 def test_no_reader(tmp_path):
     f = tmp_path / "noise.bin"
     f.write_bytes(b"hello world " * 10)
-    with pytest.raises(gu.ReaderError):
-        gu.load(f)
+    with pytest.raises(miox.ReaderError):
+        miox.load(f)

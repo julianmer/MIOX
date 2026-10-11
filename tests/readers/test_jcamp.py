@@ -25,7 +25,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 HEADER = """##TITLE= test
 ##JCAMP-DX= 5.01
@@ -73,10 +73,10 @@ def fid_text(real, imag, extra: str = "") -> str:
 def test_fid_pages(tmp_path):
     real, imag = [10, 8, 6, 4, 2, 1, 0, -1], [0, 1, 2, 3, 4, 5, 6, 7]
     path = write(tmp_path / "fid.jdx", fid_text(real, imag))
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.JCAMP_NMR, gu.Kind.SPECTROSCOPY)
-    [d] = gu.load(path)
-    assert isinstance(d, gu.MRSData) and d.shape == (1, 1, 1, 8)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.JCAMP_NMR, miox.Kind.SPECTROSCOPY)
+    [d] = miox.load(path)
+    assert isinstance(d, miox.MRSData) and d.shape == (1, 1, 1, 8)
     assert np.array_equal(d.data[0, 0, 0], 2 * (np.array(real) - 1j * np.array(imag)))
     assert d.dwelltime == pytest.approx(1e-3)
     # point 1 at 10 ppm, the carrier at point N / 2 + 1 = 5, 4 points of 1000 / 8 Hz further
@@ -87,7 +87,7 @@ def test_fid_pages(tmp_path):
 
 def test_reversed_fid_is_kept_as_stored(tmp_path):
     real, imag = [10, 8, 6, 4, 2, 1, 0, -1], [0, 1, 2, 3, 4, 5, 6, 7]
-    [d] = gu.load(write(tmp_path / "fid.jdx", fid_text(real, imag, "##$REVERSE= yes\n")))
+    [d] = miox.load(write(tmp_path / "fid.jdx", fid_text(real, imag, "##$REVERSE= yes\n")))
     assert np.array_equal(d.data[0, 0, 0], 2 * (np.array(real) + 1j * np.array(imag)))
 
 
@@ -102,8 +102,8 @@ def test_xydata_spectrum_in_hz_rising(tmp_path):
 ##NPOINTS= 8
 ##XYDATA= (X++(Y..Y))
 {lines(y)}"""
-    [image] = gu.load(write(tmp_path / "spectrum.dx", text))
-    assert isinstance(image, gu.MRImage) and image.dims[3] == "frequency"
+    [image] = miox.load(write(tmp_path / "spectrum.dx", text))
+    assert isinstance(image, miox.MRImage) and image.dims[3] == "frequency"
     assert np.array_equal(image.data[0, 0, 0], 0.5 * np.array(y[::-1]))  # shift falls
     assert image.meta["SpectralWidth"] == pytest.approx(800.0)
     assert image.meta["ReferencePPM"] == pytest.approx(3.0)  # point N / 2 of 7, 6, ..., 0 ppm
@@ -128,7 +128,7 @@ def test_2d_fid_page_times(tmp_path):
 ##$SFO1= 25.1
 {pages}
 ##END NTUPLES= nD NMR FID"""
-    [d] = gu.load(write(tmp_path / "hsqc.jdx", text))
+    [d] = miox.load(write(tmp_path / "hsqc.jdx", text))
     assert d.shape == (1, 1, 1, 4, 2) and d.dim_tags[0] == "DIM_INDIRECT_0"
     second = np.array([1, 2, 3, 4]) - 1j * np.array([1, 1, 0, 0])
     assert np.array_equal(d.data[0, 0, 0, :, 1], second)
@@ -142,7 +142,7 @@ def test_xy_table_spectrum(tmp_path):
     text = HEADER.format(kind="NMR SPECTRUM", cls="PEAK TABLE") + f"""##XUNITS= PPM
 ##PEAK TABLE= (XY..XY)
 {pairs}"""
-    [image] = gu.load(write(tmp_path / "simulated.jdx", text))
+    [image] = miox.load(write(tmp_path / "simulated.jdx", text))
     assert image.data[0, 0, 0].tolist() == [4, 3, 2, 1]
     assert image.meta["ReferencePPM"] == pytest.approx(0.5)
 
@@ -150,4 +150,4 @@ def test_xy_table_spectrum(tmp_path):
 def test_topspin_parameter_file_is_not_jcamp_nmr(tmp_path):
     path = write(tmp_path / "acqus", "##TITLE= Parameter file, TopSpin 4.1\n##JCAMPDX= 5.0\n"
                  "##DATATYPE= Parameter Values\n##$TD= 16")
-    assert gu.sniff(path).format != gu.Format.JCAMP_NMR
+    assert miox.sniff(path).format != miox.Format.JCAMP_NMR

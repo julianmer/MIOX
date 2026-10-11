@@ -23,7 +23,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 from miox.readers.ismrmrd import IsmrmrdReader
 from miox.readers.siemens_twix_raw import SiemensTwixRaw
 
@@ -101,10 +101,10 @@ def _write_raw(path, readouts, two_dimensional=False):
 def test_header_keys_and_acquisitions(tmp_path):
     path = tmp_path / "raw.h5"
     _write_raw(path, [(8, 2, 0, 1 << (19 - 1), 0), (8, 2, 2, 0, 1), (6, 1, 2, 1 << (2 - 1), 2)])
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.ISMRMRD, gu.Kind.RAW)
-    [raw] = gu.load(path)
-    assert isinstance(raw, gu.RawData)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.ISMRMRD, miox.Kind.RAW)
+    [raw] = miox.load(path)
+    assert isinstance(raw, miox.RawData)
     assert raw.shape == (3, 2, 8) and raw.samples.tolist() == [8, 8, 6]
     assert raw.data[1, 1, 3] == complex(111, -111)  # readout 1, channel 1, sample 3
     assert raw.data[2, 1, 0] == 0 and raw.data[2, 0, 6] == 0  # padded
@@ -165,7 +165,7 @@ def test_two_dimensional_table_and_waveforms(tmp_path):
     with h5py.File(path, "a") as fh:
         fh["dataset"].create_dataset("waveforms", data=table)
     del group
-    [raw] = gu.load(path)
+    [raw] = miox.load(path)
     assert raw.shape == (2, 1, 4) and raw.meta["NumberOfPoints"] == 4
     assert len(raw.waveforms) == 1
     assert raw.waveforms[0]["waveform_id"] == 1
@@ -205,10 +205,10 @@ def test_image_groups_without_xml(tmp_path):
         group.create_dataset(
             "attributes", data=[b"<meta/>", b"<meta/>"], dtype=h5py.special_dtype(vlen=str)
         )
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.ISMRMRD, gu.Kind.IMAGING)
-    [image] = gu.load(path)
-    assert isinstance(image, gu.MRImage)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.ISMRMRD, miox.Kind.IMAGING)
+    [image] = miox.load(path)
+    assert isinstance(image, miox.MRImage)
     assert image.shape == (4, 2, 1, 2) and image.dims == ("i", "j", "k", "image")
     assert image.data[3, 1, 0, 1] == 15  # x=3, y=1 of the second image
     assert image.voxel_sizes == pytest.approx((10, 10, 5))
@@ -230,10 +230,10 @@ def test_fastmri_layout(tmp_path):
         fh.create_dataset("ismrmrd_header", data=XML.encode())
         fh.create_dataset("reconstruction_rss", data=np.ones((2, 4, 5), dtype=np.float32))
         fh.attrs["acquisition"] = "AXT2"
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.FASTMRI_H5, gu.Kind.RAW)
-    raw, image = gu.load(path)
-    assert isinstance(raw, gu.RawData) and raw.shape == (10, 3, 4)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.FASTMRI_H5, miox.Kind.RAW)
+    raw, image = miox.load(path)
+    assert isinstance(raw, miox.RawData) and raw.shape == (10, 3, 4)
     assert raw.counters("slice").tolist() == [0] * 5 + [1] * 5
     assert raw.counters("kspace_encode_step_1").tolist() == [0, 1, 2, 3, 4] * 2
     assert raw.data[8, 2].tolist() == [0 + 1j, 1 + 1j, 2 + 1j, 3 + 1j]
@@ -241,7 +241,7 @@ def test_fastmri_layout(tmp_path):
     assert raw.meta["RepetitionTime"] == 0.5 and raw.meta["PatientPosition"] == "HFS"
     assert raw.meta.vendor["file_attributes"] == {"acquisition": "AXT2"}
     assert any("2 of 10" in note for note in raw.provenance.notes)
-    assert isinstance(image, gu.MRImage) and image.shape == (5, 4, 2)
+    assert isinstance(image, miox.MRImage) and image.shape == (5, 4, 2)
     assert image.meta["ImageType"] == ["RSS"]
 
 
@@ -249,8 +249,8 @@ def test_other_hdf5_is_unknown(tmp_path):
     path = tmp_path / "file.h5"
     with h5py.File(path, "w") as fh:
         fh.create_dataset("x", data=np.zeros(3))
-    sniff = gu.sniff(path)
-    assert sniff.format == gu.Format.UNKNOWN and sniff.detail["names"] == ["x"]
+    sniff = miox.sniff(path)
+    assert sniff.format == miox.Format.UNKNOWN and sniff.detail["names"] == ["x"]
 
 
 def test_twix_directions_follow_ismrmrd():

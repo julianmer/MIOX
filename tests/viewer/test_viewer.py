@@ -25,7 +25,7 @@ import pytest
 from nifti_mrs.create_nmrs import gen_nifti_mrs
 
 # own
-import miox as gu
+import miox
 from miox.cli import main
 from miox.meta import Meta
 from miox.viewer import ImageView, SpectrumView
@@ -34,7 +34,7 @@ FREQUENCY = 123.2  # MHz
 DWELL = 2.5e-4  # s
 
 
-def _spectroscopy(ppm=2.01, coils=1, frequency=FREQUENCY, dwell=DWELL, cls=gu.MRSData, **keys):
+def _spectroscopy(ppm=2.01, coils=1, frequency=FREQUENCY, dwell=DWELL, cls=miox.MRSData, **keys):
     """One decaying line that lies at ``ppm`` on the axis 4.65 - f / frequency, per coil c scaled
     by c + 1."""
     t = np.arange(1024) * (dwell or DWELL)
@@ -47,7 +47,7 @@ def _spectroscopy(ppm=2.01, coils=1, frequency=FREQUENCY, dwell=DWELL, cls=gu.MR
     meta.set("ResonantNucleus", ["1H"], "test")
     for key, value in keys.items():
         meta.set(key, value, "test")
-    provenance = gu.Provenance((), gu.Format.UNKNOWN, "test", {})
+    provenance = miox.Provenance((), miox.Format.UNKNOWN, "test", {})
     return cls(data, dwell, np.eye(4), meta, provenance, dim_tags=("DIM_COIL", None, None),
                name="svs")
 
@@ -90,7 +90,7 @@ def test_spectrum_without_frequency_or_dwell_time():
 
 
 def test_basis_set_names_the_metabolite():
-    d = _spectroscopy(coils=2, cls=gu.BasisSet)
+    d = _spectroscopy(coils=2, cls=miox.BasisSet)
     d.dim_info = {5: {"header": {"Metabolite": ["NAA", "Cr"]}}}
     view = SpectrumView(d)
     assert view.ax.get_title().endswith("NAA")
@@ -99,8 +99,8 @@ def test_basis_set_names_the_metabolite():
 
 
 def _image(data, affine, dims=()):
-    provenance = gu.Provenance((), gu.Format.UNKNOWN, "test", {})
-    return gu.MRImage(data, affine, Meta(), provenance, name="image", dims=dims)
+    provenance = miox.Provenance((), miox.Format.UNKNOWN, "test", {})
+    return miox.MRImage(data, affine, Meta(), provenance, name="image", dims=dims)
 
 
 def test_image_turned_to_ras():

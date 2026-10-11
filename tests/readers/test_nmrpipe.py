@@ -25,7 +25,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 from tests.conftest import PUBLIC_DATA
 
 
@@ -50,10 +50,10 @@ FID = (np.arange(8) + 1j * np.arange(8, 0, -1)).astype(np.complex64)
 
 def test_one_dimensional_fid_is_conjugated(tmp_path):
     path = write(tmp_path / "test.fid", FID, time=True)
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.NMRPIPE, gu.Kind.SPECTROSCOPY)
-    [d] = gu.load(path)
-    assert isinstance(d, gu.MRSData) and d.shape == (1, 1, 1, 8)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.NMRPIPE, miox.Kind.SPECTROSCOPY)
+    [d] = miox.load(path)
+    assert isinstance(d, miox.MRSData) and d.shape == (1, 1, 1, 8)
     assert np.array_equal(d.data[0, 0, 0], FID.conj())
     assert d.dwelltime == pytest.approx(1 / 5000.0)
     assert d.spectrometer_frequency == pytest.approx(500.0)
@@ -62,7 +62,7 @@ def test_one_dimensional_fid_is_conjugated(tmp_path):
 
 def test_two_dimensional_fid_keeps_its_rows(tmp_path):
     rows = np.stack([FID * (k + 1) for k in range(4)])  # 2 complex increments as pairs of rows
-    [d] = gu.load(write(tmp_path / "test2d.fid", rows, time=True))
+    [d] = miox.load(write(tmp_path / "test2d.fid", rows, time=True))
     assert d.shape == (1, 1, 1, 8, 4) and d.dim_tags[0] == "DIM_INDIRECT_0"
     assert np.array_equal(d.data[0, 0, 0, :, 3], 4 * FID.conj())
     assert d.meta["ResonantNucleus"] == ["1H", "13C"]
@@ -71,8 +71,8 @@ def test_two_dimensional_fid_keeps_its_rows(tmp_path):
 
 def test_two_dimensional_spectrum(tmp_path):
     values = np.arange(32.0).reshape(4, 8)
-    [image] = gu.load(write(tmp_path / "test.ft2", values, time=False))
-    assert isinstance(image, gu.MRImage) and image.shape == (1, 1, 1, 8, 4)
+    [image] = miox.load(write(tmp_path / "test.ft2", values, time=False))
+    assert isinstance(image, miox.MRImage) and image.shape == (1, 1, 1, 8, 4)
     assert image.dims[3:] == ("frequency", "frequency_indirect_0")
     assert image.meta["SpectrometerFrequency"] == pytest.approx([500.0, 125.0])
     # the carrier (4.7 ppm) lies at point N / 2, the shift falls with the index
@@ -85,11 +85,11 @@ def test_transposed_time_domain_data_are_refused():
     path = PUBLIC_DATA / "nmrglue_repo/nmrglue/fileio/tests/data/nmrpipe_2d_time_tp.fid"
     if not path.is_file():
         pytest.skip("not fetched")
-    with pytest.raises(gu.ReaderError, match="transposed"):
-        gu.load(path)
+    with pytest.raises(miox.ReaderError, match="transposed"):
+        miox.load(path)
 
 
 def test_other_files_are_not_nmrpipe(tmp_path):
     path = tmp_path / "zeros.fid"
     path.write_bytes(bytes(4096))
-    assert gu.sniff(path).format != gu.Format.NMRPIPE
+    assert miox.sniff(path).format != miox.Format.NMRPIPE

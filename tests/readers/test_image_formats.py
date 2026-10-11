@@ -22,7 +22,7 @@ import gzip
 import numpy as np
 import pytest
 
-import miox as gu
+import miox
 from miox.readers.ge_signa import GeHeader
 
 
@@ -37,7 +37,7 @@ def test_nrrd_detached_lps_with_diffusion_keys(tmp_path):
         "", "",
     ])
     (tmp_path / "vol.nhdr").write_text(header)
-    [im] = gu.load(tmp_path / "vol.nhdr")
+    [im] = miox.load(tmp_path / "vol.nhdr")
     assert im.shape == (2, 3, 4) and np.array_equal(im.data, data.T)
     expected = np.diag([-2.0, -3.0, 4.0, 1.0])
     expected[:3, 3] = [-10, -20, 30]
@@ -53,7 +53,7 @@ def test_nrrd_gzip_attached_with_vector_axis(tmp_path):
         "kinds: vector domain domain domain", "spacings: nan 1.5 1.5 2", "encoding: gzip", "", "",
     ]).encode()
     (tmp_path / "vec.nrrd").write_bytes(header + gzip.compress(values.tobytes()))
-    [im] = gu.load(tmp_path / "vec.nrrd")
+    [im] = miox.load(tmp_path / "vec.nrrd")
     assert im.shape == (2, 2, 1, 3) and im.dims == ("i", "j", "k", "vector")
     assert im.voxel_sizes == pytest.approx((1.5, 1.5, 2.0))
     assert im.data[1, 0, 0, 2] == values.reshape(1, 2, 2, 3)[0, 0, 1, 2]
@@ -67,7 +67,7 @@ def test_metaimage_local_and_listed_files(tmp_path):
         "DimSize = 2 3 2", "ElementType = MET_USHORT", "ElementDataFile = LOCAL", "",
     ]).encode()
     (tmp_path / "im.mha").write_bytes(header + data.tobytes())
-    [im] = gu.load(tmp_path / "im.mha")
+    [im] = miox.load(tmp_path / "im.mha")
     assert im.shape == (2, 3, 2) and np.array_equal(im.data, data.T)
     lps = np.array([[0, -2, 0, 1], [1, 0, 0, 2], [0, 0, 3, 3], [0, 0, 0, 1]], float)
     ras = lps * np.array([-1, -1, 1, 1])[:, np.newaxis]
@@ -76,7 +76,7 @@ def test_metaimage_local_and_listed_files(tmp_path):
     (tmp_path / "slice1.raw").write_bytes(data[1].tobytes())
     listed = header.decode().replace("ElementDataFile = LOCAL", "ElementDataFile = LIST")
     (tmp_path / "im.mhd").write_text(listed + "slice0.raw\nslice1.raw\n")
-    [im2] = gu.load(tmp_path / "im.mhd")
+    [im2] = miox.load(tmp_path / "im.mhd")
     assert np.array_equal(im2.data, im.data)
 
 
@@ -92,7 +92,7 @@ def test_mrtrix_layout_and_gradient_table(tmp_path):
         "dw_scheme: 0,0,0,0", "comments: made for the test", "file: . 1024", "END", "",
     ]).encode()
     (tmp_path / "im.mif").write_bytes(header.ljust(1024, b"\n") + stored.tobytes())
-    [im] = gu.load(tmp_path / "im.mif")
+    [im] = miox.load(tmp_path / "im.mif")
     assert im.shape == shape and np.array_equal(im.data, volume)
     expected = np.array([[1, 0, 0, 5], [0, 2, 0, 6], [0, 0, 3, 7], [0, 0, 0, 1]], float)
     assert np.allclose(im.affine, expected)
@@ -122,8 +122,8 @@ def test_fdf_folder_assembles_slices(tmp_path):
     folder.mkdir()
     for n, z in ((1, -0.3), (2, 0.0), (3, 0.3)):
         fdf_file(folder / f"slice00{n}image001echo001.fdf", n, z)
-    assert gu.sniff(folder).format == gu.Format.VARIAN_FDF
-    [im] = gu.load(folder)
+    assert miox.sniff(folder).format == miox.Format.VARIAN_FDF
+    [im] = miox.load(folder)
     assert im.shape == (2, 3, 3) and im.dims == ("i", "j", "k")
     assert np.all(im.data[:, :, 0] == 1) and np.all(im.data[:, :, 2] == 3)
     # 10 mm read FOV over 2 voxels, 60 mm phase over 3, slices 3 mm apart at -3, 0, 3 mm
@@ -134,7 +134,7 @@ def test_fdf_folder_assembles_slices(tmp_path):
     assert im.meta["PatientPosition"] == "HFS" and im.meta["ResonantNucleus"] == ["1H"]
     assert im.meta["SliceThickness"] == pytest.approx(2.0)
     assert im.meta["SpacingBetweenSlices"] == pytest.approx(3.0)
-    [single] = gu.load(folder / "slice002image001echo001.fdf")
+    [single] = miox.load(folder / "slice002image001echo001.fdf")
     assert single.shape == (2, 3, 1) and np.all(single.data == 2)
 
 

@@ -25,7 +25,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 
 def spectrometer(folder: Path, data: np.ndarray, **parameters) -> Path:
@@ -49,8 +49,8 @@ def spectrometer(folder: Path, data: np.ndarray, **parameters) -> Path:
 def test_spectrometer_fid(tmp_path):
     fid = (np.arange(64) - 1j * np.arange(64)).astype(complex)
     folder = spectrometer(tmp_path / "proton.fid", fid)
-    [d] = gu.load(folder)
-    assert isinstance(d, gu.MRSData) and d.provenance.reader == "VarianReader"
+    [d] = miox.load(folder)
+    assert isinstance(d, miox.MRSData) and d.provenance.reader == "VarianReader"
     assert d.shape == (1, 1, 1, 64) and np.array_equal(d.data[0, 0, 0], fid)
     assert d.meta["SpectrometerFrequency"] == [599.8311617]
     assert d.meta["ResonantNucleus"] == ["1H"] and d.dwelltime == pytest.approx(1 / 12000)
@@ -69,7 +69,7 @@ def test_spectrometer_2d_rows_as_acquired(tmp_path):
     dic["array"] = ng.varian.create_pdic_param("array", ["phase"])
     dic["array"]["basictype"] = "2"
     ng.varian.write_procpar(str(folder / "procpar"), dic, overwrite=True)
-    [d] = gu.load(folder)
+    [d] = miox.load(folder)
     assert d.shape == (1, 1, 1, 8, 4) and d.dim_tags[0] == "DIM_INDIRECT_0"
     assert np.array_equal(d.data[0, 0, 0], rows.T)
     assert d.dim_info[5]["info"].startswith("ni 2 x phase 1,2, sw1 3000 Hz")
@@ -78,6 +78,6 @@ def test_spectrometer_2d_rows_as_acquired(tmp_path):
 
 
 def test_imaging_console_is_not_spectrometer():
-    assert gu.readers.varian.VarianReader.is_spectrometer({"apptype": ["std1D"]})
-    assert not gu.readers.varian.VarianReader.is_spectrometer({"apptype": ["im1Dglobal"]})
-    assert gu.readers.varian.VarianReader.is_spectrometer({})  # older VNMR: no apptype
+    assert miox.readers.varian.VarianReader.is_spectrometer({"apptype": ["std1D"]})
+    assert not miox.readers.varian.VarianReader.is_spectrometer({"apptype": ["im1Dglobal"]})
+    assert miox.readers.varian.VarianReader.is_spectrometer({})  # older VNMR: no apptype

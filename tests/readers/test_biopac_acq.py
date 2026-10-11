@@ -23,7 +23,7 @@ import struct
 import numpy as np
 
 # own
-import miox as gu
+import miox
 from miox.sniff import Format, Kind, Sniffer
 
 CHANNELS = (  # name, units, divider, points, type (2 int16, 1 float64), scale, offset
@@ -74,7 +74,7 @@ def test_channels_by_divider(tmp_path):
     path = _acq(tmp_path / "rec.acq")
     sniff = Sniffer().sniff(path)
     assert (sniff.format, sniff.kind, sniff.vendor) == (Format.BIOPAC_ACQ, Kind.PHYSIO, "biopac")
-    fast, mid, slow = gu.load(path)
+    fast, mid, slow = miox.load(path)
     assert fast.channels == ("Pulse", "EDA")
     assert (fast.sampling_frequency, mid.sampling_frequency) == (500.0, 250.0)
     assert slow.sampling_frequency == 500.0 / 3
@@ -88,7 +88,7 @@ def test_channels_by_divider(tmp_path):
 
 
 def test_markers_journal_and_header(tmp_path):
-    fast, mid, slow = gu.load(_acq(tmp_path / "rec.acq"))
+    fast, mid, slow = miox.load(_acq(tmp_path / "rec.acq"))
     assert {k: v.tolist() for k, v in fast.events.items()} == {"Segment 1": [0], "Breath": [6]}
     assert mid.events["Breath"].tolist() == [3]
     assert slow.events["Breath"].tolist() == [2]
@@ -101,7 +101,7 @@ def test_markers_journal_and_header(tmp_path):
 
 
 def test_markers_past_the_recording_stay_in_the_header(tmp_path):
-    datasets = gu.load(_acq(tmp_path / "rec.acq", markers=((2, "a"), (99, "b"))))
+    datasets = miox.load(_acq(tmp_path / "rec.acq", markers=((2, "a"), (99, "b"))))
     assert all(not d.events for d in datasets)
     assert [m["sample"] for m in datasets[0].meta.vendor["markers"]] == [2, 99]
     assert any("not reliable" in note for note in datasets[0].provenance.notes)

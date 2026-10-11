@@ -22,7 +22,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 
 def test_two_dimensional_spectrum(tmp_path):
@@ -35,9 +35,9 @@ def test_two_dimensional_spectrum(tmp_path):
     values = np.arange(16 * 32, dtype=np.float32).reshape(16, 32)
     path = tmp_path / "test.ucsf"
     ng.sparky.write(str(path), ng.sparky.create_dic(udic), values, overwrite=True)
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.SPARKY, gu.Kind.SPECTROSCOPY)
-    [image] = gu.load(path)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.SPARKY, miox.Kind.SPECTROSCOPY)
+    [image] = miox.load(path)
     assert image.shape == (1, 1, 1, 32, 16)
     assert image.dims[3:] == ("frequency", "frequency_indirect_0")
     assert np.array_equal(image.data[0, 0, 0], values.T)
@@ -51,4 +51,4 @@ def test_two_dimensional_spectrum(tmp_path):
 def test_other_files_are_not_sparky(tmp_path):
     path = tmp_path / "other.ucsf"
     path.write_bytes(b"UCSF RMN" + bytes(200))
-    assert gu.sniff(path).format != gu.Format.SPARKY
+    assert miox.sniff(path).format != miox.Format.SPARKY

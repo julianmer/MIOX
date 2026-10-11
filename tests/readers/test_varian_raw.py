@@ -23,7 +23,7 @@ import struct
 import numpy as np
 
 # own
-import miox as gu
+import miox
 from miox.readers.varian_raw import VarianRaw
 
 
@@ -88,9 +88,9 @@ def test_varian_2d_multi_echo_multi_slice(tmp_path):
               "arraydim": nv, "np": 2 * samples, "pss": [0.2, -0.2, 0.0], "te": 0.01,
               "TE": [10.0, 20.0]}
     folder = _folder(tmp_path, "mems", params, blocks)
-    assert gu.sniff(folder).format == gu.Format.VARIAN
-    [raw] = gu.load(folder)
-    assert isinstance(raw, gu.RawData) and raw.shape == (nv * ns * ne, 1, samples)
+    assert miox.sniff(folder).format == miox.Format.VARIAN
+    [raw] = miox.load(folder)
+    assert isinstance(raw, miox.RawData) and raw.shape == (nv * ns * ne, 1, samples)
     assert raw.name == "mems" and raw.data.dtype == np.complex64
     e, slot = raw.counters("contrast"), raw.headers["idx"]["user"][:, 1]
     p = raw.counters("kspace_encode_step_1")
@@ -120,7 +120,7 @@ def test_varian_3d_integer_samples_and_truncation(tmp_path):
             blocks[b, t] = 7 * b + t + 1j
     params = {**BASE, "apptype": "im3D", "seqcon": "nccsn", "nv": nv, "nv2": nv2,
               "arraydim": nv2, "np": 2 * samples, "te": 0.002}
-    [raw] = gu.load(_folder(tmp_path, "gre3d", params, blocks, kind="i2"))
+    [raw] = miox.load(_folder(tmp_path, "gre3d", params, blocks, kind="i2"))
     assert raw.data.dtype == np.complex128 and raw.shape == (nv * nv2, 1, samples)
     assert raw.counters("kspace_encode_step_1").tolist() == [0, 1, 2, 0, 1, 2]
     assert raw.counters("kspace_encode_step_2").tolist() == [0, 0, 0, 1, 1, 1]
@@ -128,7 +128,7 @@ def test_varian_3d_integer_samples_and_truncation(tmp_path):
     assert raw.meta["EncodedMatrixSize"] == [samples, nv, nv2]
     assert raw.meta["EncodedFieldOfView"] == [30, 20, 10]
     # a file cut inside its last block keeps the complete blocks
-    [cut] = gu.load(_folder(tmp_path, "cut", params, blocks, kind="i4", cut=5))
+    [cut] = miox.load(_folder(tmp_path, "cut", params, blocks, kind="i4", cut=5))
     assert cut.shape == (nv, 1, samples)
     assert any("1 of 2 blocks" in n for n in cut.provenance.notes)
 
@@ -144,7 +144,7 @@ def test_varian_arrays_receivers_and_fse_trains(tmp_path):
     params = {**BASE, "apptype": "im2D", "seqcon": "ncsnn", "ns": ns, "nv": nv, "np": 2 * samples,
               "arraydim": elements, "array": "ti", "ti": [0.1, 0.5], "ir": "y", "rcvrs": "yy",
               "te": [0.01, 0.02], "pss": [0.0, 0.1]}
-    [raw] = gu.load(_folder(tmp_path, "ir", params, blocks))
+    [raw] = miox.load(_folder(tmp_path, "ir", params, blocks))
     assert raw.shape == (elements * ns, 2, samples)
     assert raw.data[ns * 3, 1, 0] == 301 and raw.data[0, 0, 0] == 0
     assert raw.counters("repetition").tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
@@ -158,7 +158,7 @@ def test_varian_arrays_receivers_and_fse_trains(tmp_path):
     blocks = np.arange(etl * ns * (nv // etl) * samples, dtype=np.float32).reshape(1, -1, samples)
     params = {**BASE, "apptype": "im2Dfse", "seqcon": "nccnn", "ns": ns, "nv": nv, "etl": etl,
               "np": 2 * samples, "arraydim": 1, "petable": "fse4_2_1", "pss": [0.0, 0.1]}
-    [fse] = gu.load(_folder(tmp_path, "fse", params, blocks.astype(np.complex64)))
+    [fse] = miox.load(_folder(tmp_path, "fse", params, blocks.astype(np.complex64)))
     assert fse.counters("segment").tolist() == [0, 1] * 4
     assert fse.counters("slice").tolist() == [0, 0, 1, 1, 0, 0, 1, 1]
     assert fse.counters("kspace_encode_step_1").tolist() == [0, 1, 0, 1, 2, 3, 2, 3]
@@ -170,7 +170,7 @@ def test_varian_layouts_that_do_not_add_up_and_routing(tmp_path):
     blocks = np.ones((2, 3, 4), np.complex64)
     params = {**BASE, "apptype": "im2D", "seqcon": "ccsnn", "ne": 2, "ns": 2, "nv": 2,
               "arraydim": 2, "np": 8}
-    [raw] = gu.load(_folder(tmp_path, "odd", params, blocks))
+    [raw] = miox.load(_folder(tmp_path, "odd", params, blocks))
     assert raw.shape == (6, 1, 4) and not raw.counters("contrast").any()
     assert any("carry no counters" in n for n in raw.provenance.notes)
     assert VarianRaw.is_imaging({"apptype": ["im2Dfse"]})

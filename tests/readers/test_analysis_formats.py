@@ -24,7 +24,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 
 def _fid(n: int = 64) -> np.ndarray:
@@ -46,7 +46,7 @@ def test_tarquin_dpt(tmp_path):
         "Real_FID\tImag_FID\t",
     ] + [f"{z.real:.8e}\t{z.imag:.8e}" for z in _fid()]
     f.write_text("\n".join(lines) + "\n")
-    [d] = gu.load(f)
+    [d] = miox.load(f)
     assert d.spectrometer_frequency == pytest.approx(123.2) and d.dwelltime == pytest.approx(2.5e-4)
     assert d.meta["EchoTime"] == pytest.approx(0.03) and d.meta["ReferencePPM"] == 4.65
     assert np.allclose(d.data[0, 0, 0], _fid())  # written in the NIfTI-MRS convention
@@ -62,7 +62,7 @@ def test_vasf(tmp_path):
     )
     pairs = np.column_stack([_fid().real, _fid().imag]).astype(">f4")
     rsd.write_bytes(pairs.tobytes())
-    [d] = gu.load(rsp)
+    [d] = miox.load(rsp)
     assert d.meta["EchoTime"] == pytest.approx(0.03) and d.meta["NumberOfAverages"] == 16
     assert "InversionTime" not in d.meta
     assert np.allclose(d.data[0, 0, 0], _fid(), atol=1e-6)
@@ -79,7 +79,7 @@ def test_vespa_viff(tmp_path):
         '<data data_type="complex64" encoding="xdr zlib base64" shape="1,1,1,64">'
         f"{encoded}</data></block_raw></blocks></dataset></vespa_export>"
     )
-    [d] = gu.load(f)
+    [d] = miox.load(f)
     assert d.meta["EchoTime"] == pytest.approx(0.03)
     assert np.allclose(d.data[0, 0, 0], _fid(), atol=1e-6)
     assert d.meta.vendor["dataset"]["blocks"]["block_raw"]["data"].startswith("<array")
@@ -104,7 +104,7 @@ def test_sivic_ddf_spectra_and_geometry(tmp_path):
         "===================================================\nSpectroscopy Parameters\n"
         "dwelltime(ms): 0.25\n"
     )
-    [d] = gu.load(tmp_path / "csi.ddf")
+    [d] = miox.load(tmp_path / "csi.ddf")
     assert d.shape == (nx, ny, nz, n)
     assert np.allclose(d.data[2, 1, 0], fids[0, 1, 2])  # x = 2, y = 1
     assert np.allclose(d.affine @ [1, 0.5, 0, 1], [-10.0, -5.0, 0.0, 1.0])  # LPS centre in RAS

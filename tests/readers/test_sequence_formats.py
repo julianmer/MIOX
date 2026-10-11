@@ -23,7 +23,7 @@ import struct
 import numpy as np
 import pytest
 
-import miox as gu
+import miox
 from miox.readers.pulseq import PulseqReader
 
 SEQ_15 = """# Pulseq sequence file
@@ -146,10 +146,10 @@ num_samples 3
 def test_pulseq_15(tmp_path):
     path = tmp_path / "fid.seq"
     path.write_text(SEQ_15)
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.PULSEQ, gu.Kind.SEQUENCE)
-    [seq] = gu.load(path)
-    assert isinstance(seq, gu.PulseSequence) and seq.version == "1.5.1"
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.PULSEQ, miox.Kind.SEQUENCE)
+    [seq] = miox.load(path)
+    assert isinstance(seq, miox.PulseSequence) and seq.version == "1.5.1"
     assert seq.n_blocks == 3 and seq.duration == pytest.approx((42 + 500 + 10244) * 1e-5)
     assert seq.blocks["duration"].tolist() == [42, 500, 10244]
     assert seq.blocks["ext"].tolist() == [1, 0, 0]
@@ -182,7 +182,7 @@ def test_pulseq_15(tmp_path):
 def test_pulseq_13_delays(tmp_path):
     path = tmp_path / "old.seq"
     path.write_text(SEQ_13)
-    [seq] = gu.load(path)
+    [seq] = miox.load(path)
     assert seq.version == "1.3.0" and seq.duration is None
     assert seq.blocks.dtype.names == ("id", "delay", "rf", "gx", "gy", "gz", "adc", "ext")
     assert seq.blocks["delay"].tolist() == [0, 1] and seq.events["delays"][1] == {"delay": 2000}
@@ -211,11 +211,11 @@ def test_bart_cfl_and_ra(tmp_path):
     header = "# Dimensions\n2 3 4 1 1 1 1 1 1 1 1 1 1 1 1 1\n# Command\nbart phantom -k\n"
     (tmp_path / "ksp.hdr").write_text(header)
     for suffix in ("hdr", "cfl"):
-        sniff = gu.sniff(tmp_path / f"ksp.{suffix}")
-        assert (sniff.format, sniff.kind) == (gu.Format.BART_CFL, gu.Kind.IMAGING)
+        sniff = miox.sniff(tmp_path / f"ksp.{suffix}")
+        assert (sniff.format, sniff.kind) == (miox.Format.BART_CFL, miox.Kind.IMAGING)
         assert len(sniff.companions) == 1
-    [image] = gu.load(tmp_path / "ksp.hdr")
-    assert isinstance(image, gu.MRImage) and image.shape == (2, 3, 4)
+    [image] = miox.load(tmp_path / "ksp.hdr")
+    assert isinstance(image, miox.MRImage) and image.shape == (2, 3, 4)
     assert image.dims == ("i", "j", "k")
     assert image.data[1, 0, 0] == values[1] and image.data[0, 1, 0] == values[2]  # column-major
     assert image.data[0, 0, 1] == values[6] and image.data.dtype == np.complex64
@@ -225,15 +225,15 @@ def test_bart_cfl_and_ra(tmp_path):
     # a coil dimension is named, trailing singletons dropped
     (tmp_path / "coils.cfl").write_bytes(np.ones(2 * 3 * 1 * 4, dtype=np.complex64).tobytes())
     (tmp_path / "coils.hdr").write_text("# Dimensions\n2 3 1 4 1 1 1 1 1 1 1 1 1 1 1 1\n")
-    [coils] = gu.load(tmp_path / "coils.cfl")
+    [coils] = miox.load(tmp_path / "coils.cfl")
     assert coils.shape == (2, 3, 1, 4) and coils.dims == ("i", "j", "k", "coil")
     # rawarray
     header = struct.pack("<6Q", 0x7961727261776172, 0, 4, 8, values.nbytes, 3)
     header += struct.pack("<3Q", 2, 3, 4)
     (tmp_path / "ksp.ra").write_bytes(header + values.tobytes())
-    sniff = gu.sniff(tmp_path / "ksp.ra")
-    assert sniff.format == gu.Format.BART_CFL and sniff.evidence == ("rawarray magic",)
-    [ra] = gu.load(tmp_path / "ksp.ra")
+    sniff = miox.sniff(tmp_path / "ksp.ra")
+    assert sniff.format == miox.Format.BART_CFL and sniff.evidence == ("rawarray magic",)
+    [ra] = miox.load(tmp_path / "ksp.ra")
     assert np.array_equal(ra.data, image.data)
     assert ra.meta.vendor["header"]["data_bytes"] == values.nbytes
 
@@ -268,12 +268,12 @@ def test_toppe_sequence(tmp_path):
     (tmp_path / "toppe1.entry").write_text(
         "/usr/g/research/pulseq/test/\nmodules.txt\nscanloop.txt\nex.mod\nro.mod\n"
         "seqstamp.txt\n")
-    formats = {p.name: gu.sniff(p).format for p in tmp_path.iterdir()}
-    assert formats == {"ex.mod": gu.Format.TOPPE_MOD, "ro.mod": gu.Format.TOPPE_MOD,
-                       "modules.txt": gu.Format.TOPPE_MODULES,
-                       "scanloop.txt": gu.Format.TOPPE_LOOP,
-                       "toppe1.entry": gu.Format.TOPPE_ENTRY}
-    [seq] = gu.load(tmp_path / "toppe1.entry")
+    formats = {p.name: miox.sniff(p).format for p in tmp_path.iterdir()}
+    assert formats == {"ex.mod": miox.Format.TOPPE_MOD, "ro.mod": miox.Format.TOPPE_MOD,
+                       "modules.txt": miox.Format.TOPPE_MODULES,
+                       "scanloop.txt": miox.Format.TOPPE_LOOP,
+                       "toppe1.entry": miox.Format.TOPPE_ENTRY}
+    [seq] = miox.load(tmp_path / "toppe1.entry")
     assert seq.version == "6" and seq.n_blocks == 2
     assert seq.blocks.dtype.names[-3:] == ("trigger", "trigger_out", "core")
     assert seq.blocks["module"].tolist() == [1, 2] and seq.blocks["core"].tolist() == [3, 3]
@@ -288,5 +288,5 @@ def test_toppe_sequence(tmp_path):
     assert ex["gz"][:, 0] == pytest.approx([4e-2 * 16382 / 32766] * 4)
     assert ro["gz"][:, 0] == pytest.approx([0, 4e-2, -4e-2, 0])
     assert ex["discarded_samples"] == 0 and ex["rf_samples"] == 4 and ex["int_parameters"] == [7]
-    [loop] = gu.load(tmp_path / "scanloop.txt")
+    [loop] = miox.load(tmp_path / "scanloop.txt")
     assert loop.n_blocks == 2 and loop.events["modules"] == {}

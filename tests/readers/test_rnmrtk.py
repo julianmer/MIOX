@@ -24,7 +24,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 
 def write(path: Path, data: np.ndarray, time: bool = True) -> Path:
@@ -44,9 +44,9 @@ FID = (np.arange(8) + 1j * np.arange(8, 0, -1)).astype(np.complex64)
 def test_one_dimensional_fid(tmp_path):
     path = write(tmp_path / "test.sec", FID)
     for file in (path, path.with_suffix(".par")):
-        sniff = gu.sniff(file)
-        assert (sniff.format, sniff.kind) == (gu.Format.RNMRTK, gu.Kind.SPECTROSCOPY)
-    [d] = gu.load(path)
+        sniff = miox.sniff(file)
+        assert (sniff.format, sniff.kind) == (miox.Format.RNMRTK, miox.Kind.SPECTROSCOPY)
+    [d] = miox.load(path)
     assert np.array_equal(d.data[0, 0, 0], FID)  # as stored
     assert d.dwelltime == pytest.approx(1e-3)
     assert d.meta["SpectrometerFrequency"] == pytest.approx([500.0])
@@ -56,17 +56,17 @@ def test_one_dimensional_fid(tmp_path):
 
 def test_two_dimensional_fid(tmp_path):
     rows = np.stack([FID * (k + 1) for k in range(4)])
-    [d] = gu.load(write(tmp_path / "test2d.sec", rows))
+    [d] = miox.load(write(tmp_path / "test2d.sec", rows))
     assert d.shape == (1, 1, 1, 8, 4) and d.dim_tags[0] == "DIM_INDIRECT_0"
     assert np.array_equal(d.data[0, 0, 0, :, 3], 4 * FID)
 
 
 def test_frequency_domain_is_refused(tmp_path):
-    with pytest.raises(gu.ReaderError, match="frequency"):
-        gu.load(write(tmp_path / "spectrum.sec", FID, time=False))
+    with pytest.raises(miox.ReaderError, match="frequency"):
+        miox.load(write(tmp_path / "spectrum.sec", FID, time=False))
 
 
 def test_sec_without_par_is_not_rnmrtk(tmp_path):
     path = tmp_path / "lonely.sec"
     path.write_bytes(bytes(64))
-    assert gu.sniff(path).format != gu.Format.RNMRTK
+    assert miox.sniff(path).format != miox.Format.RNMRTK

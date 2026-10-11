@@ -24,7 +24,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 from miox.readers.nibabel_image import NibabelImageReader
 
 
@@ -36,8 +36,8 @@ def test_nifti_with_bids_sidecar(tmp_path):
                "MagneticFieldStrength": 3, "ImagingFrequency": 123.2, "SliceThickness": 3,
                "NotAStandardField": "kept"}
     (tmp_path / "t1.json").write_text(json.dumps(sidecar))
-    [im] = gu.load(tmp_path / "t1.nii.gz")
-    assert isinstance(im, gu.MRImage) and im.shape == (2, 3, 4) and im.voxel_sizes == (2, 2, 3)
+    [im] = miox.load(tmp_path / "t1.nii.gz")
+    assert isinstance(im, miox.MRImage) and im.shape == (2, 3, 4) and im.voxel_sizes == (2, 2, 3)
     assert np.array_equal(im.data, data) and np.allclose(im.affine, affine)
     assert im.meta["ExcitationFlipAngle"] == 9 and im.meta["FieldStrength"] == 3
     assert im.meta["SpectrometerFrequency"] == [123.2] and im.meta["SliceThickness"] == 3
@@ -51,7 +51,7 @@ def test_mgh_units(tmp_path):
     img.header["tr"], img.header["te"], img.header["ti"] = 2300.0, 2.98, 900.0
     img.header["flip_angle"] = np.radians(9.0)
     img.to_filename(tmp_path / "t1.mgz")
-    [im] = gu.load(tmp_path / "t1.mgz")
+    [im] = miox.load(tmp_path / "t1.mgz")
     assert im.meta["RepetitionTime"] == pytest.approx(2.3)
     assert im.meta["EchoTime"] == pytest.approx(0.00298)
     assert im.meta["InversionTime"] == pytest.approx(0.9)

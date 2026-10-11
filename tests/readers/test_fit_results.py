@@ -21,7 +21,7 @@ import numpy as np
 import scipy.io
 
 # own
-import miox as gu
+import miox
 
 TABLES = """ LCModel (Version 6.3-1B)
  test title
@@ -49,8 +49,8 @@ $$INPU  6 lines in following table of input changes:
 def test_lcmodel_table(tmp_path):
     f = tmp_path / "fit.TABLE"
     f.write_text(TABLES)
-    [r] = gu.load(f)
-    assert isinstance(r, gu.FitResult) and r.metabolites == ["Cr", "NAA"]
+    [r] = miox.load(f)
+    assert isinstance(r, miox.FitResult) and r.metabolites == ["Cr", "NAA"]
     assert r.row("NAA") == {"metabolite": "NAA", "concentration": 0.012, "sd_percent": 999.0,
                             "/Cr+PCr": 0.024}
     assert r.diagnostics == {"FWHM (ppm)": 0.05, "S/N": 20.0, "Data shift (ppm)": -0.01,
@@ -72,7 +72,7 @@ def test_lcmodel_coord(tmp_path):
         " NY background values follow\n  0.5 0.5 0.5 0.5\n Cr       Conc. = 5.00E-01\n"
         "  1.5 2.5 3.5 4.5\n"
     )
-    [r] = gu.load(f)
+    [r] = miox.load(f)
     assert list(r.curves) == ["ppm", "data", "fit", "baseline", "Cr"]
     assert np.allclose(r.curves["ppm"], [4, 3, 2, 1])
     assert np.allclose(r.curves["Cr"], r.curves["fit"])
@@ -84,7 +84,7 @@ def test_lcmodel_csv_voxels(tmp_path):
         "Row, Col, Cr, Cr %SD, Cr/Cr+PCr, NAA, NAA %SD, NAA/Cr+PCr\n"
         "  1,   1, 0.500,  4, 1.000, 0.300, 5, 0.600\n  1,   2, 0.400,  6, 1.000, 0.200, 9, 0.500\n"
     )
-    results = gu.load(f)
+    results = miox.load(f)
     assert [r.voxel for r in results] == [(1, 1), (1, 2)]
     assert results[1].row("NAA") == {"metabolite": "NAA", "concentration": 0.2, "sd_percent": 9.0,
                                       "/Cr+PCr": 0.5}
@@ -100,7 +100,7 @@ def test_tarquin_results_and_fit(tmp_path):
         "Data parameters\n---------------\nFs (Hz) : 4000.\nFt (Hz) : 1.233e+08\nN       : 2048\n"
         "TE (s)  : 0.03000\n\nTARQUIN version 4.3.5\n"
     )
-    [r] = gu.load(results)
+    [r] = miox.load(results)
     assert r.row("Tau")["sd_percent"] == np.inf and r.row("NAA")["SD (au)"] == 0.0001495
     assert r.diagnostics == {"Q": 4.048} and r.meta["ReferencePPM"] == 4.668
     assert r.meta["DwellTime"] == 0.00025 and r.meta["NumberOfPoints"] == 2048
@@ -108,7 +108,7 @@ def test_tarquin_results_and_fit(tmp_path):
     block = "PPMScale,Data,Fit,Baseline,NAA\n2.0,1.0,0.9,0.1,0.9\n1.9,0.5,0.4,0.1,0.4\n"
     voxels = ("Row : 1, Col : 1, Slice : 1\n", "Row : 1, Col : 2, Slice : 1\n")
     fit.write_text(voxels[0] + block + voxels[1] + block)
-    fits = gu.load(fit)
+    fits = miox.load(fit)
     assert [f.voxel for f in fits] == [(1, 1, 1), (1, 2, 1)]
     assert list(fits[0].curves) == ["ppm", "data", "fit", "baseline", "NAA"]
 
@@ -116,7 +116,7 @@ def test_tarquin_results_and_fit(tmp_path):
 def test_pyamares_result(tmp_path):
     f = tmp_path / "result.csv"
     f.write_text("name,amplitude,sd,CRLB(%),chem shift(ppm),g (%),SNR\nPCr,4.4,0.1,2.3,0.0,,30\n")
-    [r] = gu.load(f)
+    [r] = miox.load(f)
     assert r.rows == [{"metabolite": "PCr", "concentration": 4.4, "sd": 0.1, "sd_percent": 2.3,
                        "chem shift(ppm)": 0.0, "g (%)": None, "SNR": 30.0}]
 
@@ -137,7 +137,7 @@ def test_osprey_container(tmp_path):
     ref[0, 0] = struct(0)
     container = {"raw": raw, "raw_ref": ref, "fit": {"method": "LCModel"}, "ver": {"Osp": "x"}}
     scipy.io.savemat(tmp_path / "job.mat", {"MRSCont": container})
-    datasets = gu.load(tmp_path / "job.mat")
+    datasets = miox.load(tmp_path / "job.mat")
     assert [d.name for d in datasets] == ["raw_1", "raw_2", "raw_ref_1"]
     assert np.allclose(datasets[1].data.ravel(), _fid(110))
     assert datasets[0].meta["EchoTime"] == 0.035

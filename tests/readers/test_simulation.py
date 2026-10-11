@@ -24,7 +24,7 @@ import pytest
 import scipy.io
 
 # own
-import miox as gu
+import miox
 
 
 def test_koma_phantom_with_motion(tmp_path):
@@ -41,10 +41,10 @@ def test_koma_phantom_with_motion(tmp_path):
         fh.create_group("motion/motion_1/time").attrs.update(
             {"type": "TimeRange", "t_start": 0.0, "t_end": 0.5})
         fh.create_group("motion/motion_1/spins").attrs["type"] = "AllSpins"
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.KOMA_PHANTOM, gu.Kind.PHANTOM)
-    [phantom] = gu.load(path)
-    assert isinstance(phantom, gu.Phantom) and phantom.name == "ring"
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.KOMA_PHANTOM, miox.Kind.PHANTOM)
+    [phantom] = miox.load(path)
+    assert isinstance(phantom, miox.Phantom) and phantom.name == "ring"
     assert phantom.positions[1].tolist() == [0.01, -0.01, 0.0]
     assert phantom.properties["rho"].tolist() == [1.0, 0.5, 0.2]
     assert phantom.properties["dw"].tolist() == [0.0, 10.0, -10.0]
@@ -60,7 +60,7 @@ def test_koma_spin_list(tmp_path):
         for k, values in (("x", [0.0, 0.1]), ("y", [0.0, 0.0]), ("z", [0.0, 0.0]),
                           ("ρ", [1.0, 1.0]), ("T1", [0.5, 0.6])):
             fh[k] = values
-    [phantom] = gu.load(path)
+    [phantom] = miox.load(path)
     assert phantom.n_spins == 2 and list(phantom.properties) == ["T1", "rho"]
 
 
@@ -73,7 +73,7 @@ def test_jemris_grid(tmp_path):
         fh["sample/data"] = data.T
         fh["sample/resolution"] = [[2.0], [1.0], [4.0]]
         fh["sample/offset"] = [[10.0], [0.0], [-2.0]]
-    [phantom] = gu.load(path)
+    [phantom] = miox.load(path)
     assert phantom.n_spins == 2
     assert phantom.grid["shape"] == [3, 2, 2]
     assert phantom.grid["indices"].tolist() == [[0, 0, 1], [2, 1, 0]]
@@ -91,9 +91,9 @@ def test_jemris_signal(tmp_path):
         fh["signal/times"] = times
         fh["signal/channels/00"] = values
         fh["signal/channels/01"] = -values
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.JEMRIS_SIGNAL, gu.Kind.RAW)
-    [raw] = gu.load(path)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.JEMRIS_SIGNAL, miox.Kind.RAW)
+    [raw] = miox.load(path)
     assert raw.data.shape == (2, 2, 4) and raw.samples.tolist() == [4, 3]
     assert raw.data[1, 0, :3].tolist() == [12 + 13j, 15 + 16j, 18 + 19j]
     assert raw.data[1, 1, 0] == -12 - 13j and raw.data[1, 0, 3] == 0
@@ -110,9 +110,9 @@ def test_mrilab_phantom(tmp_path):
             "XDimRes": 0.002, "YDimRes": 0.001, "ZDimRes": 0.003, "XDim": 2.0, "YDim": 4.0,
             "ZDim": 2.0, "Gyro": 267538030.38, "ChemShift": 0.0, "Type": "Water"}
     scipy.io.savemat(tmp_path / "obj.mat", {"VObj": vobj})
-    sniff = gu.sniff(tmp_path / "obj.mat")
-    assert (sniff.format, sniff.kind) == (gu.Format.MRILAB_PHANTOM, gu.Kind.PHANTOM)
-    [phantom] = gu.load(tmp_path / "obj.mat")
+    sniff = miox.sniff(tmp_path / "obj.mat")
+    assert (sniff.format, sniff.kind) == (miox.Format.MRILAB_PHANTOM, miox.Kind.PHANTOM)
+    [phantom] = miox.load(tmp_path / "obj.mat")
     assert phantom.n_spins == 1
     assert np.allclose(phantom.positions, [[(3 - 2) * 0.002, (1 - 1) * 0.001, (0 - 1) * 0.003]])
     assert phantom.properties["T1"].tolist() == pytest.approx([1.6])
@@ -123,9 +123,9 @@ def test_jemris_motion_trajectory(tmp_path):
     path = tmp_path / "motion.dat"
     path.write_text("1 2 3\n" + "".join(
         f"{t} {t / 10} 0 0 0 0 {t}\n" for t in (0.0, 10.0, 20.0)))
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.JEMRIS_MOTION, gu.Kind.PHANTOM)
-    [phantom] = gu.load(path)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.JEMRIS_MOTION, miox.Kind.PHANTOM)
+    [phantom] = miox.load(path)
     motion = phantom.motion[0]
     assert phantom.n_spins == 0
     assert np.allclose(motion["origin"], [1e-3, 2e-3, 3e-3])

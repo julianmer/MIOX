@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo.png" alt="Miox Logo" width="130"/>
+  <img src="assets/logo.png" alt="Miox Logo" width="100"/>
   <h1 style="margin-top: 5px; margin-bottom: 5px;">Miox</h1>
   <p style="margin-top: 0px;"><em>Open any MR file from any vendor into one object: data, geometry, all metadata</em></p>
 
@@ -18,6 +18,7 @@ import miox
 [d] = miox.load("meas.dat")      # one object per dataset in the file
 d.data, d.dims, d.dwelltime      # complex FIDs in NIfTI-MRS order
 d.meta["EchoTime"], d.meta.source["EchoTime"], d.meta.vendor
+miox.view(d)                     # quick look: spectra and images
 ```
 
 ## Installation

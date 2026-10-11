@@ -27,7 +27,7 @@ import numpy as np
 import pytest
 from spec2nii.GE.ge_hdr_fields import get_pfile_hdr_fields
 
-import miox as gu
+import miox
 from miox.readers.ge_rdb import GeRdbHeader
 
 VERSION = 26.002
@@ -164,9 +164,9 @@ def _archive(path, packets: list[bytes], frames: list[bytes], header: bytes) -> 
 def test_pfile_imaging(tmp_path):
     path = tmp_path / "P12345.7"
     frames = _pfile(path)
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind) == (gu.Format.GE_PFILE, gu.Kind.RAW)
-    image, baseline = gu.load(path)
+    sniff = miox.sniff(path)
+    assert (sniff.format, sniff.kind) == (miox.Format.GE_PFILE, miox.Kind.RAW)
+    image, baseline = miox.load(path)
     assert image.name == "P12345" and baseline.name == "P12345_baseline"
     assert image.shape == (SLICES * VIEWS, COILS, SAMPLES)
     assert baseline.shape == (SLICES, COILS, SAMPLES)
@@ -218,7 +218,7 @@ def test_pfile_imaging(tmp_path):
 def test_pfile_without_slice_table(tmp_path):
     path = tmp_path / "P00001.7"
     _pfile(path, slice_table=False)
-    image, _ = gu.load(path)
+    image, _ = miox.load(path)
     assert not image.headers["position"].any() and not image.headers["read_dir"].any()
     assert any("no slice geometry" in note for note in image.provenance.notes)
 
@@ -235,7 +235,7 @@ def test_spectroscopy_sequences_stay_with_spec2nii(tmp_path):
 def test_scanarchive_frames_follow_their_control_packets(tmp_path):
     pfile = tmp_path / "P12345.7"
     frames = _pfile(pfile)
-    [reference, _] = gu.load(pfile)
+    [reference, _] = miox.load(pfile)
     packets, elements = [], []
     order = [(s, v) for v in range(1, VIEWS + 1) for s in range(SLICES)]  # view-major order
     order += [(1, 257), (0, 0)]  # the view number's high byte; a baseline frame
@@ -246,9 +246,10 @@ def test_scanarchive_frames_follow_their_control_packets(tmp_path):
     packets.append(_packet(3072, len(order), 2000))
     path = tmp_path / "ScanArchive_GRE.h5"
     _archive(path, packets, elements, _header())
-    sniff = gu.sniff(path)
-    assert (sniff.format, sniff.kind, sniff.vendor) == (gu.Format.GE_SCANARCHIVE, gu.Kind.RAW, "ge")
-    image, baseline = gu.load(path)
+    sniff = miox.sniff(path)
+    expected = (miox.Format.GE_SCANARCHIVE, miox.Kind.RAW, "ge")
+    assert (sniff.format, sniff.kind, sniff.vendor) == expected
+    image, baseline = miox.load(path)
     assert image.name == "ScanArchive_GRE" and baseline.name == "ScanArchive_GRE_baseline"
     assert image.shape == (9, COILS, SAMPLES) and baseline.shape == (1, COILS, SAMPLES)
     assert image.counters("slice").tolist() == [1, 0] * VIEWS + [0]  # spatial index
@@ -289,7 +290,7 @@ def test_scanarchive_hyper_frame_packets(tmp_path):
     packets.append(_packet(3072, len(packets), 800))
     path = tmp_path / "ScanArchive_EPI.h5"
     _archive(path, packets, elements, _header())
-    [image] = gu.load(path)
+    [image] = miox.load(path)
     assert image.shape == (12, COILS, SAMPLES)
     assert image.counters("kspace_encode_step_1").tolist() == [0, 1, 2] * 4
     assert image.counters("slice").tolist() == [1, 1, 1, 0, 0, 0] * 2
@@ -307,7 +308,7 @@ def test_scanarchive_frame_count_mismatch_is_noted(tmp_path):
     elements = [_frame(i, i, frames[:, 0, 1]) for i in range(3)]
     path = tmp_path / "ScanArchive_X.h5"
     _archive(path, packets, elements, _header())
-    [image] = gu.load(path)
+    [image] = miox.load(path)
     assert image.shape == (3, COILS, SAMPLES)
     assert any("name 2 frames, 3 stored" in note for note in image.provenance.notes)
     assert image.headers["user_int"][2].tolist() == [0] * 8  # no packet for the third frame

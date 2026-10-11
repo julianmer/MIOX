@@ -23,7 +23,7 @@ import numpy as np
 import pytest
 
 # own
-import miox as gu
+import miox
 
 
 def header(path: Path, values: dict[str, object]) -> None:
@@ -58,15 +58,15 @@ def experiment(folder: Path, data: np.ndarray, **values) -> Path:
 def test_fid_and_processed_spectrum(tmp_path):
     folder = experiment(tmp_path / "proton" / "1", FID)
     experiment(folder / "Proc" / "0", FID[::-1], STATE="1", MATRIX_DIMENSION_1D=8)
-    assert gu.sniff(folder).format == gu.Format.RS2D
-    assert gu.sniff(folder / "data.dat").format == gu.Format.RS2D
-    fid, spectrum = gu.load(folder)
-    assert isinstance(fid, gu.MRSData) and np.array_equal(fid.data[0, 0, 0], FID.conj())
+    assert miox.sniff(folder).format == miox.Format.RS2D
+    assert miox.sniff(folder / "data.dat").format == miox.Format.RS2D
+    fid, spectrum = miox.load(folder)
+    assert isinstance(fid, miox.MRSData) and np.array_equal(fid.data[0, 0, 0], FID.conj())
     assert fid.dwelltime == pytest.approx(2.5e-4)
     assert fid.spectrometer_frequency == pytest.approx(400.0016)
     assert fid.meta["ReferencePPM"] == pytest.approx(4.0)  # (400.0016 - 400) / 400 in ppm
     assert fid.meta["NumberOfAverages"] == 16 and fid.meta["Solvent"] == "CDCl3"
-    assert isinstance(spectrum, gu.MRImage) and spectrum.name == "proton_1_proc0"
+    assert isinstance(spectrum, miox.MRImage) and spectrum.name == "proton_1_proc0"
     assert np.array_equal(spectrum.data[0, 0, 0], FID[::-1])  # as stored
     assert spectrum.meta["SpectralWidth"] == pytest.approx(10.0 * 400.0016)
 
@@ -74,7 +74,7 @@ def test_fid_and_processed_spectrum(tmp_path):
 def test_two_dimensional_fid(tmp_path):
     rows = np.stack([FID * (k + 1) for k in range(3)])  # (2D, 1D) as stored
     folder = experiment(tmp_path / "hsqc" / "17", rows, MATRIX_DIMENSION_2D=3)
-    [d] = gu.load(folder)
+    [d] = miox.load(folder)
     assert d.shape == (1, 1, 1, 8, 3) and d.dim_tags[0] == "DIM_INDIRECT_0"
     assert np.array_equal(d.data[0, 0, 0, :, 2], 3 * FID.conj())
     assert d.meta["ResonantNucleus"] == ["1H", "13C"]
@@ -84,4 +84,4 @@ def test_two_dimensional_fid(tmp_path):
 def test_xml_without_partner_is_not_rs2d(tmp_path):
     path = tmp_path / "header.xml"
     path.write_text("<header><params></params></header>")
-    assert gu.sniff(path).format != gu.Format.RS2D
+    assert miox.sniff(path).format != miox.Format.RS2D
