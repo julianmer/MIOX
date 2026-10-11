@@ -20,12 +20,6 @@ d.data, d.dims, d.dwelltime      # complex FIDs in NIfTI-MRS order
 d.meta["EchoTime"], d.meta.source["EchoTime"], d.meta.vendor
 ```
 
-```
-miox info  path/to/file      # what a file holds and where each value came from
-miox sniff path/to/file      # identify a file or folder without reading it whole
-miox audit path/to/file      # every vendor header field and whether it is read
-```
-
 ## Installation
 
 ```
