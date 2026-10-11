@@ -8,8 +8,8 @@
 #                                                                                                  #
 # Purpose: Console entry point for the ``miox`` command: ``info`` (what a file holds: data         #
 #          shape, standard keys and their sources), ``sniff`` (format of files or directories),    #
-#          ``audit`` (metadata coverage table of a file) and ``view`` (spectra and images in a     #
-#          window or saved to a file).                                                             #
+#          ``audit`` (metadata coverage table of a file) and ``view`` (a quick look at what a      #
+#          file holds, in a window or saved to a file).                                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -72,7 +72,7 @@ class CLI:
         audit.add_argument("path", type=Path)
         audit.set_defaults(func=self.audit)
 
-        view = commands.add_parser("view", help="spectra and images in a window or saved")
+        view = commands.add_parser("view", help="quick look in a window or saved to a file")
         view.add_argument("paths", nargs="+", type=Path)
         view.add_argument("--save", type=Path, help="save to this file instead of a window "
                           "(several datasets: name-1.png, name-2.png, ...)")

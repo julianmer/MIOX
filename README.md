@@ -18,7 +18,7 @@ import miox
 [d] = miox.load("meas.dat")      # one object per dataset in the file
 d.data, d.dims, d.dwelltime      # complex FIDs in NIfTI-MRS order
 d.meta["EchoTime"], d.meta.source["EchoTime"], d.meta.vendor
-miox.view(d)                     # quick look: spectra and images
+miox.view(d)                     # quick look in a window
 ```
 
 ## Installation
