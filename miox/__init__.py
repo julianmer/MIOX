@@ -63,4 +63,13 @@ __all__ = [
     "__version__",
     "load",
     "sniff",
+    "view",
 ]
+
+
+def __getattr__(name: str):
+    if name == "view":  # on first use: matplotlib adds about 0.3 s to every import
+        from miox.viewer import view
+
+        return view
+    raise AttributeError(f"module 'miox' has no attribute {name!r}")

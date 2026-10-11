@@ -7,8 +7,9 @@
 # Created: 01/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Console entry point for the ``miox`` command: ``info`` (what a file holds: data         #
-#          shape, standard keys and their sources), ``sniff`` (format of files or directories) and #
-#          ``audit`` (metadata coverage table of a file).                                          #
+#          shape, standard keys and their sources), ``sniff`` (format of files or directories),    #
+#          ``audit`` (metadata coverage table of a file) and ``view`` (spectra and images in a     #
+#          window or saved to a file).                                                             #
 #                                                                                                  #
 ####################################################################################################
 
@@ -70,6 +71,12 @@ class CLI:
         audit = commands.add_parser("audit", help="metadata coverage table for a file (Markdown)")
         audit.add_argument("path", type=Path)
         audit.set_defaults(func=self.audit)
+
+        view = commands.add_parser("view", help="spectra and images in a window or saved")
+        view.add_argument("paths", nargs="+", type=Path)
+        view.add_argument("--save", type=Path, help="save to this file instead of a window "
+                          "(several datasets: name-1.png, name-2.png, ...)")
+        view.set_defaults(func=self.view)
 
     def run(self, argv: list[str] | None = None) -> int:
         args = self.parser.parse_args(argv)
@@ -170,6 +177,36 @@ class CLI:
             print(f"miox audit: {e}", file=sys.stderr)
             return 2
         return 0
+
+    def view(self, args: argparse.Namespace) -> int:
+        """Every dataset that has a view; status 1 if a path cannot be read or nothing is shown."""
+        from miox.viewer import VIEWS, show, view  # matplotlib only when viewing
+
+        loader = Loader()
+        status, datasets = 0, []
+        for path in args.paths:
+            try:
+                loaded = loader.load(path)
+            except ReaderError as e:
+                print(f"miox view: {e}", file=sys.stderr)
+                status = 1
+                continue
+            for d in loaded:
+                if isinstance(d, tuple(VIEWS)):
+                    datasets.append(d)
+                else:
+                    print(f"miox view: no view for {type(d).__name__} yet ({d.name})",
+                          file=sys.stderr)
+        if not datasets:
+            return 1
+        if args.save is None:
+            show(datasets)
+        elif len(datasets) == 1:
+            view(datasets[0], args.save)
+        else:
+            for n, d in enumerate(datasets, 1):
+                view(d, args.save.with_name(f"{args.save.stem}-{n}{args.save.suffix}"))
+        return status
 
 
 #**************************************************************************************************#
