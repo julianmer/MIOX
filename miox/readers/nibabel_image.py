@@ -40,7 +40,7 @@ from miox.sniff import Format, Sniff
 #**************************************************************************************************#
 #                                                                                                  #
 # One MRImage per file: nibabel's data (scaling applied; PAR/REC as display values) and affine.    #
-# Standard keys: a BIDS sidecar's fields (renamed where Miox has the same key: FlipAngle,          #
+# Standard keys: a BIDS sidecar's fields (renamed where MIOX has the same key: FlipAngle,          #
 # MagneticFieldStrength, ImagingFrequency, ...), MGH times (ms) and flip angle (rad), PAR/REC      #
 # general and per-image values (ms). MINC and AFNI attributes stay in the vendor header; MINC data #
 # get their spatial axes first, as nibabel builds the affine from those alone.                     #
@@ -58,7 +58,7 @@ class NibabelImageReader(Reader):
     )
     PACKAGES = Reader.PACKAGES + ("nibabel",)
     HEADER_FILES = (".hdr", ".par", ".head")  # of formats split in header and data files
-    BIDS_RENAMED = {  # BIDS sidecar field -> Miox key, (scale)
+    BIDS_RENAMED = {  # BIDS sidecar field -> MIOX key, (scale)
         "FlipAngle": ("ExcitationFlipAngle", None),
         "MagneticFieldStrength": ("FieldStrength", None),
         "ImagingFrequency": ("SpectrometerFrequency", "list"),

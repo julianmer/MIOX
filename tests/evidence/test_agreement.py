@@ -144,7 +144,7 @@ def test_philips_csi_signal_lies_in_the_press_box():
 @pytest.mark.data
 @pytest.mark.parametrize("series", ["30", "31"])
 def test_dcm2niix_spectroscopy_nifti_equals_the_dicom(series):
-    """dcm2niix's complex NIfTI with an MRS sidecar holds what Miox reads from the DICOM."""
+    """dcm2niix's complex NIfTI with an MRS sidecar holds what MIOX reads from the DICOM."""
     reference = PUBLIC_DATA / f"dcm_qa_spec/Ref/svs_se_{series}.nii"
     folder = PUBLIC_DATA / f"dcm_qa_spec/In/{series}_svs_se"
     if not reference.exists() or not folder.exists():

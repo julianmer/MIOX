@@ -35,7 +35,7 @@ from miox.sniff import Format, Sniff
 #                                      NiftiSidecarMrsReader                                       #
 #**************************************************************************************************#
 #                                                                                                  #
-# The data are stored as NIfTI-MRS stores them: checked against Miox's reading of the DICOM        #
+# The data are stored as NIfTI-MRS stores them: checked against MIOX's reading of the DICOM        #
 # dcm2niix converted (identical data and affine). The dwell time is 1 / SpectralWidth, else the    #
 # sidecar's DwellTime, else pixdim[4].                                                             #
 #                                                                                                  #

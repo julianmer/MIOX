@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="assets/logo.png" alt="Miox Logo" width="100"/>
-  <h1 style="margin-top: 5px; margin-bottom: 5px;">Miox</h1>
+  <img src="assets/logo.png" alt="MIOX Logo" width="100"/>
+  <h1 style="margin-top: 5px; margin-bottom: 5px;">MIOX</h1>
   <p style="margin-top: 0px;"><em>Open any MR file from any vendor into one object: data, geometry, all metadata</em></p>
 
   [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
@@ -9,7 +9,7 @@
 
 ---
 
-Miox reads MR spectroscopy, images, raw k-space, sequences, protocols, physiological recordings
+MIOX reads MR spectroscopy, images, raw k-space, sequences, protocols, physiological recordings
 and NMR data into one well-defined object each. It keeps the complete vendor header and records
 where every standard key came from.
 
