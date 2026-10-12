@@ -85,6 +85,7 @@ class Format(StrEnum):
     JNIFTI = "jnifti"  # JNIfTI in JSON text (.jnii)
     VISTA = "vista"  # Vista images (.v; Lipsia)
     NIFTI_ZARR = "nifti_zarr"  # NIfTI-Zarr store (.nii.zarr folder)
+    STIMULATE = "stimulate"  # Stimulate .spr header with .sdt data
     JNIFTI_BINARY = "jnifti_binary"  # JNIfTI in binary BJData (.bnii)
     MRTRIX = "mrtrix"
     VARIAN_FDF = "varian_fdf"  # Varian/Agilent VnmrJ image
@@ -364,6 +365,7 @@ class Sniffer:
         (".real", ".idf", Format.SIVIC_IDF),
         (".int2", ".idf", Format.SIVIC_IDF),
         (".byt", ".idf", Format.SIVIC_IDF),
+        (".sdt", ".spr", Format.STIMULATE),
     )
     BRUKER_MRS_METHODS = (
         "press", "steam", "csi", "svs", "slaser", "laser", "isis", "fid", "nspect"
@@ -1326,7 +1328,8 @@ class Sniffer:
                 return Sniff(
                     path,
                     fmt,
-                    Kind.SPECTROSCOPY if fmt != Format.SIVIC_IDF else Kind.IMAGING,
+                    Kind.IMAGING if fmt in (Format.SIVIC_IDF, Format.STIMULATE)
+                    else Kind.SPECTROSCOPY,
                     confidence=0.9,
                     evidence=(f"{suffix} data with {text.name}",),
                     companions=(text,),
@@ -1438,7 +1441,7 @@ class Sniffer:
 
     def image_files(self, path: Path, head: bytes) -> Sniff | None:
         """Image formats nibabel reads: MGH, MINC 1 and 2, AFNI, Analyze (and their data halves);
-        gzipped MRtrix images; GE Signa images; JNIfTI (JSON or BJData); Vista."""
+        gzipped MRtrix images; GE Signa images; JNIfTI (JSON or BJData); Vista; Stimulate."""
         name, suffix = path.name.lower(), path.suffix.lower()
         if name.endswith(".mif.gz") and head[:2] == GZIP_MAGIC:
             try:
@@ -1466,6 +1469,9 @@ class Sniffer:
             header = path.with_name(self.BRIK.sub(".HEAD", path.name))
             if header.is_file():
                 return dataclasses.replace(self.sniff(header), path=path, companions=(header,))
+        if suffix == ".spr" and self._is_text(head) and b"dim:" in head and b"dataType" in head:
+            sdt = self._sibling(path, ".sdt")
+            return self._image(path, Format.STIMULATE, "Stimulate .spr header", sdt, "SDT")
         if head.startswith(b"V-data 2 {") and b"image" in head:
             return self._image(path, Format.VISTA, "V-data header with an image")
         if head[:1] == b"{" and b"NIFTIHeader" in head:

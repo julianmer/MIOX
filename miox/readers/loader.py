@@ -99,6 +99,8 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.jnifti", "JNiftiReader", (Format.JNIFTI, Format.JNIFTI_BINARY)),
     ("miox.readers.vista", "VistaReader", (Format.VISTA,)),
     ("miox.readers.nifti_zarr", "NiftiZarrReader", (Format.NIFTI_ZARR,)),
+    ("miox.readers.stimulate", "StimulateReader", (Format.STIMULATE,)),
+    ("miox.readers.stimulate", "SivicIdfReader", (Format.SIVIC_IDF,)),
     ("miox.readers.mrd", "MrdReader", (Format.MRD,)),
     ("miox.readers.mrtrix", "MrtrixReader", (Format.MRTRIX,)),
     ("miox.readers.nibabel_image", "NibabelImageReader", (

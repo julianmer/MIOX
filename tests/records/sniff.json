@@ -13415,14 +13415,14 @@
   "kind": "imaging"
  },
  "i2nii/test/spr.sdt": {
-  "format": "unknown",
+  "format": "stimulate",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "i2nii/test/spr.spr": {
-  "format": "unknown",
+  "format": "stimulate",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "ismrmrd/simple_gre.h5": {
   "format": "ismrmrd",
