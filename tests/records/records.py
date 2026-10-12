@@ -169,10 +169,10 @@ class ReadRecords:
             record = {
                 "name": d.name,
                 "n_streamlines": d.n_streamlines,
-                "n_points": int(d.points.shape[0]),
+                "n_points": d.n_points,
                 "space": d.space,
-                "points_head": d.points[:2].tolist(),
-                "points_sum": float(np.sum(d.points)),
+                "points_head": None if d.points is None else d.points[:2].tolist(),
+                "points_sum": None if d.points is None else float(np.sum(d.points)),
                 "point_data": {k: list(v.shape) for k, v in d.point_data.items()},
                 "streamline_data": {k: list(v.shape) for k, v in d.streamline_data.items()},
                 "reference": d.reference,

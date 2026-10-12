@@ -13225,9 +13225,9 @@
   "kind": "unknown"
  },
  "dsistudio_templates/CMU60.2mm.fib.gz": {
-  "format": "unknown",
+  "format": "dsi_studio_fib",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "gadgetron/T2W/generic_grappa_T2W_ref_20220817_klk.mrd": {
   "format": "ismrmrd",
@@ -17360,9 +17360,9 @@
   "kind": "surface"
  },
  "niivue/packages/niivue/demos/images/TR_S_R.tt.gz": {
-  "format": "unknown",
+  "format": "dsi_studio_tt",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "niivue/packages/niivue/demos/images/colby.trk": {
   "format": "trk",
@@ -17375,34 +17375,34 @@
   "kind": "tractogram"
  },
  "niivue/packages/niivue/demos/images/dsistudio.fib.gz": {
-  "format": "unknown",
+  "format": "dsi_studio_fib",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "niivue/packages/niivue/demos/images/dsistudio.src.gz": {
-  "format": "unknown",
+  "format": "dsi_studio_src",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "niivue/packages/niivue/demos/images/mni152.SLF1_R.tsf": {
-  "format": "unknown",
+  "format": "tsf",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "niivue/packages/niivue/demos/images/mz3/11ScalarMesh.mz3": {
-  "format": "unknown",
+  "format": "mz3",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "niivue/packages/niivue/demos/images/mz3/3Mesh.mz3": {
-  "format": "unknown",
+  "format": "mz3",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "niivue/packages/niivue/demos/images/mz3/cortex_5124.mz3": {
-  "format": "unknown",
+  "format": "mz3",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "niivue/packages/niivue/demos/images/tract.FAT_R.vtk": {
   "format": "vtk_polydata",

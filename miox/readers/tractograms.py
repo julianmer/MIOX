@@ -6,8 +6,8 @@
 #                                                                                                  #
 # Created: 12/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Readers for streamline files: TrackVis .trk and MRtrix .tck (read by nibabel) and TRX   #
-#          (.trx zip archives or folders).                                                         #
+# Purpose: Readers for streamline files: TrackVis .trk and MRtrix .tck (read by nibabel), TRX     #
+#          (.trx zip archives or folders), DSI Studio .tt and MRtrix track scalar files (.tsf).    #
 #                                                                                                  #
 ####################################################################################################
 
@@ -17,8 +17,10 @@
 #*************#
 from __future__ import annotations
 
+import gzip
 import json
 import re
+import struct
 import zipfile
 from pathlib import PurePosixPath
 
@@ -157,3 +159,127 @@ class TrxReader(Reader):
         with zipfile.ZipFile(sniff.path) as archive:
             return {name: archive.read(name) for name in archive.namelist()
                     if not name.endswith("/")}
+
+
+def matlab_v4(raw: bytes) -> dict[str, np.ndarray]:
+    """The variables of a MATLAB version 4 file: per variable five int32 (type MOPT, rows,
+    columns, imaginary flag, name length), the name and the values column by column."""
+    precisions = {0: "f8", 1: "f4", 2: "i4", 3: "i2", 4: "u2", 5: "u1"}
+    variables, position = {}, 0
+    while position + 20 <= len(raw):
+        kind, rows, columns, imaginary, length = struct.unpack_from("<5i", raw, position)
+        if kind > 9999 or kind < 0:
+            raise ReaderError(f"MATLAB v4 type {kind} at byte {position}: big-endian or not v4")
+        order = "<" if kind // 1000 == 0 else ">"
+        precision = precisions.get(kind // 10 % 10)
+        if precision is None:
+            raise ReaderError(f"MATLAB v4 precision {kind // 10 % 10} unknown")
+        position += 20
+        name = raw[position:position + length].rstrip(b"\0").decode("ascii", "replace")
+        position += length
+        count = rows * columns * (2 if imaginary else 1)
+        dtype = np.dtype(order + precision)
+        values = np.frombuffer(raw, dtype, count, position)
+        position += count * dtype.itemsize
+        if imaginary:
+            values = values[:rows * columns] + 1j * values[rows * columns:]
+        variables[name] = values.reshape(columns, rows).T
+    return variables
+
+
+#**************************************************************************************************#
+#                                        DsiStudioTrackReader                                      #
+#**************************************************************************************************#
+#                                                                                                  #
+# A DSI Studio .tt file (gzipped MATLAB v4) holds the grid (dimension, voxel_size), trans_to_mni   #
+# (4 x 4, row by row) and the streamlines packed in the byte array "track": per streamline the     #
+# byte count of its coordinates (uint32), the first point as three int32 and every further point   #
+# as three int8 steps, all in 1/32 voxel; points are voxel centres. MIOX maps them through         #
+# trans_to_mni. Other variables (report, colours, clusters) go to the vendor header.               #
+#                                                                                                  #
+#**************************************************************************************************#
+class DsiStudioTrackReader(Reader):
+    FORMATS = (Format.DSI_STUDIO_TT,)
+    PACKAGES = ("miox",)
+
+    def read(self, sniff: Sniff) -> list[Tractogram]:
+        raw = sniff.path.read_bytes()
+        try:
+            variables = matlab_v4(gzip.decompress(raw) if raw[:2] == b"\x1f\x8b" else raw)
+            track = variables.pop("track").ravel().astype(np.uint8).tobytes()
+            transform = variables.pop("trans_to_mni").ravel().astype(np.float64).reshape(4, 4)
+        except (KeyError, OSError, EOFError, struct.error, ValueError) as e:
+            raise ReaderError(f"{sniff.path}: not a readable DSI Studio track file ({e})") from e
+        pieces, lengths, position = [], [], 0
+        while position + 16 <= len(track):
+            size = struct.unpack_from("<I", track, position)[0]
+            first = np.array(struct.unpack_from("<3i", track, position + 4), dtype=np.int64)
+            steps = np.frombuffer(track, np.int8, size - 3, position + 16).reshape(-1, 3)
+            pieces.append(np.vstack([first, first + np.cumsum(steps, axis=0)]))
+            lengths.append(size // 3)
+            position += size + 13
+        if position != len(track):
+            raise ReaderError(f"{sniff.path}: track bytes end inside a streamline")
+        voxels = np.concatenate(pieces) / 32.0 if pieces else np.zeros((0, 3))
+        points = voxels @ transform[:3, :3].T + transform[:3, 3]
+        offsets = np.concatenate([[0], np.cumsum(lengths)]).astype(np.int64)
+        report = variables.pop("report", None)
+        vendor = {k: self.plain(v.ravel() if v.size < 64 else v.shape)
+                  for k, v in variables.items()}
+        if report is not None:
+            vendor["report"] = report.ravel().astype(np.uint8).tobytes().decode("utf-8", "replace")
+        reference = {"dimensions": variables.get("dimension", np.zeros(0)).ravel().tolist(),
+                     "voxel_sizes": variables.get("voxel_size", np.zeros(0)).ravel().tolist(),
+                     "voxel_to_rasmm": transform.tolist()}
+        name = sniff.path.name.removesuffix(".gz").removesuffix(".tt")
+        return [Tractogram(points, offsets, "DSI Studio trans_to_mni (mm)", {}, {}, reference,
+                           Meta(vendor), self.provenance(sniff), name)]
+
+
+#**************************************************************************************************#
+#                                            TsfReader                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# An MRtrix track scalar file (.tsf) has a header like a .tck ("mrtrix track scalars", key: value  #
+# lines to END, "file: . <offset>") and one value per point of the streamlines of a .tck: NaN      #
+# ends a streamline, Inf the file. The result is a Tractogram without points (they live in the     #
+# .tck the file was sampled on) whose point data holds the values.                                 #
+#                                                                                                  #
+#**************************************************************************************************#
+class TsfReader(Reader):
+    FORMATS = (Format.TSF,)
+    PACKAGES = ("miox",)
+    TYPES = {"float32le": "<f4", "float32be": ">f4", "float64le": "<f8", "float64be": ">f8"}
+
+    def read(self, sniff: Sniff) -> list[Tractogram]:
+        raw = sniff.path.read_bytes()
+        end = raw.find(b"\nEND")
+        if end < 0:
+            raise ReaderError(f"{sniff.path}: header without END")
+        header = {}
+        for line in raw[:end].decode("ascii", "replace").splitlines()[1:]:
+            key, sep, value = line.partition(":")
+            if sep:
+                header[key.strip()] = value.strip()
+        dtype = self.TYPES.get(header.get("datatype", "").lower())
+        try:
+            offset = int(header["file"].split()[-1])
+        except (KeyError, ValueError, IndexError) as e:
+            raise ReaderError(f"{sniff.path}: no 'file: . <offset>' line") from e
+        if dtype is None:
+            raise ReaderError(f"{sniff.path}: datatype {header.get('datatype')} not read")
+        values = np.frombuffer(raw, dtype, (len(raw) - offset) // np.dtype(dtype).itemsize,
+                               offset).astype(np.float64)
+        stop = np.flatnonzero(np.isinf(values))
+        values = values[:stop[0]] if len(stop) else values
+        breaks = np.flatnonzero(np.isnan(values))
+        lengths = np.diff(np.concatenate([[-1], breaks])) - 1
+        offsets = np.concatenate([[0], np.cumsum(lengths)]).astype(np.int64)
+        notes = []
+        if len(breaks) and breaks[-1] != len(values) - 1:
+            notes.append("values after the last NaN dropped")
+        if "count" in header and int(header["count"]) != len(lengths):
+            notes.append(f"header states {header['count']} streamlines, {len(lengths)} found")
+        return [Tractogram(None, offsets, RAS, {"values": values[~np.isnan(values)]
+                                                [:offsets[-1]]}, {}, None, Meta({"header": header}),
+                           self.provenance(sniff, tuple(notes)), sniff.path.stem)]

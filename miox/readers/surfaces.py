@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Readers for surface meshes and per-vertex data: GIFTI (.gii, also gzip/bzip2) and       #
 #          FreeSurfer surfaces, morphometry (curv, sulc, thickness, ...), annotations and labels,  #
-#          read by nibabel.                                                                        #
+#          read by nibabel; NiiVue/Surfice MZ3 meshes.                                             #
 #                                                                                                  #
 ####################################################################################################
 
@@ -17,6 +17,9 @@
 #   imports   #
 #*************#
 from __future__ import annotations
+
+import gzip
+import struct
 
 import nibabel as nib
 import numpy as np
@@ -201,3 +204,59 @@ class FreeSurferReader(Reader):
     def _measure(name: str) -> str:
         """The measure a morphometry file holds, from its name (lh.thickness -> thickness)."""
         return name.split(".", 1)[1] if "." in name else name
+
+
+#**************************************************************************************************#
+#                                            Mz3Reader                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# MZ3 (Surfice, NiiVue), little-endian, often gzipped: magic 0x5A4D, attribute bits (1 faces, 2    #
+# vertices, 4 RGBA colours, 8 float scalars, 16 double scalars), the face and vertex counts and a  #
+# number of bytes to skip; then the faces (three int32 each), the vertices (three float32 each),   #
+# the colours (four bytes each) and the scalars, one layer per vertex count. A file of scalars     #
+# only belongs to a mesh read elsewhere. The file states no coordinate frame (NiiVue shows the     #
+# vertices as world mm).                                                                           #
+#                                                                                                  #
+#**************************************************************************************************#
+class Mz3Reader(Reader):
+    FORMATS = (Format.MZ3,)
+    PACKAGES = ("miox",)
+    MAGIC = 0x5A4D
+    SPACE = "not stated (MZ3; world mm in NiiVue)"
+
+    def read(self, sniff: Sniff) -> list[Surface]:
+        raw = sniff.path.read_bytes()
+        try:
+            raw = gzip.decompress(raw) if raw[:2] == b"\x1f\x8b" else raw
+            magic, bits, n_faces, n_vertices, skip = struct.unpack_from("<HHIII", raw)
+        except (OSError, EOFError, struct.error) as e:
+            raise ReaderError(f"{sniff.path.name}: {type(e).__name__}: {e}") from e
+        if magic != self.MAGIC:
+            raise ReaderError(f"{sniff.path.name}: not MZ3 (magic {magic:#x})")
+        at = 16 + skip
+        faces = vertices = None
+        vertex_data = {}
+        try:
+            if bits & 1:
+                faces = np.frombuffer(raw, "<i4", 3 * n_faces, at).reshape(-1, 3).astype(np.int64)
+                at += 12 * n_faces
+            if bits & 2:
+                vertices = np.frombuffer(raw, "<f4", 3 * n_vertices, at).reshape(-1, 3)
+                vertices = vertices.astype(np.float64)
+                at += 12 * n_vertices
+            if bits & 4:
+                vertex_data["rgba"] = np.frombuffer(raw, np.uint8, 4 * n_vertices, at).reshape(
+                    -1, 4)
+                at += 4 * n_vertices
+            for bit, dtype in ((8, "<f4"), (16, "<f8")):
+                if bits & bit and n_vertices:
+                    size = np.dtype(dtype).itemsize * n_vertices
+                    for layer in range((len(raw) - at) // size):
+                        vertex_data[f"scalar{layer + 1}" if layer else "scalar"] = np.frombuffer(
+                            raw, dtype, n_vertices, at).astype(np.float64)
+                        at += size
+        except ValueError as e:
+            raise ReaderError(f"{sniff.path.name}: file shorter than its header states") from e
+        vendor = {"attributes": bits, "faces": n_faces, "vertices": n_vertices, "skip": skip}
+        return [Surface(vertices, faces, self.SPACE, vertex_data, {}, Meta(vendor),
+                        self.provenance(sniff), sniff.path.stem)]

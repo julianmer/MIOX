@@ -10,7 +10,8 @@
 #          vertices, Euler characteristic 2), its per-vertex files match the mesh, its V1 label    #
 #          lies in the occipital parcels of its annotation, GIFTI and FreeSurfer colour tables of  #
 #          aparc agree, one GIFTI mesh in ASCII and base64 encodings is equal, an external GIFTI   #
-#          array equals the bytes of its .dat file, and compressed copies equal the original.      #
+#          array equals the bytes of its .dat file, and compressed copies equal the original;      #
+#          NiiVue's MZ3 meshes are closed.                                                         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -124,3 +125,21 @@ def test_gifti_compressed_equals_original(suffix):
     [plain], [packed] = load(path), load(path.with_name(path.name + suffix))
     assert np.array_equal(plain.vertices, packed.vertices)
     assert np.array_equal(plain.faces, packed.faces)
+
+
+MZ3 = PUBLIC_DATA / "niivue" / "packages" / "niivue" / "demos" / "images" / "mz3"
+
+
+@pytest.mark.parametrize("name, closed, scalars", [
+    ("3Mesh.mz3", 1, None), ("11ScalarMesh.mz3", 1, [1, 2, 3, 4, 5, 6]),
+    ("cortex_5124.mz3", 2, None),
+])
+def test_mz3_meshes_are_closed(name, closed, scalars):
+    """NiiVue's MZ3 demos: an octahedron (with one scalar per vertex) and two cortical
+    hemispheres, each a closed surface of genus 0 (Euler characteristic 2 apiece)."""
+    if not (MZ3 / name).exists():
+        pytest.skip("niivue demos not fetched")
+    surface = load(MZ3 / name)[0]
+    assert euler(surface) == 2 * closed
+    if scalars is not None:
+        assert surface.vertex_data["scalar"].tolist() == scalars

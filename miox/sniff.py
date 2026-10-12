@@ -113,6 +113,11 @@ class Format(StrEnum):
     TCK = "tck"  # MRtrix streamlines
     TRX = "trx"  # TRX streamlines (zip archive or folder)
     VTK_POLYDATA = "vtk_polydata"  # VTK legacy POLYDATA: lines (streamlines) or polygons
+    DSI_STUDIO_TT = "dsi_studio_tt"  # DSI Studio streamlines (.tt, gzipped MATLAB v4)
+    TSF = "tsf"  # MRtrix track scalar file: one value per streamline point
+    MZ3 = "mz3"  # Surfice / NiiVue mesh (.mz3, often gzipped)
+    DSI_STUDIO_SRC = "dsi_studio_src"  # DSI Studio source: diffusion images and b-table
+    DSI_STUDIO_FIB = "dsi_studio_fib"  # DSI Studio fibre file: reconstructed maps
     BRAINVOYAGER_VMR = "brainvoyager_vmr"  # BrainVoyager anatomical volume
     BRAINVOYAGER_VTC = "brainvoyager_vtc"  # BrainVoyager volume time course
     BRAINVOYAGER_GLM = "brainvoyager_glm"  # BrainVoyager GLM results
@@ -985,14 +990,19 @@ class Sniffer:
 
     def tractograms(self, path: Path, head: bytes) -> Sniff | None:
         """Streamlines: TrackVis .trk ("TRACK" magic, header size 1000 at byte 996), MRtrix .tck
-        ("mrtrix tracks" first line), TRX zip archives (header.json, positions and offsets
-        arrays), VTK legacy POLYDATA (its kind from the cells it holds: LINES or POLYGONS)."""
+        ("mrtrix tracks" first line) and their scalars .tsf, TRX zip archives (header.json,
+        positions and offsets arrays), DSI Studio .tt (MATLAB v4), VTK legacy POLYDATA (its kind
+        from the cells it holds: LINES or POLYGONS)."""
         found = None
         if head.startswith(b"TRACK") and len(head) >= 1000 and 1000 in struct.unpack_from(
                 "<i", head, 996) + struct.unpack_from(">i", head, 996):
             found = Format.TRK, Kind.TRACTOGRAM, "TRACK magic, header size 1000"
         elif head.startswith(b"mrtrix tracks"):
             found = Format.TCK, Kind.TRACTOGRAM, "mrtrix tracks first line"
+        elif head.startswith(b"mrtrix track scalars"):
+            found = Format.TSF, Kind.TRACTOGRAM, "mrtrix track scalars first line"
+        elif path.name.lower().endswith((".tt", ".tt.gz")) and self._matlab_v4_track(head):
+            found = Format.DSI_STUDIO_TT, Kind.TRACTOGRAM, "MATLAB v4 variables of a .tt file"
         elif head.startswith(b"PK\x03\x04") and self._trx(path):
             found = Format.TRX, Kind.TRACTOGRAM, "zip with header.json, positions and offsets"
         elif head.startswith(b"# vtk DataFile Version") and re.search(
@@ -1004,6 +1014,30 @@ class Sniffer:
         if found is None:
             return None
         return Sniff(path, found[0], found[1], confidence=0.9, evidence=(found[2],))
+
+    @staticmethod
+    def _mz3(head: bytes) -> bool:
+        if head[:2] == GZIP_MAGIC:
+            try:
+                head = zlib.decompressobj(31).decompress(head, 16)
+            except zlib.error:
+                return False
+        return head[:2] == b"MZ"
+
+    @staticmethod
+    def _matlab_v4_track(head: bytes) -> bool:
+        """A (gzipped) MATLAB version 4 file: a small type code, then the first variable's
+        name, as DSI Studio writes .tt, .src and .fib files."""
+        if head[:2] == GZIP_MAGIC:
+            try:
+                head = zlib.decompressobj(31).decompress(head, 64)
+            except zlib.error:
+                return False
+        if len(head) < 24:
+            return False
+        kind, rows, columns, imaginary, length = struct.unpack_from("<5i", head)
+        return 0 <= kind < 100 and rows > 0 and columns > 0 and imaginary in (0, 1) and (
+            0 < length < 64)
 
     def _trx(self, path: Path) -> bool:
         """A zip archive or folder with header.json and TRX positions and offsets arrays."""
@@ -1024,7 +1058,7 @@ class Sniffer:
         """Surface meshes and per-vertex data: GIFTI (a <GIFTI root, also inside .gii.gz and
         .gii.bz2); FreeSurfer surfaces by magic number and a size that holds the vertices and
         faces they state, new-format curv files (magic 0xffffff, exactly 15 + 4 x vertices bytes),
-        .annot files (vertex count, then (vertex, value) pairs), .label text files."""
+        .annot files (vertex count, then (vertex, value) pairs), .label text files, MZ3 meshes."""
         name, size = path.name.lower(), path.stat().st_size
         found = None
         if name.endswith((".gii.gz", ".gii.bz2")):
@@ -1044,6 +1078,8 @@ class Sniffer:
                 found = Format.FREESURFER_ANNOT, ".annot with room for its vertex count"
         elif name.endswith(".label") and head.startswith(b"#!ascii label"):
             found = Format.FREESURFER_LABEL, "#!ascii label first line"
+        elif name.endswith(".mz3") and self._mz3(head):
+            found = Format.MZ3, "MZ3 magic 0x5A4D"
         if found is None:
             return None
         return Sniff(path, found[0], Kind.SURFACE, confidence=0.9, evidence=(found[1],))
@@ -1444,7 +1480,7 @@ class Sniffer:
     def image_files(self, path: Path, head: bytes) -> Sniff | None:
         """Image formats nibabel reads: MGH, MINC 1 and 2, AFNI, Analyze (and their data halves);
         gzipped MRtrix images; GE Signa images; JNIfTI (JSON or BJData); Vista; Stimulate; VTK
-        images (legacy STRUCTURED_POINTS, XML ImageData)."""
+        images (legacy STRUCTURED_POINTS, XML ImageData); DSI Studio .src and .fib files."""
         name, suffix = path.name.lower(), path.suffix.lower()
         if name.endswith(".mif.gz") and head[:2] == GZIP_MAGIC:
             try:
@@ -1475,6 +1511,9 @@ class Sniffer:
         if suffix == ".spr" and self._is_text(head) and b"dim:" in head and b"dataType" in head:
             sdt = self._sibling(path, ".sdt")
             return self._image(path, Format.STIMULATE, "Stimulate .spr header", sdt, "SDT")
+        for ending, fmt in ((".src", Format.DSI_STUDIO_SRC), (".fib", Format.DSI_STUDIO_FIB)):
+            if name.endswith((ending, ending + ".gz")) and self._matlab_v4_track(head):
+                return self._image(path, fmt, f"MATLAB v4 variables of a {ending} file")
         if head.startswith(b"# vtk DataFile Version") and re.search(
                 rb"^DATASET\s+STRUCTURED_POINTS", head, re.M | re.I):
             return self._image(path, Format.VTK_IMAGE, "VTK legacy STRUCTURED_POINTS")

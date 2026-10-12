@@ -859,7 +859,8 @@ class Phantom:
 #**************************************************************************************************#
 #                                                                                                  #
 # Streamlines as one array of ``points`` (all points, 3) in mm with ``offsets`` (streamlines + 1): #
-# streamline i runs over points[offsets[i]:offsets[i + 1]]. ``space`` names the frame the points   #
+# streamline i runs over points[offsets[i]:offsets[i + 1]]; ``points`` is None for files of values #
+# per point only (MRtrix .tsf, sampled on a .tck). ``space`` names the frame the points            #
 # are in (RAS world mm unless the reader says otherwise). ``point_data`` holds arrays with one row #
 # per point, ``streamline_data`` one row per streamline; ``reference`` the image geometry the file #
 # states (dimensions, voxel sizes, affine), when it does.                                          #
@@ -868,7 +869,7 @@ class Phantom:
 class Tractogram:
     def __init__(
         self,
-        points: np.ndarray,
+        points: np.ndarray | None,
         offsets: np.ndarray,
         space: str,
         point_data: dict[str, np.ndarray],
@@ -892,6 +893,10 @@ class Tractogram:
     def n_streamlines(self) -> int:
         return len(self.offsets) - 1
 
+    @property
+    def n_points(self) -> int:
+        return int(self.offsets[-1])
+
     def streamline(self, i: int) -> np.ndarray:
         return self.points[self.offsets[i]:self.offsets[i + 1]]
 
@@ -903,7 +908,7 @@ class Tractogram:
             "reader": self.provenance.reader,
             "paths": [str(p) for p in self.provenance.paths],
             "n_streamlines": self.n_streamlines,
-            "n_points": int(self.points.shape[0]),
+            "n_points": self.n_points,
             "space": self.space,
             "point_data": list(self.point_data),
             "streamline_data": list(self.streamline_data),
@@ -916,7 +921,7 @@ class Tractogram:
     def __repr__(self) -> str:
         name = f" {self.name}" if self.name else ""
         return (f"<Tractogram{name} {self.provenance.format}: {self.n_streamlines} streamlines, "
-                f"{self.points.shape[0]} points>")
+                f"{self.n_points} points>")
 
 
 #**************************************************************************************************#

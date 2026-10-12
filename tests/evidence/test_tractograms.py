@@ -10,6 +10,8 @@
 #          folder) and .vtk equal the published RAS mm points (the .vtk in LPS), their per-point   #
 #          and per-streamline data equal the published JSON, and the stated reference maps the     #
 #          published voxel coordinates to the RAS points and equals the reference image's affine.  #
+#          NiiVue's demos: a .tsf has its .tck's point counts; a DSI Studio .tt tract lies where   #
+#          its name says.                                                                          #
 #                                                                                                  #
 ####################################################################################################
 
@@ -73,3 +75,29 @@ def test_reference_maps_voxels_to_ras(name):
     assert np.allclose(voxels @ affine[:3, :3].T + affine[:3, 3], t.points, atol=1e-5)
     assert np.allclose(affine, nib.load(DATA / "gs.nii").affine, atol=1e-6)
     assert list(t.reference["dimensions"]) == [5, 10, 20]
+
+
+NIIVUE = PUBLIC_DATA / "niivue" / "packages" / "niivue" / "demos" / "images"
+
+
+def test_track_scalars_follow_their_tck():
+    """NiiVue's demo .tsf was sampled on its .tck: one value per point, streamline by
+    streamline."""
+    if not (NIIVUE / "mni152.SLF1_R.tsf").exists():
+        pytest.skip("niivue demos not fetched")
+    scalars, tracks = load(NIIVUE / "mni152.SLF1_R.tsf")[0], load(NIIVUE / "tract.SLF1_R.tck")[0]
+    assert scalars.points is None
+    assert np.array_equal(np.diff(scalars.offsets), np.diff(tracks.offsets))
+    assert len(scalars.point_data["values"]) == tracks.n_points
+
+
+def test_dsi_studio_tract_lies_where_its_name_says():
+    """TR_S_R (superior thalamic radiation, right) in DSI Studio's MNI mm: right hemisphere, from
+    the thalamus up to the cortex."""
+    if not (NIIVUE / "TR_S_R.tt.gz").exists():
+        pytest.skip("niivue demos not fetched")
+    tract = load(NIIVUE / "TR_S_R.tt.gz")[0]
+    low, high = tract.points.min(axis=0), tract.points.max(axis=0)
+    assert tract.n_streamlines == 1159 and low[0] > 0  # right of the midline
+    assert low[2] < 5 and high[2] > 60  # thalamus to the cortex
+    assert np.all(np.abs(tract.points) < 120)  # inside the MNI box

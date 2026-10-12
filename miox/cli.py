@@ -130,7 +130,7 @@ class CLI:
         elif isinstance(d, Phantom):
             lines.append(f"  {d.name}: {d.n_spins} spins, {', '.join(d.properties)}")
         elif isinstance(d, Tractogram):
-            lines.append(f"  {d.name}: {d.n_streamlines} streamlines, {d.points.shape[0]} "
+            lines.append(f"  {d.name}: {d.n_streamlines} streamlines, {d.n_points} "
                          f"points ({d.space})")
         elif isinstance(d, Surface):
             faces = f", {d.faces.shape[0]} faces" if d.faces is not None else ""
