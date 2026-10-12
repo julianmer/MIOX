@@ -687,8 +687,9 @@ class RawPipeline:
             flat = flat * Registration.phasor(phi, eps, n, self.sw)
             aligned = ops.reshape(flat, (b, v, 1, d, n))
             x = aligned
-            steps.append(f"{d} transients aligned (spectral registration "
-                         f"{ppmlim[0]:g}-{ppmlim[1]:g} ppm)")
+            steps.append(f"{d} transients aligned (spectral registration, "
+                         + (f"{ppmlim[0]:g}-{ppmlim[1]:g} ppm)" if self.proton
+                            else "whole spectrum)"))
             if v == 1:
                 keep = Unlike.keep(x[:, 0, 0])
                 kept = ops.cast(keep, "float64")
@@ -751,8 +752,9 @@ class RawPipeline:
             phi, eps = Registration.align(flat, self.sw, self.sf, ppmlim, self.reference)
             aligned = ops.reshape(flat * Registration.phasor(phi, eps, n, self.sw), (b, v, 1, d, n))
             x = ops.mean(aligned, axis=3, keepdims=True)
-            steps.append(f"{d} transients aligned (spectral registration "
-                         f"{ppmlim[0]:g}-{ppmlim[1]:g} ppm)")
+            steps.append(f"{d} transients aligned (spectral registration, "
+                         + (f"{ppmlim[0]:g}-{ppmlim[1]:g} ppm)" if self.proton
+                            else "whole spectrum)"))
             steps.append(f"mean of {d} transients")
         x = x * Backend.phasor(-Corrections.ecc_phase(x))
         steps.append("eddy currents corrected (water itself, smoothed phase)")

@@ -7,9 +7,10 @@
 # Created: 12/10/26                                                                                #
 #                                                                                                  #
 # Purpose: The Quick Look page on synthetic data: five tabs, the processed spectrum with its       #
-#          steps, coils with their weights, averages before and after alignment, edited data with  #
-#          their difference, the empty states (one coil, no water, no spectral axis), water scans  #
-#          (by name or by water dominance) and water references found next to the data.           #
+#          steps and the Full | Metabolites switch, coils as combined, averages before and after   #
+#          alignment, edited data with their difference, the empty states (one coil, no water, no  #
+#          spectral axis), water scans (by name or by water dominance) and water references found  #
+#          next to the data; the image page: the volume turned to RAS, planes, slices, details.    #
 #                                                                                                  #
 ####################################################################################################
 
@@ -23,9 +24,9 @@ import numpy as np
 
 # own
 import miox
-from miox.data import MRSData, Provenance
+from miox.data import MRImage, MRSData, Provenance
 from miox.meta import Meta
-from miox.quicklook import Page, Water
+from miox.quicklook import ImagePage, Page, Water
 
 SW, SF, N = 2000.0, 123.2, 1024
 T = np.arange(N) / SW
@@ -53,7 +54,9 @@ def test_page_with_coils_and_averages():
     for tab in ("Spectrum", "Coils", "Averages", "Water", "Details"):
         assert f">{tab}</label>" in page
     assert "4 coils combined (wSVD)" in page and "8 transients aligned" in page
-    assert page.count("<figure>") == 4 and "before alignment" in page
+    assert page.count("<title>coil ") == 2 * 4 and "Before alignment" in page  # full, metabolites
+    assert page.count('<g class="thin"><title>transient ') == 16  # before and after alignment
+    assert "<label for=sm>Metabolites</label>" in page
     assert "No water reference in this file." in page
 
 
@@ -94,3 +97,39 @@ def test_water_reference_next_to_the_data(tmp_path):
     assert {k: v.name if v else None for k, v in found.items()} == {
         "S01_PRESS_35.dat": "S01_PRESS_35_H2O.dat", "S02_act.SDAT": "S02_ref.sdat",
         "sub-01_svs.nii.gz": "sub-01_mrsref.nii.gz", "alone.rda": None}
+
+
+def test_image_page_turns_the_volume_to_ras():
+    volume = np.zeros((4, 5, 6))
+    volume[0, 0, 0] = 1  # the voxel at the file's origin
+    affine = np.diag([-2.0, 1.0, 3.0, 1.0])  # i runs right to left
+    image = MRImage(volume, affine, Meta({}), Provenance((), miox.Format.NIFTI, "test", {}))
+    turned, sizes = ImagePage.ras(volume, affine)
+    assert turned[3, 0, 0] == 1 and list(sizes) == [2.0, 1.0, 3.0]
+    page = ImagePage(image, "t1.nii.gz").html()
+    for tab in ("Planes", "Slices", "Details"):
+        assert f">{tab}</label>" in page
+    assert page.count("<figure>") == 3 + 6  # three planes, every one of the 6 axial slices
+
+
+def test_image_page_of_a_single_slice_and_of_a_series():
+    flat = MRImage(np.ones((8, 8, 1)), np.eye(4), Meta({}),
+                   Provenance((), miox.Format.DICOM_IMAGE, "test", {}))
+    page = ImagePage(flat, "slice.dcm").html()
+    assert page.count("<figure>") == 1 and ">Slices</label>" not in page
+    series = MRImage(np.ones((4, 4, 4, 10)), np.eye(4), Meta({}),
+                     Provenance((), miox.Format.NIFTI, "test", {}))
+    assert "first of 10 volumes" in ImagePage(series, "bold.nii").html()
+
+
+def test_command_line_writes_the_image_page(tmp_path):
+    import nibabel as nib
+
+    from miox.cli import main
+
+    path = tmp_path / "t1.nii.gz"
+    nib.Nifti1Image(np.arange(4 * 5 * 6, dtype=np.float32).reshape(4, 5, 6), np.eye(4)).to_filename(
+        path)
+    assert main(["preview", str(path), "--to", str(tmp_path / "t1.html")]) == 0
+    assert ">Planes</label>" in (tmp_path / "t1.html").read_text()
+    assert main(["preview", str(path), "--to", str(tmp_path / "t1.pdf")]) == 2

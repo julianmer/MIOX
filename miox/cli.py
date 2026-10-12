@@ -227,11 +227,13 @@ class CLI:
         from miox.preview import Preview, preview  # matplotlib only when previewing
 
         sniffed = Sniffer().sniff(args.path)
-        if sniffed.format == Format.UNKNOWN or sniffed.kind in self.NOT_SPECTROSCOPY:
+        page = bool(args.to) and str(args.to).endswith(".html")  # the Quick Look page: images too
+        declined = set(self.NOT_SPECTROSCOPY) - ({Kind.IMAGING} if page else set())
+        if sniffed.format == Format.UNKNOWN or sniffed.kind in declined:
             print(f"miox preview: {args.path.name} is not spectroscopy ({sniffed.format})",
                   file=sys.stderr)
             return 2
-        if args.to and str(args.to).endswith(".html"):
+        if page:
             from miox.quicklook import write
 
             try:
