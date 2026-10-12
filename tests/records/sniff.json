@@ -46410,9 +46410,9 @@
   "kind": "unknown"
  },
  "pyvista_vtk_data/Data/brain.vtk": {
-  "format": "unknown",
+  "format": "vtk_image",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "pyvista_vtk_data/Data/cow/LICENSE": {
   "format": "unknown",
@@ -46430,9 +46430,9 @@
   "kind": "unknown"
  },
  "pyvista_vtk_data/Data/head.vti": {
-  "format": "unknown",
+  "format": "vtk_image_xml",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "pyvista_vtk_data/Data/lincoln_life_mask/LICENSE": {
   "format": "unknown",

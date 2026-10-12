@@ -101,6 +101,8 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.nifti_zarr", "NiftiZarrReader", (Format.NIFTI_ZARR,)),
     ("miox.readers.stimulate", "StimulateReader", (Format.STIMULATE,)),
     ("miox.readers.stimulate", "SivicIdfReader", (Format.SIVIC_IDF,)),
+    ("miox.readers.vtk_legacy", "VtkImageReader", (Format.VTK_IMAGE,)),
+    ("miox.readers.vtk_xml", "VtkXmlImageReader", (Format.VTK_IMAGE_XML,)),
     ("miox.readers.mrd", "MrdReader", (Format.MRD,)),
     ("miox.readers.mrtrix", "MrtrixReader", (Format.MRTRIX,)),
     ("miox.readers.nibabel_image", "NibabelImageReader", (

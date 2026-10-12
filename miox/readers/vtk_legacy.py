@@ -6,8 +6,8 @@
 #                                                                                                  #
 # Created: 12/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Reader for VTK legacy files (.vtk) holding POLYDATA: lines as streamlines, polygons as  #
-#          a surface mesh, with their point and cell data.                                         #
+# Purpose: Readers for VTK legacy files (.vtk): POLYDATA (lines as streamlines, polygons as a      #
+#          surface mesh, with their point and cell data) and STRUCTURED_POINTS (an image).         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -22,7 +22,7 @@ import re
 import numpy as np
 
 # own
-from miox.data import Surface, Tractogram
+from miox.data import MRImage, Surface, Tractogram
 from miox.meta import Meta
 from miox.readers.base import Reader, ReaderError
 from miox.sniff import Format, Sniff
@@ -235,3 +235,60 @@ class VtkReader(Reader):
             cursor.values(4 * int(words[2]), "unsigned_char" if cursor.binary else "float")
             return {}
         raise ReaderError(f"unknown attribute {keyword}")
+
+
+#**************************************************************************************************#
+#                                          VtkImageReader                                          #
+#**************************************************************************************************#
+#                                                                                                  #
+# STRUCTURED_POINTS: DIMENSIONS (x fastest), ORIGIN (the first point) and SPACING (or the older    #
+# ASPECT_RATIO), then POINT_DATA with its attributes; the first array (SCALARS, else any other)    #
+# is the image, components last, the others are listed in the vendor header. The grid is axis      #
+# aligned; VTK states no coordinate frame, so the coordinates are kept as stored.                  #
+#                                                                                                  #
+#**************************************************************************************************#
+class VtkImageReader(Reader):
+    FORMATS = (Format.VTK_IMAGE,)
+    NOTE = "VTK states no coordinate frame; the grid is kept as stored"
+
+    def read(self, sniff: Sniff) -> list[MRImage]:
+        raw = sniff.path.read_bytes()
+        lines = raw.split(b"\n", 4)
+        if len(lines) < 5:
+            raise ReaderError(f"{sniff.path}: VTK header incomplete")
+        version, title, encoding = (lines[i].decode("ascii", "replace").strip() for i in range(3))
+        cursor = VtkCursor(raw, encoding.upper() == "BINARY", sum(len(x) + 1 for x in lines[:3]))
+        dataset = cursor.line()
+        if dataset is None or [w.upper() for w in dataset[:2]] != ["DATASET", "STRUCTURED_POINTS"]:
+            raise ReaderError(f"{sniff.path}: not STRUCTURED_POINTS: {dataset}")
+        grid = {"DIMENSIONS": [1, 1, 1], "ORIGIN": [0.0, 0.0, 0.0], "SPACING": [1.0, 1.0, 1.0]}
+        arrays: dict[str, np.ndarray] = {}
+        count = None
+        while (words := cursor.line()) is not None:
+            keyword = words[0].upper()
+            if keyword in grid or keyword == "ASPECT_RATIO":
+                grid["SPACING" if keyword == "ASPECT_RATIO" else keyword] = [
+                    float(w) for w in words[1:4]]
+            elif keyword == "POINT_DATA":
+                count = int(words[1])
+            elif keyword == "CELL_DATA":
+                break  # cell data of an image: not a voxel array
+            elif keyword == "METADATA":
+                VtkReader._skip_metadata(cursor)
+            elif count is not None:
+                arrays.update(VtkReader._attribute(cursor, words, count))
+            else:
+                raise ReaderError(f"{sniff.path}: unexpected line {' '.join(words)!r}")
+        sizes = [int(v) for v in grid["DIMENSIONS"]]
+        if not arrays or count != int(np.prod(sizes)):
+            raise ReaderError(f"{sniff.path}: no point data for {sizes} points")
+        name, values = next(iter(arrays.items()))
+        data = values.reshape(sizes[::-1] + list(values.shape[1:]))
+        data = np.moveaxis(data, (0, 1, 2), (2, 1, 0))  # (x, y, z, components)
+        affine = np.diag([*grid["SPACING"], 1.0])
+        affine[:3, 3] = grid["ORIGIN"]
+        vendor = {"version": version, "title": title, "encoding": encoding, "array": name,
+                  "other_arrays": [k for k in arrays if k != name]}
+        dims = ("component",) * (data.ndim > 3)
+        return [MRImage(data, affine, Meta(vendor), self.provenance(sniff, (self.NOTE,)),
+                        sniff.path.stem, dims)]

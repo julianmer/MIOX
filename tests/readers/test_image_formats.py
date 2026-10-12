@@ -6,8 +6,9 @@
 #                                                                                                  #
 # Created: 04/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Unit tests of the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa and JNIfTI readers on   #
-#          files written here: layouts, detached data, world coordinates and the keys derived.     #
+# Purpose: Unit tests of the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa, JNIfTI and VTK image   #
+#          readers on files written here: layouts, encodings, detached data, world coordinates and #
+#          the keys derived.                                                                       #
 #                                                                                                  #
 ####################################################################################################
 
@@ -17,7 +18,9 @@
 #*************#
 from __future__ import annotations
 
+import base64
 import gzip
+import zlib
 
 import numpy as np
 import pytest
@@ -169,3 +172,59 @@ def test_jnifti_binary_typed_array_and_qform(tmp_path):
     image = miox.load(path)[0]
     assert np.array_equal(image.data, voxels)
     assert np.allclose(image.affine[:3, :3], [[0, -2, 0], [2, 0, 0], [0, 0, 3]], atol=1e-6)
+
+
+VTK_VOXELS = np.arange(2 * 3 * 4, dtype="<u2").reshape(4, 3, 2)  # (z, y, x): x fastest on disk
+
+
+@pytest.mark.parametrize("encoding", ["ASCII", "BINARY"])
+def test_vtk_legacy_structured_points(tmp_path, encoding):
+    head = (f"# vtk DataFile Version 3.0\ntest\n{encoding}\nDATASET STRUCTURED_POINTS\n"
+            "DIMENSIONS 2 3 4\nORIGIN 1 2 3\nSPACING 0.5 1 2\nPOINT_DATA 24\n"
+            "SCALARS v unsigned_short 1\nLOOKUP_TABLE default\n").encode()
+    body = (" ".join(map(str, VTK_VOXELS.ravel())).encode() if encoding == "ASCII"
+            else VTK_VOXELS.astype(">u2").tobytes())
+    path = tmp_path / "grid.vtk"
+    path.write_bytes(head + body + b"\n")
+    image = miox.load(path)[0]
+    assert image.data.shape == (2, 3, 4) and np.array_equal(image.data, VTK_VOXELS.transpose())
+    assert np.allclose(image.affine, [[0.5, 0, 0, 1], [0, 1, 0, 2], [0, 0, 2, 3], [0, 0, 0, 1]])
+
+
+def vti(array: str, appended: bytes = b"") -> bytes:
+    return (b'<?xml version="1.0"?>\n<VTKFile type="ImageData" version="1.0" '
+            b'byte_order="LittleEndian" header_type="UInt32"'
+            + (b' compressor="vtkZLibDataCompressor"' if b"zlib" in array.encode() else b"")
+            + b'>\n<ImageData WholeExtent="1 2 0 2 0 3" Origin="0 0 0" Spacing="1 1 1" '
+            b'Direction="0 -1 0 1 0 0 0 0 1">\n<Piece Extent="1 2 0 2 0 3">\n'
+            b'<PointData Scalars="v">\n' + array.replace("zlib", "").encode()
+            + b"\n</PointData>\n</Piece>\n</ImageData>\n" + appended + b"</VTKFile>\n")
+
+
+@pytest.mark.parametrize("form", ["ascii", "binary", "zlib", "appended"])
+def test_vtk_xml_image_data(tmp_path, form):
+    raw = VTK_VOXELS.tobytes()
+    size = np.uint32(len(raw)).tobytes()
+    tag = '<DataArray type="UInt16" Name="v" format="{}"{}>{}</DataArray>'
+    appended = b""
+    if form == "ascii":
+        array = tag.format("ascii", "", " ".join(map(str, VTK_VOXELS.ravel())))
+    elif form == "binary":
+        array = tag.format("binary", "", base64.b64encode(size).decode()
+                           + base64.b64encode(raw).decode())
+    elif form == "zlib":
+        block = zlib.compress(raw)
+        header = np.array([1, len(raw), len(raw), len(block)], "<u4").tobytes()
+        array = "zlib" + tag.format("binary", "", base64.b64encode(header).decode()
+                                    + base64.b64encode(block).decode())
+    else:
+        array = tag.format("appended", ' offset="0"', "")
+        appended = b'<AppendedData encoding="raw">\n_' + size + raw + b"\n</AppendedData>\n"
+    path = tmp_path / "grid.vti"
+    path.write_bytes(vti(array, appended))
+    assert miox.sniff(path).format == miox.Format.VTK_IMAGE_XML
+    image = miox.load(path)[0]
+    assert np.array_equal(image.data, VTK_VOXELS.transpose())
+    # Direction turns x into y: voxel (0, 0, 0) at the extent start (1, 0, 0) lies at (0, 1, 0)
+    assert np.allclose(image.affine[:3, :3], [[0, -1, 0], [1, 0, 0], [0, 0, 1]])
+    assert np.allclose(image.affine[:3, 3], [0, 1, 0])

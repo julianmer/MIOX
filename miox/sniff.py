@@ -86,6 +86,8 @@ class Format(StrEnum):
     VISTA = "vista"  # Vista images (.v; Lipsia)
     NIFTI_ZARR = "nifti_zarr"  # NIfTI-Zarr store (.nii.zarr folder)
     STIMULATE = "stimulate"  # Stimulate .spr header with .sdt data
+    VTK_IMAGE = "vtk_image"  # VTK legacy STRUCTURED_POINTS
+    VTK_IMAGE_XML = "vtk_image_xml"  # VTK XML ImageData (.vti)
     JNIFTI_BINARY = "jnifti_binary"  # JNIfTI in binary BJData (.bnii)
     MRTRIX = "mrtrix"
     VARIAN_FDF = "varian_fdf"  # Varian/Agilent VnmrJ image
@@ -1441,7 +1443,8 @@ class Sniffer:
 
     def image_files(self, path: Path, head: bytes) -> Sniff | None:
         """Image formats nibabel reads: MGH, MINC 1 and 2, AFNI, Analyze (and their data halves);
-        gzipped MRtrix images; GE Signa images; JNIfTI (JSON or BJData); Vista; Stimulate."""
+        gzipped MRtrix images; GE Signa images; JNIfTI (JSON or BJData); Vista; Stimulate; VTK
+        images (legacy STRUCTURED_POINTS, XML ImageData)."""
         name, suffix = path.name.lower(), path.suffix.lower()
         if name.endswith(".mif.gz") and head[:2] == GZIP_MAGIC:
             try:
@@ -1472,6 +1475,11 @@ class Sniffer:
         if suffix == ".spr" and self._is_text(head) and b"dim:" in head and b"dataType" in head:
             sdt = self._sibling(path, ".sdt")
             return self._image(path, Format.STIMULATE, "Stimulate .spr header", sdt, "SDT")
+        if head.startswith(b"# vtk DataFile Version") and re.search(
+                rb"^DATASET\s+STRUCTURED_POINTS", head, re.M | re.I):
+            return self._image(path, Format.VTK_IMAGE, "VTK legacy STRUCTURED_POINTS")
+        if b"<VTKFile" in head[:512] and re.search(rb'<VTKFile[^>]*type="ImageData"', head):
+            return self._image(path, Format.VTK_IMAGE_XML, "VTK XML ImageData")
         if head.startswith(b"V-data 2 {") and b"image" in head:
             return self._image(path, Format.VISTA, "V-data header with an image")
         if head[:1] == b"{" and b"NIFTIHeader" in head:

@@ -6,10 +6,10 @@
 #                                                                                                  #
 # Created: 04/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Checks the NRRD, MetaImage, MRtrix, Varian fdf and GE Signa readers against evidence    #
-#          produced by other software: pynrrd's NIfTI twin of its NRRD test image, MRtrix's own    #
-#          PNG exports and reductions, ImageJ text exports of fdf images, and ITK's MetaImage      #
-#          baselines of its GE test images.                                                        #
+# Purpose: Checks the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa and VTK image readers against  #
+#          evidence produced by other software: pynrrd's NIfTI twin of its NRRD test image,        #
+#          MRtrix's own PNG exports and reductions, ImageJ text exports of fdf images, ITK's       #
+#          MetaImage baselines of its GE test images, and the value range a .vti file states.      #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,6 +19,7 @@
 #*************#
 from __future__ import annotations
 
+import re
 import struct
 import zlib
 from pathlib import Path
@@ -244,3 +245,14 @@ def test_genesis_pixel_header_ct_against_itk_baseline(name):
     assert np.allclose(im.affine[:3, :3], itk.affine[:3, :3])
     assert np.allclose(im.affine[:3, 3] - itk.affine[:3, 3], half_voxel(im))
     assert im.meta["Modality"] == "CT" and "RepetitionTime" not in im.meta
+
+
+def test_vti_values_span_the_range_the_file_states():
+    """head.vti (PyVista vtk-data) states RangeMin and RangeMax for its zlib-compressed array."""
+    path = PUBLIC_DATA / "pyvista_vtk_data" / "Data" / "head.vti"
+    if not path.exists():
+        pytest.skip("pyvista vtk-data not fetched")
+    stated = re.search(rb'RangeMin="([^"]+)" RangeMax="([^"]+)"', path.read_bytes()[:4096])
+    image = load(path)[0]
+    assert image.data.shape == (256, 256, 94)
+    assert (image.data.min(), image.data.max()) == tuple(float(v) for v in stated.groups())
