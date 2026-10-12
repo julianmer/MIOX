@@ -116,12 +116,14 @@ from miox.readers.tecmag import TecmagReader
 from miox.readers.text_fid import TextFidReader
 from miox.readers.toppe import ToppeReader
 from miox.readers.topspin import TopSpinReader
+from miox.readers.tractograms import TrackReader, TrxReader
 from miox.readers.transforms import AfniReader, FslReader, ItkReader, LtaReader
 from miox.readers.varian import VarianReader
 from miox.readers.varian_fdf import VarianFdfReader
 from miox.readers.vasf import VasfReader
 from miox.readers.vespa_prior import VespaPriorReader
 from miox.readers.vespa_viff import VespaViffReader
+from miox.readers.vtk_legacy import VtkReader
 from miox.readers.yarra import YarraReader
 from miox.sniff import Format, Sniff, Sniffer
 
@@ -228,11 +230,14 @@ class Loader:
             TextFidReader(),
             ToppeReader(),
             TopSpinReader(),
+            TrackReader(),
+            TrxReader(),
             VarianReader(),
             VarianFdfReader(),
             VasfReader(),
             VespaPriorReader(),
             VespaViffReader(),
+            VtkReader(),
             YarraReader(),
         ):
             for fmt in reader.FORMATS:

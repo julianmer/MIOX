@@ -16830,24 +16830,24 @@
   "kind": "imaging"
  },
  "nibabel/nibabel/tests/data/complex.trk": {
-  "format": "unknown",
+  "format": "trk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/complex_big_endian.trk": {
-  "format": "unknown",
+  "format": "trk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/empty.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/empty.trk": {
-  "format": "unknown",
+  "format": "trk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/example4d+orig.BRIK.gz": {
   "format": "afni",
@@ -16880,9 +16880,9 @@
   "kind": "imaging"
  },
  "nibabel/nibabel/tests/data/matlab_nan.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/minc1-no-att.mnc": {
   "format": "minc1",
@@ -16925,9 +16925,9 @@
   "kind": "imaging"
  },
  "nibabel/nibabel/tests/data/multiline_header_field.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/nifti1.hdr": {
   "format": "nifti",
@@ -16940,14 +16940,14 @@
   "kind": "imaging"
  },
  "nibabel/nibabel/tests/data/no_header_end.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/no_header_end_eof.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/no_magic_number.tck": {
   "format": "unknown",
@@ -17030,19 +17030,19 @@
   "kind": "imaging"
  },
  "nibabel/nibabel/tests/data/simple.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/simple.trk": {
-  "format": "unknown",
+  "format": "trk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/simple_big_endian.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/small.mnc": {
   "format": "minc2",
@@ -17050,9 +17050,9 @@
   "kind": "imaging"
  },
  "nibabel/nibabel/tests/data/standard.LPS.trk": {
-  "format": "unknown",
+  "format": "trk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/standard.nii.gz": {
   "format": "nifti",
@@ -17060,14 +17060,14 @@
   "kind": "imaging"
  },
  "nibabel/nibabel/tests/data/standard.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/standard.trk": {
-  "format": "unknown",
+  "format": "trk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "nibabel/nibabel/tests/data/test.mgz": {
   "format": "mgh",
@@ -17345,14 +17345,14 @@
   "kind": "unknown"
  },
  "niivue/packages/niivue/demos/images/colby.trk": {
-  "format": "unknown",
+  "format": "trk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "niivue/packages/niivue/demos/images/colby.trx": {
-  "format": "zip_archive",
+  "format": "trx",
   "vendor": null,
-  "kind": "archive"
+  "kind": "tractogram"
  },
  "niivue/packages/niivue/demos/images/dsistudio.fib.gz": {
   "format": "unknown",
@@ -17385,14 +17385,14 @@
   "kind": "unknown"
  },
  "niivue/packages/niivue/demos/images/tract.FAT_R.vtk": {
-  "format": "unknown",
+  "format": "vtk_polydata",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "niivue/packages/niivue/demos/images/tract.SLF1_R.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "niivue/packages/niivue/demos/images/trix/fa.mif": {
   "format": "mrtrix",
@@ -59385,24 +59385,24 @@
   "kind": "imaging"
  },
  "trx_test_data/gs.tck": {
-  "format": "unknown",
+  "format": "tck",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "trx_test_data/gs.trk": {
-  "format": "unknown",
+  "format": "trk",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "trx_test_data/gs.trx": {
-  "format": "zip_archive",
+  "format": "trx",
   "vendor": null,
-  "kind": "archive"
+  "kind": "tractogram"
  },
  "trx_test_data/gs.vtk": {
-  "format": "unknown",
+  "format": "vtk_polydata",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "tractogram"
  },
  "trx_test_data/gs_3mm.nii": {
   "format": "nifti",

@@ -22,6 +22,7 @@ import bz2
 import dataclasses
 import gzip
 import json
+import mmap
 import re
 import struct
 import warnings
@@ -101,6 +102,10 @@ class Format(StrEnum):
     TRANSFORM_ITK = "transform_itk"  # ITK transform (.tfm text, .h5)
     TRANSFORM_AFNI = "transform_afni"  # AFNI affine matrices (12 numbers per row)
     TRANSFORM_FSL = "transform_fsl"  # FSL FLIRT 4 x 4 matrix
+    TRK = "trk"  # TrackVis streamlines
+    TCK = "tck"  # MRtrix streamlines
+    TRX = "trx"  # TRX streamlines (zip archive or folder)
+    VTK_POLYDATA = "vtk_polydata"  # VTK legacy POLYDATA: lines (streamlines) or polygons
     GIFTI = "gifti"  # GIFTI surfaces and per-vertex data (.gii, also gzip/bzip2)
     FREESURFER_SURFACE = "freesurfer_surface"  # FreeSurfer triangle or quad surface
     FREESURFER_MORPH = "freesurfer_morph"  # FreeSurfer per-vertex values (curv, thickness, ...)
@@ -380,6 +385,7 @@ class Sniffer:
             self.rs2d,
             self.rnmrtk,
             self.jemris_motion,
+            self.tractograms,
             self.surfaces,
             self.transforms,
             self.topspin,
@@ -420,10 +426,13 @@ class Sniffer:
         return None
 
     def directory(self, path: Path) -> Sniff:
-        """A Bruker scan, a Varian .fid folder, a Spinsolve experiment, a basis set of one file per
-        metabolite, a DICOM series, or a study folder of DICOM series folders (a DICOMDIR at its
-        top is passed over)."""
+        """A TRX tractogram folder, a Bruker scan, a Varian .fid folder, a Spinsolve experiment, a
+        basis set of one file per metabolite, a DICOM series, or a study folder of DICOM series
+        folders (a DICOMDIR at its top is passed over)."""
         names = {p.name for p in path.iterdir()}
+        if "header.json" in names and self._trx(path):
+            return Sniff(path, Format.TRX, Kind.TRACTOGRAM, confidence=0.9,
+                         evidence=("folder with header.json, positions and offsets",))
         if names & set(self.BRUKER_PARAM_FILES):
             return self._bruker_scan(path, path, "directory with Bruker parameter files")
         if "acqus" in names:
@@ -884,6 +893,42 @@ class Sniffer:
             return None
         return Sniff(path, Format.JEMRIS_MOTION, Kind.PHANTOM, confidence=0.9,
                      evidence=("motion .dat: 3 numbers, then rows of 7",))
+
+    TRX_ARRAY = re.compile(r"^(positions\.3|offsets)\.(u?int|float)\d+$")
+
+    def tractograms(self, path: Path, head: bytes) -> Sniff | None:
+        """Streamlines: TrackVis .trk ("TRACK" magic, header size 1000 at byte 996), MRtrix .tck
+        ("mrtrix tracks" first line), TRX zip archives (header.json, positions and offsets
+        arrays), VTK legacy POLYDATA (its kind from the cells it holds: LINES or POLYGONS)."""
+        found = None
+        if head.startswith(b"TRACK") and len(head) >= 1000 and 1000 in struct.unpack_from(
+                "<i", head, 996) + struct.unpack_from(">i", head, 996):
+            found = Format.TRK, Kind.TRACTOGRAM, "TRACK magic, header size 1000"
+        elif head.startswith(b"mrtrix tracks"):
+            found = Format.TCK, Kind.TRACTOGRAM, "mrtrix tracks first line"
+        elif head.startswith(b"PK\x03\x04") and self._trx(path):
+            found = Format.TRX, Kind.TRACTOGRAM, "zip with header.json, positions and offsets"
+        elif head.startswith(b"# vtk DataFile Version") and re.search(
+                rb"^DATASET\s+POLYDATA", head, re.M | re.I):
+            with open(path, "rb") as fh, mmap.mmap(fh.fileno(), 0, access=mmap.ACCESS_READ) as m:
+                lines = re.search(rb"\nLINES\s", m) is not None
+            found = (Format.VTK_POLYDATA, Kind.TRACTOGRAM if lines else Kind.SURFACE,
+                     "VTK legacy POLYDATA" + (" with LINES" if lines else ""))
+        if found is None:
+            return None
+        return Sniff(path, found[0], found[1], confidence=0.9, evidence=(found[2],))
+
+    def _trx(self, path: Path) -> bool:
+        """A zip archive or folder with header.json and TRX positions and offsets arrays."""
+        if path.is_dir():
+            names = {p.name for p in path.iterdir()}
+        else:
+            try:
+                with zipfile.ZipFile(path) as archive:
+                    names = set(archive.namelist())
+            except zipfile.BadZipFile:
+                return False
+        return "header.json" in names and sum(bool(self.TRX_ARRAY.match(n)) for n in names) == 2
 
     SURFACE_MAGICS = {b"\xff\xff\xfe": "triangle", b"\xff\xff\xff": "quad",
                       b"\xff\xff\xfd": "new quad"}  # FreeSurfer surfaces (curv shares 0xffffff)
