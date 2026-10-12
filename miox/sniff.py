@@ -106,6 +106,19 @@ class Format(StrEnum):
     TCK = "tck"  # MRtrix streamlines
     TRX = "trx"  # TRX streamlines (zip archive or folder)
     VTK_POLYDATA = "vtk_polydata"  # VTK legacy POLYDATA: lines (streamlines) or polygons
+    BRAINVOYAGER_VMR = "brainvoyager_vmr"  # BrainVoyager anatomical volume
+    BRAINVOYAGER_VTC = "brainvoyager_vtc"  # BrainVoyager volume time course
+    BRAINVOYAGER_GLM = "brainvoyager_glm"  # BrainVoyager GLM results
+    BRAINVOYAGER_VMP = "brainvoyager_vmp"  # BrainVoyager volume maps
+    BRAINVOYAGER_VOI = "brainvoyager_voi"  # BrainVoyager volumes of interest
+    BRAINVOYAGER_SRF = "brainvoyager_srf"  # BrainVoyager surface mesh
+    BRAINVOYAGER_SMP = "brainvoyager_smp"  # BrainVoyager surface maps
+    BRAINVOYAGER_MTC = "brainvoyager_mtc"  # BrainVoyager mesh time courses
+    BRAINVOYAGER_SSM = "brainvoyager_ssm"  # BrainVoyager surface-to-surface mapping
+    BRAINVOYAGER_POI = "brainvoyager_poi"  # BrainVoyager patches of interest
+    BRAINVOYAGER_PRT = "brainvoyager_prt"  # BrainVoyager stimulation protocol
+    BRAINVOYAGER_SDM = "brainvoyager_sdm"  # BrainVoyager design matrix
+    BRAINVOYAGER_TRF = "brainvoyager_trf"  # BrainVoyager spatial transformation
     GIFTI = "gifti"  # GIFTI surfaces and per-vertex data (.gii, also gzip/bzip2)
     FREESURFER_SURFACE = "freesurfer_surface"  # FreeSurfer triangle or quad surface
     FREESURFER_MORPH = "freesurfer_morph"  # FreeSurfer per-vertex values (curv, thickness, ...)
@@ -385,6 +398,7 @@ class Sniffer:
             self.rs2d,
             self.rnmrtk,
             self.jemris_motion,
+            self.brainvoyager,
             self.tractograms,
             self.surfaces,
             self.transforms,
@@ -893,6 +907,69 @@ class Sniffer:
             return None
         return Sniff(path, Format.JEMRIS_MOTION, Kind.PHANTOM, confidence=0.9,
                      evidence=("motion .dat: 3 numbers, then rows of 7",))
+
+    BRAINVOYAGER_TEXT = {  # extension: (format, kind, word the header holds)
+        ".prt": (Format.BRAINVOYAGER_PRT, Kind.PROTOCOL, b"NrOfConditions"),
+        ".sdm": (Format.BRAINVOYAGER_SDM, Kind.PROTOCOL, b"NrOfPredictors"),
+        ".voi": (Format.BRAINVOYAGER_VOI, Kind.IMAGING, b"NrOfVOIs"),
+        ".poi": (Format.BRAINVOYAGER_POI, Kind.SURFACE, b"NrOfPOIs"),
+        ".trf": (Format.BRAINVOYAGER_TRF, Kind.TRANSFORM, b"DataFormat"),
+    }
+    BRAINVOYAGER_BINARY = {
+        ".vmr": (Format.BRAINVOYAGER_VMR, Kind.IMAGING), ".vtc": (Format.BRAINVOYAGER_VTC,
+                                                                  Kind.IMAGING),
+        ".glm": (Format.BRAINVOYAGER_GLM, Kind.IMAGING), ".vmp": (Format.BRAINVOYAGER_VMP,
+                                                                  Kind.IMAGING),
+        ".srf": (Format.BRAINVOYAGER_SRF, Kind.SURFACE), ".smp": (Format.BRAINVOYAGER_SMP,
+                                                                  Kind.SURFACE),
+        ".mtc": (Format.BRAINVOYAGER_MTC, Kind.SURFACE), ".ssm": (Format.BRAINVOYAGER_SSM,
+                                                                  Kind.SURFACE),
+    }
+
+    def brainvoyager(self, path: Path, head: bytes) -> Sniff | None:
+        """BrainVoyager files by extension (also gzipped) and a check of their first bytes: text
+        files hold "FileVersion" and the field naming their content; VMR dimensions fit the
+        size, VMP starts with its magic number, the others with a plausible version."""
+        name = path.name.lower().removesuffix(".gz")
+        suffix = "." + name.rsplit(".", 1)[-1] if "." in name else ""
+        if suffix not in self.BRAINVOYAGER_TEXT and suffix not in self.BRAINVOYAGER_BINARY:
+            return None
+        if head[:2] == GZIP_MAGIC:
+            try:
+                head = zlib.decompressobj(31).decompress(head, self.HEAD_BYTES)
+            except zlib.error:
+                return None
+        if suffix in self.BRAINVOYAGER_TEXT:
+            fmt, kind, word = self.BRAINVOYAGER_TEXT[suffix]
+            if b"FileVersion" not in head or word not in head:
+                return None
+            evidence = f"{suffix} with FileVersion and {word.decode()}"
+        else:
+            fmt, kind = self.BRAINVOYAGER_BINARY[suffix]
+            if not self._brainvoyager_binary(suffix, head, path):
+                return None
+            evidence = f"{suffix} with a fitting header"
+        return Sniff(path, fmt, kind, vendor="brainvoyager", confidence=0.9,
+                     evidence=(evidence,))
+
+    @staticmethod
+    def _brainvoyager_binary(suffix: str, head: bytes, path: Path) -> bool:
+        if len(head) < 16:
+            return False
+        if suffix == ".vmr":
+            version, *dims = struct.unpack_from("<4H", head)
+            plain = path.name.lower().endswith(".vmr")
+            return 1 <= version <= 10 and all(dims) and (
+                not plain or path.stat().st_size >= 8 + dims[0] * dims[1] * dims[2])
+        if suffix == ".vmp":
+            return struct.unpack_from("<I", head)[0] == 0xA1B2C3D4
+        if suffix == ".srf":
+            version, _, vertices, triangles = struct.unpack_from("<fiii", head)
+            return 1.0 <= version < 10.0 and vertices > 0 and triangles > 0
+        if suffix == ".mtc":
+            return 0 < struct.unpack_from("<i", head)[0] < 10
+        version = struct.unpack_from("<h", head)[0]  # VTC, GLM, SMP, SSM: a short version first
+        return 0 < version < 10
 
     TRX_ARRAY = re.compile(r"^(positions\.3|offsets)\.(u?int|float)\d+$")
 

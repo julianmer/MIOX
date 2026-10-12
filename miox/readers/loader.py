@@ -45,6 +45,12 @@ from miox.readers.bart_cfl import BartReader
 from miox.readers.base import IncompleteError, Reader, ReaderError
 from miox.readers.basis_folder import BasisFolderReader
 from miox.readers.biopac_acq import AcqKnowledgeReader
+from miox.readers.brainvoyager import BrainVoyagerSurfaceReader, BrainVoyagerVolumeReader
+from miox.readers.brainvoyager_text import (
+    BrainVoyagerProtocolReader,
+    BrainVoyagerRegionReader,
+    BrainVoyagerTransformReader,
+)
 from miox.readers.bruker import BrukerReader
 from miox.readers.dicom_image import DicomImageReader
 from miox.readers.dicom_mrs import DicomMrsReader
@@ -159,6 +165,11 @@ class Loader:
             BartReader(),
             BidsPhysioReader(),
             BasisFolderReader(self),
+            BrainVoyagerProtocolReader(),
+            BrainVoyagerRegionReader(),
+            BrainVoyagerSurfaceReader(),
+            BrainVoyagerTransformReader(),
+            BrainVoyagerVolumeReader(),
             BrukerReader(),
             CmrrPhysioReader(),
             DicomImageReader(),

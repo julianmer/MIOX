@@ -9075,169 +9075,169 @@
   "kind": "unknown"
  },
  "bvbabel/test_data/sub-test01_fileversion-2.vmr.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_vmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test01_hemisphere-left.srf.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_srf",
+  "vendor": "brainvoyager",
+  "kind": "surface"
  },
  "bvbabel/test_data/sub-test02_left_hemisphere.srf.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_srf",
+  "vendor": "brainvoyager",
+  "kind": "surface"
  },
  "bvbabel/test_data/sub-test02_left_hemisphere_4_curvature_maps.smp.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_smp",
+  "vendor": "brainvoyager",
+  "kind": "surface"
  },
  "bvbabel/test_data/sub-test03.vmr.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_vmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test03.voi": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_voi",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test03.vtc.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_vtc",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test03_cube.mtc.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_mtc",
+  "vendor": "brainvoyager",
+  "kind": "surface"
  },
  "bvbabel/test_data/sub-test03_cube.poi": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_poi",
+  "vendor": "brainvoyager",
+  "kind": "surface"
  },
  "bvbabel/test_data/sub-test03_cube.srf.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_srf",
+  "vendor": "brainvoyager",
+  "kind": "surface"
  },
  "bvbabel/test_data/sub-test03_cube.vmr.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_vmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test04.sdm": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_sdm",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
  },
  "bvbabel/test_data/sub-test05.prt": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_prt",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
  },
  "bvbabel/test_data/sub-test05_v2_msec.prt": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_prt",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
  },
  "bvbabel/test_data/sub-test05_v2_vols_deconvolution.prt": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_prt",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
  },
  "bvbabel/test_data/sub-test05_v3_msec_parametric_weights.prt": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_prt",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
  },
  "bvbabel/test_data/sub-test05_v3_tabs.prt": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_prt",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
  },
  "bvbabel/test_data/sub-test05_v3_vols.prt": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_prt",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
  },
  "bvbabel/test_data/sub-test06.prt": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_prt",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
  },
  "bvbabel/test_data/sub-test07_partial_coverage.glm.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_glm",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test07_partial_coverage.vmp.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_vmp",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test07_partial_coverage.vmr.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_vmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test08_lag_correlation_maps_on_512x512x512.vmp.gz": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_vmp",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
  },
  "bvbabel/test_data/sub-test09.ssm": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_ssm",
+  "vendor": "brainvoyager",
+  "kind": "surface"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-5_IA.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-7_extravmrtrf_FA.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-7_extravmrtrf_IA.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-8_FA.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-8_IA.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-8_ToMSP.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-8_aACPC.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-8_transformationtype2_cMNI_a12.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "bvbabel/test_data/trf/sub-test06_fileversion-8_transformationtype3_cMNI_a12_adjBBX.trf": {
-  "format": "unknown",
-  "vendor": null,
-  "kind": "unknown"
+  "format": "brainvoyager_trf",
+  "vendor": "brainvoyager",
+  "kind": "transform"
  },
  "dcm_qa/.gitignore": {
   "format": "unknown",

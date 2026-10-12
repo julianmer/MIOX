@@ -270,6 +270,12 @@ class KeyTable(dict):
             "surface's tkr RAS + SurfaceCRAS.",
             "miox",
         ),
+        Key(
+            "ProtocolTimeResolution", None, (str,),
+            "Unit of the onset and offset times of a stimulation protocol as the file states it "
+            "(e.g. msec, Volumes).",
+            "miox",
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning
