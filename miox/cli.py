@@ -236,7 +236,7 @@ class CLI:
 
             try:
                 datasets = Loader().load(args.path)
-                write(datasets, args.path.name, args.to)
+                write(datasets, args.path.name, args.to, source=args.path)
             except (ReaderError, ValueError) as e:
                 print(f"miox preview: {e}", file=sys.stderr)
                 return 1 if isinstance(e, ReaderError) else 2

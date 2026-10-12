@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import base64
 import html
+import re
 import zlib
 from pathlib import Path
 
@@ -34,37 +35,30 @@ from miox.sniff import Format
 NMR_FORMATS = {Format.TOPSPIN, Format.TOPSPIN_PROCESSED, Format.JCAMP_NMR, Format.NMRML,
                Format.JEOL_JDF, Format.TECMAG_TNT, Format.NMRPIPE, Format.SPARKY, Format.SIMPSON,
                Format.SPINSOLVE, Format.RS2D, Format.RNMRTK}
-METABOLITES = (4.2, 0.2)  # ppm shown for 1H metabolites (Augmentrum's alignment window)
-WATER = (8.0, 0.0)
+PROTON_RANGE = (6.0, 0.0)  # ppm shown for 1H, water included
 
 
 #**************************************************************************************************#
 #                                             Prepared                                             #
 #**************************************************************************************************#
 #                                                                                                  #
-# One dataset in the pipeline's layout (1, 1, coils, transients, points), one array per edit       #
-# condition, in FSL-MRS's orientation (conjugated): the voxel with the strongest signal of a grid, #
-# the first increment of indirect NMR dimensions, other dimensions summed (named in the notes).    #
+# One dataset in the pipeline's layout (1, voxels, coils, transients, points), one array per edit  #
+# condition, in FSL-MRS's orientation (conjugated): every voxel of a grid (the one with the        #
+# strongest signal is the focus), the first increment of indirect NMR dimensions, other dimensions #
+# summed (named in the notes).                                                                     #
 #                                                                                                  #
 #**************************************************************************************************#
 class Prepared:
     def __init__(self, d: MRSData):
         self.d, self.notes = d, []
         data = np.asarray(d.data, dtype=np.complex128)
-        spatial = data.shape[:3]
-        if np.prod(spatial) > 1:
-            head = np.abs(data[:, :, :, :16]).reshape(*spatial, -1).sum(axis=-1)
-            index = np.unravel_index(int(np.argmax(head)), spatial)
-            data = data[index]
-            self.notes.append(f"voxel {tuple(int(i) for i in index)} of "
-                              f"{' x '.join(map(str, spatial))} (strongest signal)")
-        else:
-            data = data[0, 0, 0]
-        tags = [str(t) for t in d.dim_tags[: data.ndim - 1]]
+        self.spatial = data.shape[:3]
+        data = data.reshape(-1, *data.shape[3:])  # (V, T, dims)
+        tags = [str(t) for t in d.dim_tags[: data.ndim - 2]]
         for tag in list(tags):  # first increment / sum of dimensions the pipeline has no use for
             if tag in ("DIM_COIL", "DIM_DYN", "DIM_EDIT"):
                 continue
-            axis = 1 + tags.index(tag)
+            axis = 2 + tags.index(tag)
             if tag.startswith("DIM_INDIRECT"):
                 data = data.take(0, axis=axis)
                 self.notes.append(f"first of {d.shape[4 + d.dim_tags.index(tag)]} increments")
@@ -72,19 +66,81 @@ class Prepared:
                 data = data.sum(axis=axis)
                 self.notes.append(f"{tag.removeprefix('DIM_').lower()} summed")
             tags.remove(tag)
-        for tag in ("DIM_COIL", "DIM_DYN"):
+        for tag in ("DIM_COIL", "DIM_DYN", "DIM_EDIT"):
             if tag not in tags:
                 data, tags = data[..., None], tags + [tag]
-        if "DIM_EDIT" not in tags:
-            data, tags = data[..., None], tags + ["DIM_EDIT"]
-        order = [1 + tags.index(t) for t in ("DIM_EDIT", "DIM_COIL", "DIM_DYN")] + [0]
+        order = [2 + tags.index(t) for t in ("DIM_EDIT",)] + [0] + [
+            2 + tags.index(t) for t in ("DIM_COIL", "DIM_DYN")] + [1]
         # FSL-MRS's orientation: the conjugate of NIfTI-MRS as stored (nifti_mrs conjugates at
         # use), which the pipeline and FSL-MRS's spectrum and axis expect
-        self.conditions = np.transpose(data, order)[:, None, None].conj()  # (E, 1, 1, C, D, T)
+        self.conditions = np.transpose(data, order)[:, None].conj()  # (E, 1, V, C, D, T)
+        head = np.abs(self.conditions[0, 0, :, :, :, :16]).sum(axis=(1, 2, 3))
+        self.focus = int(np.argmax(head))  # the voxel with the strongest signal
+
+    @property
+    def grid(self) -> bool:
+        return int(np.prod(self.spatial)) > 1
+
+    @property
+    def focus_index(self) -> tuple:
+        return tuple(int(i) for i in np.unravel_index(self.focus, self.spatial))
 
     @property
     def edited(self) -> bool:
         return self.conditions.shape[0] > 1
+
+
+#**************************************************************************************************#
+#                                              Water                                               #
+#**************************************************************************************************#
+#                                                                                                  #
+# Water scans and water references. A dataset is a water scan when its name ends in ref, h2o or    #
+# water, when its header says it is not water suppressed, or when water dominates it (1H; peak in  #
+# 4.2-5.1 ppm over 300 times the tallest of NAA, creatine and choline above their surroundings, on #
+# the unprocessed spectrum). A separate water reference is a file next to the data named like it   #
+# with _H2O, _ref, _water or _wref added, _act or _svs swapped for _ref or _mrsref.                #
+#                                                                                                  #
+#**************************************************************************************************#
+class Water:
+    NAME = re.compile(r"(^|[_\-. ])(ref|wref|mrsref|h2o|water)$", re.IGNORECASE)
+    ADDED = ("_H2O", "_ref", "_water", "_wref")
+    SWAPPED = (("_act", "_ref"), ("_svs", "_mrsref"))
+    DOMINANCE = 10 ** 2.5
+    METABOLITES = (2.01, 3.03, 3.2)  # ppm of NAA, creatine, choline
+
+    @classmethod
+    def named(cls, d: MRSData) -> bool:
+        return bool(cls.NAME.search(d.name or "")) or d.meta.get("WaterSuppressed") is False
+
+    @classmethod
+    def dominates(cls, prepared: Prepared) -> bool:
+        d = prepared.d
+        if d.nucleus != "1H" or d.dwelltime is None or d.spectrometer_frequency is None:
+            return False
+        fids = prepared.conditions[0, 0, prepared.focus].mean(axis=1)  # (C, T)
+        spec = np.abs(Spectral.fid_to_spec(Spectral.zero_fill(fids, 2))).sum(axis=0)
+        x = Spectral.ppm_axis(spec.size, 1.0 / d.dwelltime, d.spectrometer_frequency)
+        water, prominence = (x > 4.2) & (x < 5.1), []
+        for ppm in cls.METABOLITES:
+            peak, around = np.abs(x - ppm) < 0.06, np.abs(x - ppm) < 0.3
+            if not peak.any() or not water.any():
+                return False
+            prominence.append(spec[peak].max() - np.median(spec[around]))
+        return bool(spec[water].max() > cls.DOMINANCE * max(max(prominence), 0.0))
+
+    @classmethod
+    def partner(cls, path: Path) -> Path | None:
+        """The water reference file next to path, if there is one."""
+        name = path.name
+        stem, suffix = (name[: -len(".nii.gz")], ".nii.gz") if name.lower().endswith(
+            ".nii.gz") else (path.stem, path.suffix)
+        stems = [stem + added for added in cls.ADDED] + [
+            stem[: -len(old)] + new for old, new in cls.SWAPPED if stem.lower().endswith(old)]
+        try:
+            present = {p.name.lower(): p for p in path.parent.iterdir() if p.is_file()}
+        except OSError:
+            return None
+        return next((present[c] for s in stems if (c := (s + suffix).lower()) in present), None)
 
 
 #**************************************************************************************************#
@@ -128,11 +184,18 @@ class Plot:
                     if span / s <= 10)
         ticks = np.arange(np.ceil(min(xlim) / step) * step, max(xlim) + 1e-9, step)
         out = [f'<line class="axis" x1="0" x2="{width}" y1="{y}" y2="{y}"/>']
+        unit = f'<tspan class="unit"> {unit}</tspan>'
         for tick in ticks:
             px = (xlim[0] - tick) / (xlim[0] - xlim[1]) * width
             out.append(f'<line class="axis" x1="{px:.1f}" x2="{px:.1f}" y1="{y}" y2="{y + 4}"/>')
-            out.append(f'<text x="{px:.1f}" y="{y + 16}" text-anchor="middle">{tick:g}</text>')
-        out.append(f'<text x="{width}" y="{y + 16}" text-anchor="end" class="unit">{unit}</text>')
+            if px > width - 40:  # the last tick carries the unit
+                out.append(f'<text x="{width}" y="{y + 16}" text-anchor="end">'
+                           f"{tick:g}{unit}</text>")
+                unit = ""
+            else:
+                out.append(f'<text x="{px:.1f}" y="{y + 16}" text-anchor="middle">{tick:g}</text>')
+        if unit:
+            out.append(f'<text x="{width}" y="{y + 16}" text-anchor="end">{unit}</text>')
         return "".join(out)
 
     @staticmethod
@@ -176,20 +239,26 @@ class Plot:
 #**************************************************************************************************#
 #                                                                                                  #
 # The page: header, tabs (radio buttons and CSS, no script), panes. Spectra are FSL-MRS's (first   #
-# point halved, orthonormal FFT, zero filled twice) on its ppm axis; 1H metabolites show 0.2-4.2   #
-# ppm, water 0-8 ppm, other nuclei the whole range. Edit conditions are processed one by one and   #
-# shown with their difference (first minus second, as stored).                                     #
+# point halved, orthonormal FFT, zero filled twice) on its ppm axis; 1H shows 0-6 ppm, other       #
+# nuclei the whole range. Water scans take the pipeline's water path; other data use the water     #
+# reference in the file or, given the file's path, next to it. Edit conditions are processed one   #
+# by one and shown with their difference (first minus second, as stored).                          #
 #                                                                                                  #
 #**************************************************************************************************#
 class Page:
-    def __init__(self, datasets: list, title: str):
+    def __init__(self, datasets: list, title: str, source: Path | None = None):
         mrs = [d for d in datasets if isinstance(d, MRSData)]
         if not mrs:
             raise ValueError("no spectroscopy data")
-        self.title = title
-        self.main = next((d for d in mrs if not d.name.lower().endswith("_ref")), mrs[0])
+        self.title, self.source = title, source
+        self.main = next((d for d in mrs if not Water.named(d)), mrs[0])
         self.water = next((d for d in mrs if d is not self.main), None)
         self.prepared = Prepared(self.main)
+        self.water_scan = self.water is None and (Water.named(self.main)
+                                                  or Water.dominates(self.prepared))
+        self.water_notes = []
+        if self.water is None and not self.water_scan and source is not None:
+            self.water = self.partner(Path(source))
         d = self.main
         self.processable = d.dwelltime is not None and d.spectrometer_frequency is not None
         nmr = d.provenance.format in NMR_FORMATS or "Solvent" in d.meta
@@ -198,14 +267,37 @@ class Page:
                                           else 0.0))
         self.results = self.process()
 
+    def partner(self, source: Path) -> MRSData | None:
+        """The water reference next to the file, when it matches the data point for point."""
+        path = Water.partner(source)
+        if path is None:
+            return None
+        from miox.readers import Loader, ReaderError
+
+        try:
+            water = next((w for w in Loader().load(path) if isinstance(w, MRSData)), None)
+        except ReaderError:
+            water = None
+        d = self.main
+        if (water is None or water.n_points != d.n_points or water.dwelltime is None
+                or d.dwelltime is None or not np.isclose(water.dwelltime, d.dwelltime)
+                or water.data.shape[:3] != d.data.shape[:3]):
+            self.water_notes.append(f"{path.name} next to the file does not match the data: "
+                                    "not used as water reference")
+            return None
+        self.water_notes.append(f"water reference {path.name} (next to the file)")
+        return water
+
     def process(self) -> list:
         if not self.processable:
             return []
         d, water = self.main, None
-        if self.water is not None:
-            water = Prepared(self.water).conditions.mean(axis=0)  # (1, 1, C, D, T)
         pipeline = RawPipeline(1.0 / d.dwelltime, d.spectrometer_frequency, self.proton,
                                self.reference)
+        if self.water_scan:
+            return [pipeline.run_water(condition) for condition in self.prepared.conditions]
+        if self.water is not None:
+            water = Prepared(self.water).conditions.mean(axis=0)  # (1, V, C, D, T)
         return [pipeline.run(condition, water) for condition in self.prepared.conditions]
 
     def axis(self, n: int) -> np.ndarray:
@@ -217,11 +309,15 @@ class Page:
         spec = Spectral.fid_to_spec(Spectral.zero_fill(fid, 2))
         return self.axis(spec.shape[-1]), spec
 
-    def xlim(self, x: np.ndarray, water: bool = False) -> tuple:
+    def xlim(self, x: np.ndarray) -> tuple:
         if self.proton:
-            high, low = WATER if water else METABOLITES
+            high, low = PROTON_RANGE
             return (min(high, float(x.max())), max(low, float(x.min())))
         return (float(x.max()), float(x.min()))
+
+    def focus(self, array) -> np.ndarray:
+        """The focus voxel of a (1, V, ...) result array, as (..., T)."""
+        return np.asarray(array)[0, self.prepared.focus]
 
     def spectrum_pane(self) -> str:
         if not self.results:
@@ -229,17 +325,24 @@ class Page:
                     "nothing is processed.</div>")
         lines = []
         for r in self.results:
-            x, spec = self.spectrum(r.fid)
+            x, spec = self.spectrum(self.focus(r.fid))
             lines.append((x, spec[0].real, "line"))
         legend = ""
         if self.prepared.edited and len(self.results) == 2:
-            x, difference = self.spectrum(np.asarray(self.results[0].fid)
-                                          - np.asarray(self.results[1].fid))
+            x, difference = self.spectrum(self.focus(self.results[0].fid)
+                                          - self.focus(self.results[1].fid))
             lines.append((x, difference[0].real, "line accent"))
             legend = "<div class=legend>edit 1 · edit 2 · <b>difference 1 − 2</b></div>"
         else:
             lines = [(lines[0][0], lines[0][1], "line accent")]
-        steps = list(dict.fromkeys(self.prepared.notes + self.results[0].steps))
+        where = []
+        if self.prepared.grid:
+            where = [f"voxel {self.prepared.focus_index} of "
+                     f"{' x '.join(map(str, self.prepared.spatial))} (strongest signal)"]
+        if self.water_scan:
+            where.append("water scan")
+        steps = list(dict.fromkeys(where + self.prepared.notes + self.water_notes
+                                   + self.results[0].steps))
         if self.prepared.edited:
             steps.append("each edit condition processed on its own")
         x = lines[0][0]
@@ -251,14 +354,14 @@ class Page:
         coils = conditions.shape[3]
         if coils == 1:
             return "<div class=empty>One channel: the file holds combined data.</div>"
-        x, spec = self.spectrum(conditions[0, 0, 0].mean(axis=1))  # (C, T) mean over transients
+        x, spec = self.spectrum(conditions[0, 0, self.prepared.focus].mean(axis=1))  # (C, T)
         values = np.abs(spec)
         xlim = self.xlim(x)
         mask = (x >= min(xlim)) & (x <= max(xlim))
         top = float(values[:, mask].max()) or 1.0
         weights = None
         if self.results and self.results[0].weights is not None:
-            w = np.abs(np.asarray(self.results[0].weights)).reshape(-1, coils).mean(axis=0)
+            w = np.abs(self.focus(self.results[0].weights)).reshape(-1, coils).mean(axis=0)
             weights = w / (w.sum() or 1.0)
         cells = []
         for c in range(coils):
@@ -277,7 +380,7 @@ class Page:
             return "<div class=empty>One transient: the file holds averaged data.</div>"
         parts = []
         for label, data in (("before alignment", r.combined), ("after alignment", r.aligned)):
-            x, spec = self.spectrum(np.asarray(data)[0, 0, 0])
+            x, spec = self.spectrum(self.focus(data)[0])
             xlim = self.xlim(x)
             mask = (x >= min(xlim)) & (x <= max(xlim))
             image = np.abs(spec[:, mask])[:, ::-1]  # ppm falling to the right
@@ -287,9 +390,11 @@ class Page:
                          f'src="{Plot.image(image[:, ::step])}" '
                          f'style="height:{min(300, max(90, rows * 2))}px">')
         axis = Plot.axis(xlim, "ppm", 900, 2)
-        eps = np.asarray(r.eps).reshape(-1)
-        phi = np.degrees(np.asarray(r.phi).reshape(-1))
-        keep = np.asarray(r.keep).reshape(-1) if r.keep is not None else np.ones(len(eps), bool)
+        voxels = len(self.prepared.conditions[0, 0])
+        eps = np.asarray(r.eps).reshape(voxels, -1)[self.prepared.focus]
+        phi = np.degrees(np.asarray(r.phi).reshape(voxels, -1)[self.prepared.focus])
+        keep = (np.asarray(r.keep).reshape(-1) if r.keep is not None
+                else np.ones(len(eps), bool))
         removed = [str(i + 1) for i in np.flatnonzero(~keep)]
         drift = Plot.series([(eps, "frequency (Hz)"), (phi, "phase (degrees)")])
         text = (f"Removed as unlike: {', '.join(removed)}." if removed
@@ -300,13 +405,46 @@ class Page:
                 f"<div class=note>Correction found for every transient.</div>{drift}"
                 f"<div class=note>{text}</div>")
 
+    def grid_pane(self) -> str:
+        """The slice through the focus voxel: a map of the signal per voxel and the grid of
+        their spectra on one scale (real part, as the Spectrum tab)."""
+        r, (nx, ny, nz) = self.results[0], self.prepared.spatial
+        fids = np.asarray(r.fid)[0, :, 0, 0]  # (V, T)
+        x, spec = self.spectrum(fids)
+        xlim = self.xlim(x)
+        mask = (x >= min(xlim)) & (x <= max(xlim))
+        values = spec[:, mask].real.reshape(nx, ny, nz, -1)
+        k = self.prepared.focus_index[2]
+        plane = values[:, :, k]  # (nx, ny, points)
+        signal = np.abs(spec[:, mask]).sum(axis=-1).reshape(nx, ny, nz)[:, :, k]
+        top = float(np.abs(plane).max()) or 1.0
+        cells = []
+        for j in range(ny - 1, -1, -1):  # rows from the top of the slice
+            for i in range(nx):
+                path = Plot.path(x[mask][::4], plane[i, j, ::4], (0, 2, 100, 46), xlim,
+                                 (-top, top))
+                mark = " focus" if (i, j) == self.prepared.focus_index[:2] else ""
+                cells.append(f'<svg viewBox="0 0 100 50" class="plot cell{mark}" '
+                             f'preserveAspectRatio="none"><g class="line">{path}</g></svg>')
+        image = Plot.image(np.abs(signal.T[::-1]))
+        return (f"<div class=note>Slice {k + 1} of {nz}: signal per voxel "
+                f"({x[mask].max():.1f}-{x[mask].min():.1f} ppm), then every voxel's spectrum "
+                f"on one scale; the focus voxel {self.prepared.focus_index} is marked.</div>"
+                f'<img class="heat map" src="{image}" style="width:{min(320, nx * 20)}px">'
+                f'<div class=cells style="grid-template-columns:repeat({nx}, 1fr)">'
+                f"{''.join(cells)}</div>")
+
     def water_pane(self) -> str:
         r = self.results[0] if self.results else None
+        if self.water_scan:
+            return "<div class=empty>This file is a water scan: the Spectrum tab shows it.</div>"
         if self.water is None or r is None or r.water is None:
-            return "<div class=empty>No water reference in this file.</div>"
-        x, spec = self.spectrum(r.water)
-        return Plot.spectrum([(x, spec[0].real, "line")], self.xlim(x, water=True), "ppm",
-                             height=260)
+            return ("<div class=empty>No water reference in this file"
+                    + (" or next to it." if self.source is not None else ".")
+                    + "".join(f"<br>{html.escape(n)}." for n in self.water_notes) + "</div>")
+        x, spec = self.spectrum(self.focus(r.water))
+        source = "".join(f"<div class=note>{html.escape(n)}.</div>" for n in self.water_notes)
+        return Plot.spectrum([(x, spec[0].real, "line")], self.xlim(x), "ppm", height=260) + source
 
     def details_pane(self) -> str:
         rows = []
@@ -326,6 +464,8 @@ class Page:
             facts.append(f"TE {float(meta['EchoTime']) * 1e3:g} ms")
         if "RepetitionTime" in meta:
             facts.append(f"TR {float(meta['RepetitionTime']) * 1e3:g} ms")
+        if self.prepared.grid:
+            facts.append(" x ".join(map(str, self.prepared.spatial)) + " voxels")
         facts += [f"{c.shape[3]} coils" if c.shape[3] > 1 else "",
                   f"{c.shape[4]} transients" if c.shape[4] > 1 else "",
                   f"{c.shape[0]} edit conditions" if c.shape[0] > 1 else "",
@@ -333,9 +473,11 @@ class Page:
         return " · ".join(f for f in facts if f)
 
     def html(self) -> str:
-        tabs = [("Spectrum", self.spectrum_pane()), ("Coils", self.coils_pane()),
-                ("Averages", self.averages_pane()), ("Water", self.water_pane()),
-                ("Details", self.details_pane())]
+        tabs = [("Spectrum", self.spectrum_pane())]
+        if self.prepared.grid and self.results:
+            tabs.append(("Grid", self.grid_pane()))
+        tabs += [("Coils", self.coils_pane()), ("Averages", self.averages_pane()),
+                 ("Water", self.water_pane()), ("Details", self.details_pane())]
         radios = "".join(f'<input type=radio name=tab id=t{i}{" checked" if not i else ""}>'
                          for i in range(len(tabs)))
         labels = "".join(f"<label for=t{i}>{name}</label>" for i, (name, _) in enumerate(tabs))
@@ -384,6 +526,10 @@ figcaption {{ display:flex; justify-content:space-between; font-size:11px; color
 figcaption span {{ color:var(--faint); }}
 .heat {{ width:100%; display:block; image-rendering:auto; filter:var(--heat);
          margin-top:10px; }}
+.map {{ height:auto; image-rendering:pixelated; margin:10px 0; }}
+.cells {{ display:grid; gap:1px; margin-top:6px; }}
+.cell {{ background:var(--pill); }} .cell.focus {{ outline:1px solid var(--accent); }}
+.cell polyline {{ stroke-width:0.8; }}
 table {{ border-collapse:collapse; width:100%; font-size:12px; }}
 td {{ padding:4px 0; border-bottom:1px solid var(--rule); vertical-align:top; }}
 td:first-child {{ color:var(--soft); width:38%; padding-right:16px; }}
@@ -393,9 +539,9 @@ td:first-child {{ color:var(--soft); width:38%; padding-right:16px; }}
 </body></html>"""
 
 
-def page(datasets: list, title: str) -> str:
-    return Page(datasets, title).html()
+def page(datasets: list, title: str, source: Path | None = None) -> str:
+    return Page(datasets, title, source).html()
 
 
-def write(datasets: list, title: str, path: str | Path) -> None:
-    Path(path).write_text(page(datasets, title), encoding="utf-8")
+def write(datasets: list, title: str, path: str | Path, source: Path | None = None) -> None:
+    Path(path).write_text(page(datasets, title, source), encoding="utf-8")

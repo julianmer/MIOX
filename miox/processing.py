@@ -651,7 +651,8 @@ class Result:
 # transients, mean, eddy current correction, shift to creatine, zero-order phase. Other nuclei     #
 # than 1H skip the ppm windows of 1H: alignment over the whole spectrum, no shift, phase on the    #
 # tallest peak. Without water, eddy currents are corrected with the data itself, as Augmentrum     #
-# does (ecc_without_water=False leaves the step out, as FSL-MRS does).                             #
+# does (ecc_without_water=False leaves the step out, as FSL-MRS does). A water scan on its own     #
+# takes the water path (run_water).                                                                #
 #                                                                                                  #
 #**************************************************************************************************#
 class RawPipeline:
@@ -732,3 +733,32 @@ class RawPipeline:
             wphase = Corrections.phase(wflat, self.sw, self.sf, wlim, self.reference)
             w = ops.reshape(wflat * Backend.phasor(wphase)[..., None], ops.shape(w))
         return Result(x, w, weights, phi, eps, keep, combined, aligned, shift, phase, steps)
+
+    def run_water(self, x) -> Result:
+        """A water scan (B, V, C, D, T) on Augmentrum's water path: coils combined with their own
+        weights, transients aligned in 0-8 ppm and averaged, eddy currents corrected with the
+        water itself, zero-order phase on the water peak; no unlike removal, no creatine shift."""
+        steps = []
+        b, v, c, d, n = ops.shape(x)
+        weights = phi = eps = aligned = None
+        if c > 1:
+            x, _, weights = CoilCombination.combine(x, x)
+            steps.append(f"{c} coils combined (wSVD)")
+        combined = x
+        if d > 1:
+            ppmlim = (0, 8) if self.proton else self.full()
+            flat = ops.reshape(x[:, :, 0], (b * v, d, n))
+            phi, eps = Registration.align(flat, self.sw, self.sf, ppmlim, self.reference)
+            aligned = ops.reshape(flat * Registration.phasor(phi, eps, n, self.sw), (b, v, 1, d, n))
+            x = ops.mean(aligned, axis=3, keepdims=True)
+            steps.append(f"{d} transients aligned (spectral registration "
+                         f"{ppmlim[0]:g}-{ppmlim[1]:g} ppm)")
+            steps.append(f"mean of {d} transients")
+        x = x * Backend.phasor(-Corrections.ecc_phase(x))
+        steps.append("eddy currents corrected (water itself, smoothed phase)")
+        flat = ops.reshape(x, (-1, n))
+        limits = (4.55, 4.7) if self.proton else self.full()
+        phase = Corrections.phase(flat, self.sw, self.sf, limits, self.reference)
+        x = ops.reshape(flat * Backend.phasor(phase)[..., None], ops.shape(x))
+        steps.append("zero-order phase on water")
+        return Result(x, None, weights, phi, eps, None, combined, aligned, None, phase, steps)

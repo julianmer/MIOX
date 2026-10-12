@@ -8,8 +8,9 @@
 #                                                                                                  #
 # Purpose: The raw pipeline on synthetic single-voxel data with known answers: shifted and         #
 #          dephased transients (drift within +-2 Hz) are aligned back, coils with known            #
-#          sensitivities combine coherently, a corrupted transient is found unlike, and with a     #
-#          water reference creatine ends at 3.027 ppm with a real, positive peak.                  #
+#          sensitivities combine coherently, a corrupted transient is found unlike, with a water   #
+#          reference creatine ends at 3.027 ppm with a real, positive peak, and a water scan ends  #
+#          with water at 4.65 ppm, real and positive.                                              #
 #                                                                                                  #
 ####################################################################################################
 
@@ -81,3 +82,16 @@ def test_pipeline_puts_creatine_at_3027_with_a_real_peak():
     peak = np.flatnonzero(window)[np.argmax(np.abs(spec[window]))]
     assert abs(axis[peak] - 3.027) < 0.01
     assert spec[peak].real > 0.99 * abs(spec[peak])
+
+
+def test_water_scan_is_aligned_and_phased_on_water():
+    rng = np.random.default_rng(4)
+    x = np.stack([np.exp(2j * np.pi * rng.normal(0, 1) * T - np.pi * 6 * T + 1j * rng.normal(0, .3))
+                  for _ in range(8)])
+    x = 100 * x[None, None, None] + 0.003 * rng.normal(size=(1, 1, 1, 8, N))
+    result = RawPipeline(SW, SF).run_water(x)
+    spec = Spectral.fid_to_spec(Spectral.zero_fill(np.asarray(result.fid).reshape(1, -1), 4))[0]
+    axis = Spectral.ppm_axis(4 * N, SW, SF)
+    peak = int(np.argmax(np.abs(spec)))
+    assert abs(axis[peak] - 4.65) < 0.02 and spec[peak].real > 0.99 * abs(spec[peak])
+    assert result.shift_hz is None and result.keep is None

@@ -8,7 +8,8 @@
 #                                                                                                  #
 # Purpose: The Quick Look page on synthetic data: five tabs, the processed spectrum with its       #
 #          steps, coils with their weights, averages before and after alignment, edited data with  #
-#          their difference, and the empty states (one coil, no water, no spectral axis).          #
+#          their difference, the empty states (one coil, no water, no spectral axis), water scans  #
+#          (by name or by water dominance) and water references found next to the data.           #
 #                                                                                                  #
 ####################################################################################################
 
@@ -24,7 +25,7 @@ import numpy as np
 import miox
 from miox.data import MRSData, Provenance
 from miox.meta import Meta
-from miox.quicklook import Page
+from miox.quicklook import Page, Water
 
 SW, SF, N = 2000.0, 123.2, 1024
 T = np.arange(N) / SW
@@ -67,3 +68,29 @@ def test_single_fid_and_missing_axis():
     assert "One channel" in page and "One transient" in page
     unknown = Page([dataset(fid(), dwell=None)], "raw.txt").html()
     assert "nothing is processed" in unknown
+
+
+def water(shift_hz=0.0):
+    return 1000 * np.exp(2j * np.pi * shift_hz * T - np.pi * 6 * T).conj()
+
+
+def test_water_scans_take_the_water_path():
+    named = Page([dataset(water()[:, None] * np.ones((1, 4)), ("DIM_DYN", None, None),
+                          name="S01_PRESS_35_H2O")], "S01_PRESS_35_H2O.dat").html()
+    unsuppressed = Page([dataset(water() + fid())], "unknown.dat").html()
+    for page in (named, unsuppressed):
+        assert "water scan" in page and "zero-order phase on water" in page
+        assert "This file is a water scan" in page and "creatine" not in page
+    suppressed = Page([dataset(0.1 * water() + fid())], "metabolites.dat").html()
+    assert "water scan" not in suppressed and "shifted to creatine" in suppressed
+
+
+def test_water_reference_next_to_the_data(tmp_path):
+    for name in ("S01_PRESS_35.dat", "S01_PRESS_35_H2O.dat", "S02_act.SDAT", "S02_ref.sdat",
+                 "sub-01_svs.nii.gz", "sub-01_mrsref.nii.gz", "alone.rda"):
+        (tmp_path / name).touch()
+    found = {name: Water.partner(tmp_path / name) for name in
+             ("S01_PRESS_35.dat", "S02_act.SDAT", "sub-01_svs.nii.gz", "alone.rda")}
+    assert {k: v.name if v else None for k, v in found.items()} == {
+        "S01_PRESS_35.dat": "S01_PRESS_35_H2O.dat", "S02_act.SDAT": "S02_ref.sdat",
+        "sub-01_svs.nii.gz": "sub-01_mrsref.nii.gz", "alone.rda": None}
