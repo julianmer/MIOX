@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 
 # own
-from miox.data import MRImage, MRSData
+from miox.data import BasisSet, FitResult, MRImage, MRSData
 from miox.processing import PROTON_REFERENCE, RawPipeline, Spectral
 from miox.sniff import Format
 
@@ -685,6 +685,138 @@ class ImagePage:
         return document(self.title, self.facts(), tabs)
 
 
+#**************************************************************************************************#
+#                                             FitPage                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# The page of a fit result, as LCModel and FSL-MRS draw one: the residual on top, then data (ink), #
+# fit (red) and baseline (grey) on one scale over the fit's ppm window, each metabolite's          #
+# component staggered below when the file holds them (Osprey); the table of concentrations and     #
+# their SD; every header value.                                                                    #
+#                                                                                                  #
+#**************************************************************************************************#
+class FitPage:
+    CURVES = ("ppm", "data", "fit", "baseline")
+
+    def __init__(self, result: FitResult, title: str, others: int = 0):
+        self.result, self.title, self.others = result, title, others
+
+    def fit_pane(self) -> str:
+        curves, width = self.result.curves, 900
+        if not all(k in curves for k in self.CURVES):
+            return "<div class=empty>The file holds no fitted curves: see the table.</div>"
+        x, data, fit, baseline = (np.asarray(curves[k], dtype=np.float64) for k in self.CURVES)
+        xlim = (float(x.max()), float(x.min()))
+        ylim = Plot.ylim(x, [data, fit, baseline], xlim)
+        residual = data - fit
+        box = (0, 60, width, 260)
+        wiggle = Plot.path(x, residual, (0, 18, width, 30), xlim, Plot.ylim(x, [residual], xlim))
+        main = (f'<svg viewBox="0 0 {width} 360" class="plot">'
+                f'<text x="0" y="12" class="unit">residual</text><g class="hair">{wiggle}'
+                f'</g><g class="base">{Plot.path(x, baseline, box, xlim, ylim)}</g>'
+                f'<g class="data">{Plot.path(x, data, box, xlim, ylim)}</g>'
+                f'<g class="fitted">{Plot.path(x, fit, box, xlim, ylim)}</g>'
+                f"{Plot.axis(xlim, 'ppm', width, 334)}</svg>"
+                "<div class=note>Residual (data − fit) on top; data, <b class=fit>fit</b> and "
+                "baseline on one scale.</div>")
+        components = [k for k in curves if k not in self.CURVES]
+        if not components:
+            return main
+        row, label = 30, 90
+        ylim = Plot.ylim(x, [np.asarray(curves[k], dtype=np.float64) for k in components], xlim)
+        rows = []
+        for n, name in enumerate(components):
+            box = (0, n * row + 4, width - label, row - 6)
+            path = Plot.path(x, np.asarray(curves[name], dtype=np.float64), box, xlim, ylim)
+            rows.append(f'<g class="line">{path}</g><text x="{width}" y="{n * row + row - 8}" '
+                        f'text-anchor="end">{html.escape(name)}</text>')
+        rows = "".join(rows)
+        height = len(components) * row + 30
+        return (main + "<h2>Components</h2>"
+                f'<svg viewBox="0 0 {width} {height}" class="plot">{rows}'
+                f"{Plot.axis(xlim, 'ppm', width - label, height - 26)}</svg>"
+                "<div class=note>Each metabolite's part of the fit, on one scale.</div>")
+
+    def table_pane(self) -> str:
+        rows = "".join(f"<tr><td>{html.escape(str(r['metabolite']))}</td>"
+                       f"<td class=n>{html.escape(str(r.get('concentration', '')))}</td>"
+                       f"<td class=n>{html.escape(str(r.get('sd_percent', '')))}</td></tr>"
+                       for r in self.result.rows)
+        return ("<table><tr><td>metabolite</td><td class=n>concentration</td>"
+                f"<td class=n>SD %</td></tr>{rows}</table>")
+
+    def facts(self) -> str:
+        r = self.result
+        facts = [f"{len(r.rows)} metabolites"]
+        if r.voxel is not None:
+            facts.append(f"voxel {tuple(r.voxel)}")
+        if self.others:
+            facts.append(f"{self.others} more fit{'s' if self.others > 1 else ''} in the file")
+        return " · ".join(facts + [str(r.provenance.format).replace("_", " ")])
+
+    def html(self) -> str:
+        tabs = [("Fit", self.fit_pane()), ("Table", self.table_pane()),
+                ("Details", details(self.result.meta))]
+        if not self.result.curves:
+            tabs = tabs[1:]
+        return document(self.title, self.facts(), tabs)
+
+
+#**************************************************************************************************#
+#                                            BasisPage                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# The page of a basis set: one row per metabolite, real part as FSL-MRS shows a spectrum (nothing  #
+# processed; of sub-spectra, such as edit conditions, the first), each on its own scale and        #
+# labelled (Osprey's stagger); 1H over 6-0 ppm as spectra (FSL-MRS' plot_basis: 4.5-0, which       #
+# leaves water out), other nuclei over the whole spectrum, at the set's reference; every header    #
+# value.                                                                                           #
+#                                                                                                  #
+#**************************************************************************************************#
+class BasisPage:
+    def __init__(self, basis: BasisSet, title: str):
+        self.basis, self.title = basis, title
+
+    def basis_pane(self) -> str:
+        b, width, row, label = self.basis, 900, 30, 110
+        if b.dwelltime is None or b.spectrometer_frequency is None:
+            return "<div class=empty>The file states no dwell time or frequency.</div>"
+        proton = b.nucleus in (None, "1H")
+        reference = float(b.meta.get("ReferencePPM", PROTON_REFERENCE if proton else 0.0))
+        rows, more = [], 1
+        for n, name in enumerate(b.metabolites):
+            fid = np.asarray(b.fid(name), dtype=np.complex128)
+            more = int(np.prod(fid.shape[1:]))  # sub-spectra (e.g. edit conditions)
+            fid = fid.reshape(fid.shape[0], -1)[:, 0].conj().reshape(1, -1)
+            spec = Spectral.fid_to_spec(Spectral.zero_fill(fid, 2))[0].real
+            x = Spectral.ppm_axis(spec.size, 1.0 / b.dwelltime, b.spectrometer_frequency,
+                                  reference)
+            xlim = PROTON_RANGE if proton else (float(x.max()), float(x.min()))
+            mask = (x >= min(xlim)) & (x <= max(xlim))
+            own = (float(np.abs(spec[mask]).max()) if mask.any() else 0.0) or 1.0
+            path = Plot.path(x[mask], spec[mask], (0, n * row + 4, width - label, row - 4),
+                             xlim, (-0.2 * own, own))
+            rows.append(f'<g class="line">{path}</g><text x="{width}" y="{n * row + row - 8}" '
+                        f'text-anchor="end">{html.escape(name)}</text>')
+        height = len(rows) * row + 30
+        return (f'<svg viewBox="0 0 {width} {height}" class="plot">{"".join(rows)}'
+                f"{Plot.axis(xlim, 'ppm', width - label, height - 26)}</svg>"
+                "<div class=note>Every metabolite, real part, each on its own scale"
+                + (f"; the first of {more} sub-spectra each" if more > 1 else "") + ".</div>")
+
+    def facts(self) -> str:
+        b = self.basis
+        facts = [f"{len(b.metabolites)} metabolites", b.nucleus or ""]
+        if b.spectrometer_frequency:
+            facts.append(f"{b.spectrometer_frequency:.2f} MHz")
+        facts += [f"{b.n_points} points", str(b.provenance.format).replace("_", " ")]
+        return " · ".join(f for f in facts if f)
+
+    def html(self) -> str:
+        return document(self.title, self.facts(),
+                        [("Basis", self.basis_pane()), ("Details", details(self.basis.meta))])
+
+
 def details(meta) -> str:
     """Every header value as a table (long lists counted)."""
     rows = []
@@ -720,10 +852,12 @@ def document(title: str, facts: str, tabs: list[tuple[str, str]], switch: bool =
 PAGE = """<!doctype html><html><head><meta charset="utf-8">
 <meta name="color-scheme" content="light dark"><style>
 :root {{ --bg:#ffffff; --ink:#1d1d1f; --soft:#6e6e73; --faint:#aeaeb2; --rule:#e8e8ed;
-         --accent:#0071e3; --pill:#f2f2f7; --drop:#d70015; }}
+         --accent:#0071e3; --pill:#f2f2f7; --drop:#d70015;
+         --fit:#cc0000; }}
 @media (prefers-color-scheme: dark) {{
   :root {{ --bg:#1c1c1e; --ink:#f5f5f7; --soft:#a1a1a6; --faint:#636366; --rule:#38383a;
-           --accent:#2997ff; --pill:#2c2c2e; --drop:#ff6961; }} }}
+           --accent:#2997ff; --pill:#2c2c2e; --drop:#ff6961;
+           --fit:#ff6961; }} }}
 * {{ box-sizing:border-box; }}
 body {{ margin:0; padding:22px 26px; background:var(--bg); color:var(--ink);
         font:13px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
@@ -744,6 +878,10 @@ section {{ display:none; }} {show} {{ display:block; }}
 .plot .thin polyline {{ stroke:var(--soft); stroke-width:.6; opacity:.45; }}
 .plot .drop polyline {{ stroke:var(--drop); stroke-width:.7; stroke-dasharray:3 2; }}
 .plot .bold polyline {{ stroke:var(--accent); stroke-width:1.6; }}
+.plot .data polyline {{ stroke:var(--ink); stroke-width:.8; }}
+.plot .fitted polyline {{ stroke:var(--fit); stroke-width:1.4; }} b.fit {{ color:var(--fit); }}
+.plot .base polyline {{ stroke:var(--soft); stroke-width:.8; }}
+td.n {{ text-align:right; font-variant-numeric:tabular-nums; }}
 .plot .hair polyline {{ stroke:var(--faint); stroke-width:.6; }}
 .plot circle.dot {{ fill:var(--ink); }}
 .plot circle.drop {{ fill:var(--bg); stroke:var(--drop); stroke-width:1.2; }}
@@ -787,9 +925,15 @@ td:first-child {{ color:var(--soft); width:38%; padding-right:16px; }}
 
 
 def page(datasets: list, title: str, source: Path | None = None) -> str:
-    """The spectroscopy page when the file holds spectroscopy data, else the image page."""
+    """The page of what the file holds: a basis set, spectroscopy data, a fit, else an image."""
+    basis = next((d for d in datasets if isinstance(d, BasisSet)), None)
+    if basis is not None:
+        return BasisPage(basis, title).html()
     if any(isinstance(d, MRSData) for d in datasets):
         return Page(datasets, title, source).html()
+    fits = [d for d in datasets if isinstance(d, FitResult)]
+    if fits:
+        return FitPage(fits[0], title, len(fits) - 1).html()
     images = [d for d in datasets if isinstance(d, MRImage)]
     if not images:
         raise ValueError("no spectroscopy data or image")

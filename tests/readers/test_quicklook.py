@@ -11,7 +11,8 @@
 #          alignment, edited data with their difference, the empty states (one coil, no water, no  #
 #          spectral axis), water scans (by name or by water dominance) and water references found  #
 #          next to the data; the MRSI grid around the centre voxel; the image page: the volume     #
-#          turned to RAS, planes, slices, details.                                                 #
+#          turned to RAS, planes, slices, details; basis sets at their reference; fits with their  #
+#          residual, components and table.                                                         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -27,9 +28,10 @@ import numpy as np
 
 # own
 import miox
-from miox.data import MRImage, MRSData, Provenance
+from miox.data import BasisSet, FitResult, MRImage, MRSData, Provenance
 from miox.meta import Meta
-from miox.quicklook import ImagePage, Page, Water
+from miox.processing import Spectral
+from miox.quicklook import BasisPage, FitPage, ImagePage, Page, Water
 
 SW, SF, N = 2000.0, 123.2, 1024
 T = np.arange(N) / SW
@@ -164,3 +166,35 @@ def test_empty_data_and_reader_notes_are_shown():
     page = Page([noted], "fid").html()
     assert "Reader: The orientation of bruker fid data is mostly untested." in page
     assert "To achieve" not in page
+
+
+def test_basis_set_page_shows_each_metabolite_at_its_reference():
+    naa = np.exp(2j * np.pi * (2.01 - 3.0) * SF * T - np.pi * 4 * T).conj()  # as stored
+    data = np.stack([naa, 0.5 * naa], axis=-1).reshape(1, 1, 1, N, 2)
+    meta = Meta({})
+    meta.set("SpectrometerFrequency", [SF], "test")
+    meta.set("ResonantNucleus", ["1H"], "test")
+    meta.set("ReferencePPM", 3.0, "test")  # 0 Hz at 3.0 ppm, as Osprey's sets
+    basis = BasisSet(data, 1 / SW, np.eye(4), meta,
+                     Provenance((), miox.Format.OSPREY_BASIS, "test", {}), ("DIM_USER_0",),
+                     {5: {"header": {"Metabolite": ["NAA", "half"]}}})
+    page = BasisPage(basis, "basis.mat")
+    assert ">NAA</text>" in page.html() and ">half</text>" in page.html()
+    spec = Spectral.fid_to_spec(Spectral.zero_fill(naa.conj()[None], 2))[0].real
+    x = Spectral.ppm_axis(spec.size, SW, SF, 3.0)
+    assert abs(x[np.argmax(spec)] - 2.01) < 0.01  # what the page draws: NAA at 2.01 ppm
+
+
+def test_fit_page_draws_residual_fit_and_table():
+    x = np.linspace(4.0, 0.2, 400)
+    peak = np.exp(-((x - 2.01) / 0.03) ** 2)
+    result = FitResult([{"metabolite": "NAA", "concentration": 10.2, "sd_percent": 3}], {},
+                       {"ppm": x, "data": peak + 0.01, "fit": peak, "baseline": 0 * x,
+                        "NAA": peak}, Meta({}),
+                       Provenance((), miox.Format.LCMODEL_COORD, "test", {}))
+    page = FitPage(result, "fit.COORD").html()
+    for text in (">Fit</label>", ">Table</label>", "residual", "Components", ">10.2</td>"):
+        assert text in page
+    assert "Components" not in FitPage(FitResult([], {}, {k: v for k, v in result.curves.items()
+                                                         if k != "NAA"}, Meta({}),
+                                                 result.provenance), "fit").html()
