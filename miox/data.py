@@ -23,15 +23,17 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from mrs_tools.constants import GYRO_MAG_RATIO
-from nifti_mrs.nifti_mrs import NIFTI_MRS
 
 # own
 from miox.meta.meta import Meta
 from miox.sniff import Format
+
+if TYPE_CHECKING:
+    from nifti_mrs.nifti_mrs import NIFTI_MRS
 
 
 #**************************************************************************************************#

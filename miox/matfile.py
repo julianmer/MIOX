@@ -20,9 +20,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import matio
 import numpy as np
-from matio.utils.matclass import MatlabOpaque
 
 
 #**************************************************************************************************#
@@ -45,11 +43,15 @@ class MatFile:
     @staticmethod
     def variables(path: Path) -> dict[str, str]:
         """Variable names and their MATLAB classes."""
+        import matio  # mat-io imports pandas: only when a MATLAB file is read
+
         return {name: kind for name, (_, kind) in matio.whosmat(path).items()}
 
     @classmethod
     def load(cls, path: Path) -> dict[str, Any]:
         """Every variable, as plain Python values."""
+        import matio
+
         return {name: cls._plain(value) for name, value in matio.load_from_mat(path).items()}
 
     @classmethod
@@ -73,6 +75,8 @@ class MatFile:
 
     @classmethod
     def _plain(cls, value: Any) -> Any:
+        from matio.utils.matclass import MatlabOpaque
+
         if isinstance(value, MatlabOpaque):
             properties = {k: cls._plain(v) for k, v in (value.properties or {}).items()}
             return {"class": value.classname, **properties}

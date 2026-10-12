@@ -18,10 +18,12 @@ from __future__ import annotations
 
 import atexit
 import dataclasses
+import importlib
 import shutil
 import tempfile
 import zipfile
 from collections import defaultdict
+from collections.abc import Iterator, Mapping
 from pathlib import Path
 from typing import Any
 
@@ -41,96 +43,7 @@ from miox.data import (
     Tractogram,
     Transform,
 )
-from miox.readers.bart_cfl import BartReader
 from miox.readers.base import IncompleteError, Reader, ReaderError
-from miox.readers.basis_folder import BasisFolderReader
-from miox.readers.biopac_acq import AcqKnowledgeReader
-from miox.readers.brainvoyager import BrainVoyagerSurfaceReader, BrainVoyagerVolumeReader
-from miox.readers.brainvoyager_text import (
-    BrainVoyagerProtocolReader,
-    BrainVoyagerRegionReader,
-    BrainVoyagerTransformReader,
-)
-from miox.readers.bruker import BrukerReader
-from miox.readers.dicom_image import DicomImageReader
-from miox.readers.dicom_mrs import DicomMrsReader
-from miox.readers.fastmri import FastMriReader
-from miox.readers.fida_mat import FidaReader
-from miox.readers.fsl_mrs_basis import FslMrsBasisReader
-from miox.readers.gava_midas_prior import GavaMidasPriorReader
-from miox.readers.ge_pfile import GePfileReader
-from miox.readers.ge_scanarchive import GeScanArchiveReader
-from miox.readers.ge_signa import GeSignaReader
-from miox.readers.inspector_basis import InspectorBasisReader
-from miox.readers.ismrmrd import IsmrmrdReader
-from miox.readers.jcamp import JcampReader
-from miox.readers.jeol import JeolReader
-from miox.readers.jmrui import JmruiReader
-from miox.readers.lcmodel_basis import LcmodelBasisReader
-from miox.readers.lcmodel_control import LcmodelControlReader
-from miox.readers.lcmodel_output import LcmodelOutputReader
-from miox.readers.lcmodel_raw import LcmodelRawReader
-from miox.readers.marss_basis import MarssBasisReader
-from miox.readers.metaimage import MetaImageReader
-from miox.readers.mrd import MrdReader
-from miox.readers.mrtrix import MrtrixReader
-from miox.readers.nibabel_image import NibabelImageReader
-from miox.readers.nifti_mrs import NiftiMrsReader
-from miox.readers.nifti_sidecar_mrs import NiftiSidecarMrsReader
-from miox.readers.nmrml import NmrmlReader
-from miox.readers.nmrpipe import NmrPipeReader
-from miox.readers.nrrd import NrrdReader
-from miox.readers.osprey_basis import OspreyBasisReader
-from miox.readers.osprey_container import OspreyContainerReader
-from miox.readers.philips_data_list import PhilipsDataListReader
-from miox.readers.philips_examcard import PhilipsExamCardReader
-from miox.readers.philips_raw_lab import PhilipsRawLabReader
-from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
-from miox.readers.physio import (
-    BidsPhysioReader,
-    CmrrPhysioReader,
-    GePhysioReader,
-    HcpPhysioReader,
-    PhilipsPhyslogReader,
-    SiemensPmuReader,
-)
-from miox.readers.profit_basis import ProfitBasisReader
-from miox.readers.pulseq import PulseqReader
-from miox.readers.pyamares_prior import PyamaresPriorReader
-from miox.readers.pyamares_result import PyamaresResultReader
-from miox.readers.rnmrtk import RnmrtkReader
-from miox.readers.rs2d import Rs2dReader
-from miox.readers.siemens_protocol import SiemensPrintedProtocolReader, SiemensProtocolReader
-from miox.readers.siemens_rda import SiemensRdaReader
-from miox.readers.siemens_twix import SiemensTwixReader
-from miox.readers.simpson import SimpsonReader
-from miox.readers.simulation import (
-    JemrisMotionReader,
-    JemrisPhantomReader,
-    JemrisSignalReader,
-    KomaPhantomReader,
-    MrilabPhantomReader,
-)
-from miox.readers.sivic_ddf import SivicDdfReader
-from miox.readers.sparky import SparkyReader
-from miox.readers.spinsolve import SpinsolveReader
-from miox.readers.spinwizard_basis import SpinwizardBasisReader
-from miox.readers.surfaces import FreeSurferReader, GiftiReader
-from miox.readers.tarquin_dpt import TarquinDptReader
-from miox.readers.tarquin_output import TarquinOutputReader
-from miox.readers.tecmag import TecmagReader
-from miox.readers.text_fid import TextFidReader
-from miox.readers.toppe import ToppeReader
-from miox.readers.topspin import TopSpinReader
-from miox.readers.tractograms import TrackReader, TrxReader
-from miox.readers.transforms import AfniReader, FslReader, ItkReader, LtaReader
-from miox.readers.varian import VarianReader
-from miox.readers.varian_fdf import VarianFdfReader
-from miox.readers.vasf import VasfReader
-from miox.readers.vespa_prior import VespaPriorReader
-from miox.readers.vespa_viff import VespaViffReader
-from miox.readers.vtk_legacy import VtkReader
-from miox.readers.yarra import YarraReader
 from miox.sniff import Format, Sniff, Sniffer
 
 Dataset = (
@@ -138,6 +51,157 @@ Dataset = (
     | PhysioData | Protocol | Phantom | Tractogram | Surface | Transform
 )
 
+
+READERS = (  # (module, class, formats it reads): imported when a file of its format is read
+    ("miox.readers.bart_cfl", "BartReader", (Format.BART_CFL,)),
+    ("miox.readers.basis_folder", "BasisFolderReader", (Format.BASIS_FOLDER,)),
+    ("miox.readers.biopac_acq", "AcqKnowledgeReader", (Format.BIOPAC_ACQ,)),
+    ("miox.readers.brainvoyager", "BrainVoyagerSurfaceReader", (
+        Format.BRAINVOYAGER_SRF, Format.BRAINVOYAGER_SMP, Format.BRAINVOYAGER_MTC,
+        Format.BRAINVOYAGER_SSM,
+    )),
+    ("miox.readers.brainvoyager", "BrainVoyagerVolumeReader", (
+        Format.BRAINVOYAGER_VMR, Format.BRAINVOYAGER_VTC, Format.BRAINVOYAGER_GLM,
+        Format.BRAINVOYAGER_VMP,
+    )),
+    ("miox.readers.brainvoyager_text", "BrainVoyagerProtocolReader", (
+        Format.BRAINVOYAGER_PRT, Format.BRAINVOYAGER_SDM,
+    )),
+    ("miox.readers.brainvoyager_text", "BrainVoyagerRegionReader", (
+        Format.BRAINVOYAGER_VOI, Format.BRAINVOYAGER_POI,
+    )),
+    ("miox.readers.brainvoyager_text", "BrainVoyagerTransformReader", (Format.BRAINVOYAGER_TRF,)),
+    ("miox.readers.bruker", "BrukerReader", (Format.BRUKER,)),
+    ("miox.readers.dicom_image", "DicomImageReader", (Format.DICOM_IMAGE,)),
+    ("miox.readers.dicom_mrs", "DicomMrsReader", (Format.DICOM_MRS,)),
+    ("miox.readers.fastmri", "FastMriReader", (Format.FASTMRI_H5,)),
+    ("miox.readers.fida_mat", "FidaReader", (Format.FIDA_MAT,)),
+    ("miox.readers.fsl_mrs_basis", "FslMrsBasisReader", (Format.FSL_MRS_BASIS,)),
+    ("miox.readers.gava_midas_prior", "GavaMidasPriorReader", (
+        Format.GAVA_PRIOR, Format.MIDAS_PRIOR,
+    )),
+    ("miox.readers.ge_pfile", "GePfileReader", (Format.GE_PFILE,)),
+    ("miox.readers.ge_scanarchive", "GeScanArchiveReader", (Format.GE_SCANARCHIVE,)),
+    ("miox.readers.ge_signa", "GeSignaReader", (Format.GE_SIGNA,)),
+    ("miox.readers.inspector_basis", "InspectorBasisReader", (Format.INSPECTOR_BASIS,)),
+    ("miox.readers.ismrmrd", "IsmrmrdReader", (Format.ISMRMRD,)),
+    ("miox.readers.jcamp", "JcampReader", (Format.JCAMP_NMR,)),
+    ("miox.readers.jeol", "JeolReader", (Format.JEOL_JDF,)),
+    ("miox.readers.jmrui", "JmruiReader", (Format.JMRUI_TEXT, Format.JMRUI_BINARY)),
+    ("miox.readers.lcmodel_basis", "LcmodelBasisReader", (Format.LCMODEL_BASIS,)),
+    ("miox.readers.lcmodel_control", "LcmodelControlReader", (Format.LCMODEL_CONTROL,)),
+    ("miox.readers.lcmodel_output", "LcmodelOutputReader", (
+        Format.LCMODEL_COORD, Format.LCMODEL_TABLE, Format.LCMODEL_CSV,
+    )),
+    ("miox.readers.lcmodel_raw", "LcmodelRawReader", (Format.LCMODEL_RAW,)),
+    ("miox.readers.marss_basis", "MarssBasisReader", (Format.MARSS_BASIS,)),
+    ("miox.readers.metaimage", "MetaImageReader", (Format.METAIMAGE,)),
+    ("miox.readers.mrd", "MrdReader", (Format.MRD,)),
+    ("miox.readers.mrtrix", "MrtrixReader", (Format.MRTRIX,)),
+    ("miox.readers.nibabel_image", "NibabelImageReader", (
+        Format.NIFTI, Format.ANALYZE, Format.MGH, Format.MINC1, Format.MINC2, Format.PARREC,
+        Format.AFNI,
+    )),
+    ("miox.readers.nifti_mrs", "NiftiMrsReader", (Format.NIFTI_MRS,)),
+    ("miox.readers.nifti_sidecar_mrs", "NiftiSidecarMrsReader", (Format.NIFTI_SIDECAR_MRS,)),
+    ("miox.readers.nmrml", "NmrmlReader", (Format.NMRML,)),
+    ("miox.readers.nmrpipe", "NmrPipeReader", (Format.NMRPIPE,)),
+    ("miox.readers.nrrd", "NrrdReader", (Format.NRRD,)),
+    ("miox.readers.osprey_basis", "OspreyBasisReader", (Format.OSPREY_BASIS,)),
+    ("miox.readers.osprey_container", "OspreyContainerReader", (Format.OSPREY_MRSCONT,)),
+    ("miox.readers.philips_data_list", "PhilipsDataListReader", (Format.PHILIPS_DATA_LIST,)),
+    ("miox.readers.philips_examcard", "PhilipsExamCardReader", (Format.PHILIPS_EXAMCARD,)),
+    ("miox.readers.philips_raw_lab", "PhilipsRawLabReader", (Format.PHILIPS_RAW_LAB,)),
+    ("miox.readers.philips_spar_sdat", "PhilipsSparSdatReader", (Format.PHILIPS_SPAR_SDAT,)),
+    ("miox.readers.physio", "BidsPhysioReader", (Format.BIDS_PHYSIO,)),
+    ("miox.readers.physio", "CmrrPhysioReader", (Format.CMRR_PHYSIO,)),
+    ("miox.readers.physio", "GePhysioReader", (Format.GE_PHYSIO,)),
+    ("miox.readers.physio", "HcpPhysioReader", (Format.HCP_PHYSIO,)),
+    ("miox.readers.physio", "PhilipsPhyslogReader", (Format.PHILIPS_PHYSLOG,)),
+    ("miox.readers.physio", "SiemensPmuReader", (Format.SIEMENS_PMU,)),
+    ("miox.readers.profit_basis", "ProfitBasisReader", (Format.PROFIT_BASIS,)),
+    ("miox.readers.pulseq", "PulseqReader", (Format.PULSEQ,)),
+    ("miox.readers.pyamares_prior", "PyamaresPriorReader", (Format.PYAMARES_PRIOR,)),
+    ("miox.readers.pyamares_result", "PyamaresResultReader", (Format.PYAMARES_RESULT,)),
+    ("miox.readers.rnmrtk", "RnmrtkReader", (Format.RNMRTK,)),
+    ("miox.readers.rs2d", "Rs2dReader", (Format.RS2D,)),
+    ("miox.readers.siemens_protocol", "SiemensPrintedProtocolReader", (Format.SIEMENS_PRINTPROT,)),
+    ("miox.readers.siemens_protocol", "SiemensProtocolReader", (
+        Format.SIEMENS_PRO, Format.SIEMENS_EXAR,
+    )),
+    ("miox.readers.siemens_rda", "SiemensRdaReader", (Format.SIEMENS_RDA,)),
+    ("miox.readers.siemens_twix", "SiemensTwixReader", (Format.SIEMENS_TWIX,)),
+    ("miox.readers.simpson", "SimpsonReader", (Format.SIMPSON,)),
+    ("miox.readers.simulation", "JemrisMotionReader", (Format.JEMRIS_MOTION,)),
+    ("miox.readers.simulation", "JemrisPhantomReader", (Format.JEMRIS_PHANTOM,)),
+    ("miox.readers.simulation", "JemrisSignalReader", (Format.JEMRIS_SIGNAL,)),
+    ("miox.readers.simulation", "KomaPhantomReader", (Format.KOMA_PHANTOM,)),
+    ("miox.readers.simulation", "MrilabPhantomReader", (Format.MRILAB_PHANTOM,)),
+    ("miox.readers.sivic_ddf", "SivicDdfReader", (Format.SIVIC_DDF,)),
+    ("miox.readers.sparky", "SparkyReader", (Format.SPARKY,)),
+    ("miox.readers.spinsolve", "SpinsolveReader", (Format.SPINSOLVE,)),
+    ("miox.readers.spinwizard_basis", "SpinwizardBasisReader", (Format.SPINWIZARD_BASIS,)),
+    ("miox.readers.surfaces", "FreeSurferReader", (
+        Format.FREESURFER_SURFACE, Format.FREESURFER_MORPH, Format.FREESURFER_ANNOT,
+        Format.FREESURFER_LABEL,
+    )),
+    ("miox.readers.surfaces", "GiftiReader", (Format.GIFTI,)),
+    ("miox.readers.tarquin_dpt", "TarquinDptReader", (Format.TARQUIN_DPT,)),
+    ("miox.readers.tarquin_output", "TarquinOutputReader", (
+        Format.TARQUIN_RESULTS, Format.TARQUIN_FIT,
+    )),
+    ("miox.readers.tecmag", "TecmagReader", (Format.TECMAG_TNT,)),
+    ("miox.readers.text_fid", "TextFidReader", (Format.TEXT_FID,)),
+    ("miox.readers.toppe", "ToppeReader", (
+        Format.TOPPE_ENTRY, Format.TOPPE_MODULES, Format.TOPPE_LOOP, Format.TOPPE_MOD,
+    )),
+    ("miox.readers.topspin", "TopSpinReader", (Format.TOPSPIN, Format.TOPSPIN_PROCESSED)),
+    ("miox.readers.tractograms", "TrackReader", (Format.TRK, Format.TCK)),
+    ("miox.readers.tractograms", "TrxReader", (Format.TRX,)),
+    ("miox.readers.transforms", "AfniReader", (Format.TRANSFORM_AFNI,)),
+    ("miox.readers.transforms", "FslReader", (Format.TRANSFORM_FSL,)),
+    ("miox.readers.transforms", "ItkReader", (Format.TRANSFORM_ITK,)),
+    ("miox.readers.transforms", "LtaReader", (Format.TRANSFORM_LTA,)),
+    ("miox.readers.varian", "VarianReader", (Format.VARIAN,)),
+    ("miox.readers.varian_fdf", "VarianFdfReader", (Format.VARIAN_FDF,)),
+    ("miox.readers.vasf", "VasfReader", (Format.VASF,)),
+    ("miox.readers.vespa_prior", "VespaPriorReader", (Format.VESPA_PRIOR,)),
+    ("miox.readers.vespa_viff", "VespaViffReader", (Format.VESPA_VIFF,)),
+    ("miox.readers.vtk_legacy", "VtkReader", (Format.VTK_POLYDATA,)),
+    ("miox.readers.yarra", "YarraReader", (Format.YARRA_MODE, Format.YARRA_MODULE)),
+)
+
+
+#**************************************************************************************************#
+#                                             Readers                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# The reader of each format, as READERS lists them: a reader's module is imported and the reader   #
+# made the first time a file of one of its formats is read, so loading a file imports only what    #
+# that file needs (the readers' libraries take seconds to import all together).                    #
+#                                                                                                  #
+#**************************************************************************************************#
+class Readers(Mapping):
+    def __init__(self, loader: Loader):
+        self.loader = loader
+        self.table = {fmt: (module, name) for module, name, formats in READERS for fmt in formats}
+        self.made: dict[tuple[str, str], Reader] = {}
+
+    def __getitem__(self, fmt: Format) -> Reader:
+        module, name = self.table[fmt]
+        if (module, name) not in self.made:
+            cls = getattr(importlib.import_module(module), name)
+            self.made[module, name] = cls(self.loader) if name == "BasisFolderReader" else cls()
+        return self.made[module, name]
+
+    def __contains__(self, fmt: object) -> bool:
+        return fmt in self.table
+
+    def __iter__(self) -> Iterator[Format]:
+        return iter(self.table)
+
+    def __len__(self) -> int:
+        return len(self.table)
 
 #**************************************************************************************************#
 #                                              Loader                                              #
@@ -158,101 +222,7 @@ class Loader:
 
     def __init__(self):
         self.sniffer = Sniffer()
-        self.readers: dict[Format, Reader] = {}
-        for reader in (
-            AcqKnowledgeReader(),
-            AfniReader(),
-            BartReader(),
-            BidsPhysioReader(),
-            BasisFolderReader(self),
-            BrainVoyagerProtocolReader(),
-            BrainVoyagerRegionReader(),
-            BrainVoyagerSurfaceReader(),
-            BrainVoyagerTransformReader(),
-            BrainVoyagerVolumeReader(),
-            BrukerReader(),
-            CmrrPhysioReader(),
-            DicomImageReader(),
-            DicomMrsReader(),
-            FastMriReader(),
-            FidaReader(),
-            FslMrsBasisReader(),
-            FslReader(),
-            FreeSurferReader(),
-            GavaMidasPriorReader(),
-            GePfileReader(),
-            GePhysioReader(),
-            GeScanArchiveReader(),
-            GeSignaReader(),
-            GiftiReader(),
-            HcpPhysioReader(),
-            InspectorBasisReader(),
-            IsmrmrdReader(),
-            ItkReader(),
-            JemrisPhantomReader(),
-            JemrisSignalReader(),
-            JeolReader(),
-            JcampReader(),
-            JemrisMotionReader(),
-            JmruiReader(),
-            KomaPhantomReader(),
-            LcmodelBasisReader(),
-            LcmodelControlReader(),
-            LcmodelOutputReader(),
-            LcmodelRawReader(),
-            LtaReader(),
-            MarssBasisReader(),
-            MetaImageReader(),
-            MrdReader(),
-            MrilabPhantomReader(),
-            MrtrixReader(),
-            NibabelImageReader(),
-            NmrmlReader(),
-            NmrPipeReader(),
-            NrrdReader(),
-            NiftiMrsReader(),
-            NiftiSidecarMrsReader(),
-            OspreyBasisReader(),
-            OspreyContainerReader(),
-            PhilipsDataListReader(),
-            PhilipsRawLabReader(),
-            PhilipsExamCardReader(),
-            PhilipsPhyslogReader(),
-            PhilipsSparSdatReader(),
-            ProfitBasisReader(),
-            PulseqReader(),
-            PyamaresPriorReader(),
-            PyamaresResultReader(),
-            RnmrtkReader(),
-            Rs2dReader(),
-            SiemensPmuReader(),
-            SiemensPrintedProtocolReader(),
-            SiemensProtocolReader(),
-            SiemensRdaReader(),
-            SiemensTwixReader(),
-            SimpsonReader(),
-            SivicDdfReader(),
-            SparkyReader(),
-            SpinsolveReader(),
-            SpinwizardBasisReader(),
-            TarquinDptReader(),
-            TarquinOutputReader(),
-            TecmagReader(),
-            TextFidReader(),
-            ToppeReader(),
-            TopSpinReader(),
-            TrackReader(),
-            TrxReader(),
-            VarianReader(),
-            VarianFdfReader(),
-            VasfReader(),
-            VespaPriorReader(),
-            VespaViffReader(),
-            VtkReader(),
-            YarraReader(),
-        ):
-            for fmt in reader.FORMATS:
-                self.readers[fmt] = reader
+        self.readers = Readers(self)
 
     def load(
         self,
