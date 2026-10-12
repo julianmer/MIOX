@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import sys
 from pathlib import Path
@@ -30,6 +31,7 @@ from miox.audit import Auditor
 from miox.data import (
     FitResult,
     MRImage,
+    MRSData,
     NoiseCovariance,
     Phantom,
     PhysioData,
@@ -42,7 +44,7 @@ from miox.data import (
     Transform,
 )
 from miox.readers import Loader, ReaderError
-from miox.sniff import Format, Sniffer
+from miox.sniff import Format, Kind, Sniffer
 
 
 #**************************************************************************************************#
@@ -53,6 +55,8 @@ from miox.sniff import Format, Sniffer
 #                                                                                                  #
 #**************************************************************************************************#
 class CLI:
+    NOT_SPECTROSCOPY = (Kind.IMAGING, Kind.TRACTOGRAM, Kind.SURFACE, Kind.TRANSFORM, Kind.PHYSIO,
+                        Kind.SEQUENCE, Kind.PROTOCOL, Kind.PHANTOM, Kind.REPORT)
     def __init__(self):
         self.parser = argparse.ArgumentParser(prog="miox", description="Open any MR file.")
         self.parser.add_argument("--version", action="version", version=f"miox {__version__}")
@@ -77,6 +81,13 @@ class CLI:
         view.add_argument("--save", type=Path, help="save to this file instead of a window "
                           "(several datasets: name-1.png, name-2.png, ...)")
         view.set_defaults(func=self.view)
+
+        preview = commands.add_parser("preview", help="one picture of a spectroscopy file, as "
+                                      "the Quick Look extension shows it")
+        preview.add_argument("path", type=Path)
+        preview.add_argument("--to", default=None, help="file to write (format by suffix: pdf, "
+                             "png, svg), or - for PDF on standard output; default: a window")
+        preview.set_defaults(func=self.preview)
 
     def run(self, argv: list[str] | None = None) -> int:
         args = self.parser.parse_args(argv)
@@ -207,6 +218,41 @@ class CLI:
             for n, d in enumerate(datasets, 1):
                 view(d, args.save.with_name(f"{args.save.stem}-{n}{args.save.suffix}"))
         return status
+
+
+    def preview(self, args: argparse.Namespace) -> int:
+        """Status 2 when the file holds no spectroscopy data (files whose format cannot hold any
+        are declined before loading), 1 when it cannot be read."""
+        from miox.preview import Preview, preview  # matplotlib only when previewing
+
+        sniffed = Sniffer().sniff(args.path)
+        if sniffed.format == Format.UNKNOWN or sniffed.kind in self.NOT_SPECTROSCOPY:
+            print(f"miox preview: {args.path.name} is not spectroscopy ({sniffed.format})",
+                  file=sys.stderr)
+            return 2
+        window = None
+        if args.to is None:
+            import matplotlib.pyplot as plt
+
+            window = plt.figure(figsize=Preview.SIZE)
+        try:
+            datasets = [d for d in Loader().load(args.path) if isinstance(d, MRSData)]
+        except ReaderError as e:
+            print(f"miox preview: {e}", file=sys.stderr)
+            return 1
+        if not datasets:
+            print(f"miox preview: {args.path.name} holds no spectroscopy data", file=sys.stderr)
+            return 2
+        figure = preview(datasets, title=args.path.name, figure=window)
+        if window is not None:
+            plt.show()
+        elif args.to == "-":
+            buffer = io.BytesIO()
+            figure.savefig(buffer, format="pdf")
+            sys.stdout.buffer.write(buffer.getvalue())
+        else:
+            figure.savefig(args.to, dpi=150)
+        return 0
 
 
 #**************************************************************************************************#
