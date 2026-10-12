@@ -57,6 +57,7 @@ class RecordUpdater:
         ".part",  # a download in progress
     }
     IGNORE_NAMES = {".DS_Store"}
+    IGNORE_FOLDERS = {"augmentrum_reference"}  # arrays derived by scripts, not files of a format
 
     def __init__(self):
         self.sniffer = Sniffer()
@@ -114,7 +115,8 @@ class RecordUpdater:
                 or path.suffix.lower() in self.IGNORE_SUFFIXES
             ):
                 continue
-            if ".git" in path.parts or self.reads.is_lfs_pointer(path):
+            if ".git" in path.parts or self.IGNORE_FOLDERS & set(path.parts) \
+                    or self.reads.is_lfs_pointer(path):
                 continue
             yield path
 

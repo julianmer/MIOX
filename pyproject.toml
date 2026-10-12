@@ -28,6 +28,7 @@ dependencies = [
     "matplotlib>=3.8",
     "nibabel>=5.2",
     "nifti-mrs>=1.4",
+    "nifti-mrs-plus>=0.2.1",
     "nmrglue>=0.12",
     "numpy>=1.26",
     "pydicom>=3.0",

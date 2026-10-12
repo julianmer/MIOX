@@ -81,7 +81,8 @@ class ReadRecords:
     def targets(self) -> Iterator[Path]:
         """Public files whose format has a reader."""
         for path in sorted(q for top in PUBLIC_DATA.iterdir() for q in top.rglob("*")):
-            if not path.is_file() or ".git" in path.parts or self.is_lfs_pointer(path):
+            if not path.is_file() or ".git" in path.parts or self.is_lfs_pointer(path) \
+                    or "augmentrum_reference" in path.parts:  # arrays derived by a script
                 continue
             if path.suffix == ".part":  # a download in progress
                 continue
