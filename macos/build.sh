@@ -1,0 +1,86 @@
+#!/bin/bash
+# Builds MIOX.app: a small host app carrying the Quick Look extension, which holds a standalone
+# Python with MIOX installed and runs it inside its own process (a sandboxed extension may not
+# start other programs). Signed for this Mac only (ad hoc). Usage: macos/build.sh [--quick] [--install]
+#   --quick    keep the bundled Python of the last build (Swift and Info.plist changes only)
+#   --install  copy the app to ~/Applications, register the extension and reset Quick Look.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SRC="$ROOT/macos"
+BUILD="$SRC/build"
+APP="$BUILD/MIOX.app"
+APPEX="$APP/Contents/PlugIns/MIOXQuickLook.appex"
+PYTHON_VERSION="3.12"
+VERSION="$(sed -n 's/^__version__ = "\(.*\)"/\1/p' "$ROOT/miox/__init__.py")"
+TARGET="arm64-apple-macos12.0"
+
+# file extensions claimed for MR data that macOS has no type for, and the system's own types
+EXTENSIONS=(dat 7 rda sdat spar ima basis coord dpt ddf cmplx rsd rsp mrd data list mat jdx dx
+            jdf tnt ft ft2 ucsf nmrml h5 nii)
+TYPES=(io.github.julianmer.miox.mr-data org.nema.dicom gov.nih.nifti-1 org.gnu.gnu-zip-archive
+       org.napari.napari.h5 com.mathworks.workspace)
+
+QUICK=0 INSTALL=0
+for arg in "$@"; do
+    case "$arg" in
+        --quick) QUICK=1 ;;
+        --install) INSTALL=1 ;;
+        *) echo "unknown option $arg" >&2; exit 1 ;;
+    esac
+done
+if [[ $QUICK == 1 && -x "$APPEX/Contents/Resources/python/bin/python3" ]]; then
+    echo "== Keeping the bundled Python"
+else
+    QUICK=0
+    rm -rf "$BUILD"
+fi
+mkdir -p "$APP/Contents/MacOS" "$APPEX/Contents/MacOS" "$APPEX/Contents/Resources"
+
+if [[ $QUICK == 0 ]]; then
+echo "== Python $PYTHON_VERSION with MIOX"
+uv python install "$PYTHON_VERSION" --install-dir "$BUILD/pythons" >/dev/null
+cp -R "$(ls -d "$BUILD"/pythons/cpython-"$PYTHON_VERSION"*/ | head -1)" "$APPEX/Contents/Resources/python"
+PY="$APPEX/Contents/Resources/python/bin/python3"
+uv pip install --quiet --python "$PY" --break-system-packages "$ROOT"
+rm -rf "$BUILD/pythons"
+# the sandbox cannot write bytecode into the bundle: compile it now, valid whatever the file times
+"$PY" -m compileall -q -j 0 --invalidation-mode unchecked-hash "$APPEX/Contents/Resources/python/lib" \
+    >/dev/null || true
+fi
+
+echo "== Swift"
+plist() {  # Info.plist with the version, extensions and types filled in
+    local items="$2" indent="$3" text=""
+    for item in $items; do text+="$indent<string>$item</string>\n"; done
+    sed -e "s/__VERSION__/$VERSION/" -e "s/__SDK__/$(xcrun --sdk macosx --show-sdk-version)/g" \
+        -e "s/__SDKBUILD__/$(xcrun --sdk macosx --show-sdk-build-version)/" "$1" | awk -v key="$4" -v text="$text" \
+        '$0 ~ key { printf "%s", text; next } { print }'
+}
+plist "$SRC/App/Info.plist" "${EXTENSIONS[*]}" "                    " "__EXTENSIONS__" \
+    > "$APP/Contents/Info.plist"
+plist "$SRC/QuickLook/Info.plist" "${TYPES[*]}" "                " "__TYPES__" \
+    > "$APPEX/Contents/Info.plist"
+swiftc -O -target "$TARGET" -o "$APP/Contents/MacOS/MIOX" "$SRC/App/main.swift"
+swiftc -O -target "$TARGET" -parse-as-library -application-extension \
+    -module-name MIOXQuickLook -framework QuickLookUI \
+    -Xlinker -e -Xlinker _NSExtensionMain \
+    -o "$APPEX/Contents/MacOS/MIOXQuickLook" "$SRC/QuickLook/PreviewProvider.swift"
+
+echo "== Signing (ad hoc, this Mac only)"
+codesign --force --sign - --entitlements "$SRC/QuickLook/QuickLook.entitlements" "$APPEX"
+codesign --force --sign - "$APP"
+du -sh "$APP"
+
+if [[ $INSTALL == 1 ]]; then
+    echo "== Installing to ~/Applications"
+    mkdir -p "$HOME/Applications"
+    rm -rf "$HOME/Applications/MIOX.app"
+    ditto "$APP" "$HOME/Applications/MIOX.app"
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+        -f "$HOME/Applications/MIOX.app"
+    pluginkit -a "$HOME/Applications/MIOX.app/Contents/PlugIns/MIOXQuickLook.appex"
+    pluginkit -e use -i io.github.julianmer.miox.quicklook
+    qlmanage -r >/dev/null && qlmanage -r cache >/dev/null
+    echo "Installed. Select a spectroscopy file in Finder and press space."
+fi
