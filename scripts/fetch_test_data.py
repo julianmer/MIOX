@@ -249,6 +249,11 @@ class DataFetcher:
         "lipsia": (  # Vista .v images (Apache-2.0)
             "https://github.com/lipsia-fmri/lipsia.git", ["data", "LICENSE"],
         ),
+        "laynii": (  # the NIfTI sources of three lipsia Vista files (BSD-3)
+            "https://github.com/layerfMRI/LAYNII.git",
+            ["test_data/Ding2016_occip_T2starweighted_filtered_for_tests.nii.gz",
+             "test_data/Ding2016_occip_rim.nii.gz", "test_data/rim_M.nii.gz", "LICENSE"],
+        ),
         "nifti_zarr_py": (  # NIfTI-Zarr examples with their NIfTI sources (MIT)
             "https://github.com/neuroscales/nifti-zarr-py.git", ["tests/data", "LICENSE"],
         ),

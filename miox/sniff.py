@@ -82,6 +82,10 @@ class Format(StrEnum):
     AFNI = "afni"
     NRRD = "nrrd"
     METAIMAGE = "metaimage"
+    JNIFTI = "jnifti"  # JNIfTI in JSON text (.jnii)
+    VISTA = "vista"  # Vista images (.v; Lipsia)
+    NIFTI_ZARR = "nifti_zarr"  # NIfTI-Zarr store (.nii.zarr folder)
+    JNIFTI_BINARY = "jnifti_binary"  # JNIfTI in binary BJData (.bnii)
     MRTRIX = "mrtrix"
     VARIAN_FDF = "varian_fdf"  # Varian/Agilent VnmrJ image
     GE_SIGNA = "ge_signa"  # GE Signa 4.x, Genesis 5.x and Advantage Windows images
@@ -440,10 +444,12 @@ class Sniffer:
         return None
 
     def directory(self, path: Path) -> Sniff:
-        """A TRX tractogram folder, a Bruker scan, a Varian .fid folder, a Spinsolve experiment, a
-        basis set of one file per metabolite, a DICOM series, or a study folder of DICOM series
-        folders (a DICOMDIR at its top is passed over)."""
+        """A NIfTI-Zarr store, a TRX tractogram folder, a Bruker scan, a Varian .fid folder, a
+        Spinsolve experiment, a basis set of one file per metabolite, a DICOM series, or a study
+        folder of DICOM series folders (a DICOMDIR at its top is passed over)."""
         names = {p.name for p in path.iterdir()}
+        if names & {".zgroup", "zarr.json"} and (path / "nifti").is_dir():
+            return self._image(path, Format.NIFTI_ZARR, "zarr group with a nifti header array")
         if "header.json" in names and self._trx(path):
             return Sniff(path, Format.TRX, Kind.TRACTOGRAM, confidence=0.9,
                          evidence=("folder with header.json, positions and offsets",))
@@ -1432,7 +1438,7 @@ class Sniffer:
 
     def image_files(self, path: Path, head: bytes) -> Sniff | None:
         """Image formats nibabel reads: MGH, MINC 1 and 2, AFNI, Analyze (and their data halves);
-        gzipped MRtrix images; GE Signa images."""
+        gzipped MRtrix images; GE Signa images; JNIfTI (JSON or BJData); Vista."""
         name, suffix = path.name.lower(), path.suffix.lower()
         if name.endswith(".mif.gz") and head[:2] == GZIP_MAGIC:
             try:
@@ -1460,6 +1466,12 @@ class Sniffer:
             header = path.with_name(self.BRIK.sub(".HEAD", path.name))
             if header.is_file():
                 return dataclasses.replace(self.sniff(header), path=path, companions=(header,))
+        if head.startswith(b"V-data 2 {") and b"image" in head:
+            return self._image(path, Format.VISTA, "V-data header with an image")
+        if head[:1] == b"{" and b"NIFTIHeader" in head:
+            binary = head[1:2] not in b' \t\r\n"}'  # a BJData key length marker
+            fmt = Format.JNIFTI_BINARY if binary else Format.JNIFTI
+            return self._image(path, fmt, "JData object with a NIFTIHeader")
         if suffix == ".hdr" and head[:4] in self.ANALYZE_SIZES:
             img = self._sibling(path, ".img")
             return self._image(path, Format.ANALYZE, "Analyze header size 348", img, "IMG")

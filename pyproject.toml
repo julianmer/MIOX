@@ -34,6 +34,7 @@ dependencies = [
     "pydicom>=3.0",
     "python-gdcm>=3.2.6",
     "spec2nii>=0.8.15",
+    "zarr>=2.18",
 ]
 
 [project.optional-dependencies]

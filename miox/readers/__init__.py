@@ -33,6 +33,7 @@ __all__ = [
     "GeSignaReader",
     "IncompleteError",
     "InspectorBasisReader",
+    "JNiftiReader",
     "JmruiReader",
     "LcmodelBasisReader",
     "LcmodelOutputReader",
@@ -45,6 +46,7 @@ __all__ = [
     "NrrdReader",
     "NiftiMrsReader",
     "NiftiSidecarMrsReader",
+    "NiftiZarrReader",
     "OspreyBasisReader",
     "OspreyContainerReader",
     "PhilipsDataListReader",
@@ -67,6 +69,7 @@ __all__ = [
     "VasfReader",
     "VespaPriorReader",
     "VespaViffReader",
+    "VistaReader",
     "load",
 ]
 

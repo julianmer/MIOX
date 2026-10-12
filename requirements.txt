@@ -8,6 +8,7 @@ nmrglue>=0.12
 numpy>=1.26
 pydicom>=3.0
 spec2nii>=0.8.15
+zarr>=2.18
 pytest>=8.0.0
 ruff>=0.6
 scipy>=1.15

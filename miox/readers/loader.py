@@ -96,6 +96,9 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.lcmodel_raw", "LcmodelRawReader", (Format.LCMODEL_RAW,)),
     ("miox.readers.marss_basis", "MarssBasisReader", (Format.MARSS_BASIS,)),
     ("miox.readers.metaimage", "MetaImageReader", (Format.METAIMAGE,)),
+    ("miox.readers.jnifti", "JNiftiReader", (Format.JNIFTI, Format.JNIFTI_BINARY)),
+    ("miox.readers.vista", "VistaReader", (Format.VISTA,)),
+    ("miox.readers.nifti_zarr", "NiftiZarrReader", (Format.NIFTI_ZARR,)),
     ("miox.readers.mrd", "MrdReader", (Format.MRD,)),
     ("miox.readers.mrtrix", "MrtrixReader", (Format.MRTRIX,)),
     ("miox.readers.nibabel_image", "NibabelImageReader", (

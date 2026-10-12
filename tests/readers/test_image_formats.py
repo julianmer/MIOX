@@ -6,8 +6,8 @@
 #                                                                                                  #
 # Created: 04/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Unit tests of the NRRD, MetaImage, MRtrix, Varian fdf and GE Signa readers on files     #
-#          written here: layouts, detached data, world coordinates and the keys derived.           #
+# Purpose: Unit tests of the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa and JNIfTI readers on   #
+#          files written here: layouts, detached data, world coordinates and the keys derived.     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -144,3 +144,28 @@ def test_fdf_folder_assembles_slices(tmp_path):
 )
 def test_data_general_float(word, value):
     assert GeHeader.data_general_float(word) == value
+
+
+def bjdata_key(name: str) -> bytes:
+    return b"U" + bytes([len(name)]) + name.encode()
+
+
+def test_jnifti_binary_typed_array_and_qform(tmp_path):
+    """A BJData file written by hand: an object with a NIFTIHeader (qform with a 90-degree turn
+    about z) and NIFTIData as an N-D typed int16 array (little-endian, row-major)."""
+    voxels = np.arange(2 * 3 * 4, dtype="<i2").reshape(2, 3, 4)
+    header = (b"{" + bjdata_key("QForm") + b"S" + bjdata_key("scanner_anat")
+              + bjdata_key("VoxelSize") + b"[$d#U\x03" + np.array([2, 2, 3], "<f4").tobytes()
+              + bjdata_key("Quatern") + b"{" + bjdata_key("b") + b"d" + np.float32(0).tobytes()
+              + bjdata_key("c") + b"d" + np.float32(0).tobytes()
+              + bjdata_key("d") + b"d" + np.float32(np.sqrt(0.5)).tobytes() + b"}" + b"}")
+    data = (b"{" + bjdata_key("_ArrayType_") + b"S" + bjdata_key("int16")
+            + bjdata_key("_ArraySize_") + b"[$U#U\x03\x02\x03\x04"
+            + bjdata_key("_ArrayData_") + b"[$I#[$U#U\x03\x02\x03\x04" + voxels.tobytes() + b"}")
+    path = tmp_path / "small.bnii"
+    path.write_bytes(b"{" + bjdata_key("NIFTIHeader") + header + bjdata_key("NIFTIData") + data
+                     + b"}")
+    assert miox.sniff(path).format == miox.Format.JNIFTI_BINARY
+    image = miox.load(path)[0]
+    assert np.array_equal(image.data, voxels)
+    assert np.allclose(image.affine[:3, :3], [[0, -2, 0], [2, 0, 0], [0, 0, 3]], atol=1e-6)

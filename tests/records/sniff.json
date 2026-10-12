@@ -13975,34 +13975,34 @@
   "kind": "unknown"
  },
  "jnifti/samples/basic/mousehead.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/basic/mousehead.jnii": {
-  "format": "unknown",
+  "format": "jnifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/basic/mousehead_gzip.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/basic/mousehead_lzma.jnii": {
-  "format": "unknown",
+  "format": "jnifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/colin27/colin27_zlib.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/colin27/colin27_zlib.jnii": {
-  "format": "unknown",
+  "format": "jnifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/colin27/create_jnii.m": {
   "format": "unknown",
@@ -14015,24 +14015,24 @@
   "kind": "unknown"
  },
  "jnifti/samples/digimouse/digimouse_lzma.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/digimouse/digimouse_lzma.jnii": {
-  "format": "unknown",
+  "format": "jnifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/digimouse/digimouse_zlib.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/digimouse/digimouse_zlib.jnii": {
-  "format": "unknown",
+  "format": "jnifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/headct/create_headct_jnii.m": {
   "format": "unknown",
@@ -14045,19 +14045,19 @@
   "kind": "imaging"
  },
  "jnifti/samples/headct/headct_lzma.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/headct/headct_lzma.jnii": {
-  "format": "unknown",
+  "format": "jnifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/headct/headct_zlib.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/nifti2/avg152T1_LR_nifti2.nii.gz": {
   "format": "nifti",
@@ -14065,14 +14065,14 @@
   "kind": "imaging"
  },
  "jnifti/samples/nifti2/avg152T1_LR_nifti2_lzma.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/nifti2/avg152T1_LR_nifti2_zlib.bnii": {
-  "format": "unknown",
+  "format": "jnifti_binary",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "jnifti/samples/nifti2/create_avg152_jnii.m": {
   "format": "unknown",
@@ -14349,6 +14349,26 @@
   "vendor": null,
   "kind": "unknown"
  },
+ "laynii/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "laynii/test_data/Ding2016_occip_T2starweighted_filtered_for_tests.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "laynii/test_data/Ding2016_occip_rim.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "laynii/test_data/rim_M.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
  "lcmodel/test_lcm/3t.basis": {
   "format": "lcmodel_basis",
   "vendor": null,
@@ -14380,59 +14400,59 @@
   "kind": "unknown"
  },
  "lipsia/data/ana_Ding.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/ana_vaso.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/mask_Ding.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/metric_Ding.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/metric_M.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/metric_vaso.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/rim_Ding.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/rim_M.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/rim_vaso.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/zmap_M.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "lipsia/data/zmap_vaso.v": {
-  "format": "unknown",
+  "format": "vista",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "imaging"
  },
  "m4raw/LICENSE": {
   "format": "unknown",
