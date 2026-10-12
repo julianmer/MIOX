@@ -37,6 +37,7 @@ NMR_FORMATS = {Format.TOPSPIN, Format.TOPSPIN_PROCESSED, Format.JCAMP_NMR, Forma
                Format.SPINSOLVE, Format.RS2D, Format.RNMRTK}
 PROTON_RANGE = (6.0, 0.0)  # ppm shown for 1H, water included
 METABOLITE_SCALE = (4.2, 0.2)  # ppm whose values set the vertical range of the Metabolites view
+GRID = 32  # voxels a side shown on the Grid tab
 
 
 #**************************************************************************************************#
@@ -44,9 +45,9 @@ METABOLITE_SCALE = (4.2, 0.2)  # ppm whose values set the vertical range of the 
 #**************************************************************************************************#
 #                                                                                                  #
 # One dataset in the pipeline's layout (1, voxels, coils, transients, points), one array per edit  #
-# condition, in FSL-MRS's orientation (conjugated): every voxel of a grid (the one with the        #
-# strongest signal is the focus), the first increment of indirect NMR dimensions, other dimensions #
-# summed (named in the notes).                                                                     #
+# condition, in FSL-MRS's orientation (conjugated): every voxel of a grid (the centre one is the   #
+# focus), the first increment of indirect NMR dimensions, other dimensions summed (named in the    #
+# notes).                                                                                          #
 #                                                                                                  #
 #**************************************************************************************************#
 class Prepared:
@@ -82,8 +83,8 @@ class Prepared:
         # FSL-MRS's orientation: the conjugate of NIfTI-MRS as stored (nifti_mrs conjugates at
         # use), which the pipeline and FSL-MRS's spectrum and axis expect
         self.conditions = np.transpose(data, order)[:, None].conj()  # (E, 1, V, C, D, T)
-        head = np.abs(self.conditions[0, 0, :, :, :, :16]).sum(axis=(1, 2, 3))
-        self.focus = int(np.argmax(head))  # the voxel with the strongest signal
+        centre = tuple(n // 2 for n in self.spatial)
+        self.focus = int(np.ravel_multi_index(centre, self.spatial))  # the centre voxel
 
     @property
     def grid(self) -> bool:
@@ -236,7 +237,7 @@ class Plot:
     def axis(xlim: tuple, unit: str, width: int, y: float) -> str:
         span = abs(xlim[0] - xlim[1])
         step = next(s for s in (0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 5000)
-                    if span / s <= 10)
+                    if span / s <= width // 90)  # about one tick per 90 units
         ticks = np.arange(np.ceil(min(xlim) / step) * step, max(xlim) + 1e-9, step)
         out = [f'<line class="axis" x1="0" x2="{width}" y1="{y}" y2="{y}"/>']
         unit = f'<tspan class="unit"> {unit}</tspan>'
@@ -281,25 +282,17 @@ class Plot:
 
     @staticmethod
     def png(pixels: np.ndarray) -> str:
-        """8-bit pixels (rows, columns) grey or (rows, columns, 2) grey and alpha, as a data URL."""
-        height, width = pixels.shape[:2]
-        colour = 0 if pixels.ndim == 2 else 4
+        """8-bit grey pixels (rows, columns) as a PNG data URL."""
+        height, width = pixels.shape
         rows = b"".join(b"\x00" + row.tobytes() for row in pixels.astype(np.uint8))
         def chunk(kind: bytes, data: bytes) -> bytes:
             return (len(data).to_bytes(4, "big") + kind + data
                     + zlib.crc32(kind + data).to_bytes(4, "big"))
         png = (b"\x89PNG\r\n\x1a\n"
                + chunk(b"IHDR", width.to_bytes(4, "big") + height.to_bytes(4, "big")
-                       + bytes([8, colour, 0, 0, 0]))
+                       + bytes([8, 0, 0, 0, 0]))
                + chunk(b"IDAT", zlib.compress(rows, 9)) + chunk(b"IEND", b""))
         return "data:image/png;base64," + base64.b64encode(png).decode()
-
-    @classmethod
-    def image(cls, values: np.ndarray) -> str:
-        """Grey levels as a PNG whose ink is transparency (inverted for dark mode by CSS)."""
-        scaled = values / (np.percentile(values, 99.5) or 1.0)
-        alpha = (np.clip(scaled, 0, 1) * 255).astype(np.uint8)
-        return cls.png(np.stack([np.zeros_like(alpha), alpha], -1))  # black ink
 
     @classmethod
     def grey(cls, values: np.ndarray, window: tuple) -> str:
@@ -424,7 +417,7 @@ class Page:
         where = []
         if self.prepared.grid:
             where = [f"voxel {self.prepared.focus_index} of "
-                     f"{' x '.join(map(str, self.prepared.spatial))} (strongest signal)"]
+                     f"{' x '.join(map(str, self.prepared.spatial))} (centre)"]
         if self.water_scan:
             where.append("water scan")
         steps = list(dict.fromkeys(where + self.prepared.notes + self.water_notes
@@ -505,33 +498,46 @@ class Page:
                 + Plot.series(phi, "phase (degrees)", removed))
 
     def grid_pane(self) -> str:
-        """The slice through the focus voxel: a map of the signal per voxel and the grid of
-        their spectra on one scale (real part, as the Spectrum tab)."""
+        """The slice through the focus voxel: every voxel's spectrum (real part, one range for
+        all, cut at the 0.1 and 99.9 percentiles), its cell shaded by its signal, beside the focus
+        voxel drawn large; grids larger than GRID voxels a side show the GRID around the focus."""
         r, (nx, ny, nz) = self.results[0], self.prepared.spatial
-        fids = np.asarray(r.fid)[0, :, 0, 0]  # (V, T)
-        x, spec = self.spectrum(fids)
+        fi, fj, k = self.prepared.focus_index
+        x, spec = self.spectrum(np.asarray(r.fid)[0, :, 0, 0])  # (V, points)
+        spec = spec.reshape(nx, ny, nz, -1)[:, :, k]
         xlim = self.xlim(x)
-        mask = (x >= min(xlim)) & (x <= max(xlim))
-        values = spec[:, mask].real.reshape(nx, ny, nz, -1)
-        k = self.prepared.focus_index[2]
-        plane = values[:, :, k]  # (nx, ny, points)
-        signal = np.abs(spec[:, mask]).sum(axis=-1).reshape(nx, ny, nz)[:, :, k]
-        top = float(np.abs(plane).max()) or 1.0
-        cells = []
-        for j in range(ny - 1, -1, -1):  # rows from the top of the slice
-            for i in range(nx):
-                path = Plot.path(x[mask][::4], plane[i, j, ::4], (0, 2, 100, 46), xlim,
-                                 (-top, top))
-                mark = " focus" if (i, j) == self.prepared.focus_index[:2] else ""
-                cells.append(f'<svg viewBox="0 0 100 50" class="plot cell{mark}" '
-                             f'preserveAspectRatio="none"><g class="line">{path}</g></svg>')
-        image = Plot.image(np.abs(signal.T[::-1]))
-        return (f"<div class=note>Slice {k + 1} of {nz}: signal per voxel "
-                f"({x[mask].max():.1f}-{x[mask].min():.1f} ppm), then every voxel's spectrum "
-                f"on one scale; the focus voxel {self.prepared.focus_index} is marked.</div>"
-                f'<img class="heat map" src="{image}" style="width:{min(320, nx * 20)}px">'
-                f'<div class=cells style="grid-template-columns:repeat({nx}, 1fr)">'
-                f"{''.join(cells)}</div>")
+        i0, j0 = (max(0, min(f - GRID // 2, n - GRID)) for f, n in ((fi, nx), (fj, ny)))
+        columns, rows = range(i0, min(nx, i0 + GRID)), range(j0, min(ny, j0 + GRID))
+
+        def render(window):
+            mask = (x >= min(window or xlim)) & (x <= max(window or xlim))
+            values = spec[columns[0]:columns[-1] + 1, rows[0]:rows[-1] + 1][..., mask].real
+            ylim = tuple(float(v) for v in np.percentile(values, (0.1, 99.9)))
+            signal = np.abs(values).sum(axis=-1)
+            signal = signal / (signal.max() or 1.0)
+            view = (x >= min(xlim)) & (x <= max(xlim))
+            cells = []
+            for j in reversed(rows):  # the top row first
+                for i in columns:
+                    path = Plot.path(x[view], spec[i, j, view].real, (2, 3, 96, 54), xlim, ylim,
+                                     points=200)
+                    mark = ' class="focus"' if (i, j) == (fi, fj) else ""
+                    shade = 0.04 + 0.3 * signal[i - columns[0], j - rows[0]]
+                    cells.append(f'<svg viewBox="0 0 100 60" preserveAspectRatio="none"{mark} '
+                                 f'style="background:rgba(127,127,127,{shade:.2f})">'
+                                 f"<title>voxel ({i}, {j}, {k})</title>{path}</svg>")
+            focus = Plot.spectrum([(x, spec[fi, fj].real, "line accent")], xlim, "ppm",
+                                  width=400, height=260, window=window)
+            return (f"<div class=mrsi><div class=cells style=\"grid-template-columns:"
+                    f"repeat({len(columns)}, 1fr)\">{''.join(cells)}</div>"
+                    f"<div><h2>Voxel ({fi}, {fj}, {k})</h2>{focus}</div></div>")
+
+        part = (f"voxels {columns[0]}-{columns[-1]} x {rows[0]}-{rows[-1]} of {nx} x {ny}, "
+                if len(columns) < nx or len(rows) < ny else "")
+        return (self.scaled(render)
+                + f"<div class=note>Slice {k + 1} of {nz}, {part}every voxel's spectrum on one "
+                "scale, its cell shaded by its signal; the marked voxel (the centre) is drawn "
+                "large. Point at a cell for its voxel.</div>")
 
     def water_pane(self) -> str:
         r = self.results[0] if self.results else None
@@ -701,10 +707,10 @@ def document(title: str, facts: str, tabs: list[tuple[str, str]], switch: bool =
 PAGE = """<!doctype html><html><head><meta charset="utf-8">
 <meta name="color-scheme" content="light dark"><style>
 :root {{ --bg:#ffffff; --ink:#1d1d1f; --soft:#6e6e73; --faint:#aeaeb2; --rule:#e8e8ed;
-         --accent:#0071e3; --pill:#f2f2f7; --heat:none; --drop:#d70015; }}
+         --accent:#0071e3; --pill:#f2f2f7; --drop:#d70015; }}
 @media (prefers-color-scheme: dark) {{
   :root {{ --bg:#1c1c1e; --ink:#f5f5f7; --soft:#a1a1a6; --faint:#636366; --rule:#38383a;
-           --accent:#2997ff; --pill:#2c2c2e; --heat:invert(1); --drop:#ff6961; }} }}
+           --accent:#2997ff; --pill:#2c2c2e; --drop:#ff6961; }} }}
 * {{ box-sizing:border-box; }}
 body {{ margin:0; padding:22px 26px; background:var(--bg); color:var(--ink);
         font:13px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
@@ -743,12 +749,13 @@ section > h2:first-child {{ margin-top:0; }}
 .note, .legend {{ color:var(--faint); font-size:11px; margin-top:8px; }}
 .legend b {{ color:var(--accent); font-weight:500; }}
 .empty {{ color:var(--soft); padding:40px 0; }}
-.heat {{ width:100%; display:block; image-rendering:auto; filter:var(--heat);
-         margin-top:10px; }}
-.map {{ height:auto; image-rendering:pixelated; margin:10px 0; }}
-.cells {{ display:grid; gap:1px; margin-top:6px; }}
-.cell {{ background:var(--pill); }} .cell.focus {{ outline:1px solid var(--accent); }}
-.cell polyline {{ stroke-width:0.8; }}
+.mrsi {{ display:grid; grid-template-columns:1fr 280px; gap:18px; align-items:start; }}
+.cells {{ display:grid; border-left:1px solid var(--rule); border-top:1px solid var(--rule); }}
+.cells svg {{ display:block; width:100%; height:auto; border-right:1px solid var(--rule);
+              border-bottom:1px solid var(--rule); }}
+.cells svg.focus {{ outline:1.5px solid var(--accent); outline-offset:-1.5px; }}
+.cells polyline {{ fill:none; stroke:var(--ink); stroke-width:.8;
+                   vector-effect:non-scaling-stroke; }}
 .planes {{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; align-items:end; }}
 .slices {{ display:grid; grid-template-columns:repeat(6, 1fr); gap:3px; }}
 figure {{ margin:0; position:relative; }}

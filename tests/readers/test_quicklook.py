@@ -10,7 +10,8 @@
 #          steps and the Full | Metabolites switch, coils as combined, averages before and after   #
 #          alignment, edited data with their difference, the empty states (one coil, no water, no  #
 #          spectral axis), water scans (by name or by water dominance) and water references found  #
-#          next to the data; the image page: the volume turned to RAS, planes, slices, details.    #
+#          next to the data; the MRSI grid around the centre voxel; the image page: the volume     #
+#          turned to RAS, planes, slices, details.                                                 #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,6 +20,8 @@
 #   imports   #
 #*************#
 from __future__ import annotations
+
+import re
 
 import numpy as np
 
@@ -133,3 +136,16 @@ def test_command_line_writes_the_image_page(tmp_path):
     assert main(["preview", str(path), "--to", str(tmp_path / "t1.html")]) == 0
     assert ">Planes</label>" in (tmp_path / "t1.html").read_text()
     assert main(["preview", str(path), "--to", str(tmp_path / "t1.pdf")]) == 2
+
+
+def test_mrsi_grid_marks_the_centre_voxel():
+    data = fid()[None, None, None, :] * np.arange(1, 10).reshape(3, 3, 1, 1)
+    meta = Meta({})
+    meta.set("SpectrometerFrequency", [SF], "test")
+    meta.set("ResonantNucleus", ["1H"], "test")
+    grid = MRSData(data, 1 / SW, np.eye(4), meta,
+                   Provenance((), miox.Format.NIFTI_MRS, "test", {}), (None, None, None))
+    page = Page([grid], "mrsi.nii.gz").html()
+    assert ">Grid</label>" in page and "voxel (1, 1, 0) of 3 x 3 x 1 (centre)" in page
+    assert page.count("<title>voxel (") == 2 * 9  # full and metabolites
+    assert len(re.findall(r'class="focus" style="[^"]*"><title>voxel \(1, 1, 0\)', page)) == 2
