@@ -38,6 +38,7 @@ NMR_FORMATS = {Format.TOPSPIN, Format.TOPSPIN_PROCESSED, Format.JCAMP_NMR, Forma
 PROTON_RANGE = (6.0, 0.0)  # ppm shown for 1H, water included
 METABOLITE_SCALE = (4.2, 0.2)  # ppm whose values set the vertical range of the Metabolites view
 GRID = 32  # voxels a side shown on the Grid tab
+READER_NOTES = ("reconstruct", "untested", "assumed", "not converted", "caution", "turned into")
 
 
 #**************************************************************************************************#
@@ -327,7 +328,9 @@ class Page:
         if self.water is None and not self.water_scan and source is not None:
             self.water = self.partner(Path(source))
         d = self.main
-        self.processable = d.dwelltime is not None and d.spectrometer_frequency is not None
+        self.blank = not np.any(self.prepared.conditions)  # e.g. MRSI a converter left empty
+        self.processable = (d.dwelltime is not None and d.spectrometer_frequency is not None
+                            and not self.blank)
         nmr = d.provenance.format in NMR_FORMATS or "Solvent" in d.meta
         self.proton = d.nucleus == "1H" and not nmr
         self.reference = float(d.meta.get("ReferencePPM", PROTON_REFERENCE if self.proton
@@ -399,6 +402,9 @@ class Page:
                 f"<div class=met>{render(METABOLITE_SCALE)}</div>")
 
     def spectrum_pane(self) -> str:
+        if self.blank:
+            notes = "".join(f"<br>{html.escape(n)}." for n in self.main.provenance.notes)
+            return f"<div class=empty>The data are all zero: nothing to show.{notes}</div>"
         if not self.results:
             return ("<div class=empty>The file states no dwell time or spectrometer frequency: "
                     "nothing is processed.</div>")
@@ -427,7 +433,14 @@ class Page:
         x, height = lines[0][0], 320 if len(lines) == 1 else 440
         return (self.scaled(lambda window: Plot.spectrum(lines, self.xlim(x), "ppm",
                                                          height=height, window=window))
-                + legend + f"<div class=note>{' · '.join(steps)}.</div>")
+                + legend + f"<div class=note>{' · '.join(steps)}.</div>" + self.reader_notes())
+
+    def reader_notes(self) -> str:
+        """What the reader warned about the data (e.g. not reconstructed, untested orientation);
+        console hints and header syntax warnings are left out (miox info lists them)."""
+        notes = [html.escape(n.strip().rstrip(".")) for n in self.main.provenance.notes
+                 if any(word in n.lower() for word in READER_NOTES)]
+        return "".join(f"<div class=note>Reader: {n}.</div>" for n in notes)
 
     def coils_pane(self) -> str:
         """Every coil as it enters the combination (times its wSVD weight, so in phase; mean of

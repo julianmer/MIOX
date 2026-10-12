@@ -17,11 +17,15 @@
 #*************#
 from __future__ import annotations
 
+import re
 import warnings
 
+import numpy as np
+import spec2nii.GSL.gslfunctions as GSL
 from mapvbvd import mapVBVD
+from nifti_mrs.create_nmrs import gen_nifti_mrs_hdr_ext
 from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.Siemens.twixfunctions import process_twix, xa_or_vx
+from spec2nii.Siemens.twixfunctions import id_sequence_type, process_twix, xa_or_vx
 
 # own
 from miox.data import MRSData, RawData
@@ -157,7 +161,20 @@ class SiemensTwixReader(Spec2niiReader):
         images, names = process_twix(
             twix, None, sniff.path.name, stream, self.NO_OVERRIDES, quiet=True, remove_os=False
         )
-        return list(images), list(names)
+        images, names = list(images), list(names)
+        if stream == self.MAIN_STREAM and id_sequence_type(twix["hdr"]) == "mrsi":
+            # spec2nii leaves MRSI empty: the data, reconstructed, in its geometry
+            csi = TwixCsi(twix)
+            if not csi.verified:
+                warnings.warn(TwixCsi.UNVERIFIED, stacklevel=2)
+                return images, names
+            empty = images[0]
+            empty.hdr_ext.set_dim_info(0, "DIM_COIL")
+            images[0] = gen_nifti_mrs_hdr_ext(csi.reconstruct(), empty.dwelltime, empty.hdr_ext,
+                                              empty.getAffine("voxel", "world"))
+            names[0] = names[0].removesuffix("_empty")
+            warnings.warn(TwixCsi.NOTE, stacklevel=2)
+        return images, names
 
     def _vendor(self, twix, streams: list[str]) -> dict:
         header = twix["hdr"]
@@ -180,3 +197,81 @@ class SiemensTwixReader(Spec2niiReader):
         if not isinstance(key, tuple):
             return str(key)
         return "".join(f"[{p}]" if p.isdigit() else f".{p}" for p in key).lstrip(".")
+
+
+#**************************************************************************************************#
+#                                             TwixCsi                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# Cartesian CSI from the k-space of a twix file, as the scanner reconstructs it (checked against   #
+# its RDA of the same scans: VD and later, 2D and 3D transverse; VB and 3D sagittal or coronal     #
+# grids do not match yet and stay empty): the phase encodes placed by their counters (Lin phase,   #
+# Seg readout, Par partitions), the middle lVectorSize points after the oversampling is removed, a #
+# Hamming filter over the k-space, zero filling to the final matrix and the spatial Fourier        #
+# transform; then spec2nii's geometry (the readout mirrored for sagittal and transverse slices,    #
+# read and phase swapped for transverse ones). Coils are kept (x, y, z, points, coils), as the     #
+# FIDs stand before NIfTI-MRS conjugation.                                                         #
+#                                                                                                  #
+#**************************************************************************************************#
+class TwixCsi:
+    NOTE = ("MRSI reconstructed by MIOX (spec2nii leaves it empty): Hamming filter, zero filling "
+            "to the final matrix, spatial FFT, coils kept")
+    UNVERIFIED = ("MRSI not reconstructed: spec2nii leaves it empty (zeros), and MIOX reconstructs "
+                  "only what it has checked against the scanner (VD and later; 2D, 3D transverse)")
+    SAGITTAL, CORONAL, TRANSVERSE = 0, 1, 2  # spec2nii's main orientations
+
+    def __init__(self, twix):
+        self.twix = twix
+        self.protocol = twix["hdr"]["MeasYaps"]
+
+    @staticmethod
+    def hamming(n: int) -> np.ndarray:
+        return 0.54 + 0.46 * np.cos(2 * np.pi * (np.arange(n) - n // 2) / n)
+
+    @property
+    def verified(self) -> bool:
+        """Checked against the scanner: VD and later, 2D, and 3D with transverse slices."""
+        version = str(self.twix["hdr"]["Dicom"].get("SoftwareVersions", ""))  # "syngo MR B17"
+        vb = re.search(r"\bB\d", version) is not None
+        partitions = int(self.protocol.get(("sKSpace", "lPartitions"), 1) or 1)
+        return not vb and (partitions == 1 or self.orientation() == self.TRANSVERSE)
+
+    def orientation(self) -> int:
+        normal = [float(self.protocol.get(("sSpecPara", "sVoI", "sNormal", d), 0.0) or 0.0)
+                  for d in ("dSag", "dCor", "dTra")]
+        return GSL.class_ori(*normal, False)
+
+    def kspace(self) -> np.ndarray:
+        """(coils, phase, readout, partition, points): Lin, Seg and Par as stored (the encodes
+        centred in their counters), other counters averaged."""
+        image = self.twix["image"]
+        image.flagRemoveOS, image.squeeze = True, False
+        data, dims = image[""], list(image.dataDims)
+        encodes = ["Cha", "Lin", "Seg", "Par"]
+        rest = [d for d in dims if d not in encodes + ["Col"]]
+        data = np.transpose(data, [dims.index(d) for d in encodes + rest + ["Col"]])
+        data = data.reshape(data.shape[:4] + (-1, data.shape[-1])).mean(axis=4)
+        points = int(self.protocol[("sSpecPara", "lVectorSize")])
+        start = (data.shape[-1] - points) // 2  # the ADC holds a few points more on both sides
+        return data[..., start:start + points]
+
+    def reconstruct(self) -> np.ndarray:
+        k = self.kspace()
+        for axis in (1, 2, 3):
+            shape = [1] * k.ndim
+            shape[axis] = k.shape[axis]
+            k = k * self.hamming(k.shape[axis]).reshape(shape)
+        final = [max(1, int(self.protocol.get(("sSpecPara", f"lFinalMatrixSize{d}"), 1) or 1))
+                 for d in ("Phase", "Read", "Slice")]
+        grid = np.zeros((k.shape[0], *final, k.shape[-1]), dtype=np.complex128)
+        grid[(slice(None),) + tuple(slice(m // 2 - n // 2, m // 2 - n // 2 + n)
+                                    for n, m in zip(k.shape[1:4], final, strict=True))] = k
+        axes = (1, 2, 3)
+        image = np.fft.fftshift(np.fft.fftn(np.fft.ifftshift(grid, axes=axes), axes=axes),
+                                axes=axes)
+        orientation = self.orientation()
+        if orientation in (self.SAGITTAL, self.TRANSVERSE):
+            image = np.flip(image, 2)  # the readout mirrored
+        if orientation == self.TRANSVERSE:
+            image = np.swapaxes(image, 1, 2)  # read before phase
+        return np.moveaxis(image, 0, -1)  # (x, y, z, points, coils)

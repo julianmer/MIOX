@@ -149,3 +149,18 @@ def test_mrsi_grid_marks_the_centre_voxel():
     assert ">Grid</label>" in page and "voxel (1, 1, 0) of 3 x 3 x 1 (centre)" in page
     assert page.count("<title>voxel (") == 2 * 9  # full and metabolites
     assert len(re.findall(r'class="focus" style="[^"]*"><title>voxel \(1, 1, 0\)', page)) == 2
+
+
+def test_empty_data_and_reader_notes_are_shown():
+    blank = dataset(np.zeros(N, complex))
+    blank.provenance = Provenance((), miox.Format.SIEMENS_TWIX, "test", {},
+                                  ("MRSI not reconstructed: empty", "Using automatic encoding"))
+    page = Page([blank], "csi.dat").html()
+    assert "The data are all zero" in page and "MRSI not reconstructed" in page
+    noted = dataset(fid())
+    noted.provenance = Provenance((), miox.Format.BRUKER, "test", {},
+                                  ("The orientation of bruker fid data is mostly untested.",
+                                   "To achieve matching orientation to equivalent DICOM output:"))
+    page = Page([noted], "fid").html()
+    assert "Reader: The orientation of bruker fid data is mostly untested." in page
+    assert "To achieve" not in page
