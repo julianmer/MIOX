@@ -264,6 +264,12 @@ class KeyTable(dict):
             "Spectral width of each indirect frequency axis of a spectrum, in axis order.",
             "miox",
         ),
+        Key(
+            "SurfaceCRAS", "mm", (list, float),
+            "Centre (c_ras) of the volume a FreeSurfer surface was made from: scanner RAS = the "
+            "surface's tkr RAS + SurfaceCRAS.",
+            "miox",
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning

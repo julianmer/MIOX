@@ -18,6 +18,7 @@
 #*************#
 from __future__ import annotations
 
+import bz2
 import dataclasses
 import gzip
 import json
@@ -100,6 +101,11 @@ class Format(StrEnum):
     TRANSFORM_ITK = "transform_itk"  # ITK transform (.tfm text, .h5)
     TRANSFORM_AFNI = "transform_afni"  # AFNI affine matrices (12 numbers per row)
     TRANSFORM_FSL = "transform_fsl"  # FSL FLIRT 4 x 4 matrix
+    GIFTI = "gifti"  # GIFTI surfaces and per-vertex data (.gii, also gzip/bzip2)
+    FREESURFER_SURFACE = "freesurfer_surface"  # FreeSurfer triangle or quad surface
+    FREESURFER_MORPH = "freesurfer_morph"  # FreeSurfer per-vertex values (curv, thickness, ...)
+    FREESURFER_ANNOT = "freesurfer_annot"  # FreeSurfer annotation (.annot)
+    FREESURFER_LABEL = "freesurfer_label"  # FreeSurfer label (.label text)
     ZIP_ARCHIVE = "zip_archive"  # zip archive of files MIOX reads
     VARIAN = "varian"
     LCMODEL_RAW = "lcmodel_raw"
@@ -371,6 +377,7 @@ class Sniffer:
             self.rs2d,
             self.rnmrtk,
             self.jemris_motion,
+            self.surfaces,
             self.transforms,
             self.topspin,
             self.bruker,
@@ -864,6 +871,56 @@ class Sniffer:
             return None
         return Sniff(path, Format.JEMRIS_MOTION, Kind.PHANTOM, confidence=0.9,
                      evidence=("motion .dat: 3 numbers, then rows of 7",))
+
+    SURFACE_MAGICS = {b"\xff\xff\xfe": "triangle", b"\xff\xff\xff": "quad",
+                      b"\xff\xff\xfd": "new quad"}  # FreeSurfer surfaces (curv shares 0xffffff)
+
+    def surfaces(self, path: Path, head: bytes) -> Sniff | None:
+        """Surface meshes and per-vertex data: GIFTI (a <GIFTI root, also inside .gii.gz and
+        .gii.bz2); FreeSurfer surfaces by magic number and a size that holds the vertices and
+        faces they state, new-format curv files (magic 0xffffff, exactly 15 + 4 x vertices bytes),
+        .annot files (vertex count, then (vertex, value) pairs), .label text files."""
+        name, size = path.name.lower(), path.stat().st_size
+        found = None
+        if name.endswith((".gii.gz", ".gii.bz2")):
+            opener = gzip.open if name.endswith(".gz") else bz2.open
+            try:
+                with opener(path, "rb") as fh:
+                    head = fh.read(self.HEAD_BYTES)
+            except (OSError, EOFError):
+                return None
+        if re.search(rb"^\s*(<\?xml[^>]*>\s*)?(<!DOCTYPE[^>]*>\s*)?<GIFTI[\s>]", head):
+            found = Format.GIFTI, "GIFTI root element"
+        elif head[:3] in self.SURFACE_MAGICS and len(head) >= 15:
+            found = self._freesurfer_binary(head, size)
+        elif name.endswith(".annot") and len(head) >= 4:
+            count = struct.unpack(">i", head[:4])[0]
+            if 0 < count and size >= 4 + 8 * count:
+                found = Format.FREESURFER_ANNOT, ".annot with room for its vertex count"
+        elif name.endswith(".label") and head.startswith(b"#!ascii label"):
+            found = Format.FREESURFER_LABEL, "#!ascii label first line"
+        if found is None:
+            return None
+        return Sniff(path, found[0], Kind.SURFACE, confidence=0.9, evidence=(found[1],))
+
+    def _freesurfer_binary(self, head: bytes, size: int) -> tuple[Format, str] | None:
+        """A FreeSurfer curv or surface file from its magic number and its size."""
+        magic = self.SURFACE_MAGICS[head[:3]]
+        if magic == "quad" and size == 15 + 4 * struct.unpack(">i", head[3:7])[0]:
+            return Format.FREESURFER_MORPH, "curv magic 0xffffff, 15 + 4 x vertices bytes"
+        if magic == "triangle":
+            end = head.find(b"\n\n", 3)  # creation line, ended by two newlines
+            if end < 0 or len(head) < end + 10:
+                return None
+            vertices, faces = struct.unpack(">ii", head[end + 2:end + 10])
+            needed = end + 10 + 12 * vertices + 12 * faces
+        else:  # three-byte counts, int16 (quad) or float32 (new quad) coordinates
+            vertices = int.from_bytes(head[3:6], "big")
+            faces = int.from_bytes(head[6:9], "big")
+            needed = 9 + (6 if magic == "quad" else 12) * vertices + 12 * faces
+        if vertices <= 0 or faces <= 0 or size < needed:
+            return None
+        return Format.FREESURFER_SURFACE, f"{magic} surface magic, size fits the counts"
 
     def transforms(self, path: Path, head: bytes) -> Sniff | None:
         """Linear transforms: FreeSurfer LTA (type and nxforms lines), ITK (.tfm text header,

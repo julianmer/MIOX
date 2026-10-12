@@ -109,6 +109,7 @@ from miox.readers.sivic_ddf import SivicDdfReader
 from miox.readers.sparky import SparkyReader
 from miox.readers.spinsolve import SpinsolveReader
 from miox.readers.spinwizard_basis import SpinwizardBasisReader
+from miox.readers.surfaces import FreeSurferReader, GiftiReader
 from miox.readers.tarquin_dpt import TarquinDptReader
 from miox.readers.tarquin_output import TarquinOutputReader
 from miox.readers.tecmag import TecmagReader
@@ -164,11 +165,13 @@ class Loader:
             FidaReader(),
             FslMrsBasisReader(),
             FslReader(),
+            FreeSurferReader(),
             GavaMidasPriorReader(),
             GePfileReader(),
             GePhysioReader(),
             GeScanArchiveReader(),
             GeSignaReader(),
+            GiftiReader(),
             HcpPhysioReader(),
             InspectorBasisReader(),
             IsmrmrdReader(),

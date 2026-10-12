@@ -16585,19 +16585,19 @@
   "kind": "spectroscopy"
  },
  "nibabel/nibabel/gifti/tests/data/ascii.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/ascii_flat_data.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/base64bin.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/external.dat": {
   "format": "unknown",
@@ -16605,44 +16605,44 @@
   "kind": "unknown"
  },
  "nibabel/nibabel/gifti/tests/data/external.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/external.gii.bz2": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/external.gii.gz": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/gzipbase64.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/label.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/rh.aparc.annot.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/rh.shape.curv.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/gifti/tests/data/task.func.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nibabel/nibabel/nicom/tests/data/0.dcm": {
   "format": "dicom_image",
@@ -17335,9 +17335,9 @@
   "kind": "unknown"
  },
  "niivue/packages/niivue/demos/images/Lobules.label.gii": {
-  "format": "unknown",
+  "format": "gifti",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "niivue/packages/niivue/demos/images/TR_S_R.tt.gz": {
   "format": "unknown",
@@ -17420,44 +17420,44 @@
   "kind": "unknown"
  },
  "nitest_freesurfer/fsaverage/label/lh.V1.label": {
-  "format": "unknown",
+  "format": "freesurfer_label",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitest_freesurfer/fsaverage/label/lh.aparc.annot": {
-  "format": "unknown",
+  "format": "freesurfer_annot",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitest_freesurfer/fsaverage/surf/lh.curv": {
-  "format": "unknown",
+  "format": "freesurfer_morph",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitest_freesurfer/fsaverage/surf/lh.inflated": {
-  "format": "unknown",
+  "format": "freesurfer_surface",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitest_freesurfer/fsaverage/surf/lh.pial": {
-  "format": "unknown",
+  "format": "freesurfer_surface",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitest_freesurfer/fsaverage/surf/lh.sulc": {
-  "format": "unknown",
+  "format": "freesurfer_morph",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitest_freesurfer/fsaverage/surf/lh.thickness": {
-  "format": "unknown",
+  "format": "freesurfer_morph",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitest_freesurfer/fsaverage/surf/lh.white": {
-  "format": "unknown",
+  "format": "freesurfer_surface",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitest_freesurfer/subjects/bert/surf/README.rst": {
   "format": "unknown",
@@ -17465,9 +17465,9 @@
   "kind": "unknown"
  },
  "nitest_freesurfer/subjects/bert/surf/lh.inflated.nofix": {
-  "format": "unknown",
+  "format": "freesurfer_surface",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "surface"
  },
  "nitransforms/LICENSE": {
   "format": "unknown",
