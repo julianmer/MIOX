@@ -85,8 +85,9 @@ class CLI:
         preview = commands.add_parser("preview", help="one picture of a spectroscopy file, as "
                                       "the Quick Look extension shows it")
         preview.add_argument("path", type=Path)
-        preview.add_argument("--to", default=None, help="file to write (format by suffix: pdf, "
-                             "png, svg), or - for PDF on standard output; default: a window")
+        preview.add_argument("--to", default=None, help="file to write (format by suffix: html "
+                             "for the Quick Look page, pdf, png, svg), or - for PDF on standard "
+                             "output; default: a window")
         preview.set_defaults(func=self.preview)
 
     def run(self, argv: list[str] | None = None) -> int:
@@ -230,6 +231,16 @@ class CLI:
             print(f"miox preview: {args.path.name} is not spectroscopy ({sniffed.format})",
                   file=sys.stderr)
             return 2
+        if args.to and str(args.to).endswith(".html"):
+            from miox.quicklook import write
+
+            try:
+                datasets = Loader().load(args.path)
+                write(datasets, args.path.name, args.to)
+            except (ReaderError, ValueError) as e:
+                print(f"miox preview: {e}", file=sys.stderr)
+                return 1 if isinstance(e, ReaderError) else 2
+            return 0
         window = None
         if args.to is None:
             import matplotlib.pyplot as plt

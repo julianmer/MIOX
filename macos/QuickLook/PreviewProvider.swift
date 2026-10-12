@@ -1,6 +1,6 @@
 // Quick Look preview of MR spectroscopy files. The Python bundled in this extension runs inside
 // the extension's own process (a sandboxed extension may not start other programs): libpython is
-// loaded once, MIOX writes the preview as a PDF into the extension's temporary folder, and the
+// loaded once, MIOX writes the preview page (HTML) into the extension's temporary folder, and the
 // interpreter stays loaded, so the next files preview without starting Python again. A file MIOX
 // cannot preview makes the request fail, so Finder shows its usual icon view.
 
@@ -62,15 +62,15 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
     func providePreview(for request: QLFilePreviewRequest) async throws -> QLPreviewReply {
         let file = request.fileURL
         Self.log.info("preview of \(file.lastPathComponent, privacy: .public)")
-        let pdf: Data
+        let page: Data
         do {
-            pdf = try Self.render(file)
+            page = try Self.render(file)
         } catch {
             Self.log.error("no preview: \(String(describing: error), privacy: .public)")
             throw error
         }
-        return QLPreviewReply(dataOfContentType: .pdf, contentSize: CGSize(width: 1200, height: 675)) { _ in
-            pdf
+        return QLPreviewReply(dataOfContentType: .html, contentSize: CGSize(width: 960, height: 720)) { _ in
+            page
         }
     }
 
@@ -86,7 +86,7 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
                                         caches: caches)
         }
         let out = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString).appendingPathExtension("pdf")
+            .appendingPathComponent(UUID().uuidString).appendingPathExtension("html")
         defer {
             for suffix in ["", ".status", ".log"] {
                 try? FileManager.default.removeItem(atPath: out.path + suffix)
@@ -99,8 +99,9 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
             try:
                 import miox.cli
                 status = miox.cli.main(["preview", \(literal(file.path)), "--to", \(literal(out.path))])
-            except BaseException as error:
-                print(repr(error), file=log)
+            except BaseException:
+                import traceback
+                traceback.print_exc(file=log)
                 status = 1
             sys.stderr = sys.__stderr__
             log.close()
@@ -110,6 +111,9 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
         let status = (try? String(contentsOfFile: out.path + ".status", encoding: .utf8)) ?? "?"
         guard status == "0", let data = try? Data(contentsOf: out) else {
             let message = (try? String(contentsOfFile: out.path + ".log", encoding: .utf8)) ?? ""
+            let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            try? "\(file.path)\n\(message)".write(to: caches.appendingPathComponent("last-error.log"),
+                                                    atomically: true, encoding: .utf8)
             throw PreviewError.failed("status \(status): \(message)")
         }
         return data

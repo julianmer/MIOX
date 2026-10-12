@@ -15,11 +15,13 @@ PYTHON_VERSION="3.12"
 VERSION="$(sed -n 's/^__version__ = "\(.*\)"/\1/p' "$ROOT/miox/__init__.py")"
 TARGET="arm64-apple-macos12.0"
 
-# file extensions claimed for MR data that macOS has no type for, and the system's own types
+# file extensions claimed for MR data that macOS has no type for, and the system's own types;
+# public.data catches files without an extension (Philips XX_0001, Bruker fid/2dseq/ser), which
+# MIOX declines at once when they are not MR data
 EXTENSIONS=(dat 7 rda sdat spar ima basis coord dpt ddf cmplx rsd rsp mrd data list mat jdx dx
             jdf tnt ft ft2 ucsf nmrml h5 nii)
 TYPES=(io.github.julianmer.miox.mr-data org.nema.dicom gov.nih.nifti-1 org.gnu.gnu-zip-archive
-       org.napari.napari.h5 com.mathworks.workspace)
+       org.napari.napari.h5 com.mathworks.workspace public.data)
 
 QUICK=0 INSTALL=0
 for arg in "$@"; do
