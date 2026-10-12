@@ -17265,9 +17265,9 @@
   "kind": "unknown"
  },
  "nifti_zarr_py/tests/data/example4d.nii.zarr/nifti/0": {
-  "format": "nifti",
+  "format": "unknown",
   "vendor": null,
-  "kind": "imaging"
+  "kind": "unknown"
  },
  "nifti_zarr_py/tests/data/example_nifti2.nii.gz": {
   "format": "nifti",
@@ -17325,9 +17325,9 @@
   "kind": "unknown"
  },
  "nifti_zarr_py/tests/data/example_nifti2.nii.zarr/nifti/0": {
-  "format": "nifti",
+  "format": "unknown",
   "vendor": null,
-  "kind": "imaging"
+  "kind": "unknown"
  },
  "niivue/LICENSE": {
   "format": "unknown",
@@ -59410,9 +59410,9 @@
   "kind": "imaging"
  },
  "trx_test_data/gs_fldr.trx/dps/random_coord.3.float32": {
-  "format": "ge_pfile",
-  "vendor": "ge",
-  "kind": "raw"
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "trx_test_data/gs_fldr.trx/dpv/color_x.float32": {
   "format": "unknown",
@@ -59420,9 +59420,9 @@
   "kind": "unknown"
  },
  "trx_test_data/gs_fldr.trx/dpv/color_y.float32": {
-  "format": "ge_pfile",
-  "vendor": "ge",
-  "kind": "raw"
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "trx_test_data/gs_fldr.trx/dpv/color_z.float32": {
   "format": "unknown",

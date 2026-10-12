@@ -271,6 +271,9 @@ class Sniffer:
     TWIX_VB_BUFFERS = (b"Config", b"Dicom", b"Meas", b"MeasYaps", b"Phoenix", b"Spice")
     PFILE_REVISIONS = (7, 8, 9, 10, 11, 12, 14, 15, 16, 20, 24, 26, 27, 28, 30)
     PFILE_NAME = re.compile(r"^P\d{5}\.7$", re.I)
+    PFILE_MIN_SIZE = 39984  # header bytes of revision 7, the smallest P-file header
+    ZARR_MARKERS = (".zarray", ".zgroup", "zarr.json")  # metadata files of a zarr store
+    ZARR_DEPTH = 6  # parent folders searched for them
     BRUKER_PARAM_FILES = ("acqp", "method", "visu_pars", "reco", "subject")
     BRUKER_DATA_FILES = re.compile(
         r"^(fid|ser|2dseq|rawdata\.job\d+|fid\.refscan|rawdata\.Navigator"
@@ -399,12 +402,22 @@ class Sniffer:
             return self.directory(path)
         if not path.is_file():
             raise FileNotFoundError(path)
+        if store := self._zarr_store(path):
+            return Sniff(path, Format.UNKNOWN, evidence=(f"inside the zarr store {store.name}",))
         head = self._head(path)
         for rule in self.rules:
             result = rule(path, head)
             if result is not None:
                 return result
         return Sniff(path, Format.UNKNOWN)
+
+    def _zarr_store(self, path: Path) -> Path | None:
+        """The zarr array or group folder ``path`` lies in: its files are chunks and metadata of
+        the store, not files of their own."""
+        for folder in path.parents[:self.ZARR_DEPTH]:
+            if any((folder / marker).is_file() for marker in self.ZARR_MARKERS):
+                return folder
+        return None
 
     def directory(self, path: Path) -> Sniff:
         """A Bruker scan, a Varian .fid folder, a Spinsolve experiment, a basis set of one file per
@@ -724,7 +737,7 @@ class Sniffer:
         return None
 
     def pfile(self, path: Path, head: bytes) -> Sniff | None:
-        if len(head) < 4:
+        if len(head) < 4 or path.stat().st_size < self.PFILE_MIN_SIZE:
             return None
         if self._is_text(head):
             return None

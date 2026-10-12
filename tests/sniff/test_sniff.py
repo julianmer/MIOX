@@ -86,18 +86,24 @@ def test_twix_vd(tmp_path):
 
 def test_pfile(tmp_path):
     f = tmp_path / "P12345.7"
-    f.write_bytes(struct.pack("<f", 24.0) + b"\x00" * 64)
+    f.write_bytes(struct.pack("<f", 24.0) + b"\x00" * 40000)
     s = sniff(f)
     assert s.format == Format.GE_PFILE and s.detail["pfile_revision"] == 24.0 and s.kind == Kind.RAW
 
 
 def test_pfile_unknown_revision_needs_name(tmp_path):
     f = tmp_path / "blob.bin"
-    f.write_bytes(struct.pack("<f", 13.0) + b"\x00" * 64)
+    f.write_bytes(struct.pack("<f", 13.0) + b"\x00" * 40000)
     assert sniff(f).format == Format.UNKNOWN
     g = tmp_path / "P00001.7"
-    g.write_bytes(struct.pack("<f", 13.0) + b"\x00" * 64)
+    g.write_bytes(struct.pack("<f", 13.0) + b"\x00" * 40000)
     assert sniff(g).confidence == 1.0
+
+
+def test_small_float_array_is_not_a_pfile(tmp_path):
+    f = tmp_path / "color.float32"
+    f.write_bytes(struct.pack("<104f", *[20.0] * 104))  # starts like revision 20, no header room
+    assert sniff(f).format == Format.UNKNOWN
 
 
 def test_text_is_not_a_pfile(tmp_path):
@@ -178,6 +184,19 @@ def test_nifti(tmp_path):
     nib.Nifti1Image(np.zeros((2, 2, 2), dtype=np.float32), np.eye(4)).to_filename(f)
     s = sniff(f)
     assert s.format == Format.NIFTI and s.kind == Kind.IMAGING and s.detail["shape"] == (2, 2, 2)
+
+
+def test_zarr_chunk_is_not_a_file_of_its_own(tmp_path):
+    """A NIfTI-Zarr store keeps the NIfTI header as a chunk of a byte array."""
+    nib = pytest.importorskip("nibabel")
+    import numpy as np
+
+    array = tmp_path / "image.nii.zarr" / "nifti"
+    array.mkdir(parents=True)
+    (array / ".zarray").write_text("{}")
+    img = nib.Nifti1Image(np.zeros((2, 2, 2), np.int16), np.eye(4))
+    (array / "0").write_bytes(img.header.binaryblock + b"\x00" * 4)
+    assert sniff(array / "0").format == Format.UNKNOWN
 
 
 def test_nifti_mrs(tmp_path):
