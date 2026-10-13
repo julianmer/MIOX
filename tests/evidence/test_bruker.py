@@ -10,7 +10,9 @@
 #          against the magnitude spectra, and imaging k-space (fid, rawdata.job0) against the      #
 #          2dseq images of the same scans: the lines placed by the encoding steps and objects      #
 #          reconstruct, with zero-filling to the recon matrix, to the vendor's image of every      #
-#          slice up to the in-plane orientation.                                                   #
+#          slice up to the in-plane orientation. The fid and rawdata of CSI scans say they are     #
+#          k-space and point to the scanner's reconstruction, which their folder and Quick Look    #
+#          show.                                                                                   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -112,6 +114,36 @@ def test_magnitude_spectrum_keys():
     cycles = _magnitude("PV-360.1.1/12")
     assert cycles.shape == (1, 1, 1, 2060, 12) and cycles.dims[4] == "cycle"
     assert cycles.meta.source["SpectralWidth"] == "method: PVM_SpecSWH"  # VisuCoreExtent is 0
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("scan", ["PV-6.0.1/5", "PV-6.0.1/6"])
+def test_csi_kspace_says_so_and_points_to_the_reconstruction(scan, tmp_path):
+    """The fid and rawdata of a CSI scan are k-space: they say so and name the scanner's
+    reconstructions (complex first); the scan folder and Quick Look show the complex one."""
+    from miox.quicklook import load as shown, page
+
+    for raw_file in ("fid", "rawdata.job0"):
+        [raw] = load(BRUKER / scan / raw_file)
+        notes = [n for n in raw.provenance.notes if n.startswith("k-space, not reconstructed")]
+        assert len(notes) == 1 and notes[0].endswith("is pdata/2/2dseq or pdata/1/2dseq")
+        assert not any("might not be reconstructed" in n for n in raw.provenance.notes)
+    [folder] = load(BRUKER / scan)
+    [complex_spectra] = load(BRUKER / scan / "pdata/2/2dseq")
+    assert np.array_equal(folder.data, complex_spectra.data)
+    datasets, page_notes = shown(BRUKER / scan / "fid")
+    assert np.array_equal(datasets[0].data, complex_spectra.data)
+    assert page_notes == ("fid holds k-space: shown is the scanner's reconstruction "
+                          "pdata/2/2dseq",)
+    copy = tmp_path / "5"
+    copy.mkdir()
+    for name in ("acqp", "method", "fid"):
+        (copy / name).write_bytes((BRUKER / scan / name).read_bytes())
+    datasets, page_notes = shown(copy / "fid")
+    assert page_notes == ()
+    assert "The data are k-space: nothing to show" in page(datasets, "fid", copy / "fid")
+    assert any(n.endswith("the scan holds no reconstruction (pdata/<n>/2dseq)")
+               for n in datasets[0].provenance.notes)
 
 
 # --- k-space ------------------------------------------------------------------------------------

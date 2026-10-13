@@ -234,11 +234,11 @@ class CLI:
                   file=sys.stderr)
             return 2
         if page:
-            from miox.quicklook import write
+            from miox.quicklook import load, write
 
             try:
-                datasets = Loader().load(args.path)
-                write(datasets, args.path.name, args.to, source=args.path)
+                datasets, notes = load(args.path)
+                write(datasets, args.path.name, args.to, source=args.path, notes=notes)
             except (ReaderError, ValueError) as e:
                 print(f"miox preview: {e}", file=sys.stderr)
                 return 1 if isinstance(e, ReaderError) else 2

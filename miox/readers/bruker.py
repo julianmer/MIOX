@@ -45,16 +45,18 @@ from miox.sniff import Format, Kind, Sniff, Sniffer
 #**************************************************************************************************#
 #                                                                                                  #
 # A data file is read in its own mode; a scan folder or a parameter file reads the scan's fid,     #
-# else the 2dseq or rawdata next to it. Spectroscopy goes through spec2nii; the frequency is the   #
-# working frequency (PVM_FrqWork, SFO1) and its chemical shift, PVM_FrqWorkPpm, is ReferencePPM.   #
-# A complex 2dseq spectrum (REAL_IMAGE and IMAGINARY_IMAGE frames) is stored in the frequency      #
-# domain, frequency increasing with the index, like the spectrum of a NIfTI-MRS FID: spec2nii      #
-# keeps it as if it were a FID (single voxel) or flips it before the inverse FFT (CSI), so the FID #
-# is recomputed here as the inverse FFT without flip (checked against the raw fid of the same scan #
-# and the vendor's magnitude spectrum). Processed images (2dseq with spatial dimensions only) are  #
-# assembled from visu_pars, one MRImage per slice pack; magnitude spectra (MAGNITUDE_IMAGE frames  #
-# over a spectroscopic dimension) hold no phase and become MRImages with a frequency axis. Image   #
-# geometry and values equal the vendor's own DICOM export.                                         #
+# else the 2dseq or rawdata next to it. The fid and rawdata of a CSI scan hold k-space, which is   #
+# not reconstructed here: they say so, and its folder reads the scanner's reconstruction instead   #
+# (pdata/<n>/2dseq, complex spectra first). Spectroscopy goes through spec2nii; the frequency is   #
+# the working frequency (PVM_FrqWork, SFO1) and its chemical shift, PVM_FrqWorkPpm, is             #
+# ReferencePPM. A complex 2dseq spectrum (REAL_IMAGE and IMAGINARY_IMAGE frames) is stored in the  #
+# frequency domain, frequency increasing with the index, like the spectrum of a NIfTI-MRS FID:     #
+# spec2nii keeps it as if it were a FID (single voxel) or flips it before the inverse FFT (CSI),   #
+# so the FID is recomputed here as the inverse FFT without flip (checked against the raw fid of    #
+# the same scan and the vendor's magnitude spectrum). Processed images (2dseq with spatial         #
+# dimensions only) are assembled from visu_pars, one MRImage per slice pack; magnitude spectra     #
+# (MAGNITUDE_IMAGE frames over a spectroscopic dimension) hold no phase and become MRImages with a #
+# frequency axis. Image geometry and values equal the vendor's own DICOM export.                   #
 #                                                                                                  #
 #**************************************************************************************************#
 class BrukerReader(Spec2niiReader):
@@ -177,7 +179,13 @@ class BrukerReader(Spec2niiReader):
         header = self._header(path)
         if "method" not in header:
             raise ReaderError(f"{path}: the scan folder has no method file, which spec2nii needs")
-        images, names = read_bruker(args)
+        if self.raw_csi(path, header):
+            with warnings.catch_warnings():  # replaced by the definite note below
+                warnings.filterwarnings("ignore", "MRSI .* might not be reconstructed")
+                images, names = read_bruker(args)
+            warnings.warn(self._kspace_note(path), stacklevel=2)
+        else:
+            images, names = read_bruker(args)
         if path.name == "2dseq":
             dataset = Bruker2dseq(path, header["visu_pars"])
             images = [self._fid_from_spectrum(image, dataset) for image in images]
@@ -451,8 +459,40 @@ class BrukerReader(Spec2niiReader):
         folder = path if path.is_dir() else path.parent
         for name in self.MODES:
             if (folder / name).is_file():
-                return folder / name
+                reconstructions = self.reconstructions(folder / name)
+                return reconstructions[0] if reconstructions else folder / name
         raise ReaderError(f"no Bruker data file (fid, 2dseq, rawdata) in {folder}")
+
+    # --- CSI k-space -----------------------------------------------------------------------------
+
+    def raw_csi(self, path: Path, header: dict | None = None) -> bool:
+        """A fid or rawdata.job0 of a CSI scan (pulse program CSI.ppg, brukerapi's CSI scheme):
+        it holds k-space, which spec2nii lays out as if it were voxels."""
+        if path.name not in ("fid", "rawdata.job0"):
+            return False
+        header = self._header(path) if header is None else header
+        return str(header.get("acqp", {}).get("PULPROG", "")).strip("<>") == "CSI.ppg"
+
+    def reconstructions(self, path: Path) -> list[Path]:
+        """The scanner's reconstructions (pdata/<n>/2dseq) of a raw CSI file, complex spectra
+        before magnitude spectra, else in processing order."""
+        if not self.raw_csi(path):
+            return []
+        found = []
+        for seq in sorted(path.parent.glob("pdata/*/2dseq"), key=lambda p: (len(p.parent.name),
+                                                                              p.parent.name)):
+            if (seq.parent / "visu_pars").is_file():
+                dataset = Bruker2dseq(seq, self._parameters(seq.parent / "visu_pars"))
+                types = {t.upper() for t in dataset.frame_types}
+                found.append((not {"REAL_IMAGE", "IMAGINARY_IMAGE"} <= types, seq))
+        return [seq for _, seq in sorted(found, key=lambda f: f[0])]
+
+    def _kspace_note(self, path: Path) -> str:
+        names = [str(p.relative_to(path.parent)) for p in self.reconstructions(path)]
+        where = (f"the scanner's reconstruction is {' or '.join(names)}" if names
+                 else "the scan holds no reconstruction (pdata/<n>/2dseq)")
+        return (f"k-space, not reconstructed: the spatial dimensions of {path.name} hold "
+                f"phase-encoding steps, not voxels; {where}")
 
     def _header(self, data_file: Path) -> dict:
         """All parameters of the files that describe ``data_file``, by file name."""

@@ -30,7 +30,7 @@ import numpy as np
 # own
 from miox.data import BasisSet, FitResult, MRImage, MRSData
 from miox.processing import PROTON_REFERENCE, RawPipeline, Spectral
-from miox.sniff import Format
+from miox.sniff import Format, Sniffer
 
 NMR_FORMATS = {Format.TOPSPIN, Format.TOPSPIN_PROCESSED, Format.JCAMP_NMR, Format.NMRML,
                Format.JEOL_JDF, Format.TECMAG_TNT, Format.NMRPIPE, Format.SPARKY, Format.SIMPSON,
@@ -39,6 +39,7 @@ PROTON_RANGE = (6.0, 0.0)  # ppm shown for 1H, water included
 METABOLITE_SCALE = (4.2, 0.2)  # ppm whose values set the vertical range of the Metabolites view
 GRID = 32  # voxels a side shown on the Grid tab
 READER_NOTES = ("reconstruct", "untested", "assumed", "not converted", "caution", "turned into")
+KSPACE = "k-space, not reconstructed"  # how a reader marks data that are k-space, not voxels
 
 
 #**************************************************************************************************#
@@ -314,11 +315,12 @@ class Plot:
 #                                                                                                  #
 #**************************************************************************************************#
 class Page:
-    def __init__(self, datasets: list, title: str, source: Path | None = None):
+    def __init__(self, datasets: list, title: str, source: Path | None = None,
+                 notes: tuple[str, ...] = ()):
         mrs = [d for d in datasets if isinstance(d, MRSData)]
         if not mrs:
             raise ValueError("no spectroscopy data")
-        self.title, self.source = title, source
+        self.title, self.source, self.notes = title, source, list(notes)
         self.main = next((d for d in mrs if not Water.named(d)), mrs[0])
         self.water = next((d for d in mrs if d is not self.main), None)
         self.prepared = Prepared(self.main)
@@ -329,8 +331,9 @@ class Page:
             self.water = self.partner(Path(source))
         d = self.main
         self.blank = not np.any(self.prepared.conditions)  # e.g. MRSI a converter left empty
+        self.kspace = any(n.startswith(KSPACE) for n in d.provenance.notes)
         self.processable = (d.dwelltime is not None and d.spectrometer_frequency is not None
-                            and not self.blank)
+                            and not self.blank and not self.kspace)
         nmr = d.provenance.format in NMR_FORMATS or "Solvent" in d.meta
         self.proton = d.nucleus == "1H" and not nmr
         self.reference = float(d.meta.get("ReferencePPM", PROTON_REFERENCE if self.proton
@@ -405,6 +408,10 @@ class Page:
         if self.blank:
             notes = "".join(f"<br>{html.escape(n)}." for n in self.main.provenance.notes)
             return f"<div class=empty>The data are all zero: nothing to show.{notes}</div>"
+        if self.kspace:
+            notes = "".join(f"<br>{html.escape(n)}." for n in self.main.provenance.notes
+                            if n.startswith(KSPACE))
+            return f"<div class=empty>The data are k-space: nothing to show.{notes}</div>"
         if not self.results:
             return ("<div class=empty>The file states no dwell time or spectrometer frequency: "
                     "nothing is processed.</div>")
@@ -426,7 +433,7 @@ class Page:
                      f"{' x '.join(map(str, self.prepared.spatial))} (centre)"]
         if self.water_scan:
             where.append("water scan")
-        steps = list(dict.fromkeys(where + self.prepared.notes + self.water_notes
+        steps = list(dict.fromkeys(where + self.notes + self.prepared.notes + self.water_notes
                                    + self.results[0].steps))
         if self.prepared.edited:
             steps.append("each edit condition processed on its own")
@@ -924,13 +931,31 @@ td:first-child {{ color:var(--soft); width:38%; padding-right:16px; }}
 </body></html>"""
 
 
-def page(datasets: list, title: str, source: Path | None = None) -> str:
+def load(path: Path) -> tuple[list, tuple[str, ...]]:
+    """What the page shows of a file, with a note when that is not the file's own data: the
+    k-space of a Bruker CSI scan is shown as the scanner's reconstruction of complex spectra."""
+    from miox.readers import Loader
+
+    if Sniffer().sniff(path).format == Format.BRUKER:
+        from miox.readers.bruker import BrukerReader
+
+        for reconstruction in BrukerReader().reconstructions(path):
+            datasets = Loader().load(reconstruction)
+            if any(isinstance(d, MRSData) for d in datasets):
+                shown = reconstruction.relative_to(path.parent)
+                return datasets, (f"{path.name} holds k-space: shown is the scanner's "
+                                  f"reconstruction {shown}",)
+    return Loader().load(path), ()
+
+
+def page(datasets: list, title: str, source: Path | None = None,
+         notes: tuple[str, ...] = ()) -> str:
     """The page of what the file holds: a basis set, spectroscopy data, a fit, else an image."""
     basis = next((d for d in datasets if isinstance(d, BasisSet)), None)
     if basis is not None:
         return BasisPage(basis, title).html()
     if any(isinstance(d, MRSData) for d in datasets):
-        return Page(datasets, title, source).html()
+        return Page(datasets, title, source, notes).html()
     fits = [d for d in datasets if isinstance(d, FitResult)]
     if fits:
         return FitPage(fits[0], title, len(fits) - 1).html()
@@ -940,5 +965,6 @@ def page(datasets: list, title: str, source: Path | None = None) -> str:
     return ImagePage(images[0], title, len(images) - 1).html()
 
 
-def write(datasets: list, title: str, path: str | Path, source: Path | None = None) -> None:
-    Path(path).write_text(page(datasets, title, source), encoding="utf-8")
+def write(datasets: list, title: str, path: str | Path, source: Path | None = None,
+          notes: tuple[str, ...] = ()) -> None:
+    Path(path).write_text(page(datasets, title, source, notes), encoding="utf-8")
