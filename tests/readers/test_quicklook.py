@@ -6,13 +6,14 @@
 #                                                                                                  #
 # Created: 12/10/26                                                                                #
 #                                                                                                  #
-# Purpose: The Quick Look page on synthetic data: five tabs, the processed spectrum with its       #
-#          steps and the Full | Metabolites switch, coils as combined, averages before and after   #
+# Purpose: The Quick Look page on synthetic data: five tabs, the processed spectrum with its steps #
+#          and the Full | Metabolites switch, coils as combined, averages before and after         #
 #          alignment, edited data with their difference, the empty states (one coil, no water, no  #
 #          spectral axis), water scans (by name or by water dominance) and water references found  #
-#          next to the data; the MRSI grid around the centre voxel; the image page: the volume     #
-#          turned to RAS, planes, slices, details; basis sets at their reference; fits with their  #
-#          residual, components and table.                                                         #
+#          next to the data; the MRSI grid around the centre voxel, of the spectra and of the      #
+#          water; the image page: the volume turned to RAS, planes, slices, details; basis sets at #
+#          their reference, edited ones with a tab per sub-spectrum named by its relation to the   #
+#          others; fits with their residual, components and table.                                 #
 #                                                                                                  #
 ####################################################################################################
 
@@ -153,6 +154,22 @@ def test_mrsi_grid_marks_the_centre_voxel():
     assert len(re.findall(r'class="focus" style="[^"]*"><title>voxel \(1, 1, 0\)', page)) == 2
 
 
+def test_mrsi_water_tab_is_a_grid_of_every_voxel():
+    meta = Meta({})
+    meta.set("SpectrometerFrequency", [SF], "test")
+    meta.set("ResonantNucleus", ["1H"], "test")
+    water = np.exp(-np.pi * 6 * T).conj()  # on resonance: 4.65 ppm
+    grids = [MRSData(signal[None, None, None, :] * np.arange(1, 10).reshape(3, 3, 1, 1), 1 / SW,
+                     np.eye(4), meta, Provenance((), miox.Format.NIFTI_MRS, "test", {}),
+                     (None, None, None), name=name)
+             for signal, name in ((fid(), "mrsi"), (100 * water, "mrsi_ref"))]
+    page = Page(grids, "mrsi.nii.gz")
+    pane = page.water_pane()
+    assert "every voxel's water reference on one scale" in pane
+    assert pane.count("<title>voxel (") == 9 and 'class="focus"' in pane
+    assert "class=met" not in pane  # the Full | Metabolites switch leaves water alone
+
+
 def test_empty_data_and_reader_notes_are_shown():
     blank = dataset(np.zeros(N, complex))
     blank.provenance = Provenance((), miox.Format.SIEMENS_TWIX, "test", {},
@@ -183,6 +200,29 @@ def test_basis_set_page_shows_each_metabolite_at_its_reference():
     spec = Spectral.fid_to_spec(Spectral.zero_fill(naa.conj()[None], 2))[0].real
     x = Spectral.ppm_axis(spec.size, SW, SF, 3.0)
     assert abs(x[np.argmax(spec)] - 2.01) < 0.01  # what the page draws: NAA at 2.01 ppm
+
+
+def test_basis_sub_spectra_get_a_tab_each_named_by_their_relation():
+    """Edited sets: OFF, ON, ON - OFF (plus a macromolecule only in the difference), OFF + ON."""
+    peak = lambda ppm: np.exp(2j * np.pi * (ppm - 3.0) * SF * T - np.pi * 4 * T).conj()  # noqa: E731
+    off = [peak(2.01), peak(3.0), peak(0.9)]
+    on = [0.1 * peak(2.01), 1.5 * peak(3.0), peak(0.9)]
+    sub = [[a, b, b - a, a + b] for a, b in zip(off, on, strict=True)]
+    sub[2][2] = 1.6 * peak(0.9)  # co-edited signal added to the difference alone
+    data = np.array(sub).transpose(2, 0, 1).reshape(1, 1, 1, N, 3, 4)
+    meta = Meta({})
+    meta.set("SpectrometerFrequency", [SF], "test")
+    meta.set("ReferencePPM", 3.0, "test")
+    basis = BasisSet(data, 1 / SW, np.eye(4), meta,
+                     Provenance((), miox.Format.OSPREY_BASIS, "test", {}),
+                     ("DIM_USER_0", "DIM_USER_1"),
+                     {5: {"header": {"Metabolite": ["NAA", "GABA", "MM09"]}}})
+    page = BasisPage(basis, "basis.mat")
+    assert page.labels() == (["A", "B", "B − A", "A + B"], [[], [], ["MM09"], []])
+    text = page.html()
+    assert all(f">{label}</label>" in text for label in ("A", "B", "B − A", "A + B", "Details"))
+    assert "This one is B − A for every metabolite except MM09." in text
+    assert "4 sub-spectra" in text
 
 
 def test_fit_page_draws_residual_fit_and_table():

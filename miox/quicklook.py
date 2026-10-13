@@ -20,7 +20,9 @@
 from __future__ import annotations
 
 import base64
+import functools
 import html
+import itertools
 import re
 import zlib
 from pathlib import Path
@@ -518,12 +520,15 @@ class Page:
                 + Plot.series(phi, "phase (degrees)", removed))
 
     def grid_pane(self) -> str:
-        """The slice through the focus voxel: every voxel's spectrum (real part, one range for
+        return self.grid(self.results[0].fid, "spectrum", switch=True)
+
+    def grid(self, result, what: str, switch: bool) -> str:
+        """The slice through the focus voxel: every voxel's ``what`` (real part, one range for
         all, cut at the 0.1 and 99.9 percentiles), its cell shaded by its signal, beside the focus
-        voxel drawn large; grids larger than GRID voxels a side show the GRID around the focus."""
-        r, (nx, ny, nz) = self.results[0], self.prepared.spatial
-        fi, fj, k = self.prepared.focus_index
-        x, spec = self.spectrum(np.asarray(r.fid)[0, :, 0, 0])  # (V, points)
+        voxel drawn large; grids larger than GRID voxels a side show the GRID around the focus.
+        With ``switch`` it follows the Full | Metabolites switch."""
+        (nx, ny, nz), (fi, fj, k) = self.prepared.spatial, self.prepared.focus_index
+        x, spec = self.spectrum(np.asarray(result)[0, :, 0, 0])  # (V, points)
         spec = spec.reshape(nx, ny, nz, -1)[:, :, k]
         xlim = self.xlim(x)
         i0, j0 = (max(0, min(f - GRID // 2, n - GRID)) for f, n in ((fi, nx), (fj, ny)))
@@ -554,8 +559,8 @@ class Page:
 
         part = (f"voxels {columns[0]}-{columns[-1]} x {rows[0]}-{rows[-1]} of {nx} x {ny}, "
                 if len(columns) < nx or len(rows) < ny else "")
-        return (self.scaled(render)
-                + f"<div class=note>Slice {k + 1} of {nz}, {part}every voxel's spectrum on one "
+        return ((self.scaled(render) if switch else render(None))
+                + f"<div class=note>Slice {k + 1} of {nz}, {part}every voxel's {what} on one "
                 "scale, its cell shaded by its signal; the marked voxel (the centre) is drawn "
                 "large. Point at a cell for its voxel.</div>")
 
@@ -567,8 +572,10 @@ class Page:
             return ("<div class=empty>No water reference in this file"
                     + (" or next to it." if self.source is not None else ".")
                     + "".join(f"<br>{html.escape(n)}." for n in self.water_notes) + "</div>")
-        x, spec = self.spectrum(self.focus(r.water))
         source = "".join(f"<div class=note>{html.escape(n)}.</div>" for n in self.water_notes)
+        if self.prepared.grid:
+            return self.grid(r.water, "water reference", switch=False) + source
+        x, spec = self.spectrum(self.focus(r.water))
         return Plot.spectrum([(x, spec[0].real, "line")], self.xlim(x), "ppm", height=260) + source
 
     def details_pane(self) -> str:
@@ -774,54 +781,114 @@ class FitPage:
 #**************************************************************************************************#
 #                                                                                                  #
 # The page of a basis set: one row per metabolite, real part as FSL-MRS shows a spectrum (nothing  #
-# processed; of sub-spectra, such as edit conditions, the first), each on its own scale and        #
-# labelled (Osprey's stagger); 1H over 6-0 ppm as spectra (FSL-MRS' plot_basis: 4.5-0, which       #
-# leaves water out), other nuclei over the whole spectrum, at the set's reference; every header    #
-# value.                                                                                           #
+# processed), labelled (Osprey's stagger); 1H over 6-0 ppm as spectra (FSL-MRS' plot_basis: 4.5-0, #
+# which leaves water out), other nuclei over the whole spectrum, at the set's reference; every     #
+# header value. Each row has its own scale; sets with sub-spectra (edit conditions) get one tab    #
+# per sub-spectrum, as Osprey's fit window, on one scale per metabolite across them, so signals    #
+# that cancel stay flat. Files do not name their sub-spectra: they are lettered as stored, and one #
+# that equals a sum or difference of earlier ones (to 1e-6) for at least half of the metabolites   #
+# is named by it, with the metabolites it does not hold for (Osprey adds co-edited macromolecules  #
+# to difference spectra alone).                                                                    #
 #                                                                                                  #
 #**************************************************************************************************#
 class BasisPage:
+    TOLERANCE = 1e-6  # relative, for a sub-spectrum to equal a combination of earlier ones
+
     def __init__(self, basis: BasisSet, title: str):
         self.basis, self.title = basis, title
+        fids = [np.asarray(basis.fid(name), dtype=np.complex128) for name in basis.metabolites]
+        self.fids = [f.reshape(f.shape[0], -1) for f in fids]  # (points, sub-spectra)
+        self.subs = self.fids[0].shape[1] if self.fids else 1
 
-    def basis_pane(self) -> str:
-        b, width, row, label = self.basis, 900, 30, 110
-        if b.dwelltime is None or b.spectrometer_frequency is None:
-            return "<div class=empty>The file states no dwell time or frequency.</div>"
+    def labels(self) -> tuple[list[str], list[list[str]]]:
+        """Letters for the sub-spectra as stored; a later one that equals a sum or difference of
+        lettered ones for at least half of the metabolites is named by it (e.g. B − A), with the
+        metabolites it does not hold for (signals a set adds to that sub-spectrum alone)."""
+        names, labels, exceptions, lettered = self.basis.metabolites, [], [], []
+        fids = np.stack(self.fids) if self.fids else np.zeros((0, 1, self.subs))  # (M, T, S)
+        for i in range(self.subs):
+            best, held = None, None
+            if 2 <= len(lettered) <= 6:
+                target, stored = fids[:, :, i], fids[:, :, lettered]
+                bound = self.TOLERANCE * np.linalg.norm(target, axis=1)
+                for coefficients in itertools.product((-1, 0, 1), repeat=len(lettered)):
+                    if sum(c != 0 for c in coefficients) < 2:
+                        continue
+                    combination = stored @ np.array(coefficients, dtype=float)
+                    holds = np.linalg.norm(target - combination, axis=1) <= bound
+                    if held is None or holds.sum() > held.sum():
+                        best, held = coefficients, holds
+            if best is None or 2 * held.sum() < len(names):
+                labels.append(chr(ord("A") + len(lettered)))
+                exceptions.append([])
+                lettered.append(i)
+                continue
+            plus = [labels[j] for j, c in zip(lettered, best, strict=True) if c > 0]
+            minus = [labels[j] for j, c in zip(lettered, best, strict=True) if c < 0]
+            labels.append(" + ".join(plus) + "".join(f" − {m}" for m in minus))
+            exceptions.append([name for name, h in zip(names, held, strict=True) if not h])
+        return labels, exceptions
+
+    @functools.cached_property
+    def spectra(self) -> tuple[np.ndarray, tuple, list[np.ndarray]] | None:
+        """The ppm axis in view, its limits and every metabolite's real spectra there
+        (sub-spectra, points)."""
+        b = self.basis
+        if b.dwelltime is None or b.spectrometer_frequency is None or not self.fids:
+            return None
         proton = b.nucleus in (None, "1H")
         reference = float(b.meta.get("ReferencePPM", PROTON_REFERENCE if proton else 0.0))
-        rows, more = [], 1
-        for n, name in enumerate(b.metabolites):
-            fid = np.asarray(b.fid(name), dtype=np.complex128)
-            more = int(np.prod(fid.shape[1:]))  # sub-spectra (e.g. edit conditions)
-            fid = fid.reshape(fid.shape[0], -1)[:, 0].conj().reshape(1, -1)
-            spec = Spectral.fid_to_spec(Spectral.zero_fill(fid, 2))[0].real
-            x = Spectral.ppm_axis(spec.size, 1.0 / b.dwelltime, b.spectrometer_frequency,
-                                  reference)
-            xlim = PROTON_RANGE if proton else (float(x.max()), float(x.min()))
-            mask = (x >= min(xlim)) & (x <= max(xlim))
-            own = (float(np.abs(spec[mask]).max()) if mask.any() else 0.0) or 1.0
-            path = Plot.path(x[mask], spec[mask], (0, n * row + 4, width - label, row - 4),
-                             xlim, (-0.2 * own, own))
+        x = Spectral.ppm_axis(2 * self.fids[0].shape[0], 1.0 / b.dwelltime,
+                              b.spectrometer_frequency, reference)
+        xlim = PROTON_RANGE if proton else (float(x.max()), float(x.min()))
+        mask = (x >= min(xlim)) & (x <= max(xlim))
+        spectra = [Spectral.fid_to_spec(Spectral.zero_fill(f.T.conj(), 2)).real[:, mask]
+                   for f in self.fids]
+        return x[mask], xlim, spectra
+
+    def basis_pane(self, sub: int = 0, label: str = "", exceptions: tuple = ()) -> str:
+        if self.spectra is None:
+            return "<div class=empty>The file states no dwell time or frequency.</div>"
+        x, xlim, spectra = self.spectra
+        width, row, room = 900, 30, 110
+        rows = []
+        for n, name in enumerate(self.basis.metabolites):
+            own = (float(np.abs(spectra[n]).max()) if x.size else 0.0) or 1.0
+            ylim = (-0.2 * own, own) if self.subs == 1 else (-own, own)
+            path = Plot.path(x, spectra[n][sub], (0, n * row + 4, width - room, row - 4), xlim,
+                             ylim)
             rows.append(f'<g class="line">{path}</g><text x="{width}" y="{n * row + row - 8}" '
                         f'text-anchor="end">{html.escape(name)}</text>')
         height = len(rows) * row + 30
+        note = "Every metabolite, real part, each on its own scale."
+        if self.subs > 1:
+            note = (f"Every metabolite, real part, one scale per metabolite across its {self.subs} "
+                    "sub-spectra. The file does not name its sub-spectra: letters are sub-spectra "
+                    "as stored, the others are named by the sum or difference of them they equal.")
+            if not label.isalpha():
+                but = f" except {', '.join(exceptions)}" if exceptions else ""
+                note += f" This one is {label} for every metabolite{but}."
         return (f'<svg viewBox="0 0 {width} {height}" class="plot">{"".join(rows)}'
-                f"{Plot.axis(xlim, 'ppm', width - label, height - 26)}</svg>"
-                "<div class=note>Every metabolite, real part, each on its own scale"
-                + (f"; the first of {more} sub-spectra each" if more > 1 else "") + ".</div>")
+                f"{Plot.axis(xlim, 'ppm', width - room, height - 26)}</svg>"
+                f"<div class=note>{html.escape(note)}</div>")
 
     def facts(self) -> str:
         b = self.basis
-        facts = [f"{len(b.metabolites)} metabolites", b.nucleus or ""]
+        facts = [f"{len(b.metabolites)} metabolites",
+                 f"{self.subs} sub-spectra" if self.subs > 1 else "", b.nucleus or ""]
         if b.spectrometer_frequency:
             facts.append(f"{b.spectrometer_frequency:.2f} MHz")
         facts += [f"{b.n_points} points", str(b.provenance.format).replace("_", " ")]
         return " · ".join(f for f in facts if f)
 
     def html(self) -> str:
-        return document(self.title, self.facts(),
-                        [("Basis", self.basis_pane()), ("Details", details(self.basis.meta))])
+        if self.subs == 1:
+            tabs = [("Basis", self.basis_pane())]
+        else:
+            labels, exceptions = self.labels()
+            tabs = [(label, self.basis_pane(i, label, tuple(exceptions[i])))
+                    for i, label in enumerate(labels)]
+        return document(self.title, self.facts(), tabs + [("Details", details(self.basis.meta))])
 
 
 def details(meta) -> str:
