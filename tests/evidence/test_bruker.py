@@ -7,7 +7,8 @@
 # Created: 04/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Bruker 2dseq images against the vendor's own DICOM exports, complex 2dseq spectra       #
-#          against the magnitude spectra, and imaging k-space (fid, rawdata.job0) against the      #
+#          against the magnitude spectra and single-voxel ones against the scan's fid, rawdata     #
+#          transients as dynamics, and imaging k-space (fid, rawdata.job0) against the             #
 #          2dseq images of the same scans: the lines placed by the encoding steps and objects      #
 #          reconstruct, with zero-filling to the recon matrix, to the vendor's image of every      #
 #          slice up to the in-plane orientation. The fid and rawdata of CSI scans say they are     #
@@ -81,13 +82,16 @@ def test_2dseq_image_equals_dicom_export(pdata):
 @pytest.mark.parametrize("scan", COMPLEX)
 def test_2dseq_spectrum_fid_matches_magnitude_spectrum(scan):
     """The FID made from the complex 2dseq spectrum has the vendor's magnitude spectrum, in the
-    stored frequency order, and the raw fid of the scan agrees with that order."""
+    stored frequency order (zero-filled as the reconstruction did; the vendor's also holds the
+    digital filter's points, which the FID leaves out), and the raw fid of the scan agrees with
+    that order."""
     [fid] = load(BRUKER / scan / "pdata/2/2dseq")
     magnitude = _magnitude(scan)
     assert isinstance(fid, MRSData) and magnitude.dims[3] == "frequency"
-    spectrum = np.abs(np.fft.fftshift(np.fft.fft(fid.data, axis=3), axes=3))
+    m = magnitude.shape[3]
+    spectrum = np.abs(np.fft.fftshift(np.fft.fft(fid.data, n=m, axis=3), axes=3))
     assert spectrum.shape == magnitude.shape
-    assert np.allclose(spectrum, magnitude.data, rtol=1e-4, atol=1e-4 * float(magnitude.data.max()))
+    assert np.corrcoef(spectrum.ravel(), magnitude.data.ravel())[0, 1] > 0.999
     [raw] = load(BRUKER / scan / "fid")
     index = np.unravel_index(np.argmax(magnitude.data.sum(axis=3)), magnitude.shape[:3])
     reference = magnitude.data[index]
@@ -100,6 +104,28 @@ def test_2dseq_spectrum_fid_matches_magnitude_spectrum(scan):
     same_order = np.corrcoef(on_grid, reference)[0, 1]
     reversed_order = np.corrcoef(on_grid[::-1], reference)[0, 1]
     assert same_order > 0.98 and same_order > reversed_order
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("scan", ["PV-6.0.1/9", "PV-6.0.1/10"])
+def test_2dseq_single_voxel_fid_equals_the_scan_fid(scan):
+    """The reconstruction writes the scan's fid and its spectrum: the FID made from the spectrum
+    equals that fid point for point (up to scale)."""
+    [ours] = load(BRUKER / scan / "pdata/2/2dseq")
+    [fid] = load(BRUKER / scan / "fid")
+    a, b = np.asarray(fid.data).ravel(), np.asarray(ours.data).ravel()
+    head = b[: a.size]
+    assert abs(np.vdot(head, a)) / (np.linalg.norm(head) * np.linalg.norm(a)) > 1 - 1e-6
+    assert b.size == a.size
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("scan, transients", [("PV-6.0.1/9", 16), ("PV-360.3.5/19", 32),
+                                              ("PV-360.1.1/12", 384)])
+def test_rawdata_transients_are_dynamics(scan, transients):
+    """rawdata.job0 stores every transient: averages (PVM_NAverages) x repetitions (NR)."""
+    [d] = load(BRUKER / scan / "rawdata.job0")
+    assert d.shape[4 + d.dim_tags.index("DIM_DYN")] == transients
 
 
 @pytest.mark.data

@@ -51,10 +51,16 @@ KSPACE = "k-space, not reconstructed"  # how a reader marks data that are k-spac
 # One dataset in the pipeline's layout (1, voxels, coils, transients, points), one array per edit  #
 # condition, in FSL-MRS's orientation (conjugated): every voxel of a grid (the centre one is the   #
 # focus), the first increment of indirect NMR dimensions, other dimensions summed (named in the    #
-# notes).                                                                                          #
+# notes). 1H transients of untagged edit conditions (files that do not say a scan is edited) are   #
+# found by their alternation: when the transients' magnitude spectra (1.8-4.2 ppm) differ between  #
+# groups of every 2nd or 4th over ALTERNATION times more than within them, each group is a         #
+# condition (lettered A, B, ... as acquired).                                                      #
 #                                                                                                  #
 #**************************************************************************************************#
 class Prepared:
+    ALTERNATION = 10.0  # edited data: 80-150, unedited: below 1
+    PERIODS = (2, 4)  # MEGA; HERMES, HERCULES
+
     def __init__(self, d: MRSData):
         self.d, self.notes = d, []
         data = np.asarray(d.data, dtype=np.complex128)
@@ -89,6 +95,34 @@ class Prepared:
         self.conditions = np.transpose(data, order)[:, None].conj()  # (E, 1, V, C, D, T)
         centre = tuple(n // 2 for n in self.spatial)
         self.focus = int(np.ravel_multi_index(centre, self.spatial))  # the centre voxel
+        self.groups = 1 if self.edited else self.alternation()
+        if self.groups > 1:
+            _, _, v, c, n, t = self.conditions.shape
+            split = self.conditions[0].reshape(1, v, c, n // self.groups, self.groups, t)
+            self.conditions = np.moveaxis(split, 4, 0)  # (G, 1, V, C, D/G, T)
+            self.notes.append(f"transients alternate in {self.groups} groups (found in the data): "
+                              "each group processed on its own")
+
+    def alternation(self) -> int:
+        """The number of groups 1H transients alternate in, 1 when they do not."""
+        d, n = self.d, self.conditions.shape[4]
+        if d.nucleus != "1H" or d.dwelltime is None or d.spectrometer_frequency is None:
+            return 1
+        fids = self.conditions[0, 0, self.focus]  # (C, D, T)
+        spec = np.abs(Spectral.fid_to_spec(fids)).sum(axis=0)  # (D, T)
+        x = Spectral.ppm_axis(spec.shape[-1], 1.0 / d.dwelltime, d.spectrometer_frequency)
+        spec = spec[:, (x > 1.8) & (x < 4.2)]
+        best, ratio = 1, self.ALTERNATION
+        for period in self.PERIODS:
+            if n % period or n < 4 * period:
+                continue
+            groups = spec.reshape(-1, period, spec.shape[-1])
+            means = groups.mean(axis=0)
+            within = ((groups - means) ** 2).sum() / (n - period)
+            between = ((means - spec.mean(axis=0)) ** 2).sum() * (n // period) / (period - 1)
+            if within > 0 and between / within > ratio:
+                best, ratio = period, between / within
+        return best
 
     @property
     def grid(self) -> bool:
@@ -110,7 +144,9 @@ class Prepared:
 # Water scans and water references. A dataset is a water scan when its name ends in ref, h2o or    #
 # water, when its header says it is not water suppressed, or when water dominates it (1H; peak in  #
 # 4.2-5.1 ppm over 300 times the tallest of NAA, creatine and choline above their surroundings, on #
-# the unprocessed spectrum). A separate water reference is a file next to the data named like it   #
+# the unprocessed spectrum, or over 300 times the tallest peak above the running median of         #
+# 1.8-3.4 ppm, which a broad water line's slope does not raise). A separate water reference is a   #
+# file next to the data named like it                                                              #
 # with _H2O, _ref, _water or _wref added, _act or _svs swapped for _ref or _mrsref.                #
 #                                                                                                  #
 #**************************************************************************************************#
@@ -139,7 +175,12 @@ class Water:
             if not peak.any() or not water.any():
                 return False
             prominence.append(spec[peak].max() - np.median(spec[around]))
-        return bool(spec[water].max() > cls.DOMINANCE * max(max(prominence), 0.0))
+        band = np.flatnonzero((x > 1.8) & (x < 3.4))
+        half = max(1, int(round(0.15 / abs(x[1] - x[0]))))
+        padded = np.pad(spec, half, mode="edge")
+        windows = np.lib.stride_tricks.sliding_window_view(padded, 2 * half + 1)[band]
+        peaks = float((spec[band] - np.median(windows, axis=1)).max())  # above the running median
+        return bool(spec[water].max() > cls.DOMINANCE * max(min(max(prominence), peaks), 0.0))
 
     @classmethod
     def partner(cls, path: Path) -> Path | None:
@@ -242,7 +283,7 @@ class Plot:
         span = abs(xlim[0] - xlim[1])
         step = next(s for s in (0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 5000)
                     if span / s <= width // 90)  # about one tick per 90 units
-        ticks = np.arange(np.ceil(min(xlim) / step) * step, max(xlim) + 1e-9, step)
+        ticks = np.arange(np.ceil(min(xlim) / step) * step, max(xlim) + 1e-9, step) + 0.0  # no -0
         out = [f'<line class="axis" x1="0" x2="{width}" y1="{y}" y2="{y}"/>']
         unit = f'<tspan class="unit"> {unit}</tspan>'
         for tick in ticks:
@@ -312,8 +353,10 @@ class Plot:
 # The page: header, tabs (radio buttons and CSS, no script), panes. Spectra are FSL-MRS's (first   #
 # point halved, orthonormal FFT, zero filled twice) on its ppm axis; 1H shows 0-6 ppm, other       #
 # nuclei the whole range. Water scans take the pipeline's water path; other data use the water     #
-# reference in the file or, given the file's path, next to it. Edit conditions are processed one   #
-# by one and shown with their difference (first minus second, as stored).                          #
+# reference in the file or, given the file's path, next to it; eddy currents are corrected only    #
+# with water. Edit conditions are processed one by one and stacked, two with their difference      #
+# (first minus second, as stored). A file without dwell time or frequency is shown as stored: its  #
+# spectrum on a point (or Hz) axis and its FID.                                                    #
 #                                                                                                  #
 #**************************************************************************************************#
 class Page:
@@ -326,17 +369,17 @@ class Page:
         self.main = next((d for d in mrs if not Water.named(d)), mrs[0])
         self.water = next((d for d in mrs if d is not self.main), None)
         self.prepared = Prepared(self.main)
-        self.water_scan = self.water is None and (Water.named(self.main)
-                                                  or Water.dominates(self.prepared))
+        d = self.main
+        nmr = d.provenance.format in NMR_FORMATS or "Solvent" in d.meta
+        self.water_scan = self.water is None and (Water.named(d) or (
+            not nmr and Water.dominates(self.prepared)))
         self.water_notes = []
         if self.water is None and not self.water_scan and source is not None:
             self.water = self.partner(Path(source))
-        d = self.main
         self.blank = not np.any(self.prepared.conditions)  # e.g. MRSI a converter left empty
         self.kspace = any(n.startswith(KSPACE) for n in d.provenance.notes)
-        self.processable = (d.dwelltime is not None and d.spectrometer_frequency is not None
-                            and not self.blank and not self.kspace)
-        nmr = d.provenance.format in NMR_FORMATS or "Solvent" in d.meta
+        self.unstated = d.dwelltime is None or not d.spectrometer_frequency
+        self.processable = not self.unstated and not self.blank and not self.kspace
         self.proton = d.nucleus == "1H" and not nmr
         self.reference = float(d.meta.get("ReferencePPM", PROTON_REFERENCE if self.proton
                                           else 0.0))
@@ -368,7 +411,7 @@ class Page:
             return []
         d, water = self.main, None
         pipeline = RawPipeline(1.0 / d.dwelltime, d.spectrometer_frequency, self.proton,
-                               self.reference)
+                               self.reference, ecc_without_water=False)
         if self.water_scan:
             return [pipeline.run_water(condition) for condition in self.prepared.conditions]
         if self.water is not None:
@@ -421,12 +464,21 @@ class Page:
         for r in self.results:
             x, spec = self.spectrum(self.focus(r.fid))
             lines.append((x, spec[0].real, "line"))
-        legend = ""
-        if self.prepared.edited and len(self.results) == 2:
+        legend, groups = "", self.prepared.groups
+        names = ([f"group {chr(65 + i)}" for i in range(len(lines))] if groups > 1
+                 else [f"edit {i + 1}" for i in range(len(lines))])
+        if len(lines) == 2:
             x, difference = self.spectrum(self.focus(self.results[0].fid)
                                           - self.focus(self.results[1].fid))
             lines.append((x, difference[0].real, "line accent"))
-            legend = "<div class=legend>edit 1 · edit 2 · <b>difference 1 − 2</b></div>"
+            first, second = (n.split()[-1] for n in names)
+            legend = (f"<div class=legend>{' · '.join(names)} · <b>difference {first} − {second}"
+                      "</b></div>")
+        elif len(lines) > 2:
+            if groups > 1:
+                names = [f"{n} (transients {i + 1}, {i + 1 + groups}, …)"
+                         for i, n in enumerate(names)]
+            legend = f"<div class=legend>{' · '.join(names)}, top to bottom</div>"
         else:
             lines = [(lines[0][0], lines[0][1], "line accent")]
         where = []
@@ -437,9 +489,9 @@ class Page:
             where.append("water scan")
         steps = list(dict.fromkeys(where + self.notes + self.prepared.notes + self.water_notes
                                    + self.results[0].steps))
-        if self.prepared.edited:
+        if self.prepared.edited and self.prepared.groups == 1:
             steps.append("each edit condition processed on its own")
-        x, height = lines[0][0], 320 if len(lines) == 1 else 440
+        x, height = lines[0][0], 320 if len(lines) == 1 else 110 * (len(lines) + 1)
         return (self.scaled(lambda window: Plot.spectrum(lines, self.xlim(x), "ppm",
                                                          height=height, window=window))
                 + legend + f"<div class=note>{' · '.join(steps)}.</div>" + self.reader_notes())
@@ -508,7 +560,8 @@ class Page:
         eps = np.asarray(r.eps).reshape(voxels, -1)[self.prepared.focus]
         phi = np.degrees(np.asarray(r.phi).reshape(voxels, -1)[self.prepared.focus])
         removed = ~keep
-        edit = " (first edit condition)" if self.prepared.edited else ""
+        edit = (" (group A)" if self.prepared.groups > 1
+                else " (first edit condition)" if self.prepared.edited else "")
         numbers = ", ".join(str(i + 1) for i in np.flatnonzero(removed))
         text = (f"{transients} transients after coil combination{edit}, real part, unphased; "
                 "bold: their mean (after alignment: of the kept ones). "
@@ -598,7 +651,42 @@ class Page:
                   f"{d.n_points} points", str(d.provenance.format).replace("_", " ")]
         return " · ".join(f for f in facts if f)
 
+    def stored(self) -> np.ndarray:
+        """The focus voxel's FIDs averaged (edit conditions, coils, transients), as stored."""
+        c = self.prepared.conditions[:, 0, self.prepared.focus]  # (E, C, D, T)
+        return c.reshape(-1, c.shape[-1]).mean(axis=0)
+
+    def unstated_pane(self) -> str:
+        """The spectrum of a file without dwell time or frequency, on a point axis (Hz with a
+        dwell time), real part as stored."""
+        d, fid = self.main, self.stored()
+        spec = Spectral.fid_to_spec(Spectral.zero_fill(fid[None], 2))[0]
+        sw, unit = (1.0 / d.dwelltime, "Hz") if d.dwelltime is not None else (fid.size, "points")
+        x = Spectral.ppm_axis(spec.size, sw, 1.0, 0.0)  # scaled by 1: Hz or points
+        gone = " and ".join(name for name, value in (("dwell time", d.dwelltime),
+                                                     ("spectrometer frequency",
+                                                      d.spectrometer_frequency)) if not value)
+        averaged = self.prepared.conditions[:, 0, 0].size // fid.size
+        mean = f", mean of {averaged} FIDs" if averaged > 1 else ""
+        return (Plot.spectrum([(x, spec.real, "line accent")], (float(x.max()), float(x.min())),
+                              unit)
+                + f"<div class=note>The file states no {gone}: the spectrum on a {unit} axis "
+                f"(centre 0), real part as stored{mean}, nothing processed.</div>"
+                + self.reader_notes())
+
+    def fid_pane(self) -> str:
+        d, fid = self.main, self.stored().conj()  # as stored (the conditions are conjugated)
+        t, unit = ((np.arange(fid.size) * d.dwelltime * 1e3, "ms") if d.dwelltime is not None
+                   else (np.arange(fid.size, dtype=np.float64), "points"))
+        lines = [(t, fid.real, "line"), (t, fid.imag, "line")]
+        return (Plot.spectrum(lines, (float(t.min()), float(t.max())), unit, height=380)
+                + "<div class=note>The FID as stored: real part (top) and imaginary part.</div>")
+
     def html(self) -> str:
+        if self.unstated and not self.blank and not self.kspace:
+            return document(self.title, self.facts(), [
+                ("Spectrum", self.unstated_pane()), ("FID", self.fid_pane()),
+                ("Details", self.details_pane())])
         tabs = [("Spectrum", self.spectrum_pane())]
         if self.prepared.grid and self.results:
             tabs.append(("Grid", self.grid_pane()))

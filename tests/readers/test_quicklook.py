@@ -76,7 +76,37 @@ def test_single_fid_and_missing_axis():
     page = Page([dataset(fid())], "one.rda").html()
     assert "One channel" in page and "One transient" in page
     unknown = Page([dataset(fid(), dwell=None)], "raw.txt").html()
-    assert "nothing is processed" in unknown
+    assert "states no dwell time: the spectrum on a points axis" in unknown
+    assert ">FID</label>" in unknown and ">Coils</label>" not in unknown
+    meta = Meta({})
+    meta.set("ResonantNucleus", ["1H"], "test")
+    no_frequency = MRSData(fid().reshape(1, 1, 1, N), 1 / SW, np.eye(4), meta,
+                           Provenance((), miox.Format.SIMPSON, "test", {}))
+    assert "states no spectrometer frequency: the spectrum on a Hz axis" in Page(
+        [no_frequency], "raw.fid").html()
+
+
+def test_untagged_edit_conditions_are_found_in_the_data():
+    rng = np.random.default_rng(1)
+    off = fid()
+    on = 0.8 * np.exp(2j * np.pi * (3.027 - 4.65) * SF * T - np.pi * 6 * T).conj()  # no NAA
+    transients = np.stack([off if k % 2 == 0 else on for k in range(16)], axis=1)
+    noisy = transients + 0.01 * (rng.normal(size=transients.shape)
+                                 + 1j * rng.normal(size=transients.shape))
+    page = Page([dataset(noisy, ("DIM_DYN", None, None))], "mega.sdat").html()
+    assert "transients alternate in 2 groups (found in the data)" in page
+    assert "difference A − B" in page and "each edit condition processed" not in page
+    plain = Page([dataset(off[:, None] * np.ones((1, 16)) + 0.01 * rng.normal(size=(N, 16)),
+                          ("DIM_DYN", None, None))], "press.sdat").html()
+    assert "alternate" not in plain
+    four = np.stack([fid() * (1 + c) for c in range(4)], axis=1)[:, :, None] * np.ones((1, 1, 4))
+    stacked = Page([dataset(four, ("DIM_EDIT", "DIM_DYN", None))], "hermes.dat").html()
+    assert "edit 1 · edit 2 · edit 3 · edit 4, top to bottom" in stacked
+
+
+def test_eddy_currents_are_corrected_only_with_water():
+    page = Page([dataset(fid())], "one.rda").html()
+    assert "eddy currents" not in page
 
 
 def water(shift_hz=0.0):
@@ -92,6 +122,9 @@ def test_water_scans_take_the_water_path():
         assert "This file is a water scan" in page and "creatine" not in page
     suppressed = Page([dataset(0.1 * water() + fid())], "metabolites.dat").html()
     assert "water scan" not in suppressed and "shifted to creatine" in suppressed
+    broad = 1000 * np.exp(-np.pi * 150 * T).conj()  # a phantom's broad water, no metabolites
+    noise = 0.01 * np.random.default_rng(2).normal(size=N)
+    assert "water scan" in Page([dataset(broad + noise)], "phantom.fid").html()
 
 
 def test_water_reference_next_to_the_data(tmp_path):

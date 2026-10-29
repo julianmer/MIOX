@@ -46,6 +46,14 @@ cp -R "$(ls -d "$BUILD"/pythons/cpython-"$PYTHON_VERSION"*/ | head -1)" "$APPEX/
 PY="$APPEX/Contents/Resources/python/bin/python3"
 uv pip install --quiet --python "$PY" --break-system-packages "$ROOT"
 rm -rf "$BUILD/pythons"
+# what a preview never runs: test suites, installers, Tk and IDLE, C headers
+LIB="$APPEX/Contents/Resources/python/lib"
+find "$LIB/python$PYTHON_VERSION/site-packages" -type d \( -name tests -o -name test \) -prune \
+    -exec rm -rf {} +
+rm -rf "$LIB/python$PYTHON_VERSION"/{test,idlelib,tkinter,turtledemo,ensurepip} \
+    "$LIB/python$PYTHON_VERSION/site-packages"/pip "$LIB/python$PYTHON_VERSION/site-packages"/pip-* \
+    "$LIB"/tcl9* "$LIB"/tk9* "$LIB"/itcl* "$LIB"/thread* "$LIB"/libtcl* \
+    "$APPEX/Contents/Resources/python/include"
 # the sandbox cannot write bytecode into the bundle: compile it now, valid whatever the file times
 "$PY" -m compileall -q -j 0 --invalidation-mode unchecked-hash "$APPEX/Contents/Resources/python/lib" \
     >/dev/null || true

@@ -52,11 +52,12 @@ from miox.sniff import Format, Kind, Sniff, Sniffer
 # ReferencePPM. A complex 2dseq spectrum (REAL_IMAGE and IMAGINARY_IMAGE frames) is stored in the  #
 # frequency domain, frequency increasing with the index, like the spectrum of a NIfTI-MRS FID:     #
 # spec2nii keeps it as if it were a FID (single voxel) or flips it before the inverse FFT (CSI),   #
-# so the FID is recomputed here as the inverse FFT without flip (checked against the raw fid of    #
-# the same scan and the vendor's magnitude spectrum). Processed images (2dseq with spatial         #
-# dimensions only) are assembled from visu_pars, one MRImage per slice pack; magnitude spectra     #
-# (MAGNITUDE_IMAGE frames over a spectroscopic dimension) hold no phase and become MRImages with a #
-# frequency axis. Image geometry and values equal the vendor's own DICOM export.                   #
+# so the FID is recomputed here: the reconstruction's FT runs the other way (the spectrum is       #
+# conjugated) and moves the digital filter's PVM_DigShift points to the end (they are left out);   #
+# single-voxel FIDs then equal the processed fid of the same scan. Processed images (2dseq with    #
+# spatial dimensions only) are assembled from visu_pars, one MRImage per slice pack; magnitude     #
+# spectra (MAGNITUDE_IMAGE frames over a spectroscopic dimension) hold no phase and become         #
+# MRImages with a frequency axis. Image geometry and values equal the vendor's own DICOM export.   #
 #                                                                                                  #
 #**************************************************************************************************#
 class BrukerReader(Spec2niiReader):
@@ -188,30 +189,53 @@ class BrukerReader(Spec2niiReader):
             images, names = read_bruker(args)
         if path.name == "2dseq":
             dataset = Bruker2dseq(path, header["visu_pars"])
-            images = [self._fid_from_spectrum(image, dataset) for image in images]
+            shift = header.get("method", {}).get("PVM_DigShift", 0)
+            shift = shift if isinstance(shift, int) else 0
+            images = [self._fid_from_spectrum(image, dataset, shift) for image in images]
+        for image in images:
+            self._tag_transients(image, header)
         return list(images), list(names), header
 
-    def _fid_from_spectrum(self, image: NIFTI_MRS, dataset: Bruker2dseq) -> NIFTI_MRS:
-        """The FID of a complex 2dseq spectrum: inverse FFT of the real and imaginary frames,
-        frequency increasing with the index (spec2nii keeps the spectrum or flips it)."""
+    @staticmethod
+    def _tag_transients(image: NIFTI_MRS, header: dict) -> None:
+        """Transients stored one by one (rawdata: averages x repetitions) are DIM_DYN; spec2nii
+        tags DIM_DYN only a dimension as long as the repetitions and leaves these DIM_USER_n."""
+        averages = header.get("method", {}).get("PVM_NAverages")
+        repetitions = header.get("acqp", {}).get("NR")
+        if not isinstance(averages, int) or not isinstance(repetitions, int):
+            return
+        for index in range(image.ndim - 4):
+            tag = image.dim_tags[index]
+            if tag and tag.startswith("DIM_USER") and image.shape[4 + index] == (
+                    averages * repetitions) and "DIM_DYN" not in image.dim_tags:
+                image.set_dim_tag(4 + index, "DIM_DYN", info="transients: averages (method "
+                                  "PVM_NAverages) x repetitions (acqp NR), as acquired")
+
+    def _fid_from_spectrum(self, image: NIFTI_MRS, dataset: Bruker2dseq,
+                           shift: int) -> NIFTI_MRS:
+        """The FID of a complex 2dseq spectrum: inverse FFT of the conjugated real and imaginary
+        frames, without the digital filter's ``shift`` points (PVM_DigShift), which the
+        reconstruction moves to the end (spec2nii keeps the spectrum or flips it)."""
         types = [t.upper() for t in dataset.frame_types]
         if "REAL_IMAGE" not in types or "IMAGINARY_IMAGE" not in types:
             return image
         frames = dataset.frames()
         spectrum = frames[types.index("REAL_IMAGE")] + 1j * frames[types.index("IMAGINARY_IMAGE")]
-        fid = np.fft.ifft(np.fft.ifftshift(spectrum, axes=-1), axis=-1)
+        fid = np.fft.ifft(np.fft.ifftshift(spectrum.conj(), axes=-1), axis=-1)
+        fid = np.roll(fid, -shift, axis=-1)[..., : fid.shape[-1] - shift]
         if fid.ndim == 1:  # single voxel
             data = fid.reshape(1, 1, 1, -1)
         else:  # (y, x, points) -> (x, y, z, points)
             data = np.moveaxis(fid, -1, 0)
             data = np.moveaxis(data, 1, -1)
             data = np.moveaxis(data, 0, -1)[:, :, np.newaxis, :]
-        if data.shape != image.shape:
+        if data.shape[:-1] != image.shape[:-1]:
             warnings.warn(f"2dseq frames {data.shape} do not match spec2nii's {image.shape}; "
                           "spec2nii's data kept", stacklevel=2)
             return image
-        warnings.warn("complex 2dseq spectrum turned into a FID by inverse FFT (spec2nii keeps "
-                      "the spectrum, or flips it for CSI)", stacklevel=2)
+        warnings.warn("complex 2dseq spectrum turned into a FID by inverse FFT, without the "
+                      f"digital filter's {shift} points (spec2nii keeps the spectrum, or flips it "
+                      "for CSI)", stacklevel=2)
         affine = image.getAffine("voxel", "world")
         return gen_nifti_mrs_hdr_ext(data, image.dwelltime, image.hdr_ext, affine, no_conj=True)
 
