@@ -16230,9 +16230,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test00/test00.csdf": {
-  "format": "unknown",
+  "format": "csdm",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test00/test00.txt": {
   "format": "unknown",
@@ -16240,9 +16240,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test01/test01.csdf": {
-  "format": "unknown",
+  "format": "csdm",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test01/test01.txt": {
   "format": "unknown",
@@ -16250,9 +16250,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test02/test02.csdf": {
-  "format": "unknown",
+  "format": "csdm",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test02/test02.txt": {
   "format": "unknown",
@@ -16260,9 +16260,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test03/test03.csdf": {
-  "format": "unknown",
+  "format": "csdm",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test03/test03.txt": {
   "format": "unknown",
@@ -16270,9 +16270,9 @@
   "kind": "unknown"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test04/test04.csdf": {
-  "format": "unknown",
+  "format": "csdm",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "spectroscopy"
  },
  "mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/sideband_sideband/test04/test04.txt": {
   "format": "unknown",

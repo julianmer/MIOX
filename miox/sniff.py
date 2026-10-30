@@ -102,6 +102,7 @@ class Format(StrEnum):
     NMRPIPE = "nmrpipe"  # NMRPipe data files
     SPARKY = "sparky"  # Sparky (UCSF) spectra
     SIMPSON = "simpson"  # SIMPSON simulation output
+    CSDM = "csdm"  # Core Scientific Dataset Model (.csdf, .csdfe)
     SPINSOLVE = "spinsolve"  # Magritek Spinsolve (Prospa) data files and experiment folders
     RS2D = "rs2d"  # RS2D experiment folders (header.xml + data.dat)
     RNMRTK = "rnmrtk"  # Rowland NMR Toolkit .sec data with .par parameters
@@ -412,6 +413,7 @@ class Sniffer:
             self.nmrpipe,
             self.sparky,
             self.simpson,
+            self.csdm,
             self.spinsolve,
             self.rs2d,
             self.rnmrtk,
@@ -877,6 +879,13 @@ class Sniffer:
             return None
         return Sniff(path, Format.SIMPSON, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=("SIMP header with NP",))
+
+    def csdm(self, path: Path, head: bytes) -> Sniff | None:
+        """Core Scientific Dataset Model: a JSON object whose first key is "csdm"."""
+        if not re.match(rb'\s*\{\s*"csdm"\s*:', head):
+            return None
+        return Sniff(path, Format.CSDM, Kind.SPECTROSCOPY, confidence=1.0,
+                     evidence=('JSON object starting with "csdm"',))
 
     def spinsolve(self, path: Path, head: bytes) -> Sniff | None:
         """Spinsolve data: Prospa data files (magic SORPATAD; plot files .pt1 differ)."""

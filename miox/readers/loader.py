@@ -121,6 +121,7 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.philips_data_list", "PhilipsDataListReader", (Format.PHILIPS_DATA_LIST,)),
     ("miox.readers.philips_examcard", "PhilipsExamCardReader", (Format.PHILIPS_EXAMCARD,)),
     ("miox.readers.philips_dicom_raw", "PhilipsDicomRawReader", (Format.PHILIPS_DICOM_RAW,)),
+    ("miox.readers.csdm", "CsdmReader", (Format.CSDM,)),
     ("miox.readers.siemens_dicom_protocol", "SiemensDicomProtocolReader",
      (Format.SIEMENS_DICOM_RAW, Format.SIEMENS_PHOENIX_REPORT)),
     ("miox.readers.philips_raw_lab", "PhilipsRawLabReader", (Format.PHILIPS_RAW_LAB,)),

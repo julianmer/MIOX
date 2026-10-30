@@ -21,7 +21,8 @@
 #          simulates and against SIMPSON's own transform, Spinsolve FIDs against their JCAMP-DX   #
 #          exports, Spinsolve's own spectrum and the carbonyl shift of urea, RS2D FIDs against     #
 #          the vendor's processed spectra, RNMRTK conversions against the Bruker FIDs they were    #
-#          written from, a processed TopSpin HSQC against ibuprofen's (1H, 13C) pairs.             #
+#          written from, a processed TopSpin HSQC against ibuprofen's (1H, 13C) pairs, CSDM        #
+#          spectra against the SIMPSON scripts of their simulations.                               #
 #                                                                                                  #
 ####################################################################################################
 
@@ -684,3 +685,21 @@ def test_topspin_hsqc_axes_place_ibuprofens_cross_peaks():
     centre_h, centre_c = proton[proton.size // 2], carbon[carbon.size // 2]
     assert hits(h, c) >= 6
     assert hits(2 * centre_h - h, c) == 0 and hits(h, 2 * centre_c - c) == 0
+
+
+SIDEBANDS = PUBLIC_DATA / ("mrsimulator/tests/spectral_integration_tests/"
+                           "simpson_simulated_lineshapes/sideband_sideband")
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("test", [f"test0{i}" for i in range(5)])
+def test_csdm_axes_are_those_of_the_simpson_simulation(test):
+    """mrsimulator's CSDM spectra of SIMPSON simulations: points and spectral width of both axes
+    as the SIMPSON script sets them (np1, np2 points; sw = 10^6 / dw Hz)."""
+    script = (SIDEBANDS / test / f"{test}.txt").read_text()
+    value = {k: float(v) for k, v in re.findall(r"variable\s+(\w+)\s+([\d.eE+-]+)", script)}
+    [image] = load(SIDEBANDS / test / f"{test}.csdf")
+    assert image.shape[3:] == (int(value["np2"]), int(value["np1"]))  # direct (acquired) first
+    assert image.meta["SpectralWidth"] == pytest.approx(1e6 / value["dw2"])
+    assert image.meta["IndirectSpectralWidth"] == [pytest.approx(1e6 / value["dw1"])]
+    assert "SpectrometerFrequency" not in image.meta  # the files state no origin offset
