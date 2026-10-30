@@ -135,6 +135,7 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.physio", "PhilipsPhyslogReader", (Format.PHILIPS_PHYSLOG,)),
     ("miox.readers.physio", "SiemensPmuReader", (Format.SIEMENS_PMU,)),
     ("miox.readers.profit_basis", "ProfitBasisReader", (Format.PROFIT_BASIS,)),
+    ("miox.readers.mrs_sim_basis", "MrsSimBasisReader", (Format.MRS_SIM_BASIS,)),
     ("miox.readers.pulseq", "PulseqReader", (Format.PULSEQ,)),
     ("miox.readers.pyamares_prior", "PyamaresPriorReader", (Format.PYAMARES_PRIOR,)),
     ("miox.readers.pyamares_result", "PyamaresResultReader", (Format.PYAMARES_RESULT,)),
@@ -164,7 +165,7 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.surfaces", "Mz3Reader", (Format.MZ3,)),
     ("miox.readers.tarquin_dpt", "TarquinDptReader", (Format.TARQUIN_DPT,)),
     ("miox.readers.tarquin_output", "TarquinOutputReader", (
-        Format.TARQUIN_RESULTS, Format.TARQUIN_FIT,
+        Format.TARQUIN_RESULTS, Format.TARQUIN_FIT, Format.TARQUIN_CSV,
     )),
     ("miox.readers.tecmag", "TecmagReader", (Format.TECMAG_TNT,)),
     ("miox.readers.text_fid", "TextFidReader", (Format.TEXT_FID,)),

@@ -52109,6 +52109,181 @@
   "vendor": null,
   "kind": "unknown"
  },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S01_S01_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S02_S02_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S03_S03_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S04_S04_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S05_S05_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S06_S06_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S07_S07_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S08_S08_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S09_S09_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S10_S10_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S11_S11_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/GE/LCModelOutput/G1_P_S12_S12_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S01_S01_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S02_S02_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S03_S03_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S04_S04_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S05_S05_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S06_S06_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S07_S07_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S08_S08_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S09_S09_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S10_S10_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S11_S11_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Philips/LCModelOutput/P03_P_S12_S12_PRESS_35_act_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S01_S01_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S02_S02_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S03_S03_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S04_S04_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S05_S05_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S06_S06_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S07_S07_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S08_S08_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S09_S09_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S10_S10_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "specvis/examples/data/Siemens/LCModelOutput/S5_P_S12_S12_PRESS_35_LCM_A.coord": {
+  "format": "lcmodel_coord",
+  "vendor": null,
+  "kind": "fit_result"
+ },
  "spinsolve_ethanol/092237-1D EXTENDED+-EtOH/Enhanced/acqu.par": {
   "format": "unknown",
   "vendor": null,

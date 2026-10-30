@@ -151,6 +151,7 @@ class Format(StrEnum):
     TARQUIN_DPT = "tarquin_dpt"
     TARQUIN_RESULTS = "tarquin_results"
     TARQUIN_FIT = "tarquin_fit"
+    TARQUIN_CSV = "tarquin_csv"
     VASF = "vasf"
     VESPA_VIFF = "vespa_viff"
     SIVIC_DDF = "sivic_ddf"
@@ -161,6 +162,7 @@ class Format(StrEnum):
     INSPECTOR_BASIS = "inspector_basis"
     MARSS_BASIS = "marss_basis"
     PROFIT_BASIS = "profit_basis"
+    MRS_SIM_BASIS = "mrs_sim_basis"
     FIDA_MAT = "fida_mat"
     VESPA_PRIOR = "vespa_prior"
     GAVA_PRIOR = "gava_prior"
@@ -339,6 +341,7 @@ class Sniffer:
         (b"Dangerplot_version", Format.TARQUIN_DPT, Kind.SPECTROSCOPY, "TARQUIN dangerplot"),
         (b"Signal     Conc (au)", Format.TARQUIN_RESULTS, Kind.FIT_RESULT, "TARQUIN results"),
         (b"Row : ", Format.TARQUIN_FIT, Kind.FIT_RESULT, "TARQUIN fit"),
+        (b"Signal amplitudes", Format.TARQUIN_CSV, Kind.FIT_RESULT, "TARQUIN CSV results"),
         (b"Row, Col,", Format.LCMODEL_CSV, Kind.FIT_RESULT, "LCModel CSV"),
         (b"name,amplitude,sd,CRLB(%)", Format.PYAMARES_RESULT, Kind.FIT_RESULT, "PyAMARES result"),
         (b"[FILE INFORMATION]", Format.VASF, Kind.SPECTROSCOPY, "VASF header"),
@@ -1605,6 +1608,10 @@ class Sniffer:
             variables = MatFile.variables(path)
         except Exception as e:
             return Sniff(path, Format.UNKNOWN, evidence=(f"MATLAB file, unreadable: {e}",))
+        if {"header", "metabolites", "artifacts"} <= set(variables):
+            return Sniff(path, Format.MRS_SIM_BASIS, Kind.BASIS_SET, confidence=0.8,
+                         evidence=("MATLAB header, metabolites and artifacts (MRS-Sim)",),
+                         detail={"variables": variables})
         for pattern, fmt, kind in self.MATLAB_VARIABLES:
             names = [name for name in variables if pattern.match(name)]
             if names:

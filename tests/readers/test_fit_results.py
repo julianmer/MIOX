@@ -6,8 +6,8 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Fit-result readers on synthetic files: LCModel TABLE, COORD and CSV, TARQUIN results    #
-#          and fit, PyAMARES results, Osprey containers, and R data as spant saves it. No test     #
+# Purpose: Fit-result readers on synthetic files: LCModel TABLE, COORD and CSV, TARQUIN results,   #
+#          fit and CSV, PyAMARES results, Osprey containers, and R data as spant saves it. No test #
 #          data needed.                                                                            #
 #                                                                                                  #
 ####################################################################################################
@@ -42,8 +42,8 @@ $$MISC  3 lines in following misc. output table
   Ph:  10 deg      -2.0 deg/ppm
 
 $$INPU  6 lines in following table of input changes:
- HZPPPM = 123.2
- DELTAT = 0.00025
+ HZPPPM =1.232000e+02, DELTAT=2.500000D-04, NUNFI
+   L=4096
  FILBAS = '/data/basis sets/a very long name for
    a basis.basis'
  FILRAW = '/data/a/very/long/path/to/the/raws/fil
@@ -61,6 +61,7 @@ def test_lcmodel_table(tmp_path):
     assert r.diagnostics == {"FWHM (ppm)": 0.05, "S/N": 20.0, "Data shift (ppm)": -0.01,
                              "Ph (deg)": 10.0, "Ph (deg/ppm)": -2.0}
     assert r.meta["SpectrometerFrequency"] == [123.2] and r.meta["DwellTime"] == 0.00025
+    assert r.meta["NumberOfPoints"] == 4096  # a namelist line, cut inside NUNFIL
     inputs = r.meta.vendor["inputs"]
     assert inputs["FILBAS"] == "/data/basis sets/a very long name for a basis.basis"
     assert inputs["FILRAW"] == "/data/a/very/long/path/to/the/raws/file.RAW"
@@ -180,3 +181,27 @@ def test_r_serialization_version_3_with_compact_sequence_na_and_factor():
             + _symbol("names") + names + _r(254))
     value = RSerial(gzip.compress(blob)).read()
     assert value.plain() == {"seq": [1, 2, 3, 4], "na": [None, 2.5], "f": ["b", "a"]}
+
+
+def test_tarquin_csv(tmp_path):
+    f = tmp_path / "fit.csv"
+    f.write_text(
+        "Signal amplitudes\nRow,Col,Slice,NAA,NAAG,TNAA\n1,1,1,2.0,0.5,2.5\n"
+        "CRLBs (standard deviation)\nRow,Col,Slice,NAA,NAAG,TNAA\n1,1,1,0.1,0.5,0.1\n"
+        "Fit diagnostics\nRow,Col,Slice,Q,SNR\n1,1,1,1.5,40\n"
+        "Basis shifts and dampings\nRow,Col,Slice,name,group,shift (PPM),damping (Hz)\n"
+        "1,1,1,NAA,1,0.01,2.0\n1,1,1,NAAG,1,-0.02,3.0\n"
+        "Geometry parameters\nRows,1\nPixelSpacing,Unknown\n"
+        "Data parameters\nFs (Hz),4.0e+03\nFt (Hz),1.232e+08\nN,2048\nTE (s),3.0e-02\n\n"
+        "TARQUIN version,4.3.11\n"
+    )
+    [r] = miox.load(f)
+    assert r.provenance.format == "tarquin_csv" and r.voxel == (1, 1, 1)
+    assert r.row("NAA") == {"metabolite": "NAA", "concentration": 2.0, "sd": 0.1,
+                            "sd_percent": 5.0, "group": 1.0, "shift (PPM)": 0.01,
+                            "damping (Hz)": 2.0}
+    assert r.row("TNAA")["concentration"] == 2.5 and "shift (PPM)" not in r.row("TNAA")
+    assert r.diagnostics == {"Q": 1.5, "SNR": 40.0}
+    assert r.meta["SpectrometerFrequency"] == [123.2] and r.meta["DwellTime"] == 0.00025
+    assert r.meta["NumberOfPoints"] == 2048 and r.meta["EchoTime"] == 0.03
+    assert r.meta.vendor["Geometry parameters"]["PixelSpacing"] == "Unknown"

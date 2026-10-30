@@ -7,7 +7,8 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Basis sets: the NAA singlet of every set at 2.008 ppm (not mirrored, not shifted), and  #
-#          the same spectra stored in different formats read as the same FIDs.                     #
+#          the same spectra stored in different formats read as the same FIDs; MRS-Sim's           #
+#          metabolites at the shifts of its spin database.                                         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -16,6 +17,8 @@
 #   imports   #
 #*************#
 from __future__ import annotations
+
+import json
 
 import numpy as np
 import pytest
@@ -28,6 +31,7 @@ TOOLBOX = "basis_toolbox/sample_basis_sets/"
 CHALLENGE = "mrs_fitting_challenge/"
 OSPREY = "osprey/fit/basissets/"
 SLASER = TOOLBOX + "LCModel/BASIS_file/SLASER_Siemens26.basis"
+MRS_SIM = "mrs_sim/src/basis_sets/PRESS_30_GE_2000.mat"
 
 # (basis set, ppm at 0 Hz): most basis formats store no reference, each tool picks its own; None:
 # the ReferencePPM the set states
@@ -62,6 +66,8 @@ NAA_SETS = [
     (TOOLBOX + "JET/from_spinwizard_mouse", None),
     (TOOLBOX + "MRSCLOUD/BASIS_Siemens_UnEdited_sLASER_105_wMM.mat", None),
     ("profit/sampleBasisSet/sLASER_7ppm_moiety_UF_basis_TE24.mat", 4.70),  # not stored; ProFit's
+    (MRS_SIM, None),
+    ("spant/tests/testthat/def_basis.rds", None),
 ] + [
     (path.relative_to(PUBLIC_DATA).as_posix(), None)
     for path in sorted((PUBLIC_DATA / OSPREY).rglob("*.mat"))
@@ -144,3 +150,29 @@ def test_same_prior_in_three_formats():
     keys = ("metabolite", "line", "ppm", "area", "phase", "dims")
     tables = [[tuple(str(line[k]) for k in keys) for line in load(p)[0].lines] for p in paths]
     assert len(tables[0]) > 100 and tables[0] == tables[1] == tables[2]
+
+
+@pytest.mark.data
+def test_mrs_sim_metabolites_peak_at_the_shifts_of_its_spin_database():
+    """MRS-Sim lists every metabolite's spin shifts (omega) in a JSON database beside its basis
+    sets: each metabolite's tallest peak lies at one of them (multiplets within 0.08 ppm), and not
+    when the FIDs are taken as stored, unconjugated. Its macromolecule and lipid signals are left
+    out: they lie near 4.6 + 0.85 x their nominal shift in this file, in either convention."""
+    b = basis(MRS_SIM)
+    database = PUBLIC_DATA / MRS_SIM
+    database = json.loads(database.with_name("metabolites_database.json").read_text())
+    ppm = b.meta["ReferencePPM"] - np.fft.fftshift(
+        np.fft.fftfreq(b.n_points, b.dwelltime)) / b.spectrometer_frequency
+    distances = {}
+    for name in b.metabolites:
+        if not database.get(name, {}).get("omega") or name.startswith(("mm", "lip")):
+            continue
+        omega = np.asarray(database[name]["omega"], dtype=float)
+        for conjugated in (False, True):
+            fid = np.conj(b.fid(name)) if conjugated else b.fid(name)
+            peak = ppm[np.argmax(np.abs(np.fft.fftshift(np.fft.fft(fid))))]
+            distances[name, conjugated] = float(np.min(np.abs(omega - peak)))
+    read = [d for (_, conjugated), d in distances.items() if not conjugated]
+    assert len(read) >= 30 and max(read) < 0.08 and sum(d < 0.03 for d in read) >= 25
+    for name in ("naa", "cr", "lac", "gaba", "glu"):
+        assert distances[name, True] > 0.3, name  # creatine's NH at 6.65 ppm is 0.38 away

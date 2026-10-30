@@ -10,7 +10,9 @@
 #          curves add up as each tool composes them; combined rows equal the sum of their parts.   #
 #          spant's saved fits: their data, with spant's fitted shift and phase, give the spectrum  #
 #          spant fitted; its simulated spectrum is its basis weighted by the amplitudes it was     #
-#          made with; the basis signals lie at their shifts.                                       #
+#          made with; the basis signals lie at their shifts. SpecVis's LCModel and TARQUIN fits of #
+#          the same spectra state the same acquisition, TARQUIN's combined signals are the sums of #
+#          their parts.                                                                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,6 +21,8 @@
 #   imports   #
 #*************#
 from __future__ import annotations
+
+import re
 
 import numpy as np
 import pytest
@@ -29,6 +33,7 @@ from tests.conftest import PUBLIC_DATA
 
 SUSPECT = "suspect/tests/test_data/"
 SPANT = "spant/tests/testthat/"
+SPECVIS = "specvis/examples/data/"
 CURVES = ("ppm", "data", "fit", "baseline")
 
 
@@ -119,3 +124,25 @@ def test_spant_simulation_is_its_basis_weighted_by_its_amplitudes():
     for signal, shift in (("NAA", 2.008), ("Cr", 3.027), ("PCr", 3.029)):
         spectrum = np.fft.fftshift(np.fft.fft(basis.fid(signal)))
         assert ppm[np.argmax(np.abs(spectrum))] == pytest.approx(shift, abs=0.01)
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("vendor", ["GE", "Philips", "Siemens"])
+def test_specvis_tarquin_and_lcmodel_fits_of_the_same_data_agree(vendor):
+    """SpecVis fitted each subject's spectrum with LCModel and with TARQUIN: both state the same
+    frequency, dwell time and points; TARQUIN's combined signals are the sums of their parts."""
+    folder = PUBLIC_DATA / SPECVIS / vendor
+    if not folder.exists():
+        pytest.skip("SpecVis not fetched")
+    subject = re.compile(r"S\d\d_S\d\d")
+    coords = {subject.search(f.name)[0]: f for f in (folder / "LCModelOutput").glob("*.coord")}
+    tables = {subject.search(f.name)[0]: f for f in (folder / "TarquinOutput").glob("*.csv")}
+    assert len(coords.keys() & tables.keys()) >= 10
+    for name in coords.keys() & tables.keys():
+        [lcmodel], [tarquin] = load(coords[name]), load(tables[name])
+        for key in ("SpectrometerFrequency", "DwellTime", "NumberOfPoints"):
+            assert tarquin.meta[key] == pytest.approx(lcmodel.meta[key], rel=1e-5)
+        amplitude = {row["metabolite"]: row["concentration"] for row in tarquin.rows}
+        for total, parts in (("TNAA", ("NAA", "NAAG")), ("TCho", ("GPC", "PCh")),
+                             ("TCr", ("Cr", "PCr")), ("Glx", ("Glu", "Gln"))):
+            assert amplitude[total] == pytest.approx(sum(amplitude[p] for p in parts), rel=1e-5)

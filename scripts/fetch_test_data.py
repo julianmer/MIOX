@@ -171,6 +171,16 @@ class DataFetcher:
         "mrscloud": (  # MRSCloud simulation configurations (no licence: local only)
             "https://github.com/shui5/MRSCloud.git", ["*.json", "LICENSE*"],
         ),
+        "specvis": (  # LCModel and TARQUIN outputs of GE, Philips and Siemens data (MIT)
+            "https://github.com/HJZollner/SpecVis.git", ["/examples/data", "/LICENSE.md"],
+        ),
+        "mrs_sim": (  # MRS-Sim's basis set and parameter files (AGPL-3: local test data only)
+            "https://github.com/JohnLaMaster/MRS-Sim.git",
+            [f"/src/basis_sets/{name}" for name in ("PRESS_30_GE_2000.mat", "artifacts.mat",
+                                                     "ranges_30ms.mat", "metabolite_database.json",
+                                                     "metabolites_database.json")]
+            + ["/LICENSE.md"],
+        ),
         "bidsphysio": (  # physio logs with their BIDS conversions (MIT)
             "https://github.com/cbinyu/bidsphysio.git",
             [f"bidsphysio.{m}/tests/data" for m in ("acq2bids", "base", "dcm2bids", "edf2bids",

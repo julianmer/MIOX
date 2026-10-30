@@ -34,11 +34,12 @@ from miox.sniff import Format, Sniff
 #**************************************************************************************************#
 #                                                                                                  #
 # COORD and TABLE share their tables, each announced by "<n> lines in following <name>". Rows keep #
-# the ratio column under its own name (e.g. "/Cr+PCr"); "Conc." and "%SD" become concentration     #
-# and sd_percent. COORD curves are as LCModel plots them: each metabolite curve includes the       #
-# baseline. The input changes give SpectrometerFrequency (HZPPPM), DwellTime (DELTAT), EchoTime    #
-# (ECHOT, ms) and NumberOfPoints (NUNFIL). Long string inputs are wrapped at a fixed width and     #
-# padded; the width is taken from the longest wrapped first line.                                  #
+# the ratio column under its own name (e.g. "/Cr+PCr"); "Conc." and "%SD" become concentration and #
+# sd_percent. COORD curves are as LCModel plots them: each metabolite curve includes the baseline. #
+# The input changes give SpectrometerFrequency (HZPPPM), DwellTime (DELTAT), EchoTime (ECHOT, ms)  #
+# and NumberOfPoints (NUNFIL). Input lines are cut at a fixed width (even inside a name) and       #
+# padded, the rest on lines indented by three spaces; the width is taken from the longest cut      #
+# line. A line may hold several comma-separated KEY=value pairs (namelist style).                  #
 #                                                                                                  #
 #**************************************************************************************************#
 class LcmodelOutputReader(Reader):
@@ -60,6 +61,8 @@ class LcmodelOutputReader(Reader):
         "Ph (deg)": re.compile(r"Ph:\s*([-+.\dE]+)\s*deg\b"),
         "Ph (deg/ppm)": re.compile(r"([-+.\dE]+)\s*deg/ppm"),
     }
+    PAIR = re.compile(r"([A-Za-z][\w()]*)\s*=\s*('(?:[^']|'')*'|[^,]*)")  # KEY = value
+    EXPONENT = re.compile(r"(?<=\d)[dD](?=[+-]?\d)")  # Fortran double exponent: 1.5D+02
     INPUTS = {  # standard key: (input, factor)
         "SpectrometerFrequency": ("hzpppm", 1.0),
         "DwellTime": ("deltat", 1.0),
@@ -151,21 +154,20 @@ class LcmodelOutputReader(Reader):
 
     @staticmethod
     def _inputs(table: list[str]) -> dict:
-        """``KEY = value`` lines; a line without '=' continues the previous (wrapped) value."""
+        """``KEY = value`` lines, several on one line separated by commas; a line indented by
+        three spaces continues the previous one, cut at a fixed width (even inside a name)."""
         entries = []
         for line in table:
-            key, equals, value = line.partition("=")
-            if equals and key.strip() and " " not in key.strip():
-                entries.append([key.strip(), value.strip(), [line.rstrip()]])
-            elif entries:
-                entries[-1][2].append(line.strip())
-        wrapped = [e[2][0] for e in entries if len(e[2]) > 1]
-        width = max((len(line) for line in wrapped), default=0)
+            if line.startswith("   ") and entries:
+                entries[-1].append(line.strip())
+            elif "=" in line:
+                entries.append([line.rstrip()])
+        width = max((len(parts[0]) for parts in entries if len(parts) > 1), default=0)
         inputs = {}
-        for key, value, parts in entries:
-            if len(parts) > 1:
-                value = (parts[0].ljust(width) + "".join(parts[1:])).partition("=")[2].strip()
-            inputs[key] = value.strip("'")
+        for parts in entries:
+            line = parts[0].ljust(width) + "".join(parts[1:]) if len(parts) > 1 else parts[0]
+            for key, value in LcmodelOutputReader.PAIR.findall(line):  # namelist: a, b, ...
+                inputs[key] = value.strip().strip("'")
         return inputs
 
     def _values(self, inputs: dict) -> dict:
@@ -174,7 +176,7 @@ class LcmodelOutputReader(Reader):
         for key, (name, factor) in self.INPUTS.items():
             if name in lower:
                 field, text = lower[name]
-                number = float(text.replace("D", "E")) * factor
+                number = float(self.EXPONENT.sub("E", text)) * factor
                 number = [number] if key == "SpectrometerFrequency" else number
                 values[key] = (int(number) if factor == 1 and name == "nunfil" else number,
                                f"inputs/{field}")
