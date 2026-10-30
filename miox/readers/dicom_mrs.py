@@ -66,10 +66,12 @@ from miox.sniff import Format, Sniff, open_dicom
 # (the slab centre), the plane orientation negated as spec2nii negates the slab orientations,      #
 # PixelSpacing in plane and the slab thickness along the normal. Philips enhanced CSI, which       #
 # spec2nii does not read: SpectroscopyData as (frames, rows, columns, points), the frames split    #
-# into metabolite and reference by (2005,1304) of the private per-frame items, conjugated as       #
-# spec2nii conjugates Philips SVS (checked: NAA, Cr, Cho at 2.02, 3.03, 3.23 ppm), the grid from   #
-# the plane position (first voxel), orientation and pixel spacing. The MR Spectroscopy module's    #
-# Chemical Shift Reference (ppm at the transmitter frequency) is ReferencePPM.                     #
+# into metabolite and reference by (2005,1304) of the private per-frame items (newer software:     #
+# (frames, columns, rows, points) and (2005,1004); both equal the SPAR/SDAT of the same scans),    #
+# conjugated as spec2nii conjugates Philips SVS (checked: NAA, Cr, Cho at 2.02, 3.03, 3.23 ppm),   #
+# the grid from the plane position (first voxel), orientation and pixel spacing. The MR            #
+# Spectroscopy module's Chemical Shift Reference (ppm at the transmitter frequency) is             #
+# ReferencePPM.                                                                                    #
 #                                                                                                  #
 #**************************************************************************************************#
 class DicomMrsReader(Spec2niiReader):
@@ -211,7 +213,7 @@ class DicomMrsReader(Spec2niiReader):
             names = [str(header["dicom"].get("SeriesDescription") or f.stem) for f in files]
             return images, names, header
         function = {"dicom": siemens_dicom, "philips_dicom": philips_dicom, "uih": uih_dicom}
-        with self._one_slab():
+        with self._one_slab(), self._philips_frames():
             images, names = function[converter](files, None, self.TAGS[converter], False)
         return list(images), list(names), header
 
@@ -311,6 +313,60 @@ class DicomMrsReader(Spec2niiReader):
         finally:
             philips_dcm._enhanced_dcm_svs_to_orientation = original
 
+    @contextlib.contextmanager
+    def _philips_frames(self) -> Iterator[None]:
+        """spec2nii's split of Philips enhanced single-voxel frames into data and reference and
+        into edit conditions, also for newer software: the reference flag in (2005,1004) when
+        (2005,1304) is absent, the edit flag (2005,1598) a number rather than text."""
+        original = philips_dcm._process_philips_svs_new
+
+        def process(img, verbose):
+            ds = img.dcm_data
+            frames, items = int(ds.NumberOfFrames), ds.get((0x2005, 0x140F))
+            if items is None or frames < 2 or len(items.value) != frames:
+                return original(img, verbose)
+            items = items.value
+            flag = next((t for t in ((0x2005, 0x1304), (0x2005, 0x1004)) if t in items[0]), None)
+            if flag is None:
+                return original(img, verbose)
+            values = np.frombuffer(ds.SpectroscopyData, dtype="<f4")
+            data = (values[0::2] + 1j * values[1::2]).reshape(frames, -1)
+            reference = np.array([int(item[flag].value) == 1 for item in items])
+            meta = philips_dcm._extractDicomMetadata_new(img)
+            meta_r = (philips_dcm._extractDicomMetadata_new(img, water_suppressed=False)
+                      if reference.any() else None)
+            edited = (0x2005, 0x1597) in ds and str(ds[0x2005, 0x1597].value).strip() == "Y"
+            main = None
+            if edited and all((0x2005, 0x1598) in item for item in items):
+                on = np.array([str(item[0x2005, 0x1598].value).strip() == "1" for item in items])
+                on, off = on & ~reference, ~on & ~reference
+                if on.sum() == off.sum() > 0:
+                    main = np.stack((data[on].T, data[off].T), axis=-1)
+                    meta.set_dim_info("5th", "DIM_DYN")
+                    meta.set_dim_info("6th", "DIM_EDIT", hdr={"EditCondition": ["ON", "OFF"]})
+                else:
+                    warnings.warn(f"edit flags of {on.sum()} ON and {off.sum()} OFF frames do not "
+                                  "pair: the frames are kept as dynamics", stacklevel=2)
+            if main is None:
+                main = data[~reference].T
+                if main.shape[1] > 1:
+                    meta.set_dim_info("5th", "DIM_DYN")
+                else:
+                    main = main[:, 0]
+            ref = data[reference].T if reference.any() else None
+            if ref is not None and ref.shape[1] > 1:
+                meta_r.set_dim_info("5th", "DIM_DYN")
+            elif ref is not None:
+                ref = ref[:, 0]
+            orientation = philips_dcm._enhanced_dcm_svs_to_orientation(img, verbose)
+            return main, ref, orientation, 1.0 / float(ds.SpectralWidth), meta, meta_r
+
+        philips_dcm._process_philips_svs_new = process
+        try:
+            yield
+        finally:
+            philips_dcm._process_philips_svs_new = original
+
     @staticmethod
     def _check_philips_classic(files: list[Path]) -> None:
         """Classic Philips files hold the spectrum in (2005,1270), (2005,1315) points of it."""
@@ -318,6 +374,8 @@ class DicomMrsReader(Spec2niiReader):
             ds = pydicom.dcmread(path)
             if (0x2005, 0x1270) not in ds or (0x2005, 0x1315) not in ds:
                 continue
+            if not isinstance(ds[0x2005, 0x1270].value, (bytes, bytearray)):
+                continue  # newer software uses these tags for other values
             size, points = len(ds[0x2005, 0x1270].value), int(ds[0x2005, 0x1315].value)
             if size < 8 * points:
                 raise ReaderError(
@@ -339,8 +397,14 @@ class DicomMrsReader(Spec2niiReader):
         columns = int(ds.SpectroscopyAcquisitionPhaseColumns)
         points, frames = int(ds.SpectroscopyAcquisitionDataColumns), int(ds.NumberOfFrames)
         values = np.frombuffer(ds.SpectroscopyData, dtype="<f4")
-        data = np.conj(values[0::2] + 1j * values[1::2]).reshape(frames, rows, columns, points)
-        flags = [int(item[0x2005, 0x1304].value) for item in ds[0x2005, 0x140F].value]
+        data = np.conj(values[0::2] + 1j * values[1::2])
+        items = ds[0x2005, 0x140F].value
+        if (0x2005, 0x1304) in items[0]:
+            data = data.reshape(frames, rows, columns, points)
+            flags = [int(item[0x2005, 0x1304].value) for item in items]
+        else:  # newer software: columns outer, the reference flag in (2005,1004)
+            data = data.reshape(frames, columns, rows, points).transpose(0, 2, 1, 3)
+            flags = [int(item[0x2005, 0x1004].value) for item in items]
         is_ref = np.asarray(flags).reshape(frames, rows * columns)[:, 0] == 1
         iop = np.asarray(self._plane(ds, "PlaneOrientationSequence", "ImageOrientationPatient"))
         ipp = np.asarray(self._plane(ds, "PlanePositionSequence", "ImagePositionPatient"))

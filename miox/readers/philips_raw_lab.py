@@ -24,9 +24,10 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+from mrs_tools.constants import GYRO_MAG_RATIO
 
 # own
-from miox.data import RawData
+from miox.data import MRSData, RawData
 from miox.meta import Meta
 from miox.readers.base import Reader, ReaderError
 from miox.readers.ismrmrd import IsmrmrdReader
@@ -132,6 +133,16 @@ class MiraDecoder:
 # The slice position comes from the location's offcentres (AP, RL, FH to LPS), its normal from the #
 # image orientation rows; which image axis is the readout is not stated, so the read and phase     #
 # directions stay zero.                                                                            #
+# Single-voxel spectroscopy (spectro_* parameters, recon resolutions of one voxel) also becomes    #
+# one MRSData per mix: the first the data, the second the water reference (named _act and _ref as  #
+# the scanner's SPAR/SDAT export names them). Its readouts are oversampled: each is cut to the     #
+# reconstruction's points by keeping the central band of its spectrum (FFT, central points, IFFT,  #
+# amplitude kept), which gives the scanner's export of the water reference point for point;        #
+# channels are DIM_COIL, readouts DIM_DYN in label order. The nucleus follows from acq_gamma; the  #
+# files state no spectrometer frequency. The voxel's axes and centre are the location's matrix     #
+# rows and centre (first, second, third) taken to RAS as (-second, first, -third), times the voxel #
+# sizes, as the scanner's DICOM of the same scan places it; its centre lies 0.1 mm off in the last #
+# component there, kept as stated.                                                                 #
 #                                                                                                  #
 #**************************************************************************************************#
 class PhilipsRawLabReader(Reader):
@@ -249,6 +260,8 @@ class PhilipsRawLabReader(Reader):
             datasets.append(
                 self._stream(rows, labels, blocks, channels, old, meta, sin, provenance, name)
             )
+        if "spectro_echo_times" in sin and datasets and datasets[0].encoding["controls"] == [0]:
+            datasets += self._spectra(datasets[0], sin, sniff, notes)
         return datasets
 
     @staticmethod
@@ -417,6 +430,73 @@ class PhilipsRawLabReader(Reader):
     def _lps(ap_rl_fh: list) -> np.ndarray:
         """Philips (AP, RL, FH) components as LPS: L = RL, P = AP, S = FH."""
         return np.array([ap_rl_fh[1], ap_rl_fh[0], ap_rl_fh[2]], dtype=float)
+
+    # --- single-voxel spectroscopy --------------------------------------------------------------
+
+    def _spectra(self, raw: RawData, sin: dict, sniff: Sniff, notes: list[str]) -> list[MRSData]:
+        recon = {e["index"][0]: e["values"] for e in sin.get("recon_resolutions", [])}
+        if not recon or any(len(v) < 2 or any(n != 1 for n in v[1:]) for v in recon.values()):
+            return []  # a grid: spectroscopic imaging, k-space
+        mixes = raw.headers["idx"]["user"][:, 0]
+        names = ("_act", "_ref")
+        datasets = []
+        for mix in sorted(set(mixes.tolist())):
+            data = np.asarray(raw.data)[mixes == mix]  # (readouts, channels, samples)
+            samples = data.shape[-1]
+            points = int(recon.get(mix + 1, [samples])[0])
+            factor = samples // points if 0 < points < samples and samples % points == 0 else 1
+            mix_notes = list(notes)
+            if factor > 1:
+                band = np.fft.fftshift(np.fft.fft(data, axis=-1), axes=-1)
+                band = band[..., (samples - points) // 2: (samples + points) // 2]
+                data = np.fft.ifft(np.fft.ifftshift(band, axes=-1), axis=-1) * points / samples
+                mix_notes.append(f"readouts cut to the reconstruction's {points} points: the "
+                                 f"central 1/{factor} of their spectrum")
+            meta = Meta(raw.meta.vendor)
+            meta.update(raw.meta)
+            meta.source.update(raw.meta.source)
+            meta.fields.update(raw.meta.fields)
+            dwell = raw.meta.get("DwellTime")
+            dwell = dwell * factor if isinstance(dwell, (int, float)) else None
+            if dwell is not None:
+                meta.set("DwellTime", dwell, f"{self.SOURCE}: sample_time_interval x {factor}",
+                         "sin/sample_time_interval/0/values")
+            meta.set("NumberOfPoints", data.shape[-1], f"{self.SOURCE}: recon_resolutions",
+                     "sin/recon_resolutions")
+            nucleus = self._nucleus(sin)
+            if nucleus:
+                meta.set("ResonantNucleus", [nucleus], f"{self.SOURCE}: acq_gamma",
+                         "sin/acq_gamma/0/values")
+            name = sniff.path.stem + (names[len(datasets)] if len(datasets) < 2 else f"_mix{mix}")
+            datasets.append(MRSData(
+                np.transpose(data, (2, 1, 0))[None, None, None], dwell, self._voxel(sin, mix + 1),
+                meta, self.provenance(sniff, tuple(mix_notes)), ("DIM_COIL", "DIM_DYN", None),
+                name=name,
+            ))
+        return datasets
+
+    def _nucleus(self, sin: dict) -> str | None:
+        gamma = self.first(sin, "acq_gamma")  # kHz/T
+        if not gamma or not isinstance(gamma[0], (int, float)):
+            return None
+        return next((n for n, g in GYRO_MAG_RATIO.items()
+                     if abs(gamma[0] / 1e3 - g) < 1e-3 * g), None)
+
+    def _voxel(self, sin: dict, mix: int) -> np.ndarray:
+        """RAS affine of the voxel from the location's matrix rows and centre of the mix."""
+        def entries(name: str) -> dict:
+            return {tuple(e["index"][1:]): e["values"] for e in sin.get(name, [])
+                    if e["index"][0] == mix}
+        centre = entries("location_center_coordinates").get((0, 1))
+        rows = [entries("location_matrices").get((r, 1)) for r in (1, 2, 3)]
+        sizes = entries("voxel_sizes").get((0, 0))
+        affine = np.eye(4)
+        if centre is None or any(r is None for r in rows) or sizes is None:
+            return affine
+        first, second, third = (np.asarray(r, dtype=float) for r in rows)
+        affine[:3, :3] = np.stack([-second, first, -third]) * np.asarray(sizes[:3], dtype=float)
+        affine[:3, 3] = [-centre[1], centre[0], -centre[2]]
+        return affine
 
     # --- standard keys ---------------------------------------------------------------------------
 

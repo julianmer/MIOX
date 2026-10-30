@@ -473,7 +473,8 @@ class DicomImageReader(Reader):
         except Exception as e:
             syntax = frame.ds.file_meta.TransferSyntaxUID
             raise ReaderError(f"{frame.path.name}: pixel data ({syntax.name}) not decoded") from e
-        pixels = pixels if frame.index is None else pixels[frame.index]
+        if frame.index is not None and int(frame.ds.get("NumberOfFrames", 1)) > 1:
+            pixels = pixels[frame.index]  # one frame comes without a frame axis
         if int(frame.ds.get("SamplesPerPixel", 1)) == 3:
             return pixels
         slope = float(self._value(frame.ds, "RescaleSlope", frame.index) or 1)

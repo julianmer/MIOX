@@ -198,6 +198,9 @@ class Format(StrEnum):
     SIEMENS_EXAR = "siemens_exar"
     SIEMENS_PRINTPROT = "siemens_printprot"
     PHILIPS_EXAMCARD = "philips_examcard"
+    PHILIPS_DICOM_RAW = "philips_dicom_raw"
+    SIEMENS_DICOM_RAW = "siemens_dicom_raw"
+    SIEMENS_PHOENIX_REPORT = "siemens_phoenix_report"
     UNKNOWN = "unknown"
 
 
@@ -284,6 +287,8 @@ class Sniffer:
         "1.2.840.10008.5.1.4.1.1.4.3": "Enhanced MR Color Image Storage",
         "1.2.840.10008.5.1.4.1.1.4.4": "Legacy Converted Enhanced MR Image Storage",
     }
+    RAW_DATA_STORAGE = "1.2.840.10008.5.1.4.1.1.66"
+    STRUCTURED_REPORT = "1.2.840.10008.5.1.4.1.1.88."  # the SR storage classes
     VENDORS = (  # vendor name and the pattern that finds it in a Manufacturer string
         ("siemens", re.compile(r"siemens", re.I)),
         ("philips", re.compile(r"philips", re.I)),
@@ -1757,6 +1762,16 @@ class Sniffer:
         elif sop in self.DICOM_SOP_IMAGE:
             fmt, kind, confidence = Format.DICOM_IMAGE, Kind.IMAGING, 1.0
             sop_name = self.DICOM_SOP_IMAGE[sop]
+        elif sop == self.RAW_DATA_STORAGE and self._vendor(manufacturer) == "philips":
+            fmt, kind, confidence = Format.PHILIPS_DICOM_RAW, Kind.PROTOCOL, 1.0
+            sop_name = "Raw Data Storage (Philips scan parameters)"
+        elif sop == self.RAW_DATA_STORAGE and self._vendor(manufacturer) == "siemens":
+            fmt, kind, confidence = Format.SIEMENS_DICOM_RAW, Kind.PROTOCOL, 1.0
+            sop_name = "Raw Data Storage (Siemens protocol)"
+        elif sop.startswith(self.STRUCTURED_REPORT) and self._vendor(manufacturer) == "siemens" \
+                and str(ds.get("SeriesDescription", "")) == "PhoenixZIPReport":
+            fmt, kind, confidence = Format.SIEMENS_PHOENIX_REPORT, Kind.PROTOCOL, 1.0
+            sop_name = "Siemens PhoenixZIPReport (structured report holding the protocol)"
         else:
             fmt, kind, confidence = Format.DICOM_OTHER, Kind.UNKNOWN, 0.8
             sop_name = sop or "missing"

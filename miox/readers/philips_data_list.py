@@ -19,11 +19,12 @@
 #*************#
 from __future__ import annotations
 
+import dataclasses
 import re
 from pathlib import Path
 
+import numpy as np
 from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.Philips.philips import read_spar
 from spec2nii.Philips.philips_data_list import read_data_list_pair
 
 # own
@@ -40,13 +41,18 @@ from miox.sniff import Format, Sniff, Sniffer
 #                                                                                                  #
 # The auxiliary file is found in the folder: a SPAR ending in _act first, then any SPAR, then a    #
 # Philips spectroscopy DICOM; SPARs that disagree on frequency or dwell time make the read fail    #
-# rather than guess. Sources and corrections are those of the auxiliary file's own reader.         #
+# rather than guess. Without one there, the SPAR of the same scan in a folder beside it is used:   #
+# raw_<n>.data belongs to <name>_<n>_<m>_raw_act.SPAR, as the scanner numbers its exports. Sources #
+# and corrections are those of the auxiliary file's own reader. Spectroscopic imaging (k-space     #
+# ranges in the .list) is refused: spec2nii would put every k-space position on one spectrum.      #
 #                                                                                                  #
 #**************************************************************************************************#
 class PhilipsDataListReader(Spec2niiReader):
     FORMATS = (Format.PHILIPS_DATA_LIST,)
     CONVERTER = "philips_dl"
     INFO = re.compile(r"^\.\s+(\d+)\s+(\d+)\s+(\d+)\s+(\w+)\s*:\s*(.*)$")  # general-info line
+    SCAN = re.compile(r"^raw_(\d+)$", re.IGNORECASE)  # raw_<scan number>.data
+    EXPORT = re.compile(r"_(\d+)_\d+_raw_act$", re.IGNORECASE)  # <name>_<scan>_<n>_raw_act.SPAR
     HEADER = re.compile(r"^#\s+([^:=]+?)\s*:\s*(.*)$")  # comment header line
 
     def __init__(self):
@@ -56,11 +62,19 @@ class PhilipsDataListReader(Spec2niiReader):
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         data, list_file = self._pair(sniff)
-        aux = self._auxiliary(data.parent)
-        images, names = read_data_list_pair(data, list_file, aux, None)
+        info = self._list(list_file)["list_info"]
+        if any(len(set(r.split())) > 1 for k in ("kx_range", "ky_range", "kz_range")
+               for r in info.get(k, {}).values()):
+            raise ReaderError(f"{data.name}: spectroscopic imaging k-space (kx, ky, kz), which is "
+                              "not reconstructed here: read the scan's SPAR/SDAT or DICOM")
+        aux = self._auxiliary(data.parent, data.stem)
         if aux.suffix.lower() == ".spar":
-            header = {k: self.plain(v) for k, v in read_spar(aux).items()}
+            spar = self.spar.read_spar(aux)
+            with self.spar.defaults(spar):
+                images, names = read_data_list_pair(data, list_file, aux, None)
+            header = {k: self.plain(v) for k, v in spar.items()}
         else:
+            images, names = read_data_list_pair(data, list_file, aux, None)
             header = self.dicom.header(aux)
         header.update(self._list(list_file))
         header["auxiliary_file"] = aux.name
@@ -85,6 +99,42 @@ class PhilipsDataListReader(Spec2niiReader):
             d.dim_info[6]["info"] = "HYPER water references, echo time alternating 80 / 35 ms"
             for record in (d.meta, d.meta.source, d.meta.fields):
                 record.pop("EchoTime", None)
+        self._edit_pairs(d)
+
+    @staticmethod
+    def _edit_pairs(d: MRSData) -> None:
+        """Edited scans (MEGA): spec2nii puts every transient on its own extr1 index and in the
+        extr2 slot of its edit condition, the other slot empty. Here transient pairs (extr1 // 2)
+        are DIM_DYN and extr2 DIM_EDIT, ON (extr2 1, as the scan's DICOM flags it) first; a pair
+        with a transient (or a coil of one) missing from the export is left out, with a note."""
+        infos = [d.dim_info.get(n, {}).get("info") for n in (6, 7)]
+        if d.data.ndim != 7 or infos != ["data/list dim extr1", "data/list dim extr2"]:
+            return
+        data = np.asarray(d.data)  # (x, y, z, points, coils, extr1, extr2)
+        if data.shape[6] != 2:
+            return
+        per_coil = np.abs(data).sum(axis=(0, 1, 2, 3)) > 0  # (coils, extr1, extr2)
+        filled, complete = per_coil.any(axis=0), per_coil.all(axis=0)
+        if (filled.sum(axis=1) > 1).any():
+            return
+        pairs, missing = [], []
+        for j in range(data.shape[5] // 2):
+            slots = [next((i for i in (2 * j, 2 * j + 1) if complete[i, e]), None) for e in (1, 0)]
+            if None in slots:
+                missing += [i for i in (2 * j, 2 * j + 1) if filled[i].any()]
+                continue
+            pairs.append([data[..., i, e] for i, e in zip(slots, (1, 0), strict=True)])
+        if not pairs:
+            return
+        d.data = np.stack([np.stack(p, axis=-1) for p in pairs], axis=-2)  # (..., pairs, 2)
+        d.dim_tags = ("DIM_COIL", "DIM_DYN", "DIM_EDIT")
+        d.dim_info = {6: {"info": "transient pairs (extr1 // 2)"},
+                      7: {"info": "edit condition (extr2)",
+                          "header": {"EditCondition": ["ON", "OFF"]}}}
+        if missing:
+            d.provenance = dataclasses.replace(d.provenance, notes=d.provenance.notes + (
+                f"transients {', '.join(map(str, missing))} (extr1) left out: their pair is "
+                "incomplete in the export (a transient or a coil of one missing)",))
 
     def _aux_reader(self, vendor: dict) -> Reader:
         return self.dicom if "dicom" in vendor else self.spar
@@ -97,13 +147,19 @@ class PhilipsDataListReader(Spec2niiReader):
             raise ReaderError(f"incomplete .data/.list pair: {sniff.path.name}")
         return data, list_file
 
-    def _auxiliary(self, folder: Path) -> Path:
-        spars = sorted(p for p in folder.iterdir() if p.suffix.lower() == ".spar")
+    def _auxiliary(self, folder: Path, stem: str) -> Path:
+        spars = sorted(p for p in folder.iterdir() if self._spar(p))
+        if not spars and (scan := self.SCAN.match(stem)):
+            beside = [p for sub in sorted(folder.parent.iterdir()) if sub.is_dir() and sub != folder
+                      for p in sorted(sub.iterdir()) if self._spar(p)
+                      and (m := self.EXPORT.search(p.stem)) and int(m[1]) == int(scan[1])]
+            if beside:
+                return beside[0]
         spars.sort(key=lambda p: not p.stem.lower().endswith("_act"))
         dicoms = [
             p
             for p in sorted(folder.iterdir())
-            if p.is_file()
+            if p.is_file() and not p.name.startswith("._")
             and p.suffix.lower() not in (".spar", ".sdat", ".data", ".list")
             and self.sniffer.sniff(p).format == Format.DICOM_MRS
         ]
@@ -116,8 +172,13 @@ class PhilipsDataListReader(Spec2niiReader):
         return candidates[0]
 
     @staticmethod
+    def _spar(path: Path) -> bool:
+        """A SPAR file, not the macOS resource fork (._name) copied beside it."""
+        return path.suffix.lower() == ".spar" and not path.name.startswith("._")
+
+    @staticmethod
     def _settings(spar: Path) -> tuple[float, float]:
-        header = read_spar(spar)
+        header = PhilipsSparSdatReader.read_spar(spar)
         return float(header["synthesizer_frequency"]), float(header["sample_frequency"])
 
     def _list(self, path: Path) -> dict:

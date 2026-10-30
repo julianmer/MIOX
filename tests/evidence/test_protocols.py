@@ -10,7 +10,9 @@
 #          (.exar1) and printed by the scanner (XML), every protocol's keys from the ASCCONV block #
 #          against the printed values; Philips ExamCards against gt-examcard-parser's expectations #
 #          and their computed TR against the set TR; an LCModel control file against the inputs    #
-#          LCModel printed in the report of its run.                                               #
+#          LCModel printed in the report of its run; Philips Raw Data Storage against the SPAR of  #
+#          the same scan, and an exam log with its ExamCard; Siemens PhoenixZIPReports and XA Raw  #
+#          Data Storage against images of the same protocol.                                       #
 #                                                                                                  #
 ####################################################################################################
 
@@ -113,3 +115,87 @@ def test_lcmodel_control_equals_the_inputs_of_its_run():
     assert protocol.meta["SpectrometerFrequency"] == [float(printed["hzpppm"])]
     assert protocol.meta["DwellTime"] == float(printed["deltat"])
     assert protocol.meta["NumberOfPoints"] == int(printed["nunfil"])
+
+
+ORIENTATION = PUBLIC_DATA / "spec2nii_test_data/philips/spar_dcm_orientation_tests"
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("scan", range(40, 49))
+def test_philips_raw_data_storage_equals_the_spar_of_the_scan(scan):
+    """The scan parameters in Raw Data Storage: TR and TE as the scanner displays them (ms,
+    rounded) and the flip angle against the SPAR the scanner exported for the same scan."""
+    from spec2nii.Philips.philips import read_spar
+
+    raw = sorted(ORIENTATION.glob(f"{scan}02-*/RAW*.dcm"))[0]  # the folder holds two copies
+    [protocol] = load(raw)
+    spar = read_spar(ORIENTATION / f"dbiex_{scan}_2_raw_act.spar")
+    assert protocol.meta["RepetitionTime"] * 1000 == pytest.approx(spar["repetition_time"], abs=1)
+    assert protocol.meta["EchoTime"] * 1000 == pytest.approx(spar["echo_time"], abs=1)
+    assert protocol.meta["ExcitationFlipAngle"] == pytest.approx(90.0)
+    assert "SliceThickness" not in protocol.meta
+    assert "MultibandAccelerationFactor" not in protocol.meta
+
+
+@pytest.mark.data
+def test_philips_exam_log_holds_its_examcard():
+    """An exam log in Raw Data Storage: the scans of its ExamCard, each with its log entry; the
+    multiband factor only where multiband is on."""
+    [raw] = (PUBLIC_DATA / "dcm_qa_philips_enh/In/enh").glob("*ExamCard_Raw.dcm*")
+    protocols = load(raw)
+    assert len(protocols) == 31
+    assert all(p.meta.vendor["exam_log"]["Name"] == p.name for p in protocols
+               if "exam_log" in p.meta.vendor)
+    dti = next(p for p in protocols if p.name == "DTI_S2MB2")
+    assert dti.meta["MultibandAccelerationFactor"] == 2
+    assert all(p.meta.vendor["parameters"].get("EX_MB_multiband") == "YES"
+               for p in protocols if "MultibandAccelerationFactor" in p.meta)
+
+
+def _header(ds) -> tuple:
+    """TR, TE (ms) and flip angle of an image header, classic or enhanced."""
+    def get(keyword):
+        if keyword in ds:
+            return ds.get(keyword)
+        for groups in ("SharedFunctionalGroupsSequence", "PerFrameFunctionalGroupsSequence"):
+            for item in ds.get(groups, [{}])[0] if groups in ds else []:
+                if item.VR == "SQ" and len(item.value) and keyword in item.value[0]:
+                    return item.value[0].get(keyword)
+        return None
+    return (get("RepetitionTime"), get("EchoTime") or get("EffectiveEchoTime"), get("FlipAngle"))
+
+
+@pytest.mark.data
+def test_siemens_dicom_protocols_equal_their_images():
+    """The protocol in a PhoenixZIPReport and in XA Raw Data Storage against an image of the same
+    protocol in the same set: TR, TE and flip angle."""
+    import pydicom
+
+    from miox.sniff import open_dicom
+
+    files = (sorted(PUBLIC_DATA.glob("dcm_qa*/In/**/*.SR"))
+             + sorted(PUBLIC_DATA.glob("dcm_qa_xa30/In/**/*_Raw.dcm"))
+             + sorted(PUBLIC_DATA.glob("dcm_qa_xa30/In/99_Phoenix_Document/*.dcm")))
+    compared = 0
+    for path in files:
+        [protocol] = load(path)
+        for image in sorted(path.parent.parent.rglob("*")):
+            if (not image.is_file() or image.suffix in (".SR", ".json", ".nii")
+                    or "_Raw" in image.name):
+                continue
+            try:
+                with open_dicom(image) as fh:
+                    ds = pydicom.dcmread(fh, stop_before_pixels=True)
+            except pydicom.errors.InvalidDicomError:
+                continue
+            if str(ds.get("ProtocolName")) != protocol.name or "Image" not in ds.SOPClassUID.name:
+                continue
+            tr, te, flip = (float(v) for v in _header(ds))
+            assert protocol.meta["RepetitionTime"] * 1000 == pytest.approx(tr, abs=0.5)
+            echoes = protocol.meta["EchoTime"]
+            echoes = echoes if isinstance(echoes, list) else [echoes]  # one image: one echo
+            assert any(abs(e * 1000 - te) <= 0.05 for e in echoes)
+            assert protocol.meta["ExcitationFlipAngle"] == pytest.approx(flip)
+            compared += 1
+            break
+    assert compared >= 25

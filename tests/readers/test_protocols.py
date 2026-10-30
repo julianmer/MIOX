@@ -218,6 +218,7 @@ def test_philips_examcard(tmp_path):
         ("EX_GEO_slice_thickness", 0, [2.4]),
         ("EX_GEO_sense_enable", 4, [0], ["YES", "NO"]),
         ("EX_GEO_sense_p_red_factor", 0, [1.5]),
+        ("EX_MB_multiband", 4, [1], ["NO", "YES"]),
         ("EX_MB_multiband_factor", 1, [6]),
         ("IF_act_rep_time_echo_time", 2, ["801 / 31"]),
     ])

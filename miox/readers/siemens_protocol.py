@@ -40,18 +40,18 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # A protocol is XProtocol text (kept whole) ending with the ASCCONV block, "name = value" lines in #
 # Siemens notation (sKSpace.lBaseResolution, alTE[0]) between "### ASCCONV BEGIN" and "END ###";   #
-# the block is read into a flat dict (quoted values as text, hexadecimal and decimal numbers as    #
-# numbers) and gives the standard keys as for twix files (times in µs, frequencies in Hz; no       #
-# inversion time when sPrepPulses.ucInversion is 4, the inversion off; all alTI and alTE of a      #
-# protocol with several (alTI: lInvContrasts, or two for a double inversion); the slice thickness  #
-# of 3D protocols is the slab over the images per slab). An .exar1 file is an SQLite database of   #
-# the exam tree: instances (programs, steps, protocols, texts, directories) with their content     #
-# raw-deflated as "EDF V1: ContentType=...;" plus JSON, in change sets; the latest instance of     #
-# every element counts. A program lists its steps in order as GUIDs; each measurement step holds   #
-# one protocol, whose JSON carries the XProtocol text. Labels are texts by language (English, else #
-# the unnamed one, else any). Every measurement step becomes a Protocol named by its label,        #
-# located by the directories and the program; the program's steps (measurement, pause, decision,   #
-# ...) and the step's own content go to the vendor header.                                         #
+# the block is read into a flat dict (quoted values as text, XA's doubled quotes too, hexadecimal  #
+# and decimal numbers as numbers) and gives the standard keys as for twix files (times in µs,      #
+# frequencies in Hz; no inversion time when sPrepPulses.ucInversion is 4, the inversion off; all   #
+# alTI and alTE of a protocol with several (alTI: lInvContrasts, or two for a double inversion);   #
+# the slice thickness of 3D protocols is the slab over the images per slab). An .exar1 file is an  #
+# SQLite database of the exam tree: instances (programs, steps, protocols, texts, directories)     #
+# with their content raw-deflated as "EDF V1: ContentType=...;" plus JSON, in change sets; the     #
+# latest instance of every element counts. A program lists its steps in order as GUIDs; each       #
+# measurement step holds one protocol, whose JSON carries the XProtocol text. Labels are texts by  #
+# language (English, else the unnamed one, else any). Every measurement step becomes a Protocol    #
+# named by its label, located by the directories and the program; the program's steps              #
+# (measurement, pause, decision, ...) and the step's own content go to the vendor header.          #
 #                                                                                                  #
 #**************************************************************************************************#
 class SiemensProtocolReader(Reader):
@@ -94,6 +94,8 @@ class SiemensProtocolReader(Reader):
 
     @staticmethod
     def _value(text: str) -> Any:
+        if text.startswith('""') and text.endswith('""') and len(text) >= 4:
+            return text[2:-2]  # XA writes strings in doubled quotes
         if text.startswith('"'):
             end = text.rfind('"')
             return text[1:end] if end > 0 else text[1:]
