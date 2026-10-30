@@ -80,6 +80,18 @@ def test_frequency_in_hz_is_corrected(tmp_path):
     assert d.meta.vendor["header_extension"]["SpectrometerFrequency"] == [123.2e6]
 
 
+def test_bids_sidecar_adds_keys_and_notes_disagreements(tmp_path):
+    path = _write(tmp_path, np.ones((1, 1, 1, 64, 2, 1), complex), EchoTime=0.03)
+    sidecar = {"Manufacturer": "Philips", "EchoTime": 0.08, "SpectrometerFrequency": 123.2}
+    (tmp_path / "svs.json").write_text(json.dumps(sidecar))
+    [d] = miox.load(path)
+    assert d.meta["Manufacturer"] == "Philips"
+    assert d.meta.source["Manufacturer"] == "BIDS sidecar: Manufacturer"
+    assert d.meta["EchoTime"] == 0.03 and d.meta.vendor["sidecar"] == sidecar
+    [note] = [n for n in d.provenance.notes if "svs.json" in n]
+    assert "EchoTime" in note and "header's is kept" in note
+
+
 def test_vendor_fields_flatten_nested_headers():
     meta = Meta({"a": {"b": [1, 2], "c": [{"d": 1}, [3, 4]]}, "e": "x"})
     assert meta.vendor_fields() == {"a/b": [1, 2], "a/c/0/d": 1, "a/c/1": [3, 4], "e": "x"}

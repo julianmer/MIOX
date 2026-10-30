@@ -6,10 +6,11 @@
 #                                                                                                  #
 # Created: 04/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Checks the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa and VTK image readers against  #
-#          evidence produced by other software: pynrrd's NIfTI twin of its NRRD test image,        #
-#          MRtrix's own PNG exports and reductions, ImageJ text exports of fdf images, ITK's       #
-#          MetaImage baselines of its GE test images, and the value range a .vti file states.      #
+# Purpose: Checks the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa, VTK and DMIWizard map readers #
+#          against evidence produced by other software: pynrrd's NIfTI twin of its NRRD test       #
+#          image, MRtrix's own PNG exports and reductions, ImageJ text exports of fdf images,      #
+#          ITK's MetaImage baselines of its GE test images, the value range a .vti file states,    #
+#          and the DICOM copies DMIWizard writes of its text maps.                                 #
 #                                                                                                  #
 ####################################################################################################
 
@@ -21,10 +22,12 @@ from __future__ import annotations
 
 import re
 import struct
+import zipfile
 import zlib
 from pathlib import Path
 
 import numpy as np
+import pydicom
 import pytest
 
 from miox import MRImage, load
@@ -256,3 +259,30 @@ def test_vti_values_span_the_range_the_file_states():
     image = load(path)[0]
     assert image.data.shape == (256, 256, 94)
     assert (image.data.min(), image.data.max()) == tuple(float(v) for v in stated.groups())
+
+
+def test_dmiwizard_text_maps_against_their_dicom_copies(tmp_path):
+    """DMIWizard writes each metabolic map as text and as DICOM (clipped at zero, divided by its
+    largest magnitude, stored as 0-65535); its ROI masks are 0/1 on the zero-filled grid."""
+    archive = PUBLIC_DATA / "dmiwizard" / "DMIWizard_Data.zip"
+    if not archive.exists():
+        pytest.skip("DMIWizard not fetched")
+    with zipfile.ZipFile(archive) as zf:
+        members = [m for m in zf.namelist() if "/maps/" in m and not m.endswith("/")]
+        zf.extractall(tmp_path, members)
+    maps = sorted(tmp_path.rglob("MetabolicMap_*"))
+    texts = [m for m in maps if m.suffix != ".dcm"]
+    assert texts
+    for text in texts:
+        [im] = load(text)
+        assert im.provenance.format == "dmiwizard_map" and im.meta.vendor["map"] == "MetabolicMap"
+        copy = next(m for m in maps if m.name == f"{text.name}.dcm")
+        stored = pydicom.dcmread(copy).pixel_array.astype(float)
+        values = im.data[:, :, 0]
+        assert values.shape == stored.shape
+        expected = np.round(np.clip(values, 0, None) / np.abs(values).max() * 65535)
+        assert np.abs(expected - stored).max() <= 1
+    for mask in tmp_path.rglob("ROIMap_*"):
+        [im] = load(mask)
+        rows, columns = (int(n) for n in re.match(r"ROIMap_(\d+)x(\d+)_", mask.name).groups())
+        assert im.shape == (rows, columns, 1) and set(np.unique(im.data)) <= {0.0, 1.0}

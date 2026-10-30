@@ -7,7 +7,8 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Fit-result readers on synthetic files: LCModel TABLE, COORD and CSV, TARQUIN results    #
-#          and fit, PyAMARES results, and Osprey containers. No test data needed.                  #
+#          and fit, PyAMARES results, Osprey containers, and R data as spant saves it. No test     #
+#          data needed.                                                                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -17,11 +18,15 @@
 #*************#
 from __future__ import annotations
 
+import gzip
+import struct
+
 import numpy as np
 import scipy.io
 
 # own
 import miox
+from miox.readers.spant_rds import RSerial
 
 TABLES = """ LCModel (Version 6.3-1B)
  test title
@@ -142,3 +147,36 @@ def test_osprey_container(tmp_path):
     assert np.allclose(datasets[1].data.ravel(), _fid(110))
     assert datasets[0].meta["EchoTime"] == 0.035
     assert any("fit results not read" in note for note in datasets[0].provenance.notes)
+
+
+def _r(kind: int, *words: int, attributes: bool = False) -> bytes:
+    """An item of R's XDR serialization: flags (type, attribute bit), then integers."""
+    return struct.pack(">i", kind | (0x200 if attributes else 0)) + struct.pack(
+        f">{len(words)}i", *words)
+
+
+def _text(value: str) -> bytes:
+    return _r(9, len(value)) + value.encode()
+
+
+def _symbol(name: str) -> bytes:
+    return _r(1) + _text(name)
+
+
+def test_r_serialization_version_3_with_compact_sequence_na_and_factor():
+    """list(seq = 1:4, na = c(NA, 2.5), f = factor(c("b", "a"))) as saveRDS writes it (version 3:
+    the native encoding; 1:4 as an ALTREP compact sequence)."""
+    header = b"X\n" + struct.pack(">iii", 3, 0x40400, 0x30500) + struct.pack(">i", 5) + b"UTF-8"
+    pairlist = 2 | 0x400  # a node with a tag
+    info = (_r(2) + _symbol("compact_intseq") + _r(2) + _symbol("base") + _r(2) + _r(13, 1, 13)
+            + _r(254))
+    sequence = _r(238) + info + _r(14, 3) + struct.pack(">3d", 4, 1, 1) + _r(254)
+    missing = _r(14, 2) + struct.pack(">2d", float("nan"), 2.5)
+    labels = _r(16, 2) + _text("a") + _text("b")
+    factor = (_r(13, 2, 2, 1, attributes=True) + _r(pairlist) + _symbol("levels") + labels
+              + _r(pairlist) + _symbol("class") + _r(16, 1) + _text("factor") + _r(254))
+    names = _r(16, 3) + _text("seq") + _text("na") + _text("f")
+    blob = (header + _r(19, 3, attributes=True) + sequence + missing + factor + _r(pairlist)
+            + _symbol("names") + names + _r(254))
+    value = RSerial(gzip.compress(blob)).read()
+    assert value.plain() == {"seq": [1, 2, 3, 4], "na": [None, 2.5], "f": ["b", "a"]}

@@ -69,7 +69,6 @@ class DataFetcher:
         "osi2one": ("21807140", ("OSIIONE_Reference_System_Data_v1.zip",)),
         "osi2one_lumc": ("19661402", ()),
         "dsistudio_templates": ("6324701", ("CMU60.2mm.fib.gz",)),  # DSI Studio FIB, CC BY 4.0
-        "mrsi_bids": ("7701228", None),  # MRSI in an MRS-BIDS tree (licence unverified: local only)
     }
     ZENODO_ALL = {  # with --all: further files of large records (CC BY 4.0)
         "osi2one_lumc": ("partial_fourier.zip",),
@@ -160,8 +159,8 @@ class DataFetcher:
             ["sample_basis_sets"],
         ),
         "osprey": ("https://github.com/schorschinho/osprey.git", ["fit/basissets", "exampledata"]),
-        "bids_examples": (  # MRS-BIDS example trees, empty data files (licence unverified)
-            "https://github.com/bids-standard/bids-examples.git", ["mrs_*", "LICENSE"],
+        "bids_examples": (  # MRS-BIDS example trees, empty data files (no licence: local only)
+            "https://github.com/bids-standard/bids-examples.git", ["mrs_*"],
         ),
         "spant": (  # spant's saved objects and example data (GPL-3: local test data only)
             "https://github.com/martin3141/spant.git", ["*.rds", "inst/extdata"],
@@ -169,7 +168,7 @@ class DataFetcher:
         "dmiwizard": (  # deuterium MRSI data and outputs of DMIWizard (CC0)
             "https://github.com/radegraaf/DMIWizard.git", None,
         ),
-        "mrscloud": (  # MRSCloud simulation configurations (licence unverified: local only)
+        "mrscloud": (  # MRSCloud simulation configurations (no licence: local only)
             "https://github.com/shui5/MRSCloud.git", ["*.json", "LICENSE*"],
         ),
         "bidsphysio": (  # physio logs with their BIDS conversions (MIT)
@@ -474,6 +473,11 @@ class DataFetcher:
                          "strawberry_sagittal_01.fid"),
             "t2_map.MAT": f"{STRAWBERRY}/qmaps/sb_href/s0_t2_2par_s01d01_hydroref.MAT",
             "readme.txt": f"{STRAWBERRY}/readme.txt",
+        }),
+        "mrsi_bids": ("7701228", "chbh_2d_slaser_mrsi_bids.zip", {  # 2D MRSI in BIDS (CC BY 4.0)
+            name: f"chbh_2d_slaser_mrsi_bids/{name}" for name in (
+                "dataset_description.json", "CHANGES", "sub-01/mrs/sub-01_run-1_mrsi.nii.gz",
+                "sub-01/mrs/sub-01_run-1_mrsi.json")
         }),
     }
     ZIP_MEMBERS_ALL = {  # with --all

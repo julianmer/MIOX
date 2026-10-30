@@ -22,6 +22,7 @@ import bz2
 import dataclasses
 import gzip
 import json
+import lzma
 import mmap
 import re
 import struct
@@ -166,6 +167,8 @@ class Format(StrEnum):
     MIDAS_PRIOR = "midas_prior"
     PYAMARES_PRIOR = "pyamares_prior"
     PYAMARES_RESULT = "pyamares_result"
+    DMIWIZARD_MAP = "dmiwizard_map"  # DMIWizard metabolic or ROI map: one text column
+    SPANT_RDS = "spant_rds"  # spant spectra, basis sets or fit results saved as R data
     OSPREY_MRSCONT = "osprey_mrscont"
     BASIS_FOLDER = "basis_folder"
     JMRUI_TEXT = "jmrui_text"
@@ -329,6 +332,9 @@ class Sniffer:
         ((b";SIMULATION SPECTRAL RESULTS",), Format.GAVA_PRIOR, Kind.BASIS_SET, "GAVA prior"),
     )
     PYAMARES = re.compile(rb"^Index,[^\r\n]*\r?\nInitial Values,", re.M)  # prior table rows
+    SPANT_CLASSES = ((b"fit_result", Kind.FIT_RESULT), (b"mrs_data", Kind.SPECTROSCOPY),
+                     (b"basis_set", Kind.BASIS_SET))  # first found gives the kind
+    DMIWIZARD_MAP = re.compile(r"^(MetabolicMap|ROIMap)_(\d+)x(\d+)_([XYZ])slice(\d+)_(.+)$")
     TEXT_STARTS = (  # (start of the file, format, kind, evidence)
         (b"Dangerplot_version", Format.TARQUIN_DPT, Kind.SPECTROSCOPY, "TARQUIN dangerplot"),
         (b"Signal     Conc (au)", Format.TARQUIN_RESULTS, Kind.FIT_RESULT, "TARQUIN results"),
@@ -414,6 +420,7 @@ class Sniffer:
             self.sparky,
             self.simpson,
             self.csdm,
+            self.rds,
             self.spinsolve,
             self.rs2d,
             self.rnmrtk,
@@ -581,10 +588,10 @@ class Sniffer:
             header = header_class.from_fileobj(fh, check=False)
         detail = {"nifti_version": version, "shape": tuple(int(n) for n in header.get_data_shape())}
         extension = next((e for e in header.extensions if e.get_code() == 44), None)
+        stem = path.name.removesuffix(".gz").removesuffix(".nii").removesuffix(".hdr")
+        sidecars = [path.with_name(stem + s) for s in self.NIFTI_SIDECARS]
+        sidecars = tuple(s for s in sidecars if s.is_file())
         if extension is None:
-            stem = path.name.removesuffix(".gz").removesuffix(".nii").removesuffix(".hdr")
-            sidecars = [path.with_name(stem + s) for s in self.NIFTI_SIDECARS]
-            sidecars = tuple(s for s in sidecars if s.is_file())
             if header.get_data_dtype().kind == "c" and self._mrs_sidecar(sidecars):
                 return Sniff(
                     path,
@@ -615,6 +622,7 @@ class Sniffer:
             Kind.SPECTROSCOPY,
             confidence=1.0,
             evidence=(f"NIfTI-{version} magic", "header extension ecode 44"),
+            companions=tuple(s for s in sidecars if s.suffix == ".json"),
             detail=detail,
         )
 
@@ -879,6 +887,25 @@ class Sniffer:
             return None
         return Sniff(path, Format.SIMPSON, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=("SIMP header with NP",))
+
+    def rds(self, path: Path, head: bytes) -> Sniff | None:
+        """spant objects saved by saveRDS: the class names among the serialized strings."""
+        if path.suffix.lower() != ".rds":
+            return None
+        data = path.read_bytes()
+        for decompress in (gzip.decompress, bz2.decompress, lzma.decompress):
+            try:
+                data = decompress(data)
+                break
+            except (OSError, ValueError, lzma.LZMAError, EOFError):
+                continue
+        if not data.startswith(b"X\n"):
+            return None
+        for name, kind in self.SPANT_CLASSES:
+            if len(name).to_bytes(4, "big") + name in data:
+                return Sniff(path, Format.SPANT_RDS, kind, confidence=0.9,
+                             evidence=("R serialization", f"spant class {name.decode()}"))
+        return None
 
     def csdm(self, path: Path, head: bytes) -> Sniff | None:
         """Core Scientific Dataset Model: a JSON object whose first key is "csdm"."""
@@ -1389,7 +1416,8 @@ class Sniffer:
         return None
 
     def analysis_text(self, path: Path, head: bytes) -> Sniff | None:
-        """Text formats of LCModel, TARQUIN, VASF and SIVIC, recognised by their own markers."""
+        """Text formats of LCModel, TARQUIN, VASF, SIVIC and DMIWizard, recognised by their own
+        markers (DMIWizard's maps by their names)."""
         upper = head.upper()
         stripped = head.lstrip()
         if stripped.startswith(b"{") and b'"basis_re"' in head:
@@ -1427,6 +1455,11 @@ class Sniffer:
                 return Sniff(
                     path, fmt, kind, confidence=0.9, evidence=(evidence,), companions=companions
                 )
+        if (match := self.DMIWIZARD_MAP.match(path.name)) and self.NUMBER.fullmatch(
+                head.split(b"\n", 1)[0].strip().decode("ascii", "replace")):
+            evidence = (f"DMIWizard {match[1]} name", "a column of numbers")
+            return Sniff(path, Format.DMIWIZARD_MAP, Kind.IMAGING, confidence=0.9,
+                         evidence=evidence)
         return None
 
     def vespa(self, path: Path, head: bytes) -> Sniff | None:

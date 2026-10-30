@@ -1169,6 +1169,1051 @@
   "vendor": null,
   "kind": "basis_set"
  },
+ "bids_examples/mrs_2dmrsi/CHANGES": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-01/anat/sub-01_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-01/mrs/sub-01_run-1_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-01/mrs/sub-01_run-2_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-01/mrs/sub-01_run-3_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-02/anat/sub-02_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-02/mrs/sub-02_run-1_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-02/mrs/sub-02_run-2_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-02/mrs/sub-02_run-3_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-03/anat/sub-03_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-03/mrs/sub-03_run-1_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-03/mrs/sub-03_run-2_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-03/mrs/sub-03_run-3_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-04/anat/sub-04_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-04/mrs/sub-04_run-1_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-04/mrs/sub-04_run-2_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-04/mrs/sub-04_run-3_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-05/anat/sub-05_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-05/mrs/sub-05_run-1_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-05/mrs/sub-05_run-2_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-05/mrs/sub-05_run-3_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-06/anat/sub-06_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-06/mrs/sub-06_run-1_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-06/mrs/sub-06_run-2_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-06/mrs/sub-06_run-3_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-07/anat/sub-07_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-07/mrs/sub-07_run-1_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-07/mrs/sub-07_run-2_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-07/mrs/sub-07_run-3_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-08/anat/sub-08_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-08/mrs/sub-08_run-1_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-08/mrs/sub-08_run-2_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_2dmrsi/sub-08/mrs/sub-08_run-3_mrsi.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/participants.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-01/anat/sub-01_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-01/mrs/sub-01_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-01/mrs/sub-01_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-01/mrs/sub-01_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-01/mrs/sub-01_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-01/mrs/sub-01_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-01/mrs/sub-01_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-02/anat/sub-02_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-02/mrs/sub-02_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-02/mrs/sub-02_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-02/mrs/sub-02_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-02/mrs/sub-02_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-02/mrs/sub-02_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-02/mrs/sub-02_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-03/anat/sub-03_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-03/mrs/sub-03_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-03/mrs/sub-03_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-03/mrs/sub-03_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-03/mrs/sub-03_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-03/mrs/sub-03_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-03/mrs/sub-03_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-04/anat/sub-04_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-04/mrs/sub-04_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-04/mrs/sub-04_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-04/mrs/sub-04_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-04/mrs/sub-04_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-04/mrs/sub-04_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-04/mrs/sub-04_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-05/anat/sub-05_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-05/mrs/sub-05_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-05/mrs/sub-05_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-05/mrs/sub-05_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-05/mrs/sub-05_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-05/mrs/sub-05_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-05/mrs/sub-05_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-06/anat/sub-06_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-06/mrs/sub-06_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-06/mrs/sub-06_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-06/mrs/sub-06_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-06/mrs/sub-06_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-06/mrs/sub-06_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-06/mrs/sub-06_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-07/anat/sub-07_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-07/mrs/sub-07_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-07/mrs/sub-07_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-07/mrs/sub-07_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-07/mrs/sub-07_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-07/mrs/sub-07_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-07/mrs/sub-07_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-08/anat/sub-08_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-08/mrs/sub-08_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-08/mrs/sub-08_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-08/mrs/sub-08_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-08/mrs/sub-08_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-08/mrs/sub-08_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-08/mrs/sub-08_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-09/anat/sub-09_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-09/mrs/sub-09_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-09/mrs/sub-09_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-09/mrs/sub-09_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-09/mrs/sub-09_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-09/mrs/sub-09_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-09/mrs/sub-09_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-10/anat/sub-10_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-10/mrs/sub-10_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-10/mrs/sub-10_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-10/mrs/sub-10_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-10/mrs/sub-10_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-10/mrs/sub-10_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-10/mrs/sub-10_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-11/anat/sub-11_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-11/mrs/sub-11_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-11/mrs/sub-11_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-11/mrs/sub-11_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-11/mrs/sub-11_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-11/mrs/sub-11_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-11/mrs/sub-11_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-12/anat/sub-12_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-12/mrs/sub-12_acq-megapress68_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-12/mrs/sub-12_acq-megapress68_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-12/mrs/sub-12_acq-megapress80_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-12/mrs/sub-12_acq-megapress80_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-12/mrs/sub-12_acq-press_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_biggaba/sub-12/mrs/sub-12_acq-press_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/participants.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-01/anat/sub-01_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-01/mrs/sub-01_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-01/mrs/sub-01_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-01/mrs/sub-01_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-01/mrs/sub-01_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-01/mrs/sub-01_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-02/anat/sub-02_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-02/mrs/sub-02_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-02/mrs/sub-02_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-02/mrs/sub-02_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-02/mrs/sub-02_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-02/mrs/sub-02_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-03/anat/sub-03_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-03/mrs/sub-03_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-03/mrs/sub-03_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-03/mrs/sub-03_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-03/mrs/sub-03_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-03/mrs/sub-03_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-04/anat/sub-04_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-04/mrs/sub-04_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-04/mrs/sub-04_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-04/mrs/sub-04_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-04/mrs/sub-04_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-04/mrs/sub-04_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-05/anat/sub-05_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-05/mrs/sub-05_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-05/mrs/sub-05_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-05/mrs/sub-05_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-05/mrs/sub-05_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-05/mrs/sub-05_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-06/anat/sub-06_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-06/mrs/sub-06_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-06/mrs/sub-06_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-06/mrs/sub-06_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-06/mrs/sub-06_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-06/mrs/sub-06_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-07/anat/sub-07_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-07/mrs/sub-07_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-07/mrs/sub-07_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-07/mrs/sub-07_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-07/mrs/sub-07_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-07/mrs/sub-07_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-08/anat/sub-08_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-08/mrs/sub-08_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-08/mrs/sub-08_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-08/mrs/sub-08_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-08/mrs/sub-08_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-08/mrs/sub-08_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-09/anat/sub-09_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-09/mrs/sub-09_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-09/mrs/sub-09_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-09/mrs/sub-09_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-09/mrs/sub-09_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-09/mrs/sub-09_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-10/anat/sub-10_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-10/mrs/sub-10_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-10/mrs/sub-10_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-10/mrs/sub-10_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-10/mrs/sub-10_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-10/mrs/sub-10_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-11/anat/sub-11_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-11/mrs/sub-11_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-11/mrs/sub-11_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-11/mrs/sub-11_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-11/mrs/sub-11_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-11/mrs/sub-11_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-12/anat/sub-12_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-12/mrs/sub-12_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-12/mrs/sub-12_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-12/mrs/sub-12_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-12/mrs/sub-12_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-12/mrs/sub-12_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-13/anat/sub-13_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-13/mrs/sub-13_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-13/mrs/sub-13_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-13/mrs/sub-13_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-13/mrs/sub-13_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-13/mrs/sub-13_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-14/anat/sub-14_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-14/mrs/sub-14_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-14/mrs/sub-14_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-14/mrs/sub-14_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-14/mrs/sub-14_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-14/mrs/sub-14_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-15/anat/sub-15_T1w.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-15/mrs/sub-15_task-baseline_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-15/mrs/sub-15_task-baseline_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-15/mrs/sub-15_task-pain_events.tsv": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-15/mrs/sub-15_task-pain_mrsref.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bids_examples/mrs_fmrs/sub-15/mrs/sub-15_task-pain_svs.nii.gz": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "bidsphysio/bidsphysio.acq2bids/tests/data/acq_physio.tsv": {
   "format": "bids_physio",
   "vendor": null,
@@ -13224,6 +14269,11 @@
   "vendor": null,
   "kind": "unknown"
  },
+ "dmiwizard/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "dsistudio_templates/CMU60.2mm.fib.gz": {
   "format": "dsi_studio_fib",
   "vendor": null,
@@ -15731,6 +16781,41 @@
  },
  "mrs_fitting_challenge/datasets_text/dataset9.txt": {
   "format": "text_fid",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "mrscloud/functions/FID-A/LICENSE.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrscloud/functions/FID-A/processingTools/distinguishable_colors/license.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrscloud/functions/FID-A/processingTools/splinefit/license.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrscloud/functions/jsonlab-2.0/jsonlab-2.0/LICENSE_BSD.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrscloud/functions/jsonlab-2.0/license.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrsi_bids/CHANGES": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "mrsi_bids/sub-01/mrs/sub-01_run-1_mrsi.nii.gz": {
+  "format": "nifti_mrs",
   "vendor": null,
   "kind": "spectroscopy"
  },
@@ -46199,6 +47284,351 @@
   "vendor": null,
   "kind": "imaging"
  },
+ "osprey/exampledata/ima/jobIMA.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/nifti-mrs/jobNIfTIMRS.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/nifti-mrs/sub-01/ses-01/mrs/sub-01_ses-01_SVS-ref.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/nifti-mrs/sub-01/ses-01/mrs/sub-01_ses-01_SVS.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/nifti-mrs/sub-02/ses-01/mrs/sub-02_ses-01_SVS-ref.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/nifti-mrs/sub-02/ses-01/mrs/sub-02_ses-01_SVS.nii.gz": {
+  "format": "nifti_mrs",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/p/MEGA/jobP_MEGA_Example.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/p/MEGA/jobP_MEGA_LCModel_Example.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/p/UnEdited/jobP.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/rda/jobRDA.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/sdat/MEGA/jobSDAT_MEGA.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/sdat/MEGA/jobSDAT_MEGA_LCModel.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/sdat/MEGA/jobSDAT_MEGA_Multidataset.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-01/ses-01/anat/sub-01/sub-01_ses-01_T1w.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-01/ses-01/mrs/sub-01_ses-01_megapress-ref/sub-01_megapress_ref.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-01/ses-01/mrs/sub-01_ses-01_megapress-ref/sub-01_megapress_ref.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-01/ses-01/mrs/sub-01_ses-01_megapress/sub-01_megapress_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-01/ses-01/mrs/sub-01_ses-01_megapress/sub-01_megapress_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-01/ses-01/mrs/sub-01_ses-01_press-ref/sub-01_PRESS_35_ref.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-01/ses-01/mrs/sub-01_ses-01_press-ref/sub-01_PRESS_35_ref.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-02/ses-01/anat/sub-02/sub-02_ses-01_T1w.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-02/ses-01/mrs/sub-02_ses-01_megapress-ref/sub-02_megapress_ref.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-02/ses-01/mrs/sub-02_ses-01_megapress-ref/sub-02_megapress_ref.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-02/ses-01/mrs/sub-02_ses-01_megapress/sub-02_megapress_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-02/ses-01/mrs/sub-02_ses-01_megapress/sub-02_megapress_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-02/ses-01/mrs/sub-02_ses-01_press-ref/sub-02_PRESS_35_ref.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/MEGA/sub-02/ses-01/mrs/sub-02_ses-01_press-ref/sub-02_PRESS_35_ref.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited/jobSDAT.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/sdat/UnEdited/jobSDAT_LCModel.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-01/ses-01/anat/sub-01/sub-01_ses-01_T1w.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-01/ses-01/mrs/sub-01_ses-01_press-ref/sub-01_PRESS_35_ref.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-01/ses-01/mrs/sub-01_ses-01_press-ref/sub-01_PRESS_35_ref.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-01/ses-01/mrs/sub-01_ses-01_press/sub-01_PRESS_35_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-01/ses-01/mrs/sub-01_ses-01_press/sub-01_PRESS_35_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-02/ses-01/anat/sub-02/sub-02_ses-01_T1w.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-02/ses-01/mrs/sub-02_ses-01_press-ref/sub-02_PRESS_35_ref.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-02/ses-01/mrs/sub-02_ses-01_press-ref/sub-02_PRESS_35_ref.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-02/ses-01/mrs/sub-02_ses-01_press/sub-02_PRESS_35_act.sdat": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited/sub-02/ses-01/mrs/sub-02_ses-01_press/sub-02_PRESS_35_act.spar": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/jobSDAT_MM.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/anat/sub-01_ses-01_T1w_scanner-space_FSL-skull-stripped.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/mrs/sub-01_ses-01_press-inverted/sub-01_ses-01_PRESS-Inverted_TI-600_raw-act_noID.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/mrs/sub-01_ses-01_press-inverted/sub-01_ses-01_PRESS-Inverted_TI-600_raw-act_noID.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/mrs/sub-01_ses-01_press-inverted_ref/sub-01_ses-01_PRESS-Inverted_TI-600_raw-ref_noID.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/mrs/sub-01_ses-01_press-inverted_ref/sub-01_ses-01_PRESS-Inverted_TI-600_raw-ref_noID.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/mrs/sub-01_ses-01_press/sub-01_ses-01_PRESS_raw-act_noID.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/mrs/sub-01_ses-01_press/sub-01_ses-01_PRESS_raw-act_noID.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/mrs/sub-01_ses-01_press_ref/sub-01_ses-01_PRESS_raw-ref_noID.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-01/ses-01/mrs/sub-01_ses-01_press_ref/sub-01_ses-01_PRESS_raw-ref_noID.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/anat/sub-02_ses-01_T1w_scanner-space_FSL-skull-stripped.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/mrs/sub-02_ses-01_press-inverted/sub-02_ses-01_PRESS-Inverted_TI-600_raw-act_noID.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/mrs/sub-02_ses-01_press-inverted/sub-02_ses-01_PRESS-Inverted_TI-600_raw-act_noID.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/mrs/sub-02_ses-01_press-inverted_ref/sub-02_ses-01_PRESS-Inverted_TI-600_raw-ref_noID.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/mrs/sub-02_ses-01_press-inverted_ref/sub-02_ses-01_PRESS-Inverted_TI-600_raw-ref_noID.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/mrs/sub-02_ses-01_press/sub-02_ses-01_PRESS_raw-act_noID.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/mrs/sub-02_ses-01_press/sub-02_ses-01_PRESS_raw-act_noID.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/mrs/sub-02_ses-01_press_ref/sub-02_ses-01_PRESS_raw-ref_noID.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/sdat/UnEdited_with_MM_data/sub-02/ses-01/mrs/sub-02_ses-01_press_ref/sub-02_ses-01_PRESS_raw-ref_noID.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "osprey/exampledata/twix/MEGA/jobTwix_MEGA_Example.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/twix/MEGA/jobTwix_MEGA_LCModel_Example.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/twix/UnEdited/jobTwix.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "osprey/exampledata/twix/UnEdited/sub-01/ses-01/anat/sub-01/ses-01_T1w.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/twix/UnEdited/sub-01/ses-01/anat/sub-01/ses-01_T1w_overlay.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/twix/UnEdited/sub-01/ses-01/mrs/sub-01_ses-01_press-ref/sub-01_PRESS30_w.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "osprey/exampledata/twix/UnEdited/sub-01/ses-01/mrs/sub-01_ses-01_press/sub-01_PRESS30.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "osprey/exampledata/twix/UnEdited/sub-02/ses-01/anat/sub-02/ses-01_T1w.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/twix/UnEdited/sub-02/ses-01/anat/sub-02/ses-02_T1w_overlay.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "osprey/exampledata/twix/UnEdited/sub-02/ses-01/mrs/sub-02_ses-01_press-ref/sub-02_PRESS30_w.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "osprey/exampledata/twix/UnEdited/sub-02/ses-01/mrs/sub-02_ses-01_press/sub-02_PRESS30.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
  "osprey/fit/basissets/3T/ge/unedited/press/35/3T_PRESS_GE_35ms_noMM.BASIS": {
   "format": "lcmodel_basis",
   "vendor": null,
@@ -46703,6 +48133,66 @@
   "format": "simpson",
   "vendor": null,
   "kind": "spectroscopy"
+ },
+ "spant/inst/extdata/philips_spar_sdat_W.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spant/inst/extdata/philips_spar_sdat_W.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spant/inst/extdata/philips_spar_sdat_WS.SDAT": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spant/inst/extdata/philips_spar_sdat_WS.SPAR": {
+  "format": "philips_spar_sdat",
+  "vendor": "philips",
+  "kind": "spectroscopy"
+ },
+ "spant/inst/extdata/press_refocus.pta": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "spant/tests/testthat/abfit_res_coarse.rds": {
+  "format": "spant_rds",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "spant/tests/testthat/abfit_res_default.rds": {
+  "format": "spant_rds",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "spant/tests/testthat/abfit_res_fine.rds": {
+  "format": "spant_rds",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "spant/tests/testthat/abfit_res_no_optim.rds": {
+  "format": "spant_rds",
+  "vendor": null,
+  "kind": "fit_result"
+ },
+ "spant/tests/testthat/abfit_sim_mrs_data.rds": {
+  "format": "spant_rds",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spant/tests/testthat/abfit_sim_res.rds": {
+  "format": "spant_rds",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "spant/tests/testthat/def_basis.rds": {
+  "format": "spant_rds",
+  "vendor": null,
+  "kind": "basis_set"
  },
  "spec2nii_test_data/.gitattributes": {
   "format": "unknown",
