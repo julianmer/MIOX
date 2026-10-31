@@ -12,7 +12,8 @@
 #          spant fitted; its simulated spectrum is its basis weighted by the amplitudes it was     #
 #          made with; the basis signals lie at their shifts. SpecVis's LCModel and TARQUIN fits of #
 #          the same spectra state the same acquisition, TARQUIN's combined signals are the sums of #
-#          their parts.                                                                            #
+#          their parts; FSL-MRS dynamic fits: the model's estimate, its sd and covariance as its   #
+#          three files state them, and the time points at the level of their independent fits.     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -146,3 +147,29 @@ def test_specvis_tarquin_and_lcmodel_fits_of_the_same_data_agree(vendor):
         for total, parts in (("TNAA", ("NAA", "NAAG")), ("TCho", ("GPC", "PCh")),
                              ("TCr", ("Cr", "PCr")), ("Glx", ("Glu", "Gln"))):
             assert amplitude[total] == pytest.approx(sum(amplitude[p] for p in parts), rel=1e-5)
+
+
+FMRS = PUBLIC_DATA / "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/sim_fmrs"
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("run", ["sub0/ctrl", "sub0/stim", "sub1/ctrl", "sub1/stim"])
+def test_fsl_mrs_dynamic_fit_files_agree(run):
+    """FSL-MRS writes the model's estimate twice (free_parameters, dyn_results) and its
+    covariance (dyn_cov): the means agree, the sds are the roots of the covariance's diagonal,
+    and the model's NAA over time lies at the level of the independent fit of each time point."""
+    folder = FMRS / run
+    if not folder.is_dir():
+        pytest.skip("FSL-MRS test data not fetched")
+    results = load(folder)
+    assert [r.diagnostics["dynamic"] for r in results] == list(range(len(results)))
+    model = results[0].meta.vendor
+    free, [estimate] = model["free_parameters"], model["dyn_results"]
+    covariance = np.asarray(model["dyn_cov"]["matrix"])
+    assert model["dyn_cov"]["names"] == list(free) == list(estimate)
+    for i, name in enumerate(free):
+        assert free[name]["mean"] == estimate[name]
+        assert free[name]["sd"] == pytest.approx(np.sqrt(covariance[i, i]), rel=1e-9)
+    mapped = np.mean([r.row("NAA")["concentration"] for r in results])
+    independent = np.mean([r.meta.vendor["init_results"]["conc_NAA"] for r in results])
+    assert mapped == pytest.approx(independent, rel=0.01)

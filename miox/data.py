@@ -618,6 +618,75 @@ class PulseSequence:
 
 
 #**************************************************************************************************#
+#                                             RFPulse                                              #
+#**************************************************************************************************#
+#                                                                                                  #
+# One RF pulse shape: ``amplitude`` and ``phase`` (degrees) per sample, the amplitude in           #
+# ``amplitude_unit`` as the file states it ("Hz", "uT", ..., or "relative" when it is scaled to a  #
+# peak of 1), and the pulse's ``duration`` in seconds, None when the file leaves it to the         #
+# sequence. Each sample holds for duration / samples; ``time`` gives the start of each.            #
+#                                                                                                  #
+#**************************************************************************************************#
+class RFPulse:
+    def __init__(
+        self,
+        amplitude: np.ndarray,
+        phase: np.ndarray,
+        amplitude_unit: str,
+        duration: float | None,
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+    ):
+        self.amplitude = amplitude
+        self.phase = phase
+        self.amplitude_unit = amplitude_unit
+        self.duration = duration
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    @property
+    def n_samples(self) -> int:
+        return len(self.amplitude)
+
+    @property
+    def time(self) -> np.ndarray | None:
+        """Start of each sample in seconds; None without a duration."""
+        if self.duration is None:
+            return None
+        return np.arange(self.n_samples) * self.duration / self.n_samples
+
+    @property
+    def waveform(self) -> np.ndarray:
+        """The complex shape: amplitude x exp(i phase)."""
+        return self.amplitude * np.exp(1j * np.radians(self.phase))
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the samples and the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "n_samples": self.n_samples,
+            "amplitude_unit": self.amplitude_unit,
+            "duration": self.duration,
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "vendor_fields": len(self.meta.vendor_fields()),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        duration = f", {self.duration * 1e3:.4g} ms" if self.duration is not None else ""
+        return (f"<RFPulse{name} {self.provenance.format}: {self.n_samples} samples"
+                f"{duration}, amplitude in {self.amplitude_unit}>")
+
+
+#**************************************************************************************************#
 #                                         NoiseCovariance                                          #
 #**************************************************************************************************#
 #                                                                                                  #

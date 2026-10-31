@@ -32,6 +32,7 @@ CHALLENGE = "mrs_fitting_challenge/"
 OSPREY = "osprey/fit/basissets/"
 SLASER = TOOLBOX + "LCModel/BASIS_file/SLASER_Siemens26.basis"
 MRS_SIM = "mrs_sim/src/basis_sets/PRESS_30_GE_2000.mat"
+FSL_MRS_IO = "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/"  # its FSL-MRS JSON set differs
 
 # (basis set, ppm at 0 Hz): most basis formats store no reference, each tool picks its own; None:
 # the ReferencePPM the set states
@@ -87,6 +88,8 @@ SAME_SPECTRA = [
     (SLASER, TOOLBOX + "PROFIT/profit_struct.mat", False, ()),
     (CHALLENGE + "basisset_LCModel/press3T_30ms.BASIS", CHALLENGE + "basisset_LCModel", False, ()),
     (CHALLENGE + "basisset_LCModel", CHALLENGE + "basisset_JMRUI", False, ()),
+    (FSL_MRS_IO + "basisset_LCModel_raw", FSL_MRS_IO + "basisset_JMRUI", False, ()),
+    (FSL_MRS_IO + "basisset_LCModel_raw", FSL_MRS_IO + "basisset_LCModel.BASIS", False, ()),
 ]
 
 # the same prior exported by Vespa-Simulation in its three formats

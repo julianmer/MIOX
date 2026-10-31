@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Protocol files on synthetic files: a Siemens single protocol (XProtocol with ASCCONV),  #
 #          exam tree database (.exar1) and printed protocols as XML and as text, and a Philips     #
-#          ExamCard; LCModel control and MakeBasis input files.                                    #
+#          ExamCard; LCModel control and MakeBasis input files; FSL design files (VEST).           #
 #                                                                                                  #
 ####################################################################################################
 
@@ -276,3 +276,14 @@ def test_makebasis_input(tmp_path):
     assert protocol.meta["SpectrometerFrequency"] == [297.2]
     assert protocol.meta["EchoTime"] == pytest.approx(0.0085)
     assert "DwellTime" not in protocol.meta
+
+
+def test_fsl_vest_feat_contrasts(tmp_path):
+    f = tmp_path / "design.con"
+    f.write_text("/ContrastName1\tgroup mean A\n/ContrastName2\tB > A\n/NumWaves\t2\n"
+                 "/NumContrasts\t2\n/PPheights\t1.0 1.0\n\n/Matrix\n1 0\n-1 1\n")
+    [protocol] = miox.load(f)
+    assert protocol.provenance.format == "fsl_vest"
+    assert protocol.meta.vendor["matrix"] == [[1, 0], [-1, 1]]
+    assert protocol.meta.vendor["contrast_names"] == ["group mean A", "B > A"]
+    assert protocol.meta.vendor["header"]["PPheights"] == [1.0, 1.0]

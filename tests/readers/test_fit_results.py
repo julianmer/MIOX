@@ -7,8 +7,8 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Fit-result readers on synthetic files: LCModel TABLE, COORD and CSV, TARQUIN results,   #
-#          fit and CSV, PyAMARES results, Osprey containers, and R data as spant saves it. No test #
-#          data needed.                                                                            #
+#          fit and CSV, PyAMARES results, Osprey containers, R data as spant saves it, and         #
+#          FSL-MRS dynamic fit folders. No test data needed.                                       #
 #                                                                                                  #
 ####################################################################################################
 
@@ -205,3 +205,20 @@ def test_tarquin_csv(tmp_path):
     assert r.meta["SpectrometerFrequency"] == [123.2] and r.meta["DwellTime"] == 0.00025
     assert r.meta["NumberOfPoints"] == 2048 and r.meta["EchoTime"] == 0.03
     assert r.meta.vendor["Geometry parameters"]["PixelSpacing"] == "Unknown"
+
+
+def test_fsl_mrs_dynamic_folder(tmp_path):
+    (tmp_path / "mapped_parameters.csv").write_text(
+        ",0,0,1,1\n,mean,std,mean,std\nconc_NAA,1.0,0.1,2.0,0.1\ngamma_0,5.0,0.5,6.0,0.5\n")
+    (tmp_path / "free_parameters.csv").write_text(",mean,sd\nconc_NAA_beta0,1.5,0.2\n")
+    (tmp_path / "dyn_results.csv").write_text("samples,conc_NAA_beta0\n0,1.5\n")
+    (tmp_path / "init_results.csv").write_text(",conc_NAA,gamma_0\n0,1.1,5.2\n1,1.9,5.9\n")
+    (tmp_path / "options.txt").write_text('{"ppmlim": [0.2, 4.2]}\n--------\nCommand Line\n')
+    first, second = miox.load(tmp_path)
+    assert first.provenance.format == "fsl_mrs_dynamic" and first.voxel is None
+    assert second.row("NAA") == {"metabolite": "NAA", "concentration": 2.0, "sd": 0.1,
+                                 "sd_percent": 5.0}
+    assert second.diagnostics == {"dynamic": 1, "gamma_0": 6.0, "gamma_0 sd": 0.5}
+    assert second.meta.vendor["init_results"] == {"conc_NAA": 1.9, "gamma_0": 5.9}
+    assert second.meta.vendor["free_parameters"] == {"conc_NAA_beta0": {"mean": 1.5, "sd": 0.2}}
+    assert second.meta.vendor["options"] == {"ppmlim": [0.2, 4.2]}

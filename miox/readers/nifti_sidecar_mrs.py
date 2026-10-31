@@ -8,8 +8,9 @@
 #                                                                                                  #
 # Purpose: Reader for spectroscopy written as a plain complex NIfTI with its MRS values in a BIDS  #
 #          .json sidecar (as dcm2niix writes it): SpectrometerFrequency, ResonantNucleus,          #
-#          SpectralWidth, dim_5 to dim_7 and the BIDS fields. The vendor header keeps the NIfTI    #
-#          header and the whole sidecar.                                                           #
+#          SpectralWidth, dim_5 to dim_7 and the BIDS fields. Also FSL-MRS's NIfTI from before     #
+#          NIfTI-MRS (sidecar with ImagingFrequency and Dwelltime). The vendor header keeps the    #
+#          NIfTI header and the whole sidecar.                                                     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -23,6 +24,7 @@ import json
 
 import nibabel as nib
 import numpy as np
+from mrs_tools.constants import GYRO_MAG_RATIO
 
 # own
 from miox.data import MRSData
@@ -37,11 +39,14 @@ from miox.sniff import Format, Sniff
 #                                                                                                  #
 # The data are stored as NIfTI-MRS stores them: checked against MIOX's reading of the DICOM        #
 # dcm2niix converted (identical data and affine). The dwell time is 1 / SpectralWidth, else the    #
-# sidecar's DwellTime, else pixdim[4].                                                             #
+# sidecar's DwellTime, else pixdim[4]. FSL-MRS's own NIfTI (before NIfTI-MRS) stores the           #
+# conjugate: checked against the LCModel .RAW and jMRUI text of the same spectrum (identical once  #
+# conjugated); its sidecar gives ImagingFrequency (Hz) and Dwelltime, and the nucleus follows from #
+# the frequency and MagneticFieldStrength.                                                         #
 #                                                                                                  #
 #**************************************************************************************************#
 class NiftiSidecarMrsReader(Reader):
-    FORMATS = (Format.NIFTI_SIDECAR_MRS,)
+    FORMATS = (Format.NIFTI_SIDECAR_MRS, Format.FSL_MRS_NIFTI)
     PACKAGES = Reader.PACKAGES + ("nibabel",)
     SOURCE = "BIDS sidecar"
     DIMS = ("dim_5", "dim_6", "dim_7")
@@ -57,10 +62,16 @@ class NiftiSidecarMrsReader(Reader):
             key: (value, field)
             for key, (value, field, _) in NibabelImageReader().bids_values(sidecar).items()
         }
+        notes = []
+        if sniff.format == Format.FSL_MRS_NIFTI:
+            data = np.conj(data)
+            notes.append("stored as the conjugate (FSL-MRS convention); conjugated")
+            values.update(self._fsl_mrs(sidecar, notes))
         if "SpectralWidth" in sidecar:
             dwelltime, field = 1 / float(sidecar["SpectralWidth"]), "sidecar/SpectralWidth"
-        elif "DwellTime" in sidecar:
-            dwelltime, field = float(sidecar["DwellTime"]), "sidecar/DwellTime"
+        elif "DwellTime" in sidecar or "Dwelltime" in sidecar:
+            field = "DwellTime" if "DwellTime" in sidecar else "Dwelltime"
+            dwelltime, field = float(sidecar[field]), f"sidecar/{field}"
         else:
             dwelltime, field = float(img.header.get_zooms()[3]), "nifti/pixdim"
         tags = tuple(
@@ -74,8 +85,27 @@ class NiftiSidecarMrsReader(Reader):
         }
         name = sniff.path.name.removesuffix(".gz").removesuffix(".nii")
         d = self.dataset(
-            sniff, data, dwelltime, values, vendor, name, [], self.SOURCE,
+            sniff, data, dwelltime, values, vendor, name, notes, self.SOURCE,
             affine=img.affine, dim_tags=tags,
         )
         d.meta.set("DwellTime", dwelltime, f"{self.SOURCE}: {field}", field)
         return [d]
+
+    def _fsl_mrs(self, sidecar: dict, notes: list[str]) -> dict:
+        """SpectrometerFrequency from ImagingFrequency (Hz above MAX_MHZ, else MHz) and the
+        nucleus whose gyromagnetic ratio is that frequency / MagneticFieldStrength (within 1 %)."""
+        frequency = float(sidecar["ImagingFrequency"])
+        if frequency > self.MAX_MHZ:
+            frequency /= 1e6
+            notes.append("ImagingFrequency is in Hz; divided by 1e6")
+        values = {"SpectrometerFrequency": ([frequency], "sidecar/ImagingFrequency")}
+        field = sidecar.get("MagneticFieldStrength")
+        if isinstance(field, (int, float)) and field > 0:
+            ratio = frequency / field
+            nucleus = next((n for n, g in GYRO_MAG_RATIO.items() if abs(ratio - g) < 1e-2 * g),
+                           None)
+            if nucleus is not None:
+                values["ResonantNucleus"] = ([nucleus], None)
+                notes.append(f"nucleus not stored; {nucleus} from ImagingFrequency / "
+                             "MagneticFieldStrength")
+        return values

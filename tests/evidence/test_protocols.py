@@ -12,7 +12,8 @@
 #          and their computed TR against the set TR; an LCModel control file against the inputs    #
 #          LCModel printed in the report of its run; Philips Raw Data Storage against the SPAR of  #
 #          the same scan, and an exam log with its ExamCard; Siemens PhoenixZIPReports and XA Raw  #
-#          Data Storage against images of the same protocol.                                       #
+#          Data Storage against images of the same protocol; FSL design files (VEST) as fslpy      #
+#          reads them.                                                                             #
 #                                                                                                  #
 ####################################################################################################
 
@@ -199,3 +200,24 @@ def test_siemens_dicom_protocols_equal_their_images():
             compared += 1
             break
     assert compared >= 25
+
+
+FMRS_TOOLS = PUBLIC_DATA / "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools"
+VEST = {  # FSL's own reader (fslpy, fsl.data.vest.loadVestFile) of FSL-MRS's design files
+    "design.mat": [[1, 1, 0], [1, 0, 1], [-1, 1, 0], [-1, 0, 1]],
+    "design.con": [[1, 0, 0], [-1, 0, 0]],
+    "design.fts": [[1, 0]],
+    "design2.fts": [[0, 1], [1, 0]],
+    "design_groupmean.mat": [[1], [1], [1], [1]],
+    "design_groupmean.con": [[1], [-1]],
+}
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("name", list(VEST))
+def test_fsl_design_files_as_fslpy_reads_them(name):
+    path = FMRS_TOOLS / name
+    if not path.exists():
+        pytest.skip("FSL-MRS test data not fetched")
+    [protocol] = load(path)
+    assert protocol.meta.vendor["matrix"] == VEST[name]

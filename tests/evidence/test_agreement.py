@@ -7,8 +7,8 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Cross-format agreement on the public test data: the same acquisition stored in several  #
-#          formats must give the same values. Unlike the records, this is independent              #
-#          evidence that the values are correct.                                                   #
+#          formats must give the same values. FSL-MRS's own NIfTI against its LCModel and jMRUI    #
+#          copies. Unlike the records, this is independent evidence that the values are correct.   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -188,3 +188,22 @@ def test_fitting_challenge_text_basis_equals_lcmodel_basis():
     assert _same(text, lcmodel, ("SpectrometerFrequency", "ResonantNucleus") + AVERAGED_KEYS) == []
     for metabolite in text.metabolites:
         assert np.allclose(text.fid(metabolite), lcmodel.fid(metabolite), rtol=1e-5, atol=1e-5)
+
+
+FSL_MRS_IO = PUBLIC_DATA / "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io"
+
+
+@pytest.mark.data
+def test_fsl_mrs_nifti_equals_its_lcmodel_and_jmrui_copies():
+    """FSL-MRS's NIfTI from before NIfTI-MRS stores the conjugate of the same spectrum it keeps as
+    LCModel .RAW and jMRUI text; read, all three hold the same FID, frequency and dwell time."""
+    if not FSL_MRS_IO.is_dir():
+        pytest.skip("FSL-MRS test data not fetched")
+    [nifti] = load(FSL_MRS_IO / "metab.nii")
+    assert nifti.provenance.format == Format.FSL_MRS_NIFTI and nifti.nucleus == "1H"
+    for copy in ("metab.RAW", "metab.txt"):
+        [other] = load(FSL_MRS_IO / copy)
+        x, y = nifti.data.ravel(), other.data.ravel()
+        assert np.abs(x - y).max() < 1e-6 * np.abs(y).max(), copy
+        assert nifti.spectrometer_frequency == pytest.approx(other.spectrometer_frequency)
+        assert nifti.dwelltime == pytest.approx(other.dwelltime)

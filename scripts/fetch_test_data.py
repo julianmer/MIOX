@@ -181,6 +181,15 @@ class DataFetcher:
                                                      "metabolites_database.json")]
             + ["/LICENSE.md"],
         ),
+        "fsl_mrs_testdata": (  # FSL-MRS test data (GitHub mirror, LFS; non-commercial: local only)
+            "https://github.com/wtclarke/fsl_mrs.git",
+            [f"/fsl_mrs/tests/testdata/{folder}" for folder in ("fmrs_tools", "sim", "mrs_io")]
+            + ["/LICENSE"],
+        ),
+        "brkraw_dataset": (  # pruned ParaVision 6.0.1 phantom study (CC BY 4.0; PV5.1 is 231 MB)
+            "https://github.com/BrkRaw/brkraw-dataset.git",
+            ["/PV6.0.1", "/LICENSE", "/README.md"],
+        ),
         "bidsphysio": (  # physio logs with their BIDS conversions (MIT)
             "https://github.com/cbinyu/bidsphysio.git",
             [f"bidsphysio.{m}/tests/data" for m in ("acq2bids", "base", "dcm2bids", "edf2bids",

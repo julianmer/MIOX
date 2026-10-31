@@ -485,6 +485,10 @@ class BrukerReader(Spec2niiReader):
             if (folder / name).is_file():
                 reconstructions = self.reconstructions(folder / name)
                 return reconstructions[0] if reconstructions else folder / name
+        seqs = sorted(folder.glob("pdata/*/2dseq"), key=lambda p: (len(p.parent.name),
+                                                                   p.parent.name))
+        if seqs:  # a scan shared without its raw data: the first reconstruction
+            return seqs[0]
         raise ReaderError(f"no Bruker data file (fid, 2dseq, rawdata) in {folder}")
 
     # --- CSI k-space -----------------------------------------------------------------------------

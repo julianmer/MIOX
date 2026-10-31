@@ -2659,6 +2659,166 @@
   "vendor": "varian",
   "kind": "raw"
  },
+ "brkraw_dataset/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI.metadata.yaml": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/10/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/10/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/10/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/10/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/10/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/10/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/11/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/11/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/11/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/11/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/11/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/11/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/3/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/3/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/3/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/3/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/3/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/3/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/6/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/6/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/6/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/6/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/6/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/6/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/7/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/7/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/7/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/7/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/7/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI/UNC_PV6.0.1_FLASH_TurboRARE_EPI/7/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
  "bruker_data_test/data/flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR/10/acqu": {
   "format": "topspin",
   "vendor": "bruker",
@@ -2890,9 +3050,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR/21/spnam6": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR/21/uxnmr.par": {
   "format": "topspin",
@@ -2985,9 +3145,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR/22/spnam6": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR/22/uxnmr.par": {
   "format": "topspin",
@@ -3090,9 +3250,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR/23/spnam6": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR/23/uxnmr.par": {
   "format": "topspin",
@@ -3355,9 +3515,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/flat/coffee/UV1010_M1-1003-1002_6268756_ErISKLIoeB/11/spnam6": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/flat/coffee/UV1010_M1-1003-1002_6268756_ErISKLIoeB/11/uxnmr.par": {
   "format": "topspin",
@@ -3450,9 +3610,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/flat/coffee/UV1010_M1-1003-1002_6268756_ErISKLIoeB/12/spnam6": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/flat/coffee/UV1010_M1-1003-1002_6268756_ErISKLIoeB/12/uxnmr.par": {
   "format": "topspin",
@@ -3515,9 +3675,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/flat/coffee/UV1010_M1-1003-1002_6268756_ErISKLIoeB/13/spnam6": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/flat/coffee/UV1010_M1-1003-1002_6268756_ErISKLIoeB/13/uxnmr.par": {
   "format": "topspin",
@@ -4250,24 +4410,24 @@
   "kind": "spectroscopy"
  },
  "bruker_data_test/data/zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3/spnam14": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3/spnam18": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3/spnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3/spnam31": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3/uxnmr.par": {
   "format": "topspin",
@@ -4825,9 +4985,9 @@
   "kind": "spectroscopy"
  },
  "bruker_data_test/data/zipped/hsqc-incompleted-acquisition/5/spnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/hsqc-incompleted-acquisition/5/uxnmr.par": {
   "format": "topspin",
@@ -5160,9 +5320,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/cosy/3/EA": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/cosy/3/acqu": {
   "format": "topspin",
@@ -5200,19 +5360,19 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/cosy/3/gpnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/cosy/3/gpnam2": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/cosy/3/gpnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/cosy/3/nuslist": {
   "format": "unknown",
@@ -5430,9 +5590,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hmbc/5/EA": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hmbc/5/acqu": {
   "format": "topspin",
@@ -5470,19 +5630,19 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hmbc/5/gpnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hmbc/5/gpnam2": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hmbc/5/gpnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hmbc/5/nuslist": {
   "format": "unknown",
@@ -5690,9 +5850,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/EA": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/acqu": {
   "format": "topspin",
@@ -5735,24 +5895,24 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/gpnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/gpnam2": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/gpnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/gpnam4": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/nuslist": {
   "format": "unknown",
@@ -5805,29 +5965,29 @@
   "kind": "spectroscopy"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/spnam14": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/spnam18": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/spnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/spnam31": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/spnam7": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/fid/hsqc/4/stanprogram92036": {
   "format": "unknown",
@@ -6500,9 +6660,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/cosy/3/EA": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/cosy/3/acqu": {
   "format": "topspin",
@@ -6540,19 +6700,19 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/cosy/3/gpnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/cosy/3/gpnam2": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/cosy/3/gpnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/cosy/3/nuslist": {
   "format": "unknown",
@@ -6865,9 +7025,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hmbc/5/EA": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hmbc/5/acqu": {
   "format": "topspin",
@@ -6905,19 +7065,19 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hmbc/5/gpnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hmbc/5/gpnam2": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hmbc/5/gpnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hmbc/5/nuslist": {
   "format": "unknown",
@@ -7220,9 +7380,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/EA": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/acqu": {
   "format": "topspin",
@@ -7265,24 +7425,24 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/gpnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/gpnam2": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/gpnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/gpnam4": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/nuslist": {
   "format": "unknown",
@@ -7385,29 +7545,29 @@
   "kind": "spectroscopy"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/spnam14": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/spnam18": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/spnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/spnam31": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/spnam7": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/ibuprofen/processed/hsqc/4/stanprogram92036": {
   "format": "unknown",
@@ -8140,9 +8300,9 @@
   "kind": "spectroscopy"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/cosy-nus/2/EA": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/cosy-nus/2/acqu": {
   "format": "topspin",
@@ -8175,19 +8335,19 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/cosy-nus/2/gpnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/cosy-nus/2/gpnam2": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/cosy-nus/2/gpnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/cosy-nus/2/gradient_calib": {
   "format": "unknown",
@@ -8290,9 +8450,9 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/EA": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/acqu": {
   "format": "topspin",
@@ -8340,14 +8500,14 @@
   "kind": "unknown"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/gpnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/gpnam2": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/gradient_calib": {
   "format": "unknown",
@@ -8445,24 +8605,24 @@
   "kind": "spectroscopy"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/spnam14": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/spnam18": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/spnam3": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/spnam31": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "bruker_data_test/data/zipped/nonUniformSampling/hsqc-nus/3/uxnmr.info": {
   "format": "unknown",
@@ -14278,6 +14438,321 @@
   "format": "dsi_studio_fib",
   "vendor": null,
   "kind": "imaging"
+ },
+ "fsl_mrs_testdata/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/design.con": {
+  "format": "fsl_vest",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/design.fts": {
+  "format": "fsl_vest",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/design2.fts": {
+  "format": "fsl_vest",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/design_groupmean.con": {
+  "format": "fsl_vest",
+  "vendor": null,
+  "kind": "protocol"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/sim_fmrs/sub0/ctrl/options.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/sim_fmrs/sub0/stim/options.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/sim_fmrs/sub1/ctrl/options.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/fmrs_tools/sim_fmrs/sub1/stim/options.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basis_set_jMRUI.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Ala.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Asc.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Asp.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Cr.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/GABA.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/GPC.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/GSH.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Glc.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Gln.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Glu.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Gly.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Ins.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Lac.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Mac.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/NAA.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/NAAG.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/PCho.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/PCr.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/PE.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/Tau.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI/sIns.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI_vespa/creatine.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI_vespa/jmrui-text_output_summary.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_JMRUI_vespa/n-acetylaspartate.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel.BASIS": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Ala.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Asc.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Asp.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Cr.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/GABA.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/GPC.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/GSH.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Glc.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Gln.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Glu.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Gly.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Ins.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Lac.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Mac.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/NAA.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/NAAG.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/PCho.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/PCr.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/PE.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/Tau.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/basisset_LCModel_raw/sIns.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/fittingChallengeMetabs.txt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/gamma_press_te20_3t_v1.basis": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/makeFSLMRSBasisForFittingChallengeData.ipynb": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/metab.RAW": {
+  "format": "lcmodel_raw",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/metab.nii": {
+  "format": "fsl_mrs_nifti",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/metab.txt": {
+  "format": "jmrui_text",
+  "vendor": null,
+  "kind": "spectroscopy"
+ },
+ "fsl_mrs_testdata/fsl_mrs/tests/testdata/mrs_io/press_te25_3t_v3.basis": {
+  "format": "lcmodel_basis",
+  "vendor": null,
+  "kind": "basis_set"
  },
  "gadgetron/T2W/generic_grappa_T2W_ref_20220817_klk.mrd": {
   "format": "ismrmrd",
@@ -33320,9 +33795,9 @@
   "kind": "spectroscopy"
  },
  "nmrml/examples/working.tmp/BirminghamMSIExamples/BML_Analysis_2085_Raw_Experiment_Directory/2085/spnam1": {
-  "format": "topspin",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "nmrml/examples/working.tmp/BirminghamMSIExamples/BML_Analysis_2085_Raw_Experiment_Directory/2085/uxnmr.par": {
   "format": "topspin",
@@ -48155,9 +48630,9 @@
   "kind": "spectroscopy"
  },
  "spant/inst/extdata/press_refocus.pta": {
-  "format": "unknown",
+  "format": "siemens_pta",
   "vendor": null,
-  "kind": "unknown"
+  "kind": "sequence"
  },
  "spant/tests/testthat/abfit_res_coarse.rds": {
   "format": "spant_rds",
@@ -49200,29 +49675,29 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/12/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/12/spnam4": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/12/spnam50": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/12/spnam51": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/12/spnam53": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/12/uxnmr.info": {
   "format": "unknown",
@@ -49320,19 +49795,19 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/15/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/15/spnam1": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/15/spnam53": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/15/uxnmr.info": {
   "format": "unknown",
@@ -49425,14 +49900,14 @@
   "kind": "imaging"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/2/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/2/spnam40": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/2/uxnmr.info": {
   "format": "unknown",
@@ -49530,19 +50005,19 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/7/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/7/spnam1": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/7/spnam53": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-360.1.1/7/uxnmr.info": {
   "format": "unknown",
@@ -50010,14 +50485,14 @@
   "kind": "imaging"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/1/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/1/spnam40": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/1/uxnmr.info": {
   "format": "unknown",
@@ -50140,24 +50615,24 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/10/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/10/spnam50": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/10/spnam51": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/10/spnam53": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/10/uxnmr.info": {
   "format": "unknown",
@@ -50255,9 +50730,9 @@
   "kind": "imaging"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/11/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/11/traj": {
   "format": "unknown",
@@ -50355,9 +50830,9 @@
   "kind": "imaging"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/2/spnam40": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/2/uxnmr.info": {
   "format": "unknown",
@@ -50445,9 +50920,9 @@
   "kind": "imaging"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/3/spnam40": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/3/uxnmr.info": {
   "format": "unknown",
@@ -50535,9 +51010,9 @@
   "kind": "imaging"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/4/spnam40": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/4/uxnmr.info": {
   "format": "unknown",
@@ -50660,19 +51135,19 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/5/spnam50": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/5/spnam51": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/5/spnam53": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/5/uxnmr.info": {
   "format": "unknown",
@@ -50790,19 +51265,19 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/6/spnam50": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/6/spnam51": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/6/spnam53": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/6/uxnmr.info": {
   "format": "unknown",
@@ -50865,9 +51340,9 @@
   "kind": "imaging"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/7/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/7/uxnmr.info": {
   "format": "unknown",
@@ -50960,9 +51435,9 @@
   "kind": "imaging"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/8/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "imaging"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/8/traj": {
   "format": "unknown",
@@ -51090,24 +51565,24 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/9/spnam0": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/9/spnam50": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/9/spnam51": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/9/spnam53": {
-  "format": "bruker",
+  "format": "bruker_shape",
   "vendor": "bruker",
-  "kind": "spectroscopy"
+  "kind": "sequence"
  },
  "spec2nii_test_data/bruker/PV-6.0.1/9/uxnmr.info": {
   "format": "unknown",
@@ -51450,9 +51925,9 @@
   "kind": "spectroscopy"
  },
  "spec2nii_test_data/other/metab.nii": {
-  "format": "nifti",
+  "format": "fsl_mrs_nifti",
   "vendor": null,
-  "kind": "imaging"
+  "kind": "spectroscopy"
  },
  "spec2nii_test_data/other/metab.txt": {
   "format": "text_fid",

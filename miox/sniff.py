@@ -75,6 +75,7 @@ class Format(StrEnum):
     NIFTI_MRS = "nifti_mrs"
     NIFTI = "nifti"
     NIFTI_SIDECAR_MRS = "nifti_sidecar_mrs"  # complex NIfTI with MRS values in a BIDS sidecar
+    FSL_MRS_NIFTI = "fsl_mrs_nifti"  # FSL-MRS NIfTI before NIfTI-MRS: ImagingFrequency, Dwelltime
     ANALYZE = "analyze"
     MGH = "mgh"
     MINC1 = "minc1"
@@ -132,6 +133,7 @@ class Format(StrEnum):
     BRAINVOYAGER_POI = "brainvoyager_poi"  # BrainVoyager patches of interest
     BRAINVOYAGER_PRT = "brainvoyager_prt"  # BrainVoyager stimulation protocol
     BRAINVOYAGER_SDM = "brainvoyager_sdm"  # BrainVoyager design matrix
+    FSL_VEST = "fsl_vest"  # FSL design matrix, contrasts or F-tests (/NumWaves ... /Matrix)
     BRAINVOYAGER_TRF = "brainvoyager_trf"  # BrainVoyager spatial transformation
     GIFTI = "gifti"  # GIFTI surfaces and per-vertex data (.gii, also gzip/bzip2)
     FREESURFER_SURFACE = "freesurfer_surface"  # FreeSurfer triangle or quad surface
@@ -169,6 +171,7 @@ class Format(StrEnum):
     MIDAS_PRIOR = "midas_prior"
     PYAMARES_PRIOR = "pyamares_prior"
     PYAMARES_RESULT = "pyamares_result"
+    FSL_MRS_DYNAMIC = "fsl_mrs_dynamic"  # FSL-MRS dynamic (fMRS) fit result folder
     DMIWIZARD_MAP = "dmiwizard_map"  # DMIWizard metabolic or ROI map: one text column
     SPANT_RDS = "spant_rds"  # spant spectra, basis sets or fit results saved as R data
     OSPREY_MRSCONT = "osprey_mrscont"
@@ -180,6 +183,9 @@ class Format(StrEnum):
     FASTMRI_H5 = "fastmri_h5"
     GE_SCANARCHIVE = "ge_scanarchive"
     PULSEQ = "pulseq"
+    SIEMENS_PTA = "siemens_pta"  # Siemens RF pulse table: PULSENAME, then amplitude and phase
+    BRUKER_SHAPE = "bruker_shape"  # Bruker RF shape (JCAMP-DX Shape Data: amplitude %, phase)
+    FSL_MRS_SIM = "fsl_mrs_sim"  # FSL-MRS simulator sequence description (JSON: RF, delays, ...)
     BART_CFL = "bart_cfl"
     MRD = "mrd"
     SIEMENS_PMU = "siemens_pmu"
@@ -353,6 +359,7 @@ class Sniffer:
     FIELD_SEPARATOR = re.compile(r"[,\s]+")
     TEXT_FID_LINES = 8  # complete numeric lines a headerless text file must start with
     TEXT_FID_MAX_COLUMNS = 8  # more numeric columns than that is a table or an image, not FIDs
+    FSL_MRS = ("ImagingFrequency", "Dwelltime")  # the sidecar keys of FSL-MRS before NIfTI-MRS
     NIFTI_SIDECARS = (".json", ".bval", ".bvec", ".img")  # BIDS sidecar, diffusion tables, pair
     ANALYZE_SIZES = (b"\x00\x00\x01\x5c", b"\x5c\x01\x00\x00")  # sizeof_hdr 348, either byte order
     BRIK = re.compile(r"\.brik(\.gz)?$", re.I)
@@ -394,6 +401,7 @@ class Sniffer:
     )
     JCAMP_NMR_TYPE = re.compile(rb"##DATA\s*TYPE=\s*(n?D\s*)?NMR\s*(FID|SPECTRUM)", re.I)
     JCAMP_LINK = re.compile(rb"##DATA\s*TYPE=\s*LINK", re.I)
+    JCAMP_SHAPE = re.compile(rb"##DATA\s*TYPE=\s*Shape\s*Data", re.I)
     TOPSPIN_SPECTRA = re.compile(r"^(1[ri]|2[ri]{2}|3[ri]{3}|4[ri]{4})$")  # 1r, 2rr, 3rrr, ...
     PARAVISION_FILES = ("acqp", "method", "visu_pars", "reco")  # beside a ParaVision scan's data
 
@@ -471,8 +479,9 @@ class Sniffer:
 
     def directory(self, path: Path) -> Sniff:
         """A NIfTI-Zarr store, a TRX tractogram folder, a Bruker scan, a Varian .fid folder, a
-        Spinsolve experiment, a basis set of one file per metabolite, a DICOM series, or a study
-        folder of DICOM series folders (a DICOMDIR at its top is passed over)."""
+        Spinsolve experiment, an FSL-MRS dynamic fit, a basis set of one file per metabolite, a
+        DICOM series, or a study folder of DICOM series folders (a DICOMDIR at its top is passed
+        over)."""
         names = {p.name for p in path.iterdir()}
         if names & {".zgroup", "zarr.json"} and (path / "nifti").is_dir():
             return self._image(path, Format.NIFTI_ZARR, "zarr group with a nifti header array")
@@ -497,6 +506,9 @@ class Sniffer:
         if self._rs2d_folder(path):
             return Sniff(path, Format.RS2D, Kind.SPECTROSCOPY, vendor="rs2d", confidence=1.0,
                          evidence=("RS2D header.xml with data.dat",))
+        if {"mapped_parameters.csv", "free_parameters.csv", "dyn_results.csv"} <= names:
+            return Sniff(path, Format.FSL_MRS_DYNAMIC, Kind.FIT_RESULT, confidence=1.0,
+                         evidence=("FSL-MRS dynamic fit folder (mapped and free parameters)",))
         if "acqu.par" in names and names & {"data.1d", "fid.1d", "spectrum.1d"}:
             return Sniff(path, Format.SPINSOLVE, Kind.SPECTROSCOPY, confidence=1.0,
                          evidence=("Spinsolve experiment folder (acqu.par with .1d data)",))
@@ -605,6 +617,17 @@ class Sniffer:
                     companions=sidecars,
                     detail=detail,
                 )
+            if header.get_data_dtype().kind == "c" and self._mrs_sidecar(sidecars, self.FSL_MRS):
+                return Sniff(
+                    path,
+                    Format.FSL_MRS_NIFTI,
+                    Kind.SPECTROSCOPY,
+                    confidence=0.9,
+                    evidence=(f"NIfTI-{version} magic", "complex data",
+                              "ImagingFrequency and Dwelltime in sidecar (FSL-MRS)"),
+                    companions=sidecars,
+                    detail=detail,
+                )
             return Sniff(
                 path,
                 Format.NIFTI,
@@ -630,8 +653,10 @@ class Sniffer:
         )
 
     @staticmethod
-    def _mrs_sidecar(sidecars: tuple[Path, ...]) -> bool:
-        """A BIDS sidecar that states the spectrometer frequency and nucleus."""
+    def _mrs_sidecar(sidecars: tuple[Path, ...],
+                     keys: tuple[str, ...] = ("SpectrometerFrequency", "ResonantNucleus")) -> bool:
+        """A sidecar that states the given keys (default: the spectrometer frequency and nucleus,
+        as BIDS names them)."""
         sidecar = next((s for s in sidecars if s.suffix == ".json"), None)
         if sidecar is None:
             return False
@@ -639,7 +664,7 @@ class Sniffer:
             values = json.loads(sidecar.read_text())
         except ValueError:
             return False
-        return "SpectrometerFrequency" in values and "ResonantNucleus" in values
+        return all(key in values for key in keys)
 
     def rda(self, path: Path, head: bytes) -> Sniff | None:
         if not head.startswith(b">>> Begin of header <<<"):
@@ -833,9 +858,12 @@ class Sniffer:
 
     def jcamp(self, path: Path, head: bytes) -> Sniff | None:
         """JCAMP-DX files with an NMR FID or spectrum (DATA TYPE NMR FID, NMR SPECTRUM, nD NMR
-        ..., also within a compound LINK file)."""
+        ..., also within a compound LINK file), or a Bruker RF shape (DATA TYPE Shape Data)."""
         if not head.lstrip().startswith(b"##TITLE"):
             return None
+        if self.JCAMP_SHAPE.search(head):
+            return Sniff(path, Format.BRUKER_SHAPE, Kind.SEQUENCE, vendor="bruker", confidence=1.0,
+                         evidence=("JCAMP-DX Shape Data",))
         if self.JCAMP_NMR_TYPE.search(head):
             linked = bool(self.JCAMP_LINK.search(head))
             what = "compound file with an NMR block" if linked else "NMR data type"
@@ -1419,10 +1447,17 @@ class Sniffer:
         return None
 
     def analysis_text(self, path: Path, head: bytes) -> Sniff | None:
-        """Text formats of LCModel, TARQUIN, VASF, SIVIC and DMIWizard, recognised by their own
-        markers (DMIWizard's maps by their names)."""
+        """Text formats of LCModel, TARQUIN, VASF, SIVIC, FSL (VEST), FSL-MRS, Siemens pulse tables
+        and DMIWizard, recognised by their own markers (DMIWizard's maps by their names)."""
         upper = head.upper()
         stripped = head.lstrip()
+        if re.match(rb"\w?PULSENAME:", stripped) and b"AMPINT:" in head:  # some start "ePULSENAME"
+            evidence = ("Siemens pulse table (PULSENAME, AMPINT)",)
+            return Sniff(path, Format.SIEMENS_PTA, Kind.SEQUENCE, confidence=0.9, evidence=evidence)
+        if stripped.startswith(b"{") and b'"sequenceName"' in head and self._fsl_mrs_sim(path):
+            evidence = ("FSL-MRS sequence description (sequenceName, RF, CoherenceFilter)",)
+            fmt = Format.FSL_MRS_SIM
+            return Sniff(path, fmt, Kind.SEQUENCE, confidence=1.0, evidence=evidence)
         if stripped.startswith(b"{") and b'"basis_re"' in head:
             evidence = ("FSL-MRS basis JSON",)
             fmt = Format.FSL_MRS_BASIS
@@ -1458,12 +1493,23 @@ class Sniffer:
                 return Sniff(
                     path, fmt, kind, confidence=0.9, evidence=(evidence,), companions=companions
                 )
+        if stripped.startswith((b"/NumWaves", b"/ContrastName")) and b"/Matrix" in head:
+            evidence = ("FSL VEST header (/NumWaves, /Matrix)",)
+            return Sniff(path, Format.FSL_VEST, Kind.PROTOCOL, confidence=0.9, evidence=evidence)
         if (match := self.DMIWIZARD_MAP.match(path.name)) and self.NUMBER.fullmatch(
                 head.split(b"\n", 1)[0].strip().decode("ascii", "replace")):
             evidence = (f"DMIWizard {match[1]} name", "a column of numbers")
             return Sniff(path, Format.DMIWIZARD_MAP, Kind.IMAGING, confidence=0.9,
                          evidence=evidence)
         return None
+
+    @staticmethod
+    def _fsl_mrs_sim(path: Path) -> bool:
+        try:
+            description = json.loads(path.read_text())
+        except (ValueError, UnicodeDecodeError):
+            return False
+        return isinstance(description, dict) and {"RF", "CoherenceFilter"} <= description.keys()
 
     def vespa(self, path: Path, head: bytes) -> Sniff | None:
         if head[:2] == b"\x1f\x8b":

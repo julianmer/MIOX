@@ -7,7 +7,8 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Images: the same MINC data as MINC 1 and MINC 2 read alike; PAR/REC spacing equals the  #
-#          voxel size of the affine; a dcm2niix sidecar's values land in the standard keys.        #
+#          voxel size of the affine; a dcm2niix sidecar's values land in the standard keys;        #
+#          ParaVision 6.0.1 reconstructions as brkraw converts them.                               #
 #                                                                                                  #
 ####################################################################################################
 
@@ -66,3 +67,56 @@ def test_dcm2niix_sidecar_values():
     assert im.meta["EchoTime"] == sidecar["EchoTime"]
     assert im.meta["ExcitationFlipAngle"] == sidecar["FlipAngle"]
     assert im.meta["SpectrometerFrequency"] == [sidecar["ImagingFrequency"]]
+
+
+BRKRAW = PUBLIC_DATA / "brkraw_dataset/PV6.0.1/UNC_PV6.0.1_FLASH_TurboRARE_EPI"
+# (scan, slice pack, voxel sum, affine rows) as brkraw 0.5.7 converts pdata/1 ("scanner" space,
+# x negated: brkraw's scanner frame has the opposite x to MIOX's RAS)
+BRKRAW_SCANS = [
+    ("3", 0, 79404.7, [
+        [-0.1172, 0, 0, 15],
+        [0, -0.1172, 0, 10],
+        [0, 0, 4, 0]]),
+    ("3", 1, 113432.09, [
+        [0, 0, 4, 0],
+        [-0.1172, 0, 0, 10],
+        [0, -0.1172, 0, 15]]),
+    ("3", 2, 103749.79, [
+        [-0.1172, 0, 0, 15],
+        [0, 0, -4, -5],
+        [0, -0.1172, 0, 15]]),
+    ("6", 0, 3178187.38, [
+        [-0.075, 0, 0, 14.4],
+        [0, -0.075, 0, 9.4],
+        [0, 0, 1, -5.5]]),
+    ("7", 0, 9874585.13, [
+        [-0.075, 0, 0, 14.4],
+        [0, -0.075, 0, 9.4],
+        [0, 0, 1, -5.5]]),
+    ("10", 0, 50345.87, [
+        [0, 0, 0.9062, -28.5469],
+        [-0.9062, 0, 0, 29],
+        [0, -0.9062, 0, 29]]),
+    ("11", 0, 709514.64, [
+        [-0.36, 0, 0, 14.4],
+        [0, -0.36, 0, 9.4],
+        [0, 0, 1, -5.5]]),
+]
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("scan,pack,total,rows", BRKRAW_SCANS)
+def test_paravision_reconstruction_as_brkraw_converts_it(scan, pack, total, rows):
+    """The same voxels and geometry as brkraw's NIfTI, read from the scan folder (no raw data in
+    this pruned study). A single-slice pack has no slice spacing: brkraw gives it 4 mm, MIOX the
+    stated VisuCoreFrameThickness (2 mm), so there only the slice direction is compared."""
+    folder = BRKRAW / "UNC_PV6.0.1_FLASH_TurboRARE_EPI" / scan
+    if not folder.is_dir():
+        pytest.skip("brkraw-dataset not fetched")
+    image = load(folder)[pack]
+    assert float(image.data.astype(float).sum()) == pytest.approx(total, rel=1e-6)
+    expected, affine = np.asarray(rows), image.affine[:3]
+    columns = [0, 1, 3] if image.shape[2] == 1 else [0, 1, 2, 3]
+    assert np.allclose(affine[:, columns], expected[:, columns], atol=1e-3)
+    unit = expected[:, 2] / np.linalg.norm(expected[:, 2])
+    assert np.allclose(affine[:, 2] / np.linalg.norm(affine[:, 2]), unit, atol=1e-6)

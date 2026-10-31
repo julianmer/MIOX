@@ -39,6 +39,7 @@ from miox.data import (
     Protocol,
     PulseSequence,
     RawData,
+    RFPulse,
     Surface,
     Tractogram,
     Transform,
@@ -48,7 +49,7 @@ from miox.sniff import Format, Sniff, Sniffer
 
 Dataset = (
     MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | NoiseCovariance
-    | PhysioData | Protocol | Phantom | Tractogram | Surface | Transform
+    | PhysioData | Protocol | Phantom | Tractogram | Surface | Transform | RFPulse
 )
 
 
@@ -78,6 +79,8 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
                                                           Format.DSI_STUDIO_FIB)),
     ("miox.readers.fastmri", "FastMriReader", (Format.FASTMRI_H5,)),
     ("miox.readers.fida_mat", "FidaReader", (Format.FIDA_MAT,)),
+    ("miox.readers.fsl_mrs_dynamic", "FslMrsDynamicReader", (Format.FSL_MRS_DYNAMIC,)),
+    ("miox.readers.fsl_vest", "FslVestReader", (Format.FSL_VEST,)),
     ("miox.readers.fsl_mrs_basis", "FslMrsBasisReader", (Format.FSL_MRS_BASIS,)),
     ("miox.readers.gava_midas_prior", "GavaMidasPriorReader", (
         Format.GAVA_PRIOR, Format.MIDAS_PRIOR,
@@ -112,7 +115,9 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
         Format.AFNI,
     )),
     ("miox.readers.nifti_mrs", "NiftiMrsReader", (Format.NIFTI_MRS,)),
-    ("miox.readers.nifti_sidecar_mrs", "NiftiSidecarMrsReader", (Format.NIFTI_SIDECAR_MRS,)),
+    ("miox.readers.nifti_sidecar_mrs", "NiftiSidecarMrsReader", (
+        Format.NIFTI_SIDECAR_MRS, Format.FSL_MRS_NIFTI,
+    )),
     ("miox.readers.nmrml", "NmrmlReader", (Format.NMRML,)),
     ("miox.readers.nmrpipe", "NmrPipeReader", (Format.NMRPIPE,)),
     ("miox.readers.nrrd", "NrrdReader", (Format.NRRD,)),
@@ -139,6 +144,9 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.pulseq", "PulseqReader", (Format.PULSEQ,)),
     ("miox.readers.pyamares_prior", "PyamaresPriorReader", (Format.PYAMARES_PRIOR,)),
     ("miox.readers.pyamares_result", "PyamaresResultReader", (Format.PYAMARES_RESULT,)),
+    ("miox.readers.rf_pulse", "BrukerShapeReader", (Format.BRUKER_SHAPE,)),
+    ("miox.readers.rf_pulse", "FslMrsSimReader", (Format.FSL_MRS_SIM,)),
+    ("miox.readers.rf_pulse", "SiemensPtaReader", (Format.SIEMENS_PTA,)),
     ("miox.readers.rnmrtk", "RnmrtkReader", (Format.RNMRTK,)),
     ("miox.readers.rs2d", "Rs2dReader", (Format.RS2D,)),
     ("miox.readers.siemens_protocol", "SiemensPrintedProtocolReader", (Format.SIEMENS_PRINTPROT,)),
@@ -251,8 +259,8 @@ class Loader:
         complete: bool = False,
     ) -> list[Dataset]:
         """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet, FitResult,
-        PulseSequence, NoiseCovariance, PhysioData, Protocol, Phantom, Tractogram, Surface or
-        Transform each.
+        PulseSequence, NoiseCovariance, PhysioData, Protocol, Phantom, Tractogram, Surface,
+        Transform or RFPulse each.
 
         ``given`` maps standard keys to values for what the file does not state
         (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated

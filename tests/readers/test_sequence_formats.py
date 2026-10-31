@@ -7,8 +7,8 @@
 # Created: 07/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Pulseq files of revisions 1.3, 1.4 and 1.5 (column layouts, shape decompression,        #
-#          extensions, definitions as keys) and BART arrays (.cfl with .hdr, .ra) on synthetic     #
-#          files.                                                                                  #
+#          extensions, definitions as keys) and BART arrays (.cfl with .hdr, .ra) and RF pulses    #
+#          (Bruker shape files, Siemens .pta, FSL-MRS sequence descriptions) on synthetic files.   #
 #                                                                                                  #
 ####################################################################################################
 
@@ -18,6 +18,7 @@
 #*************#
 from __future__ import annotations
 
+import json
 import struct
 
 import numpy as np
@@ -290,3 +291,49 @@ def test_toppe_sequence(tmp_path):
     assert ex["discarded_samples"] == 0 and ex["rf_samples"] == 4 and ex["int_parameters"] == [7]
     [loop] = miox.load(tmp_path / "scanloop.txt")
     assert loop.n_blocks == 2 and loop.events["modules"] == {}
+
+
+def test_siemens_pta(tmp_path):
+    f = tmp_path / "sinc.pta"
+    f.write_text("PULSENAME:\tsinc3.sinc3\nCOMMENT:\ttest pulse\nREFGRAD:\t2.5\nAMPINT:\t1.5\n"
+                 "POWERINT:\t1.25\nABSINT:\t2.5\n\n1.000000000\t0.000000000\t; (0)\n"
+                 "0.500000000\t3.141592654\t; (1)\n1.000000000\t0.000000000\t; (2)\n")
+    [pulse] = miox.load(f)
+    assert isinstance(pulse, miox.RFPulse) and pulse.name == "sinc3.sinc3"
+    assert np.allclose(pulse.amplitude, [1, 0.5, 1]) and np.allclose(pulse.phase, [0, 180, 0])
+    assert pulse.amplitude_unit == "relative" and pulse.duration is None and pulse.time is None
+    assert pulse.meta.vendor["header"]["REFGRAD"] == 2.5
+    assert np.allclose(pulse.waveform, [1, -0.5, 1])
+
+
+def test_fsl_mrs_sequence_description(tmp_path):
+    f = tmp_path / "seq.json"
+    f.write_text(json.dumps({
+        "sequenceName": "test", "B0": 3.0, "centralShift": 4.65, "Rx_Points": 1024,
+        "Rx_SW": 2000, "RFUnits": "Hz", "GradUnits": "mT", "CoherenceFilter": [1, -1],
+        "delays": [0.01, 0.02], "rephaseAreas": [[0, 0, 0], [0, 0, 0]],
+        "RF": [{"time": 0.002, "amp": [250, 250], "phase": [0, 1.5707963], "grad": [1, 0, 0],
+                "phaseOffset": 0.5, "ampScale": 2}],
+    }))
+    pulse, protocol = miox.load(f)
+    assert pulse.amplitude_unit == "Hz" and pulse.duration == 0.002
+    assert np.allclose(pulse.amplitude, [500, 500]) and np.allclose(pulse.time, [0, 0.001])
+    assert np.allclose(pulse.phase, np.degrees([0.5, 1.5707963 + 0.5]))
+    assert pulse.meta.vendor["grad"] == [1, 0, 0] and pulse.meta.vendor["GradUnits"] == "mT"
+    assert isinstance(protocol, miox.Protocol)
+    assert protocol.meta["FieldStrength"] == 3.0 and protocol.meta["ReferencePPM"] == 4.65
+    assert protocol.meta["SpectralWidth"] == 2000 and protocol.meta["NumberOfPoints"] == 1024
+
+
+def test_bruker_shape(tmp_path):
+    f = tmp_path / "spnam0"
+    f.write_text("##TITLE= test sinc\n##JCAMP-DX= 5.00 Bruker JCAMP library\n"
+                 "##DATA TYPE= Shape Data\n##$SHAPE_EXMODE= Excitation\n"
+                 "##$SHAPE_TOTROT= 9.000000E01\n##$SHAPE_INTEGFAC= 5.000000E-01\n"
+                 "##NPOINTS= 2\n##XYPOINTS= (XY..XY)\n1.000000E02, 0.000000E00\n"
+                 "5.000000E01, 1.800000E02\n##END=\n")
+    assert miox.sniff(f).format == miox.Format.BRUKER_SHAPE
+    [pulse] = miox.load(f)
+    assert pulse.name == "test sinc" and pulse.amplitude_unit == "%" and pulse.duration is None
+    assert np.allclose(pulse.amplitude, [100, 50]) and np.allclose(pulse.phase, [0, 180])
+    assert pulse.meta.vendor["header"]["SHAPE_TOTROT"] == 90.0
