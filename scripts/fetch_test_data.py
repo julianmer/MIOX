@@ -186,6 +186,10 @@ class DataFetcher:
             [f"/fsl_mrs/tests/testdata/{folder}" for folder in ("fmrs_tools", "sim", "mrs_io")]
             + ["/LICENSE"],
         ),
+        "bruker2nifti": (  # ParaVision banana study (MIT repository; data PDDL)
+            "https://github.com/SebastianoF/bruker2nifti.git",
+            ["/test_data/bru_banana", "/LICENSE*"],
+        ),
         "brkraw_dataset": (  # pruned ParaVision 6.0.1 phantom study (CC BY 4.0; PV5.1 is 231 MB)
             "https://github.com/BrkRaw/brkraw-dataset.git",
             ["/PV6.0.1", "/LICENSE", "/README.md"],
@@ -310,6 +314,14 @@ class DataFetcher:
         ),
     }
     ARCHIVES = {  # folder: zip archive unpacked into it
+        "tcia_hitachi_oasis": (  # Hitachi Oasis DWI-ADC, CMB-BRCA (CC BY 4.0)
+            "https://services.cancerimagingarchive.net/nbia-api/services/v1/getImage?SeriesInstanceUID="
+            "1.3.6.1.4.1.14519.5.2.1.93796319512998741262662885610411350810"
+        ),
+        "tcia_hitachi_echelon": (  # Hitachi Echelon Oval DWI b300, CMB-MML (CC BY 4.0)
+            "https://services.cancerimagingarchive.net/nbia-api/services/v1/getImage?SeriesInstanceUID="
+            "1.3.6.1.4.1.14519.5.2.1.1.9679156953940711646830195889485639413"
+        ),
         "nmrglue": (  # nmrglue's test data: Agilent, Bruker, Tecmag, SIMPSON inputs (BSD-3 project)
             "https://github.com/jjhelmus/nmrglue/releases/download/v0.5/test_data_v0.5-dev.zip"
         ),
@@ -369,6 +381,42 @@ class DataFetcher:
         "baseline/113766.003.001.mha":
             "bafkreighxzakrzvtd5ykjw5ju4eycxwmxcruphkqi6weza2zayhx2ub33a",
         "baseline/19771.002.001.mha": "bafkreidvxasu7bdqrqvsicgkmirp4tzunpgnm6z4y6egoo5ch3f6yyrxyi",
+    }
+    ITK_IO_FILES = {  # ITK's GIPL test image and the baseline its reading must equal
+        "ramp.gipl": "bafkreibtmnmqob7py3i5yqrs7w2a3mjuax7guh7ouie74k2gdorv5agoee",
+        "ramp.gipl.gz": "bafkreif5qdohfa6d6otd2xj7wn523qaxeypqsgmmqntklmsvnghtqm3xgi",
+        "baseline/ramp.mhd": "bafkreibybxnagopkoydjp67r3w2i2hkl57fxxthwnf4ap33ngmg3vl2z7u",
+        "baseline/ramp.raw": "bafkreieqf2sifxgtp3xffbv3zplzya36iqbvq6rszcjme6eev4jcf7x3le",
+    }
+    KITWARE = "https://data.kitware.com/api/v1/file/hashsum/sha512"  # SimpleITK-Notebooks data
+    ANTS_FILES = {  # one ANTs registration as affine .mat and composite .h5 (Apache 2.0)
+        "B1_fixed_B2_moving0GenericAffine.mat": "09eaa8e86eb2fdf4617887ac330da1c8b26c2a25ef69e53a89"
+        "d69f81b350ec9461635c93eb22f011cbd4256e4a915c40c09e6d28a5079739b2312d793bab07d3/download",
+        "B1_fixed_B2_movingComposite.h5": "184e27629eb4a0ae03d23443503592a94b2f807a5267a4b98353de"
+        "dcadcebec71ac521eb297256c4b298eacc90af99fa1d1af1815ad14a14501a479179dae385/download",
+    }
+    MALATERRE = "https://raw.githubusercontent.com/malaterre"
+    GDCMDATA = (  # legacy MR DICOM and ACR-NEMA files (gdcmdata: no licence, local only)
+        "MR-MONO2-12-an2.acr", "MR-MONO2-12-angio-an1.acr", "MR-MONO2-16-head.dcm",
+        "MR-MONO2-8-16x-heart.dcm", "MR16BitsAllocated_8BitsStored.dcm",
+        "MR-Brucker-CineTagging-NonSquarePixels.dcm",
+        "MR_ELSCINT1_00e1_1042_SQ_feff_00e0_Item.dcm",
+        "MR_GE_with_Private_Compressed_Icon_0009_1110.dcm", "MR_Spectroscopy_SIEMENS_OF.dcm",
+        "PICKER-16-MONO2-No_DicomV3_Preamble.dcm", "PICKER-16-MONO2-Nested_icon.dcm",
+        "SIEMENS_GBS_III-16-ACR_NEMA_1.acr", "SIEMENS_MAGNETOM-12-ACR_NEMA_2-Modern.dcm",
+        "TOSHIBA_MRT150-16-MONO2-ACR_NEMA_2.dcm", "gdcm-MR-SIEMENS-16-2.acr",
+        "gdcm-ACR-LibIDO.acr",
+    )
+    GDCMDATA_FILES = {name: f"gdcmdata/master/{name}" for name in GDCMDATA} | {  # + GDCM MD5s
+        "gdcmMD5DataImages.cxx": "GDCM/master/Testing/Source/Data/gdcmMD5DataImages.cxx",
+    }
+    CORONADO = (  # one scan of rmcoronado/IEE3773_2-2023
+        "https://raw.githubusercontent.com/rmcoronado/IEE3773_2-2023/main/"
+        "4_%20Separacion%20de%20agua%20y%20grasa/data/flyback_no/DIXON_2P"
+    )
+    CORONADO_FILES = {  # Philips 2-point Dixon raw with the scanner's DICOM (no licence: local)
+        f"dixon_2p/{name}": name for name in ("RAW/raw_000.data", "RAW/raw_000.list",
+                                              "DICOM/IM_000.dcm")
     }
     ISMRMRD = "https://downloads.sourceforge.net/project/ismrmrd/data"  # ISMRMRD's own samples
     ISMRMRD_FILES = ("simple_gre.h5", "simple_spiral.h5")
@@ -475,6 +523,10 @@ class DataFetcher:
         "bmrb": (BMRB, BMRB_FILES),
         "yarra": (YARRA, YARRA_FILES),
         "physio_examples": (PHYSIO_EXAMPLES, PHYSIO_EXAMPLES_FILES),
+        "itk_io": (IPFS, ITK_IO_FILES),
+        "simpleitk_ants": (KITWARE, ANTS_FILES),
+        "gdcmdata": (MALATERRE, GDCMDATA_FILES),
+        "philips_dixon": (CORONADO, CORONADO_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),
@@ -492,6 +544,14 @@ class DataFetcher:
                          "strawberry_sagittal_01.fid"),
             "t2_map.MAT": f"{STRAWBERRY}/qmaps/sb_href/s0_t2_2par_s01d01_hydroref.MAT",
             "readme.txt": f"{STRAWBERRY}/readme.txt",
+        }),
+        "lowfield_halbach": ("20411475", "repeatability_share_data.zip", {  # 47 mT (CC BY 4.0)
+            name: f"repeatability_share_data/{name}" for name in (
+                "dataset_description.json", "k-space_data/9092/T1w_TSE_340_ICU1.h5",
+                "sub-9092/ses-icu01/anat/sub-9092_ses-icu01_T1w.nii.gz",
+                "sub-9092/ses-icu01/anat/sub-9092_ses-icu01_T1w.json",
+                "sub-9092/ses-icu01/misc/sub-9092_ses-icu01_run-02_T1w_kspace.nii.gz",
+                "sub-9092/ses-icu01/misc/sub-9092_ses-icu01_run-02_T1w_kspace.json")
         }),
         "mrsi_bids": ("7701228", "chbh_2d_slaser_mrsi_bids.zip", {  # 2D MRSI in BIDS (CC BY 4.0)
             name: f"chbh_2d_slaser_mrsi_bids/{name}" for name in (

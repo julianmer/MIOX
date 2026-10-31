@@ -79,6 +79,7 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
                                                           Format.DSI_STUDIO_FIB)),
     ("miox.readers.fastmri", "FastMriReader", (Format.FASTMRI_H5,)),
     ("miox.readers.fida_mat", "FidaReader", (Format.FIDA_MAT,)),
+    ("miox.readers.gipl", "GiplReader", (Format.GIPL,)),
     ("miox.readers.fsl_mrs_dynamic", "FslMrsDynamicReader", (Format.FSL_MRS_DYNAMIC,)),
     ("miox.readers.fsl_vest", "FslVestReader", (Format.FSL_VEST,)),
     ("miox.readers.fsl_mrs_basis", "FslMrsBasisReader", (Format.FSL_MRS_BASIS,)),

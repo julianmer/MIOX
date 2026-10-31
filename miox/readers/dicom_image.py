@@ -164,12 +164,13 @@ class DicomImageReader(Reader):
 
     def read(self, sniff: Sniff) -> list[MRImage]:
         paths = self._files(sniff)
-        frames = []
+        frames, legacy = [], {}
         for path in paths:
             with open_dicom(path) as fh:
-                ds = pydicom.dcmread(fh)
+                ds = pydicom.dcmread(fh, force=True)
             if "PixelData" not in ds:
                 continue
+            legacy |= dict.fromkeys(self._legacy(ds))
             frames += self._frames(ds, path)
         if not frames:
             raise ReaderError(f"{sniff.path.name}: no DICOM image data")
@@ -187,16 +188,64 @@ class DicomImageReader(Reader):
             raise ReaderError("; ".join(failed))
         for image in images:
             image.provenance = dataclasses.replace(
-                image.provenance, notes=image.provenance.notes + tuple(failed)
+                image.provenance, notes=image.provenance.notes + tuple(legacy) + tuple(failed)
             )
         return images
+
+    @staticmethod
+    def _legacy(ds: pydicom.Dataset) -> list[str]:
+        """What files before DICOM 3.0 (ACR-NEMA) or with out-of-standard values lack, filled in
+        as GDCM reads them (checked against GDCM's checksums of the decoded pixels): the transfer
+        syntax from the encoding read, MONOCHROME2 for a missing or plain "MONOCHROME" photometric
+        interpretation, one sample per pixel, unsigned pixels, and 12-bit pixels packed two in
+        three bytes unpacked to 16 bits. A missing orientation, position or pixel spacing (ACR-NEMA
+        has none in DICOM's patient frame) becomes identity, the origin and 1 mm, with a note."""
+        notes = []
+        meta = getattr(ds, "file_meta", None) or pydicom.dataset.FileMetaDataset()
+        if "TransferSyntaxUID" not in meta:
+            implicit, little = ds.original_encoding
+            meta.TransferSyntaxUID = (
+                pydicom.uid.ImplicitVRLittleEndian if implicit and little
+                else pydicom.uid.ExplicitVRLittleEndian if little
+                else pydicom.uid.ExplicitVRBigEndian)
+            ds.file_meta = meta
+            notes.append(f"no transfer syntax (no file meta): {meta.TransferSyntaxUID.name}, "
+                         "as encoded")
+        if str(ds.get("PhotometricInterpretation", "")) in ("", "MONOCHROME"):
+            stated = ds.get("PhotometricInterpretation")
+            ds.PhotometricInterpretation = "MONOCHROME2"
+            notes.append(f"photometric interpretation {stated or 'missing'}: MONOCHROME2")
+        if "SamplesPerPixel" not in ds:
+            ds.SamplesPerPixel = 1
+            notes.append("samples per pixel missing: 1")
+        if "PixelRepresentation" not in ds:
+            ds.PixelRepresentation = 0
+            notes.append("pixel representation missing: unsigned")
+        if "PerFrameFunctionalGroupsSequence" not in ds:
+            defaults = (("ImageOrientationPatient", [1.0, 0.0, 0.0, 0.0, 1.0, 0.0], "identity"),
+                        ("ImagePositionPatient", [0.0, 0.0, 0.0], "the origin"),
+                        ("PixelSpacing", [1.0, 1.0], "1 mm"))
+            for keyword, value, said in defaults:
+                if ds.get(keyword) in (None, ""):
+                    setattr(ds, keyword, value)
+                    notes.append(f"{keyword} missing: {said}; the position in the patient is "
+                                 "not known")
+        if ds.get("BitsAllocated") == 12:
+            packed = np.frombuffer(ds.PixelData, np.uint8)
+            triples = packed[:len(packed) // 3 * 3].reshape(-1, 3).astype(np.uint16)
+            pixels = np.empty(2 * len(triples), np.uint16)
+            pixels[0::2] = triples[:, 0] | ((triples[:, 1] & 0x0F) << 8)
+            pixels[1::2] = (triples[:, 1] >> 4) | (triples[:, 2] << 4)
+            ds.PixelData, ds.BitsAllocated = pixels.astype("<u2").tobytes(), 16
+            notes.append("12-bit pixels packed two in three bytes: unpacked to 16 bits")
+        return notes
 
     # --- frames ----------------------------------------------------------------------------------
 
     def _frames(self, ds: pydicom.Dataset, path: Path) -> list[Frame]:
-        if "PerFrameFunctionalGroupsSequence" in ds:
+        if "PerFrameFunctionalGroupsSequence" in ds or int(ds.get("NumberOfFrames") or 1) > 1:
             return [self._frame(ds, path, i) for i in range(int(ds.NumberOfFrames))]
-        return [self._frame(ds, path, None)]
+        return [self._frame(ds, path, None)]  # a classic multi-frame file repeats its geometry
 
     def _frame(self, ds: pydicom.Dataset, path: Path, index: int | None) -> Frame:
         orientation = np.asarray(self._value(ds, "ImageOrientationPatient", index), float)
@@ -489,7 +538,7 @@ class DicomImageReader(Reader):
         ds = frame.ds
         if "philips" not in str(ds.get("Manufacturer", "")).lower():
             return None
-        if frame.index is not None:  # in the frame's functional groups
+        if frame.index is not None and "PerFrameFunctionalGroupsSequence" in ds:  # per frame
             group = ds.PerFrameFunctionalGroupsSequence[frame.index]
             item = group[self.PHILIPS_FRAMES].value[0] if self.PHILIPS_FRAMES in group else group
             value = item.get(self.PHILIPS_SCALE)

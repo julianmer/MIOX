@@ -6,11 +6,12 @@
 #                                                                                                  #
 # Created: 04/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Checks the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa, VTK and DMIWizard map readers #
-#          against evidence produced by other software: pynrrd's NIfTI twin of its NRRD test       #
-#          image, MRtrix's own PNG exports and reductions, ImageJ text exports of fdf images,      #
-#          ITK's MetaImage baselines of its GE test images, the value range a .vti file states,    #
-#          and the DICOM copies DMIWizard writes of its text maps.                                 #
+# Purpose: Checks the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa, VTK and DMIWizard map and     #
+#          GIPL readers against evidence produced by other software: pynrrd's NIfTI twin of its    #
+#          NRRD test image, MRtrix's own PNG exports and reductions, ImageJ text exports of fdf    #
+#          images, ITK's MetaImage baselines of its GE test images, the value range a .vti file    #
+#          states, and the DICOM copies DMIWizard writes of its text maps, and ITK's GIPL test     #
+#          images against the MetaImage baseline ITK's own test compares them with.                #
 #                                                                                                  #
 ####################################################################################################
 
@@ -286,3 +287,14 @@ def test_dmiwizard_text_maps_against_their_dicom_copies(tmp_path):
         [im] = load(mask)
         rows, columns = (int(n) for n in re.match(r"ROIMap_(\d+)x(\d+)_", mask.name).groups())
         assert im.shape == (rows, columns, 1) and set(np.unique(im.data)) <= {0.0, 1.0}
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("name", ["ramp.gipl", "ramp.gipl.gz"])
+def test_gipl_against_itk_baseline(name):
+    """ITK's itkGiplImageIOTest requires its reading of ramp.gipl (.gz) to equal ramp.mhd."""
+    gipl = image(f"itk_io/{name}")
+    baseline = image("itk_io/baseline/ramp.mhd")
+    assert gipl.provenance.format == "gipl" and gipl.data.dtype.isnative
+    assert np.array_equal(gipl.data, baseline.data)
+    assert np.allclose(gipl.affine, baseline.affine)

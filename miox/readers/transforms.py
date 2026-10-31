@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import re
+import struct
 from pathlib import Path
 
 import h5py
@@ -135,33 +136,48 @@ class LtaReader(Reader):
 #**************************************************************************************************#
 #                                                                                                  #
 # ITK transforms map points of the fixed image to the moving image in LPS physical coordinates     #
-# (mm). An affine (AffineTransform, MatrixOffsetTransformBase) has 9 matrix and 3 translation      #
-# parameters and a centre c (FixedParameters): y = A (x - c) + t + c. The text format (.tfm) lists #
-# one or more transforms; the HDF5 format (.h5, also ANTs composite transforms) holds them as      #
-# groups of TransformGroup. Each affine becomes a Transform; ras_matrix is the same map in RAS (D  #
-# M D with D flipping x and y). Non-affine transforms are counted in a note.                       #
+# (mm). An affine (AffineTransform, MatrixOffsetTransformBase; a TranslationTransform is one with  #
+# the identity matrix) of n = 2 or 3 dimensions has n x n matrix and n translation parameters and  #
+# a centre c (FixedParameters): y = A (x - c) + t + c; a 2-D one leaves z unchanged. The text      #
+# format (.tfm) lists one or more transforms; the HDF5 format (.h5, also ANTs composite            #
+# transforms) holds them as groups of TransformGroup (ITK before 4.5 spelled the parameter names   #
+# "Tranform..."); the MATLAB level-4 format (.mat, as ANTs writes affines) stores the parameters   #
+# under the type's name and the centre as "fixed". Each affine becomes a Transform; ras_matrix is  #
+# the same map in RAS (D M D with D flipping x and y). Non-affine transforms are counted in a      #
+# note.                                                                                            #
 #                                                                                                  #
 #**************************************************************************************************#
 class ItkReader(Reader):
     FORMATS = (Format.TRANSFORM_ITK,)
     PACKAGES = ("miox",)
-    AFFINE = re.compile(r"^(AffineTransform|MatrixOffsetTransformBase)_(double|float)_3_3$")
+    AFFINE = re.compile(r"^(AffineTransform|MatrixOffsetTransformBase|TranslationTransform)_"
+                        r"(double|float)_([23])_\3$")
 
     def read(self, sniff: Sniff) -> list[Transform]:
-        items = self._h5(sniff.path) if sniff.path.suffix.lower() == ".h5" else \
-            self._text(sniff.path)
+        suffix = sniff.path.suffix.lower()
+        items = self._h5(sniff.path) if suffix == ".h5" else self._mat(sniff.path) \
+            if suffix == ".mat" else self._text(sniff.path)
         datasets, skipped = [], []
         for i, (kind, parameters, fixed) in enumerate(items):
-            if not self.AFFINE.match(kind):
+            match = self.AFFINE.match(kind or "")
+            if not match:
                 skipped.append(kind)
                 continue
-            if len(parameters) != 12:
+            n = int(match[3])
+            if match[1] == "TranslationTransform":
+                parameters = np.eye(n).ravel().tolist() + list(parameters)
+            if len(parameters) != n * n + n:
                 raise ReaderError(f"{sniff.path}: {kind} with {len(parameters)} parameters")
-            linear = np.reshape(parameters[:9], (3, 3))
-            centre = np.asarray(fixed[:3] if len(fixed) >= 3 else np.zeros(3))
-            matrix = affine(linear, np.asarray(parameters[9:]) + centre - linear @ centre)
+            linear, centre = np.eye(3), np.zeros(3)
+            linear[:n, :n] = np.reshape(parameters[:n * n], (n, n))
+            translation = np.zeros(3)
+            translation[:n] = parameters[n * n:]
+            centre[:min(n, len(fixed))] = fixed[:n]
+            matrix = affine(linear, translation + centre - linear @ centre)
             notes = (f"not affine, not read: {', '.join(sorted(set(skipped)))}",) if skipped \
                 else ()
+            if n == 2:
+                notes += ("2-D transform: z is left unchanged",)
             meta = Meta({"type": kind, "parameters": list(parameters), "fixed": list(fixed)})
             datasets.append(Transform(
                 "affine", "ITK LPS physical, fixed to moving", matrix, None, None,
@@ -188,6 +204,7 @@ class ItkReader(Reader):
 
     @staticmethod
     def _h5(path: Path) -> list[tuple[str, list[float], list[float]]]:
+        """TransformGroup entries; ITK before 4.5 wrote "Tranform" for the parameter names."""
         items = []
         with h5py.File(path, "r") as fh:
             group = fh.get("TransformGroup")
@@ -199,12 +216,32 @@ class ItkReader(Reader):
                 kind = kind.decode() if isinstance(kind, bytes) else str(kind)
                 if kind.startswith("CompositeTransform"):
                     continue
-                parameters = entry["TransformParameters"][()].tolist() \
-                    if "TransformParameters" in entry else []
-                fixed = entry["TransformFixedParameters"][()].tolist() \
-                    if "TransformFixedParameters" in entry else []
-                items.append((kind, parameters, fixed))
+                values = {}
+                for name in ("Parameters", "FixedParameters"):
+                    keys = [k for k in (f"Transform{name}", f"Tranform{name}") if k in entry]
+                    values[name] = entry[keys[0]][()].tolist() if keys else []
+                items.append((kind, values["Parameters"], values["FixedParameters"]))
         return items
+
+    @staticmethod
+    def _mat(path: Path) -> list[tuple[str, list[float], list[float]]]:
+        """An ITK/ANTs MATLAB (level 4) file: the transform's parameters stored under its type
+        name, the centre under "fixed"."""
+        blob, position, variables = path.read_bytes(), 0, {}
+        while position + 20 <= len(blob):
+            kind, rows, columns, imaginary, length = struct.unpack_from("<5i", blob, position)
+            if kind not in (0, 10) or imaginary or length <= 0:
+                raise ReaderError(f"{path.name}: MATLAB 4 record type {kind} not read")
+            name = blob[position + 20:position + 20 + length].split(b"\0")[0].decode("latin-1")
+            position += 20 + length
+            dtype = "<f8" if kind == 0 else "<f4"
+            count = rows * columns
+            variables[name] = np.frombuffer(blob, dtype, count, position).tolist()
+            position += count * np.dtype(dtype).itemsize
+        kinds = [name for name in variables if name != "fixed"]
+        if not kinds:
+            raise ReaderError(f"{path.name}: no transform variable")
+        return [(kinds[0], variables[kinds[0]], variables.get("fixed", []))]
 
 
 #**************************************************************************************************#

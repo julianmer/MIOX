@@ -7,8 +7,9 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: DICOM image reader on synthetic series: slice and volume order, the RAS affine,         #
-#          rescaling, Philips floating-point scaling, echoes split into images, study folders      #
-#          with and without a DICOMDIR. No test data needed.                                       #
+#          rescaling, Philips floating-point scaling, echoes split into images, study folders with #
+#          and without a DICOMDIR, and an ACR-NEMA file (no preamble, no SOP class, 12-bit packed  #
+#          pixels). No test data needed.                                                           #
 #                                                                                                  #
 ####################################################################################################
 
@@ -130,3 +131,18 @@ def test_study_with_dicomdir(tmp_path):
     [im] = miox.load(tmp_path / "cd")
     assert im.shape == (3, 2, 2, 2)
     assert np.array_equal(im.data[:, :, 0, 1], values[(5.0, 2)].T)
+
+
+def test_acr_nema_without_preamble_and_12_bit_packed(tmp_path):
+    ds = Dataset()
+    ds.Modality, ds.Rows, ds.Columns = "MR", 2, 2
+    ds.BitsAllocated, ds.BitsStored, ds.HighBit = 12, 12, 11
+    pixels = [0x123, 0x456, 0x789, 0xABC]  # two pixels in three bytes, low nibbles first
+    ds.PixelData = bytes([0x23, 0x61, 0x45, 0x89, 0xC7, 0xAB])
+    f = tmp_path / "old.acr"
+    ds.save_as(f, implicit_vr=True, little_endian=True, enforce_file_format=False)
+    assert miox.sniff(f).format == miox.Format.DICOM_IMAGE
+    [image] = miox.load(f)
+    assert image.data[:, :, 0].T.ravel().tolist() == pixels
+    notes = " ".join(image.provenance.notes)
+    assert "12-bit pixels" in notes and "MONOCHROME2" in notes and "not known" in notes

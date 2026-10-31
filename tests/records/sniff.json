@@ -2819,6 +2819,246 @@
   "vendor": "bruker",
   "kind": "imaging"
  },
+ "bruker2nifti/test_data/bru_banana/1/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/1/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/1/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/1/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/1/pdata/1/d3proc": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/1/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/1/pdata/1/meta": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/1/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/1/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/1/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/1/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/1/spnam0": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/1/spnam1": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/1/spnam25": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/1/spnam26": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/1/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/2/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/2/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/2/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/2/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/2/pdata/1/d3proc": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/2/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/2/pdata/1/meta": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/2/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/2/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/2/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/2/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/2/spnam0": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/2/spnam1": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/2/spnam25": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/2/spnam26": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/2/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/3/AdjStatePerScan": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/3/acqp": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/3/method": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/3/pdata/1/2dseq": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "bruker2nifti/test_data/bru_banana/3/pdata/1/d3proc": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/3/pdata/1/id": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/3/pdata/1/meta": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/3/pdata/1/procs": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/3/pdata/1/reco": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/3/pdata/1/visu_pars": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/3/pulseprogram": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "bruker2nifti/test_data/bru_banana/3/spnam0": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/3/spnam1": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/3/spnam25": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/3/spnam26": {
+  "format": "bruker_shape",
+  "vendor": "bruker",
+  "kind": "sequence"
+ },
+ "bruker2nifti/test_data/bru_banana/3/uxnmr.par": {
+  "format": "bruker",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
  "bruker_data_test/data/flat/coffee/UV1009_M1-1003-1002_6268712_73uEjPg4XR/10/acqu": {
   "format": "topspin",
   "vendor": "bruker",
@@ -14844,6 +15084,26 @@
   "vendor": null,
   "kind": "imaging"
  },
+ "gdcmdata/MR-Brucker-CineTagging-NonSquarePixels.dcm": {
+  "format": "dicom_image",
+  "vendor": "bruker",
+  "kind": "imaging"
+ },
+ "gdcmdata/MR_Spectroscopy_SIEMENS_OF.dcm": {
+  "format": "dicom_mrs",
+  "vendor": "siemens",
+  "kind": "spectroscopy"
+ },
+ "gdcmdata/PICKER-16-MONO2-Nested_icon.dcm": {
+  "format": "dicom_other",
+  "vendor": "picker",
+  "kind": "unknown"
+ },
+ "gdcmdata/gdcmMD5DataImages.cxx": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "ge_to_ismrmrd/LICENSE": {
   "format": "unknown",
   "vendor": null,
@@ -15056,6 +15316,26 @@
  },
  "itk_ge/test_ge5/113766.003.006": {
   "format": "ge_signa",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_io/baseline/ramp.mhd": {
+  "format": "metaimage",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_io/baseline/ramp.raw": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "itk_io/ramp.gipl": {
+  "format": "gipl",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "itk_io/ramp.gipl.gz": {
+  "format": "gipl",
   "vendor": null,
   "kind": "imaging"
  },
@@ -15976,6 +16256,21 @@
  },
  "lipsia/data/zmap_vaso.v": {
   "format": "vista",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "lowfield_halbach/k-space_data/9092/T1w_TSE_340_ICU1.h5": {
+  "format": "ismrmrd",
+  "vendor": null,
+  "kind": "raw"
+ },
+ "lowfield_halbach/sub-9092/ses-icu01/anat/sub-9092_ses-icu01_T1w.nii.gz": {
+  "format": "nifti",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "lowfield_halbach/sub-9092/ses-icu01/misc/sub-9092_ses-icu01_run-02_T1w_kspace.nii.gz": {
+  "format": "nifti",
   "vendor": null,
   "kind": "imaging"
  },
@@ -48144,6 +48439,21 @@
   "vendor": null,
   "kind": "protocol"
  },
+ "philips_dixon/dixon_2p/DICOM/IM_000.dcm": {
+  "format": "dicom_image",
+  "vendor": "philips",
+  "kind": "imaging"
+ },
+ "philips_dixon/dixon_2p/RAW/raw_000.data": {
+  "format": "philips_data_list",
+  "vendor": "philips",
+  "kind": "raw"
+ },
+ "philips_dixon/dixon_2p/RAW/raw_000.list": {
+  "format": "philips_data_list",
+  "vendor": "philips",
+  "kind": "raw"
+ },
  "phys2bids_ge/PPGData_epiRT_0000000000_00_00_000": {
   "format": "ge_physio",
   "vendor": "ge",
@@ -48593,6 +48903,11 @@
   "format": "nifti",
   "vendor": null,
   "kind": "imaging"
+ },
+ "simpleitk_ants/B1_fixed_B2_movingComposite.h5": {
+  "format": "transform_itk",
+  "vendor": null,
+  "kind": "transform"
  },
  "simpyson/examples/read/ethanol.fid": {
   "format": "simpson",
@@ -61510,6 +61825,26 @@
   "kind": "unknown"
  },
  "tarquin/src/unit_tests/data/simulation.ref": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tcia_hitachi_echelon/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "hitachi, ltd.",
+  "kind": "imaging"
+ },
+ "tcia_hitachi_echelon/LICENSE": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "tcia_hitachi_oasis/00000001.dcm": {
+  "format": "dicom_image",
+  "vendor": "hitachi medical corporation",
+  "kind": "imaging"
+ },
+ "tcia_hitachi_oasis/LICENSE": {
   "format": "unknown",
   "vendor": null,
   "kind": "unknown"

@@ -9,7 +9,9 @@
 # Purpose: Linear transforms against each other: one affine written as LTA, ITK and AFNI files     #
 #          gives one RAS map; voxel-to-voxel LTAs equal their RAS-to-RAS twins through the volume  #
 #          geometry they state; real FreeSurfer, ITK and FSL outputs of one registration agree     #
-#          (ITK maps the other way, FSL through the LTA's image geometry).                         #
+#          (ITK maps the other way, FSL through the LTA's image geometry); an ANTs registration's  #
+#          GenericAffine.mat is its composite's translation and affine stages applied one after    #
+#          the other.                                                                              #
 #                                                                                                  #
 ####################################################################################################
 
@@ -83,3 +85,22 @@ def test_freesurfer_itk_and_fsl_outputs_of_one_registration(name):
     target_scale, target = fsl_frame(freesurfer.target)
     ras = target @ np.linalg.inv(target_scale) @ flirt.matrix @ source_scale @ np.linalg.inv(source)
     assert np.allclose(ras, freesurfer.ras_matrix, atol=1e-4)
+
+
+ANTS = PUBLIC_DATA / "simpleitk_ants"
+
+
+@pytest.mark.data
+def test_ants_generic_affine_is_its_composite_linear_stages():
+    """ANTs writes the linear stages of a registration twice: collapsed into one affine
+    (0GenericAffine.mat) and as the first stages of the composite (.h5: translation, affine, then a
+    displacement field). ITK applies a composite's stages last added first, so the .mat equals
+    the translation applied after the affine."""
+    if not ANTS.is_dir():
+        pytest.skip("SimpleITK-Notebooks data not fetched")
+    [generic] = load(ANTS / "B1_fixed_B2_moving0GenericAffine.mat")
+    translation, linear = load(ANTS / "B1_fixed_B2_movingComposite.h5")
+    assert translation.meta.vendor["type"].startswith("TranslationTransform")
+    assert linear.meta.vendor["type"].startswith("AffineTransform")
+    assert np.allclose(generic.matrix, translation.matrix @ linear.matrix, atol=1e-12)
+    assert np.allclose(generic.ras_matrix, translation.ras_matrix @ linear.ras_matrix, atol=1e-12)

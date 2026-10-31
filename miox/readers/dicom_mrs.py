@@ -40,6 +40,7 @@ with warnings.catch_warnings():  # nibabel.nicom warns on import that it is expe
     from nibabel.nicom.dicomwrappers import wrapper_from_file
     from spec2nii.Philips import philips_dcm
     from spec2nii.Philips.philips_dcm import multi_file_dicom as philips_dicom
+    from spec2nii.Siemens import dicomfunctions as siemens_dcm
     from spec2nii.Siemens.dicomfunctions import multi_file_dicom as siemens_dicom
     from spec2nii.uih import multi_file_dicom as uih_dicom
 
@@ -213,7 +214,7 @@ class DicomMrsReader(Spec2niiReader):
             names = [str(header["dicom"].get("SeriesDescription") or f.stem) for f in files]
             return images, names, header
         function = {"dicom": siemens_dicom, "philips_dicom": philips_dicom, "uih": uih_dicom}
-        with self._one_slab(), self._philips_frames():
+        with self._one_slab(), self._philips_frames(), self._siemens_orientation():
             images, names = function[converter](files, None, self.TAGS[converter], False)
         return list(images), list(names), header
 
@@ -261,7 +262,7 @@ class DicomMrsReader(Spec2niiReader):
         """Complete header of one DICOM file: elements, CSA headers and Siemens protocol (from
         the CSA series header, or from the XA series header (0021,1019) of enhanced files)."""
         with open_dicom(path) as fh:
-            ds = pydicom.dcmread(fh)
+            ds = pydicom.dcmread(fh, force=True)  # also files without preamble (ACR-NEMA)
         header = {"file_meta": self._dataset(ds.file_meta), "dicom": self._dataset(ds)}
         for kind in ("image", "series"):
             csa = csareader.get_csa_header(ds, kind)
@@ -312,6 +313,31 @@ class DicomMrsReader(Spec2niiReader):
             yield
         finally:
             philips_dcm._enhanced_dcm_svs_to_orientation = original
+
+    @contextlib.contextmanager
+    def _siemens_orientation(self) -> Iterator[None]:
+        """spec2nii's Siemens enhanced orientation, for files whose ImageOrientationPatient does
+        not hold six direction cosines (one syngo B15 export stores "1"): identity, noted."""
+        original = siemens_dcm._get_enhanced_dcm_img_orientation_pat
+        warned = []
+
+        def orientation(img):
+            try:
+                return original(img)
+            except ValueError as e:  # the stated values do not reshape to two rows of three
+                if "reshape" not in str(e):
+                    raise
+            if not warned:
+                warnings.warn("ImageOrientationPatient does not hold six values: identity "
+                              "orientation assumed, the orientation is not known", stacklevel=2)
+                warned.append(True)
+            return np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+
+        siemens_dcm._get_enhanced_dcm_img_orientation_pat = orientation
+        try:
+            yield
+        finally:
+            siemens_dcm._get_enhanced_dcm_img_orientation_pat = original
 
     @contextlib.contextmanager
     def _philips_frames(self) -> Iterator[None]:

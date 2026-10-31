@@ -6,9 +6,9 @@
 #                                                                                                  #
 # Created: 04/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Unit tests of the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa, JNIfTI and VTK image   #
-#          readers on files written here: layouts, encodings, detached data, world coordinates and #
-#          the keys derived.                                                                       #
+# Purpose: Unit tests of the NRRD, MetaImage, MRtrix, Varian fdf, GE Signa, JNIfTI, VTK and GIPL   #
+#          image readers on files written here: layouts, encodings, detached data, world           #
+#          coordinates and the keys derived.                                                       #
 #                                                                                                  #
 ####################################################################################################
 
@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import base64
 import gzip
+import struct
 import zlib
 
 import numpy as np
@@ -228,3 +229,20 @@ def test_vtk_xml_image_data(tmp_path, form):
     # Direction turns x into y: voxel (0, 0, 0) at the extent start (1, 0, 0) lies at (0, 1, 0)
     assert np.allclose(image.affine[:3, :3], [[0, -1, 0], [1, 0, 0], [0, 0, 1]])
     assert np.allclose(image.affine[:3, 3], [0, 1, 0])
+
+
+@pytest.mark.parametrize("order", ["<", ">"])
+def test_gipl_little_and_big_endian(tmp_path, order):
+    header = bytearray(256)
+    struct.pack_into(f"{order}4H", header, 0, 3, 2, 1, 1)
+    struct.pack_into(f"{order}H", header, 8, 64)  # float
+    struct.pack_into(f"{order}4f", header, 10, 0.5, 2.0, 3.0, 1.0)
+    struct.pack_into(f"{order}4d", header, 204, 10.0, 20.0, 30.0, 0.0)
+    struct.pack_into(f"{order}I", header, 252, 0xEFFFE9B0)
+    values = np.arange(6, dtype=f"{order}f4")
+    f = tmp_path / "test.gipl.gz"
+    f.write_bytes(gzip.compress(bytes(header) + values.tobytes()))
+    [image] = miox.load(f)
+    assert image.shape == (3, 2, 1) and image.data[2, 1, 0] == 5 and image.data[1, 0, 0] == 1
+    assert np.allclose(np.diag(image.affine)[:3], [-0.5, -2.0, 3.0])  # LPS axes as RAS
+    assert np.allclose(image.affine[:3, 3], [-10, -20, 30])

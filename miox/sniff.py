@@ -84,6 +84,7 @@ class Format(StrEnum):
     AFNI = "afni"
     NRRD = "nrrd"
     METAIMAGE = "metaimage"
+    GIPL = "gipl"  # Guy's Image Processing Lab image (.gipl, .gipl.gz), as ITK writes it
     JNIFTI = "jnifti"  # JNIfTI in JSON text (.jnii)
     VISTA = "vista"  # Vista images (.v; Lipsia)
     NIFTI_ZARR = "nifti_zarr"  # NIfTI-Zarr store (.nii.zarr folder)
@@ -413,6 +414,7 @@ class Sniffer:
             self.toppe,
             self.protocols,
             self.image_files,
+            self.gipl,
             self.rda,
             self.matlab,
             self.companion_binary,
@@ -919,6 +921,22 @@ class Sniffer:
         return Sniff(path, Format.SIMPSON, Kind.SPECTROSCOPY, confidence=1.0,
                      evidence=("SIMP header with NP",))
 
+    def gipl(self, path: Path, head: bytes) -> Sniff | None:
+        """GIPL images: a .gipl or .gipl.gz file whose magic number sits at byte 252."""
+        name = path.name.lower()
+        if not name.endswith((".gipl", ".gipl.gz")):
+            return None
+        if name.endswith(".gz"):
+            try:
+                with gzip.open(path, "rb") as fh:
+                    head = fh.read(256)
+            except OSError:
+                return None
+        if len(head) < 256 or not any(struct.unpack_from(f"{order}I", head, 252)[0] in (
+                0xEFFFE9B0, 0x2AE389B8) for order in "<>"):
+            return None
+        return self._image(path, Format.GIPL, "GIPL magic number at byte 252")
+
     def rds(self, path: Path, head: bytes) -> Sniff | None:
         """spant objects saved by saveRDS: the class names among the serialized strings."""
         if path.suffix.lower() != ".rds":
@@ -1176,15 +1194,17 @@ class Sniffer:
         return Format.FREESURFER_SURFACE, f"{magic} surface magic, size fits the counts"
 
     def transforms(self, path: Path, head: bytes) -> Sniff | None:
-        """Linear transforms: FreeSurfer LTA (type and nxforms lines), ITK (.tfm text header,
-        or HDF5 with TransformGroup), AFNI (non-comment rows of 12 numbers), FSL FLIRT (four
-        rows of four numbers, the last 0 0 0 1 to
-        single precision)."""
+        """Linear transforms: FreeSurfer LTA (type and nxforms lines), ITK (.tfm text header, HDF5
+        with TransformGroup, or ANTs' MATLAB 4 .mat), AFNI (non-comment rows of 12 numbers), FSL
+        FLIRT (four rows of four numbers, the last 0 0 0 1 to single precision)."""
         found = None
         if b"nxforms" in head and re.search(rb"^\s*type\s*=\s*\d", head, re.M):
             found = Format.TRANSFORM_LTA, "LTA type and nxforms lines"
         elif head.startswith(b"#Insight Transform File"):
             found = Format.TRANSFORM_ITK, "ITK transform file header"
+        elif path.suffix.lower() == ".mat" and head[:4] in (b"\0\0\0\0", b"\n\0\0\0") \
+                and re.search(rb"Transform_(double|float)_[23]_[23]\0", head[:96]):
+            found = Format.TRANSFORM_ITK, "MATLAB 4 file with an ITK transform"
         elif head.startswith(b"\x89HDF") and path.suffix.lower() == ".h5":
             try:
                 with h5py.File(path, "r") as fh:
@@ -1770,8 +1790,9 @@ class Sniffer:
         return None
 
     def dicom_no_preamble(self, path: Path, head: bytes) -> Sniff | None:
-        """Last resort: some exports drop the 128-byte preamble; let pydicom try."""
-        if path.suffix.lower() not in (".dcm", ".ima", ""):
+        """Last resort: some exports drop the 128-byte preamble, and ACR-NEMA files (before
+        DICOM 3.0) never had one; let pydicom try."""
+        if path.suffix.lower() not in (".dcm", ".ima", ".acr", ""):
             return None
         try:
             with warnings.catch_warnings():
@@ -1838,7 +1859,9 @@ class Sniffer:
         with open_dicom(path) as fh:
             ds = pydicom.dcmread(fh, stop_before_pixels=True, force=force)
         sop = str(ds.get("SOPClassUID", "") or ds.file_meta.get("MediaStorageSOPClassUID", ""))
-        if not sop and force:
+        acr_nema = not sop and force and "Rows" in ds and "Columns" in ds \
+            and str(ds.get("Modality", "MR") or "MR") == "MR"  # before DICOM 3.0: no SOP class
+        if not sop and force and not acr_nema:
             raise ValueError("not DICOM")
         manufacturer = str(ds.get("Manufacturer", ""))
         detail = {
@@ -1857,6 +1880,9 @@ class Sniffer:
         elif sop in self.DICOM_SOP_IMAGE:
             fmt, kind, confidence = Format.DICOM_IMAGE, Kind.IMAGING, 1.0
             sop_name = self.DICOM_SOP_IMAGE[sop]
+        elif acr_nema:
+            fmt, kind, confidence = Format.DICOM_IMAGE, Kind.IMAGING, 0.8
+            sop_name = "none (ACR-NEMA MR image: rows and columns, no SOP class)"
         elif sop == self.RAW_DATA_STORAGE and self._vendor(manufacturer) == "philips":
             fmt, kind, confidence = Format.PHILIPS_DICOM_RAW, Kind.PROTOCOL, 1.0
             sop_name = "Raw Data Storage (Philips scan parameters)"

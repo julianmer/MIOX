@@ -264,7 +264,9 @@ class BrukerReader(Spec2niiReader):
                 pack = arr if spatial == 3 else arr[:, :, np.newaxis]
                 dims = tuple(names)
             first = self._first_frame(dataset, start, slice_axis, counts)
-            affine = self._affine(dataset, first, count if slice_axis is not None else None)
+            geometry: list[str] = []
+            affine = self._affine(dataset, first, count if slice_axis is not None else None,
+                                  geometry)
             name = f"{self._scan(sniff)}_{dataset.path.parent.name}"
             if len(packs) > 1:
                 name += f"_{number + 1}"
@@ -272,6 +274,7 @@ class BrukerReader(Spec2niiReader):
             if slice_axis is not None and count > 1:
                 self._slice_spacing(affine, meta)
             notes = [f"Bruker 2dseq, frame groups {groups}" if groups else "Bruker 2dseq"]
+            notes += geometry
             if len(packs) > 1:
                 notes.append(f"slice pack {number + 1} of {len(packs)}")
             provenance = self.provenance(sniff, tuple(notes))
@@ -289,7 +292,11 @@ class BrukerReader(Spec2niiReader):
         stride = int(np.prod(counts[:slice_axis])) if slice_axis else 1
         return start * stride
 
-    def _affine(self, dataset: Bruker2dseq, first: int, slices: int | None) -> np.ndarray:
+    def _affine(self, dataset: Bruker2dseq, first: int, slices: int | None,
+                notes: list[str] | None = None) -> np.ndarray:
+        """The slice step from the first and last slice positions; when that step does not run
+        along the slice normal of VisuCoreOrientation (a contradiction in the file), the normal
+        times the frame thickness, noted."""
         orientation = dataset.orientation(first)
         dims = zip(dataset.spacing(), dataset.dim_desc, strict=True)
         spacing = [s for s, d in dims if d == "spatial"]
@@ -298,13 +305,24 @@ class BrukerReader(Spec2niiReader):
         lps[:3, 1] = orientation[1] * spacing[1]
         if slices is not None and slices > 1:
             last = dataset.position(first + (slices - 1) * self._slice_stride(dataset))
-            lps[:3, 2] = (last - dataset.position(first)) / (slices - 1)
+            step = (last - dataset.position(first)) / (slices - 1)
+            length = np.linalg.norm(step)
+            if length and abs(step @ orientation[2]) < self.ALONG_NORMAL * length:
+                lps[:3, 2] = orientation[2] * dataset.thickness()
+                if notes is not None:
+                    notes.append("slice positions do not advance along the slice normal of "
+                                 "VisuCoreOrientation: the normal times VisuCoreFrameThickness "
+                                 "is used")
+            else:
+                lps[:3, 2] = step
         elif len(spacing) > 2:
             lps[:3, 2] = orientation[2] * spacing[2]
         else:
             lps[:3, 2] = orientation[2] * dataset.thickness()
         lps[:3, 3] = dataset.position(first)
         return self.LPS_TO_RAS @ lps
+
+    ALONG_NORMAL = 0.99  # cosine between slice step and normal below which they contradict
 
     def _slice_spacing(self, affine: np.ndarray, meta: Meta) -> None:
         meta.set("SpacingBetweenSlices", float(np.linalg.norm(affine[:3, 2])),
