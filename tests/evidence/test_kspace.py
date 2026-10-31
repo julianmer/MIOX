@@ -13,7 +13,8 @@
 #          P-files of ge_to_ismrmrd against the ScanArchives of the same scans frame for frame,    #
 #          their slice geometry against the image header, and a spectroscopy P-file read through   #
 #          the imaging frame layout against spec2nii, and the Philips raw export against the       #
-#          published reading of Philips' reader and its random phase as a ramp along the readout.  #
+#          published reading of Philips' reader and its random phase as a ramp along the readout;  #
+#          a Philips Dixon scan exported as .data/.list against the scanner's DICOM of it.         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -24,6 +25,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pydicom
 import pytest
 
 # own
@@ -334,3 +336,46 @@ def test_philips_random_phase_is_a_ramp_along_the_readout():
         entropy[name] = _entropy(_philips_image(kspace))
     assert entropy["ramp"] < entropy["none"] - 0.1
     assert abs(entropy["constant"] - entropy["none"]) < 0.02
+
+
+DIXON = PUBLIC_DATA / "philips_dixon/dixon_2p"
+
+
+def _dixon_image(raw: RawData, echo: int) -> np.ndarray:
+    """A plain reconstruction on the scanner's grid: the lines placed by ky on the Y-resolution,
+    the readout zero-filled to twice the X-resolution (2x oversampled), 2D FFT, the central half
+    of the readout, root sum of squares over the coils: (Y-resolution, X-resolution)."""
+    recon = raw.encoding["reconSpace"]["matrixSize"]
+    ny, nx = recon["y"], 2 * recon["x"]
+    samples = raw.data.shape[2]
+    rows = raw.headers["idx"]["contrast"] == echo
+    steps = raw.headers["idx"]["kspace_encode_step_1"][rows].astype(int)
+    ky = raw.meta.vendor["offsets_from"]["ky"] + steps
+    kspace = np.zeros((raw.data.shape[1], ny, nx), complex)
+    kspace[:, ky + ny // 2, nx // 2 - samples // 2:nx // 2 + samples // 2] = \
+        np.moveaxis(raw.data[rows], 0, 1)
+    image = np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(kspace, axes=(1, 2))), axes=(1, 2))
+    return np.sqrt((np.abs(image[:, :, nx // 4:3 * nx // 4]) ** 2).sum(0))
+
+
+@pytest.mark.data
+def test_philips_dixon_raw_against_the_scanner_image():
+    """The scanner's DICOM holds, per echo, imaginary, magnitude and real frames of 320 x 320,
+    the 232 reconstructed rows in its middle. The first echo matches its magnitude frame as
+    read; the second echo was read out the other way (the .list's X_range runs backwards for
+    it), so it matches mirrored along the readout, better than as read."""
+    if not DIXON.is_dir():
+        pytest.skip("Philips Dixon sample not fetched")
+    raw, noise = load(DIXON / "RAW/raw_000.data")
+    assert raw.data.shape == (274, 4, 376) and noise.headers["flags"][0] == 1 << 18
+    frames = pydicom.dcmread(DIXON / "DICOM/IM_000.dcm").pixel_array.astype(float)
+    middle = frames[:, 44:44 + 232, :]
+
+    def corr(a: np.ndarray, b: np.ndarray) -> float:
+        return float(np.corrcoef(a.ravel(), b.ravel())[0, 1])
+
+    first, second = _dixon_image(raw, 0), _dixon_image(raw, 1)
+    assert corr(first, middle[2]) > 0.7
+    assert corr(second[:, ::-1], middle[3]) > 0.75
+    assert corr(first, middle[2]) > corr(first[:, ::-1], middle[2]) + 0.05  # the object is
+    assert corr(second[:, ::-1], middle[3]) > corr(second, middle[3]) + 0.05  # near symmetric

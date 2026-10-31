@@ -7,8 +7,9 @@
 # Created: 07/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Philips raw/lab/sin exports on synthetic files: bit-packed blocks written by a small    #
-#          encoder, labels of several control types, a block whose size on disk differs from its  #
-#          label, the sin parameters as keys, and the old plain-sample layout.                     #
+#          encoder, labels of several control types, a block whose size on disk differs from its   #
+#          label, the sin parameters as keys, and the old plain-sample layout; imaging k-space     #
+#          exported as .data/.list.                                                                #
 #                                                                                                  #
 ####################################################################################################
 
@@ -220,3 +221,35 @@ def test_missing_companion_is_an_error(tmp_path):
     (tmp_path / "x.lab").write_bytes(_label(0, 0, 0))
     with pytest.raises(miox.ReaderError, match="no .raw file"):
         miox.load(tmp_path / "x.lab")
+
+
+def test_data_list_imaging_kspace(tmp_path):
+    """Two ky lines of two coils (the readout spans the kx range) and one noise readout."""
+    header = (
+        "# === DATA DESCRIPTION FILE ======================================================\n"
+        ".    0    0    0  number_of_echoes                   :     1\n"
+        ".    0    0    0  number of coil channels            :     2\n"
+        ".    0    0    0  kx_range                           :    -2     1\n"
+        ".    0    0    0  ky_range                           :    -1     0\n"
+        ".    0    0    0  kx_oversample_factor               :    2.0000\n"
+        ".    0    0    0  X-resolution                       :     2\n"
+        ".    0    0    0  Y-resolution                       :     2\n"
+    )
+    values, lines, offset = [], [], 0
+    rows = [("NOI", 0, 0, 0, 6), ("NOI", 0, 1, 0, 6), ("STD", 0, 0, -1, 4), ("STD", 0, 1, -1, 4),
+            ("STD", 1, 0, 0, 4), ("STD", 1, 1, 0, 4)]
+    for typ, echo, coil, ky, count in rows:
+        samples = np.arange(count) + 10 * coil + 100 * (ky + 1) + 1j * echo
+        values.append(np.column_stack([samples.real, samples.imag]).astype("<f4").ravel())
+        lines.append(f"  {typ}  0  0  0  {echo}  0  {coil}  0  0  {ky}  0  0  0  1  0  0  0  0  0"
+                     f"  {8 * count}  {offset}")
+        offset += 8 * count
+    (tmp_path / "raw_001.list").write_text(header + "\n".join(lines) + "\n# END OF DATA\n")
+    (tmp_path / "raw_001.data").write_bytes(np.concatenate(values).tobytes())
+    imaging, noise = miox.load(tmp_path / "raw_001.data")
+    assert imaging.data.shape == (2, 2, 4) and noise.data.shape == (1, 2, 6)
+    assert np.allclose(imaging.data[1, 1], np.arange(4) + 10 + 100 + 1j)
+    assert imaging.headers["idx"]["kspace_encode_step_1"].tolist() == [0, 1]
+    assert imaging.headers["idx"]["contrast"].tolist() == [0, 1]
+    assert imaging.encoding["encodedSpace"]["matrixSize"] == {"x": 4, "y": 2, "z": 1}
+    assert int(noise.headers["flags"][0]) == 1 << 18  # ISMRMRD noise measurement

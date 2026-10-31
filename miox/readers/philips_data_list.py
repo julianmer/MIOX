@@ -28,9 +28,10 @@ from nifti_mrs.nifti_mrs import NIFTI_MRS
 from spec2nii.Philips.philips_data_list import read_data_list_pair
 
 # own
-from miox.data import MRSData
+from miox.data import MRSData, RawData
 from miox.readers.base import Reader, ReaderError, Spec2niiReader
 from miox.readers.dicom_mrs import DicomMrsReader
+from miox.readers.philips_list_raw import PhilipsListRaw
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.sniff import Format, Sniff, Sniffer
 
@@ -39,18 +40,20 @@ from miox.sniff import Format, Sniff, Sniffer
 #                                      PhilipsDataListReader                                       #
 #**************************************************************************************************#
 #                                                                                                  #
-# The auxiliary file is found in the folder: a SPAR ending in _act first, then any SPAR, then a    #
-# Philips spectroscopy DICOM; SPARs that disagree on frequency or dwell time make the read fail    #
-# rather than guess. Without one there, the SPAR of the same scan in a folder beside it is used:   #
-# raw_<n>.data belongs to <name>_<n>_<m>_raw_act.SPAR, as the scanner numbers its exports. Sources #
-# and corrections are those of the auxiliary file's own reader. Spectroscopic imaging (k-space     #
-# ranges in the .list) is refused: spec2nii would put every k-space position on one spectrum.      #
+# Imaging scans (the readout spans the kx range of the .list) are read as raw k-space              #
+# (PhilipsListRaw). For spectroscopy, the auxiliary file is found in the folder: a SPAR ending in  #
+# _act first, then any SPAR, then a Philips spectroscopy DICOM; SPARs that disagree on frequency   #
+# or dwell time make the read fail rather than guess. Without one there, the SPAR of the same scan #
+# in a folder beside it is used: raw_<n>.data belongs to <name>_<n>_<m>_raw_act.SPAR, as the       #
+# scanner numbers its exports. Sources and corrections are those of the auxiliary file's own       #
+# reader. Spectroscopic imaging (k-space ranges in the .list) is refused: spec2nii would put every #
+# k-space position on one spectrum.                                                                #
 #                                                                                                  #
 #**************************************************************************************************#
 class PhilipsDataListReader(Spec2niiReader):
     FORMATS = (Format.PHILIPS_DATA_LIST,)
     CONVERTER = "philips_dl"
-    INFO = re.compile(r"^\.\s+(\d+)\s+(\d+)\s+(\d+)\s+(\w+)\s*:\s*(.*)$")  # general-info line
+    INFO = re.compile(r"^\.\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S.*?)\s*:\s*(.*)$")  # general info
     SCAN = re.compile(r"^raw_(\d+)$", re.IGNORECASE)  # raw_<scan number>.data
     EXPORT = re.compile(r"_(\d+)_\d+_raw_act$", re.IGNORECASE)  # <name>_<scan>_<n>_raw_act.SPAR
     HEADER = re.compile(r"^#\s+([^:=]+?)\s*:\s*(.*)$")  # comment header line
@@ -59,6 +62,16 @@ class PhilipsDataListReader(Spec2niiReader):
         self.spar = PhilipsSparSdatReader()
         self.dicom = DicomMrsReader()
         self.sniffer = Sniffer()
+
+    def read(self, sniff: Sniff) -> list[MRSData | RawData]:
+        """Imaging k-space as RawData; spectroscopy through spec2nii and the auxiliary file."""
+        data, list_file = self._pair(sniff)
+        parsed = self._list(list_file)
+        rows = PhilipsListRaw.vectors(parsed["list_vectors"])
+        if PhilipsListRaw.imaging(parsed["list_info"], rows):
+            raw = PhilipsListRaw(data, list_file, parsed["list_info"], self.provenance(sniff))
+            return raw.datasets(rows)
+        return super().read(sniff)
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         data, list_file = self._pair(sniff)
