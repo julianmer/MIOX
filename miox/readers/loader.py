@@ -63,8 +63,9 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     )),
     ("miox.readers.brainvoyager", "BrainVoyagerVolumeReader", (
         Format.BRAINVOYAGER_VMR, Format.BRAINVOYAGER_VTC, Format.BRAINVOYAGER_GLM,
-        Format.BRAINVOYAGER_VMP,
+        Format.BRAINVOYAGER_VMP, Format.BRAINVOYAGER_V16,
     )),
+    ("miox.readers.brainvoyager_text", "BrainVoyagerFmrReader", (Format.BRAINVOYAGER_FMR,)),
     ("miox.readers.brainvoyager_text", "BrainVoyagerProtocolReader", (
         Format.BRAINVOYAGER_PRT, Format.BRAINVOYAGER_SDM,
     )),
@@ -82,6 +83,7 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.gipl", "GiplReader", (Format.GIPL,)),
     ("miox.readers.fsl_mrs_dynamic", "FslMrsDynamicReader", (Format.FSL_MRS_DYNAMIC,)),
     ("miox.readers.fsl_vest", "FslVestReader", (Format.FSL_VEST,)),
+    ("miox.readers.gadgetron_array", "GadgetronArrayReader", (Format.GADGETRON_ARRAY,)),
     ("miox.readers.fsl_mrs_basis", "FslMrsBasisReader", (Format.FSL_MRS_BASIS,)),
     ("miox.readers.gava_midas_prior", "GavaMidasPriorReader", (
         Format.GAVA_PRIOR, Format.MIDAS_PRIOR,
@@ -166,6 +168,7 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.sparky", "SparkyReader", (Format.SPARKY,)),
     ("miox.readers.spinsolve", "SpinsolveReader", (Format.SPINSOLVE,)),
     ("miox.readers.spinwizard_basis", "SpinwizardBasisReader", (Format.SPINWIZARD_BASIS,)),
+    ("miox.readers.spm_mat", "SpmMatReader", (Format.SPM_MAT,)),
     ("miox.readers.surfaces", "FreeSurferReader", (
         Format.FREESURFER_SURFACE, Format.FREESURFER_MORPH, Format.FREESURFER_ANNOT,
         Format.FREESURFER_LABEL,

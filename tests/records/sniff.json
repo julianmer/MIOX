@@ -2659,6 +2659,86 @@
   "vendor": "varian",
   "kind": "raw"
  },
+ "brainvoyager_tbv/Ser0004/Analyze00001.hdr": {
+  "format": "analyze",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/Analyze00001.img": {
+  "format": "analyze",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/Analyze00001.pos": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "brainvoyager_tbv/Ser0004/FFA_PPA.prt": {
+  "format": "brainvoyager_prt",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
+ },
+ "brainvoyager_tbv/Ser0004/FacesHouses_3DMC.sdm": {
+  "format": "brainvoyager_sdm",
+  "vendor": "brainvoyager",
+  "kind": "protocol"
+ },
+ "brainvoyager_tbv/Ser0004/FacesHouses_firstvol.fmr": {
+  "format": "brainvoyager_fmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/FacesHouses_firstvol.stc": {
+  "format": "brainvoyager_fmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/FacesHouses_firstvol_IDENTITY.vtc": {
+  "format": "brainvoyager_vtc",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/FacesHouses_firstvol_VTC-Host.vmr": {
+  "format": "brainvoyager_vmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/untitled.v16": {
+  "format": "brainvoyager_v16",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/untitled.vmr": {
+  "format": "brainvoyager_vmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/untitled_firstvol.fmr": {
+  "format": "brainvoyager_fmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/untitled_firstvol.stc": {
+  "format": "brainvoyager_fmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/Ser0004/untitled_firstvol_as_anat.amr": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "brainvoyager_tbv/SubjectNK_PreparedAnatomy/NK1.v16": {
+  "format": "brainvoyager_v16",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
+ "brainvoyager_tbv/SubjectNK_PreparedAnatomy/NK1.vmr": {
+  "format": "brainvoyager_vmr",
+  "vendor": "brainvoyager",
+  "kind": "imaging"
+ },
  "brkraw_dataset/LICENSE": {
   "format": "unknown",
   "vendor": null,
@@ -15004,6 +15084,11 @@
   "vendor": "siemens",
   "kind": "raw"
  },
+ "gadgetron/cmr/T1SRmapping/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
  "gadgetron/epi/epi_2d_out_20161020_pjv.mrd": {
   "format": "ismrmrd",
   "vendor": null,
@@ -15081,6 +15166,36 @@
  },
  "gadgetron/spiral/simple_spiral_out_v2.mrd": {
   "format": "ismrmrd",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron/tse/meas_MID00450_FID76726_SAX_TE62_DIR_TSE/meas_MID00450_FID76726_SAX_TE62_DIR_TSE.dat": {
+  "format": "siemens_twix",
+  "vendor": "siemens",
+  "kind": "raw"
+ },
+ "gadgetron_arrays/fb_data.cplx": {
+  "format": "gadgetron_array",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron_arrays/shepp_logan_256_256_high_noise.real": {
+  "format": "gadgetron_array",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron_arrays/shepp_logan_256_256_low_noise.real": {
+  "format": "gadgetron_array",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron_arrays/shepp_logan_256_256_med_noise.real": {
+  "format": "gadgetron_array",
+  "vendor": null,
+  "kind": "imaging"
+ },
+ "gadgetron_arrays/shepp_logan_256_256_no_noise.real": {
+  "format": "gadgetron_array",
   "vendor": null,
   "kind": "imaging"
  },
@@ -18973,6 +19088,36 @@
   "format": "parrec",
   "vendor": "philips",
   "kind": "imaging"
+ },
+ "nidmresults/_ground_truth/1.3.0/con_t/nidm.ttl": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nidmresults/_ground_truth/1.3.0/hrf_spmcanonical/nidm.ttl": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nidmresults/_ground_truth/1.3.0/spm_full_example001/example001_spm_results.ttl": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nidmresults/_ground_truth/1.3.0/thr_voxeluncp001/nidm.ttl": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nidmresults/spm_default/batch.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "nidmresults/spm_full_example001/batch.m": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
  },
  "nifti_mrs_examples/example_01.nii.gz": {
   "format": "nifti_mrs",

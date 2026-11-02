@@ -6,9 +6,10 @@
 #                                                                                                  #
 # Created: 12/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Readers for BrainVoyager binary files: anatomical volumes (.vmr), volume time courses   #
-#          (.vtc), GLM results (.glm), volume maps (.vmp), surfaces (.srf), surface maps (.smp),   #
-#          mesh time courses (.mtc) and surface-to-surface mappings (.ssm); also gzipped.          #
+# Purpose: Readers for BrainVoyager binary files: anatomical volumes (.vmr, 16-bit .v16), volume   #
+#          time courses (.vtc), GLM results (.glm), volume maps (.vmp), surfaces (.srf), surface   #
+#          maps (.smp), mesh time courses (.mtc) and surface-to-surface mappings (.ssm); also      #
+#          gzipped.                                                                                #
 #                                                                                                  #
 ####################################################################################################
 
@@ -105,7 +106,10 @@ class BvStream:
 # byte per voxel) states its voxel sizes, offsets in its framing cube (version 3+), the left-right #
 # convention and reference space (version 4) and, after the data, the slice positions of the       #
 # scan it came from (PosInfos, DICOM LPS; kept in the vendor header) and its past                  #
-# transformations. VTC, GLM and VMP grids are boxes of VMR voxels (start, end, resolution          #
+# transformations. A V16 (two bytes per voxel, the intensities the VMR was made from)              #
+# states only its dimensions: 1 mm voxels, no offsets, the radiological convention and a           #
+# framing cube as large as its largest dimension are assumed. VTC, GLM and VMP grids are           #
+# boxes of VMR voxels (start, end, resolution                                                      #
 # multiplier); their voxels are taken as 1 mm VMR voxels in the cube of the VMR the file names     #
 # (VMP states its VMR's dimensions; VTC and GLM do not, so the default 256 cube is assumed). A GLM #
 # holds per voxel R2, SS, one beta and one SS_XiY per predictor, the mean time course value and    #
@@ -115,7 +119,7 @@ class BvStream:
 #**************************************************************************************************#
 class BrainVoyagerVolumeReader(Reader):
     FORMATS = (Format.BRAINVOYAGER_VMR, Format.BRAINVOYAGER_VTC, Format.BRAINVOYAGER_GLM,
-               Format.BRAINVOYAGER_VMP)
+               Format.BRAINVOYAGER_VMP, Format.BRAINVOYAGER_V16)
     PACKAGES = ("miox",)
     VMP_MAGIC = 0xA1B2C3D4
 
@@ -125,6 +129,8 @@ class BrainVoyagerVolumeReader(Reader):
         try:
             if sniff.format == Format.BRAINVOYAGER_VMR:
                 return [self._vmr(sniff, stream, name)]
+            if sniff.format == Format.BRAINVOYAGER_V16:
+                return [self._v16(sniff, stream, name)]
             if sniff.format == Format.BRAINVOYAGER_VTC:
                 return [self._vtc(sniff, stream, name)]
             if sniff.format == Format.BRAINVOYAGER_GLM:
@@ -155,6 +161,18 @@ class BrainVoyagerVolumeReader(Reader):
         return MRImage(data, bv_affine(offsets, 1.0, cube, voxel, convention),
                        Meta(self.plain(header)),
                        self.provenance(sniff, tuple(notes)), name)
+
+    def _v16(self, sniff: Sniff, s: BvStream, name: str) -> MRImage:
+        header = {"DimX": s.read("H"), "DimY": s.read("H"), "DimZ": s.read("H")}
+        dims = (header["DimX"], header["DimY"], header["DimZ"])
+        data = s.array(int(np.prod(dims)), "u2").reshape(dims[::-1]).transpose(2, 1, 0)
+        cube = max(dims)
+        notes = ("V16 states no geometry: 1 mm voxels, no offsets, the radiological convention "
+                 f"and a framing cube of {cube} assumed, its centre at 0",)
+        if s.left:
+            notes += (f"{s.left} bytes after the data",)
+        return MRImage(data, bv_affine((0, 0, 0), 1.0, cube, (1.0, 1.0, 1.0), 1),
+                       Meta(self.plain(header)), self.provenance(sniff, notes), name)
 
     @staticmethod
     def _vmr_post(s: BvStream, version: int) -> dict:

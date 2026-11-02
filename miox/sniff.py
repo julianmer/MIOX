@@ -23,6 +23,7 @@ import dataclasses
 import gzip
 import json
 import lzma
+import math
 import mmap
 import re
 import struct
@@ -126,6 +127,8 @@ class Format(StrEnum):
     BRAINVOYAGER_VTC = "brainvoyager_vtc"  # BrainVoyager volume time course
     BRAINVOYAGER_GLM = "brainvoyager_glm"  # BrainVoyager GLM results
     BRAINVOYAGER_VMP = "brainvoyager_vmp"  # BrainVoyager volume maps
+    BRAINVOYAGER_V16 = "brainvoyager_v16"  # BrainVoyager 16-bit anatomical volume
+    BRAINVOYAGER_FMR = "brainvoyager_fmr"  # BrainVoyager functional project (.fmr + .stc)
     BRAINVOYAGER_VOI = "brainvoyager_voi"  # BrainVoyager volumes of interest
     BRAINVOYAGER_SRF = "brainvoyager_srf"  # BrainVoyager surface mesh
     BRAINVOYAGER_SMP = "brainvoyager_smp"  # BrainVoyager surface maps
@@ -135,6 +138,7 @@ class Format(StrEnum):
     BRAINVOYAGER_PRT = "brainvoyager_prt"  # BrainVoyager stimulation protocol
     BRAINVOYAGER_SDM = "brainvoyager_sdm"  # BrainVoyager design matrix
     FSL_VEST = "fsl_vest"  # FSL design matrix, contrasts or F-tests (/NumWaves ... /Matrix)
+    SPM_MAT = "spm_mat"  # SPM.mat: a first-level GLM design, its estimation and contrasts
     BRAINVOYAGER_TRF = "brainvoyager_trf"  # BrainVoyager spatial transformation
     GIFTI = "gifti"  # GIFTI surfaces and per-vertex data (.gii, also gzip/bzip2)
     FREESURFER_SURFACE = "freesurfer_surface"  # FreeSurfer triangle or quad surface
@@ -188,6 +192,7 @@ class Format(StrEnum):
     BRUKER_SHAPE = "bruker_shape"  # Bruker RF shape (JCAMP-DX Shape Data: amplitude %, phase)
     FSL_MRS_SIM = "fsl_mrs_sim"  # FSL-MRS simulator sequence description (JSON: RF, delays, ...)
     BART_CFL = "bart_cfl"
+    GADGETRON_ARRAY = "gadgetron_array"  # Gadgetron hoNDArray dump (.real, .cplx, .short)
     MRD = "mrd"
     SIEMENS_PMU = "siemens_pmu"
     CMRR_PHYSIO = "cmrr_physio"
@@ -372,6 +377,7 @@ class Sniffer:
         (re.compile(r"^exptDat$"), Format.MARSS_BASIS, Kind.BASIS_SET),
         (re.compile(r"^basis$"), Format.PROFIT_BASIS, Kind.BASIS_SET),
         (re.compile(r"^out"), Format.FIDA_MAT, Kind.SPECTROSCOPY),  # out, outw, outA, ...
+        (re.compile(r"^SPM$"), Format.SPM_MAT, Kind.PROTOCOL),
     )
     BASIS_MEMBERS = (
         Format.LCMODEL_RAW,
@@ -447,6 +453,7 @@ class Sniffer:
             self.varian,
             self.pulseq,
             self.bart,
+            self.gadgetron_array,
             self.yardl,
             self.text_formats,
             self.hdf5,
@@ -1019,6 +1026,7 @@ class Sniffer:
         ".voi": (Format.BRAINVOYAGER_VOI, Kind.IMAGING, b"NrOfVOIs"),
         ".poi": (Format.BRAINVOYAGER_POI, Kind.SURFACE, b"NrOfPOIs"),
         ".trf": (Format.BRAINVOYAGER_TRF, Kind.TRANSFORM, b"DataFormat"),
+        ".fmr": (Format.BRAINVOYAGER_FMR, Kind.IMAGING, b"Prefix:"),
     }
     BRAINVOYAGER_BINARY = {
         ".vmr": (Format.BRAINVOYAGER_VMR, Kind.IMAGING), ".vtc": (Format.BRAINVOYAGER_VTC,
@@ -1029,14 +1037,20 @@ class Sniffer:
                                                                   Kind.SURFACE),
         ".mtc": (Format.BRAINVOYAGER_MTC, Kind.SURFACE), ".ssm": (Format.BRAINVOYAGER_SSM,
                                                                   Kind.SURFACE),
+        ".v16": (Format.BRAINVOYAGER_V16, Kind.IMAGING),
     }
+    FMR_PREFIX = re.compile(rb'Prefix:\s*"([^"\r\n]*)"')
 
     def brainvoyager(self, path: Path, head: bytes) -> Sniff | None:
         """BrainVoyager files by extension (also gzipped) and a check of their first bytes: text
-        files hold "FileVersion" and the field naming their content; VMR dimensions fit the
-        size, VMP starts with its magic number, the others with a plausible version."""
+        files hold "FileVersion" and the field naming their content; VMR and V16 dimensions fit
+        the size, VMP starts with its magic number, the others with a plausible version. An FMR
+        names its slice time courses (Prefix.stc) as companion; an STC is sniffed through the
+        FMR beside it that names it."""
         name = path.name.lower().removesuffix(".gz")
         suffix = "." + name.rsplit(".", 1)[-1] if "." in name else ""
+        if suffix == ".stc":
+            return self._stc(path)
         if suffix not in self.BRAINVOYAGER_TEXT and suffix not in self.BRAINVOYAGER_BINARY:
             return None
         if head[:2] == GZIP_MAGIC:
@@ -1054,8 +1068,25 @@ class Sniffer:
             if not self._brainvoyager_binary(suffix, head, path):
                 return None
             evidence = f"{suffix} with a fitting header"
+        companions = ()
+        if fmt == Format.BRAINVOYAGER_FMR and (match := self.FMR_PREFIX.search(head)):
+            stc = path.with_name(match[1].decode("utf-8", "replace") + ".stc")
+            companions = (stc,) if stc.is_file() else ()
         return Sniff(path, fmt, kind, vendor="brainvoyager", confidence=0.9,
-                     evidence=(evidence,))
+                     evidence=(evidence,), companions=companions)
+
+    def _stc(self, path: Path) -> Sniff | None:
+        """Slice time courses: the FMR in the same folder whose Prefix is the file's stem."""
+        for fmr in path.parent.iterdir():
+            if fmr.suffix.lower() != ".fmr" or not fmr.is_file():
+                continue
+            with open(fmr, "rb") as fh:
+                match = self.FMR_PREFIX.search(fh.read(self.HEAD_BYTES))
+            if match and match[1].decode("utf-8", "replace") == path.stem:
+                return Sniff(path, Format.BRAINVOYAGER_FMR, Kind.IMAGING, vendor="brainvoyager",
+                             confidence=0.9, evidence=(f".stc named by {fmr.name}",),
+                             companions=(fmr,))
+        return None
 
     @staticmethod
     def _brainvoyager_binary(suffix: str, head: bytes, path: Path) -> bool:
@@ -1066,6 +1097,10 @@ class Sniffer:
             plain = path.name.lower().endswith(".vmr")
             return 1 <= version <= 10 and all(dims) and (
                 not plain or path.stat().st_size >= 8 + dims[0] * dims[1] * dims[2])
+        if suffix == ".v16":
+            dims = struct.unpack_from("<3H", head)
+            plain = path.name.lower().endswith(".v16")
+            return all(dims) and (not plain or path.stat().st_size == 6 + 2 * math.prod(dims))
         if suffix == ".vmp":
             return struct.unpack_from("<I", head)[0] == 0xA1B2C3D4
         if suffix == ".srf":
@@ -1290,6 +1325,23 @@ class Sniffer:
                     companions=(hdr,),
                 )
         return None
+
+    GADGETRON_ARRAYS = {".real": 4, ".cplx": 8, ".short": 2}  # extension: bytes per element
+
+    def gadgetron_array(self, path: Path, head: bytes) -> Sniff | None:
+        """Gadgetron hoNDArray dumps: the number of dimensions, the dimensions (int32 each) and
+        then the elements, the file as long as they add up to."""
+        size = self.GADGETRON_ARRAYS.get(path.suffix.lower())
+        if size is None or len(head) < 8:
+            return None
+        ndim = struct.unpack_from("<i", head)[0]
+        if not 1 <= ndim <= 16 or len(head) < 4 + 4 * ndim:
+            return None
+        dims = struct.unpack_from(f"<{ndim}i", head, 4)
+        if min(dims) <= 0 or path.stat().st_size != 4 + 4 * ndim + size * math.prod(dims):
+            return None
+        return Sniff(path, Format.GADGETRON_ARRAY, Kind.IMAGING, confidence=0.9,
+                     evidence=(f"{ndim} dimensions {list(dims)} fill the file",))
 
     def physio(self, path: Path, head: bytes) -> Sniff | None:
         """Physiological logs: Siemens PMU files (by extension and their four header values),

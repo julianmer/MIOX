@@ -313,7 +313,8 @@ class DataFetcher:
             ["data/sample1/sample1-proton.zip", "data/sample3/sample3-hsqc.zip"],
         ),
     }
-    ARCHIVES = {  # folder: zip archive unpacked into it
+    SOURCEFORGE_GADGETRON = "https://sourceforge.net/projects/gadgetron/files/testdata/standalone"
+    ARCHIVES = {  # folder: archive(s) unpacked into it
         "tcia_hitachi_oasis": (  # Hitachi Oasis DWI-ADC, CMB-BRCA (CC BY 4.0)
             "https://services.cancerimagingarchive.net/nbia-api/services/v1/getImage?SeriesInstanceUID="
             "1.3.6.1.4.1.14519.5.2.1.93796319512998741262662885610411350810"
@@ -327,6 +328,10 @@ class DataFetcher:
         ),
         "trx_test_data": (  # one tractogram as .trx/.trk/.tck/.vtk (no licence: local only)
             "https://github.com/tee-ar-ex/trx-test-data/releases/download/v0.1.0/gold_standard.zip"
+        ),
+        "gadgetron_arrays": (  # Gadgetron hoNDArray dumps (SourceForge test data, no licence)
+            f"{SOURCEFORGE_GADGETRON}/shepp.tar.gz/download",
+            f"{SOURCEFORGE_GADGETRON}/fb_data.zip/download",
         ),
         "spinsolve_zenodo": (  # Spinsolve inversion recovery of formic acid, CC BY 4.0
             "https://zenodo.org/records/15131439/files/SIR-SWAPE_data.zip?download=1"
@@ -435,6 +440,10 @@ class DataFetcher:
         "spiral/simple_spiral_out_v2.mrd", "gre_3d/simple_gre_out_3d_20210910_klk.mrd",
         "grappa_3d/grappa2x1_ref_20210917.mrd", "epi/epi_2d_out_20161020_pjv.mrd",
         "rtgrappa/grappa_rate2_cpu_out.mrd",
+        "cmr/T1SRmapping/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256/"
+        "meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256.dat",  # with PMU waveforms (62 MB)
+        "tse/meas_MID00450_FID76726_SAX_TE62_DIR_TSE/"
+        "meas_MID00450_FID76726_SAX_TE62_DIR_TSE.dat",
     )
     GADGETRON_FILES_ALL = (  # the large raw files (0.1 to 1.2 GB each)
         "gre_3d/meas_MID248_gre_FID30644.dat", "spiral/meas_MID00080_FID16005_MiniIRT_B0.dat",
@@ -508,6 +517,18 @@ class DataFetcher:
         "Siemens_HCP/PPU3T/tfMRI_MOTOR_LR_Physio_log.txt":
             "Siemens_HCP/PPU3T/tfMRI_MOTOR_LR_Physio_log.txt",
     }
+    NIDMRESULTS = "https://raw.githubusercontent.com/incf-nidash/nidmresults-examples/master"
+    NIDMRESULTS_FILES = {  # two SPM analyses (SPM.mat) with their NIDM-Results ground truth
+        name: name for name in (  # (no licence: local test data only)
+            "README.md", "spm_default/SPM.mat", "spm_default/batch.m", "spm_default/config.json",
+            "spm_default/README.md", "spm_full_example001/SPM.mat",
+            "spm_full_example001/batch.m", "spm_full_example001/config.json",
+            "spm_full_example001/nidm_example001.mat",
+            "_ground_truth/1.3.0/spm_full_example001/example001_spm_results.ttl",
+            "_ground_truth/1.3.0/con_t/nidm.ttl", "_ground_truth/1.3.0/hrf_spmcanonical/nidm.ttl",
+            "_ground_truth/1.3.0/thr_voxeluncp001/nidm.ttl",
+        )
+    }
     FILES = {
         "pynrrd": (PYNRRD, dict(zip(PYNRRD_FILES, PYNRRD_FILES, strict=True))),
         "agilent_fdf": (SWELLING, dict(zip(SWELLING_FILES, SWELLING_FILES, strict=True))),
@@ -527,6 +548,7 @@ class DataFetcher:
         "simpleitk_ants": (KITWARE, ANTS_FILES),
         "gdcmdata": (MALATERRE, GDCMDATA_FILES),
         "philips_dixon": (CORONADO, CORONADO_FILES),
+        "nidmresults": (NIDMRESULTS, NIDMRESULTS_FILES),
     }
     FILES_ALL = {  # with --all
         "ismrmrd": (ISMRMRD, dict(zip(ISMRMRD_FILES_ALL, ISMRMRD_FILES_ALL, strict=True))),
@@ -536,6 +558,22 @@ class DataFetcher:
     }
     STRAWBERRY = "zenodo_repo_strawberry_mri"  # zenodo 7442381 (CC BY 4.0), one 13 GB zip
     STRAWBERRY_SCANS = f"{STRAWBERRY}/hydroref/s_20220824_strawberry_stol01_day01_hydroref_01"
+    TBV = "https://download.brainvoyager.com/tbv/TBV_FacesHouses.zip"  # Turbo-BrainVoyager
+    TBV_FILES = {  # sample (no licence stated: local test data only): V16, FMR/STC, AMR with
+        name: f"TBV_FacesHouses/{name}" for name in (  # the Analyze and VMR of the same scan
+            "SubjectNK_PreparedAnatomy/NK1.v16", "SubjectNK_PreparedAnatomy/NK1.vmr",
+            "Ser0004/untitled.v16", "Ser0004/untitled.vmr", "Ser0004/untitled_firstvol.fmr",
+            "Ser0004/untitled_firstvol.stc", "Ser0004/untitled_firstvol_as_anat.amr",
+            "Ser0004/FacesHouses_firstvol.fmr", "Ser0004/FacesHouses_firstvol.stc",
+            "Ser0004/FacesHouses_firstvol_IDENTITY.vtc",
+            "Ser0004/FacesHouses_firstvol_VTC-Host.vmr", "Ser0004/Analyze00001.hdr",
+            "Ser0004/Analyze00001.img", "Ser0004/Analyze00001.pos", "Ser0004/FFA_PPA.prt",
+            "Ser0004/FacesHouses_3DMC.sdm",
+        )
+    }
+    URL_ZIP_MEMBERS = {  # folder: (archive URL, {target: member}); read by HTTP range requests
+        "brainvoyager_tbv": (TBV, TBV_FILES),
+    }
     ZIP_MEMBERS = {  # folder: (Zenodo record, archive, {target: member})
         "varian_strawberry": ("7442381", f"{STRAWBERRY}.zip", {
             **fid_folder("mems.fid", f"{STRAWBERRY_SCANS}/mems_T2_MESE_strawberries_ms_T2_MESE_"
@@ -634,7 +672,10 @@ class DataFetcher:
             self.ZIP_MEMBERS,)
         for group in groups:
             for name, (record, archive, members) in group.items():
-                self._step(name, self.zip_members, self.dest / name, record, archive, members)
+                url = f"https://zenodo.org/api/records/{record}/files/{archive}/content"
+                self._step(name, self.zip_members, self.dest / name, url, members)
+        for name, (url, members) in self.URL_ZIP_MEMBERS.items():
+            self._step(name, self.zip_members, self.dest / name, url, members)
         self._step("mrd", self.mrd, self.dest / "mrd")
         self._step("rnmrtk", self.rnmrtk, self.dest / "rnmrtk")
         if self.failed:
@@ -690,17 +731,19 @@ class DataFetcher:
             time.sleep(0.5)  # the gateways rate-limit bursts
         print(f"{dest.name}: {len(files)} files")
 
-    def archive(self, dest: Path, url: str) -> None:
-        """Download a zip archive and unpack it into ``dest``, once."""
+    def archive(self, dest: Path, urls: str | tuple[str, ...]) -> None:
+        """Download one or more archives (zip, or .tar.gz by URL) and unpack them into ``dest``,
+        once."""
         if dest.is_dir() and any(dest.iterdir()):
             print(f"{dest.name} already present")
             return
         dest.mkdir(parents=True, exist_ok=True)
-        partial = dest.with_name(dest.name + ".zip.part")
-        print(f"downloading {url}")
-        urllib.request.urlretrieve(url, partial)
-        shutil.unpack_archive(partial, dest, "zip")
-        partial.unlink()
+        for url in (urls,) if isinstance(urls, str) else urls:
+            partial = dest.with_name(dest.name + ".archive.part")
+            print(f"downloading {url}")
+            urllib.request.urlretrieve(url, partial)
+            shutil.unpack_archive(partial, dest, "gztar" if ".tar.gz" in url else "zip")
+            partial.unlink()
         print(f"{dest.name} unpacked")
 
     def rnmrtk(self, dest: Path) -> None:
@@ -759,14 +802,13 @@ class DataFetcher:
             partial.replace(target)
         print(f"MRD streams in {dest}")
 
-    def zip_members(self, dest: Path, record: str, archive: str, members: dict[str, str]) -> None:
-        """Extract single members of a Zenodo zip archive without downloading the archive: the
-        central directory and the members are read through HTTP range requests."""
+    def zip_members(self, dest: Path, url: str, members: dict[str, str]) -> None:
+        """Extract single members of a zip archive without downloading the archive: the central
+        directory and the members are read through HTTP range requests."""
         missing = {t: m for t, m in members.items() if not (dest / t).is_file()}
         if not missing:
             print(f"{dest.name}: {len(members)} files")
             return
-        url = f"https://zenodo.org/api/records/{record}/files/{archive}/content"
         with zipfile.ZipFile(io.BufferedReader(RangeFile(url), buffer_size=1 << 20)) as zf:
             for target, member in missing.items():
                 path = dest / target

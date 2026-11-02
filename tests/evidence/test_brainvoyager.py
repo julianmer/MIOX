@@ -12,7 +12,9 @@
 #          GLM's betas give the VMP's contrast t maps, the stored inverse X'X inverts the design,  #
 #          per-vertex files match their meshes, smoothing lowers curvature spread, VOIs sit on     #
 #          their VMR's grid, a protocol written with tabs equals its space-separated twin and the  #
-#          rigid transformations are rotations.                                                    #
+#          rigid transformations are rotations. Turbo-BrainVoyager's sample: a V16 equals the VMR  #
+#          made from it, and the first functional volume as STC and as V16 equals the Analyze     #
+#          volume it was imported from.                                                            #
 #                                                                                                  #
 ####################################################################################################
 
@@ -22,6 +24,7 @@
 #*************#
 from __future__ import annotations
 
+import nibabel as nib
 import numpy as np
 import pytest
 
@@ -30,6 +33,7 @@ from miox import load
 from tests.conftest import PUBLIC_DATA
 
 DATA = PUBLIC_DATA / "bvbabel/test_data"
+TBV = PUBLIC_DATA / "brainvoyager_tbv"  # Turbo-BrainVoyager's FacesHouses sample
 LPS = np.array([-1.0, -1.0, 1.0])
 
 
@@ -167,3 +171,35 @@ def test_rigid_transformations_are_rotations(name):
         rotation = transform.matrix[:3, :3]
         assert np.allclose(rotation @ rotation.T, np.eye(3), atol=1e-3)
         assert np.isclose(np.linalg.det(rotation), 1.0, atol=1e-3)
+
+
+def test_v16_equals_the_vmr_made_from_it():
+    """NK1.vmr was made from NK1.v16 without rescaling (both hold 0-225): same voxels, same
+    axes, and the V16's framing cube is the VMR's 256."""
+    if not (TBV / "SubjectNK_PreparedAnatomy/NK1.v16").is_file():
+        pytest.skip("brainvoyager_tbv not fetched")
+    [v16] = load(TBV / "SubjectNK_PreparedAnatomy/NK1.v16")
+    [vmr] = load(TBV / "SubjectNK_PreparedAnatomy/NK1.vmr")
+    assert v16.data.dtype == np.uint16 and v16.shape == vmr.shape == (256, 256, 176)
+    assert np.array_equal(v16.data, vmr.data)
+    assert np.allclose(v16.affine, vmr.affine)
+
+
+def test_first_functional_volume_as_stc_and_v16_equals_its_analyze_source():
+    """FacesHouses_firstvol.fmr names its STC (one volume) and the Analyze volume it was imported
+    from; the STC read through the FMR or the STC, and untitled.v16 (the same volume as V16),
+    equal the Analyze voxels (x, y, slice) exactly, with the FMR's voxel sizes and TR."""
+    if not (TBV / "Ser0004/FacesHouses_firstvol.stc").is_file():
+        pytest.skip("brainvoyager_tbv not fetched")
+    analyze = np.asanyarray(nib.load(TBV / "Ser0004/Analyze00001.hdr").dataobj)[..., 0]
+    [by_fmr] = load(TBV / "Ser0004/FacesHouses_firstvol.fmr")
+    [by_stc] = load(TBV / "Ser0004/FacesHouses_firstvol.stc")
+    [v16] = load(TBV / "Ser0004/untitled.v16")
+    assert by_fmr.meta.vendor["FirstDataSourceFile"] == "Analyze00001.img"
+    assert by_fmr.shape == (64, 64, 30, 1) and by_fmr.dims == ("i", "j", "k", "time")
+    assert np.array_equal(by_fmr.data[..., 0], analyze)
+    assert np.array_equal(by_stc.data, by_fmr.data) and np.array_equal(by_stc.affine, by_fmr.affine)
+    assert np.array_equal(v16.data, analyze)
+    assert by_fmr.voxel_sizes == pytest.approx((3.5, 3.5, 3.99))
+    assert by_fmr.meta["RepetitionTime"] == 3.0
+    assert any("not verified" in note for note in by_fmr.provenance.notes)
