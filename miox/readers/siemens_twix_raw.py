@@ -7,7 +7,8 @@
 # Created: 05/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Raw k-space of a Siemens twix measurement: every data stream (image, noise, refscan,    #
-#          phasecor, ...) as readouts with their complete MDH scan headers.                        #
+#          phasecor, ...) as readouts with their complete MDH scan headers, and the PMU waveforms  #
+#          (ECG, pulse, respiration, external triggers) stored between the readouts.               #
 #                                                                                                  #
 ####################################################################################################
 
@@ -40,6 +41,13 @@ from miox.meta import Meta
 # ISMRMRD acquisition layout with the same field mapping as siemens_to_ismrmrd (Siemens            #
 # quaternion (w, x, y, z) to the read, phase and slice directions; sLC counters to idx), so the    #
 # flags keep the Siemens evaluation-mask names. Protocol times are in µs, the dwell in ns.         #
+# PMU packets (VD and later: SYNCDATA scans whose packet id starts with PMU) hold, per             #
+# signal (ECG leads 1-4, PULS, RESP, EXT1, EXT2), a sampling period and samples of value           #
+# and trigger flags; they become ISMRMRD-style waveforms as siemens_to_ismrmrd makes them:         #
+# the ECG leads as one waveform (the leads, then the OR of their triggers), the others as          #
+# (value, trigger); ids 0-4 (ECG, PULS, RESP, EXT1, EXT2), +5 for the learning phase; the          #
+# sample time in µs from the packet duration (0.1 ms units); the time stamp in 2.5 ms ticks        #
+# on the MDH clock. VB files carry none in this layout.                                            #
 #                                                                                                  #
 #**************************************************************************************************#
 class SiemensTwixRaw:
@@ -92,6 +100,11 @@ class SiemensTwixRaw:
         ("channel_id", "<H", 124, None), ("ptab_pos_neg", "<H", 126, None),
     )
     MDH_BYTES = {"vb": 128, "vd": 192}
+    RAID_ENTRY = struct.Struct("<IIQQ64s64s")  # measurement id, file id, offset, length, names
+    PMU_MAGIC = {0x01010000: "ECG1", 0x01020000: "ECG2", 0x01030000: "ECG3", 0x01040000: "ECG4",
+                 0x01050000: "PULS", 0x01060000: "RESP", 0x01070000: "EXT1", 0x01080000: "EXT2"}
+    PMU_END = 0x01FF0000
+    WAVEFORM_ID = {"ECG": 0, "PULS": 1, "RESP": 2, "EXT1": 3, "EXT2": 4}
     KEYS = {  # standard key: (buffer, field in Siemens notation, divisor to the key's unit)
         "EchoTime": ("Phoenix", "alTE[0]", 1e6),
         "RepetitionTime": ("Phoenix", "alTR[0]", 1e6),
@@ -138,9 +151,11 @@ class SiemensTwixRaw:
 
     def datasets(self, streams: list[str]) -> list[RawData]:
         with open(self.path, "rb") as fh:
-            return [self._stream(fh, stream) for stream in streams]
+            waveforms = self._waveforms(fh) if self.version != "vb" else []
+            return [self._stream(fh, stream, waveforms if i == 0 else [])
+                    for i, stream in enumerate(streams)]
 
-    def _stream(self, fh, stream: str) -> RawData:
+    def _stream(self, fh, stream: str, waveforms: list[dict]) -> RawData:
         obj = self.twix[stream]
         obj.flagRemoveOS = False
         obj.flagDoRawDataCorrect = False
@@ -152,8 +167,91 @@ class SiemensTwixRaw:
         name = self.path.stem if stream == "image" else f"{self.path.stem}_{stream}"
         encoding = self._encoding()
         return RawData(
-            data, headers, meta, self.provenance, name, None, None, encoding, [], self.EVAL_INFO
+            data, headers, meta, self.provenance, name, None, None, encoding, waveforms,
+            self.EVAL_INFO,
         )
+
+    # --- PMU waveforms ---------------------------------------------------------------------------
+
+    def _waveforms(self, fh) -> list[dict]:
+        """The PMU packets of the measurement holding the image stream, walked scan by scan."""
+        span = self._measurement_span(fh)
+        if span is None:
+            return []
+        start, length = span
+        fh.seek(start)
+        position, end = start + struct.unpack("<I", fh.read(4))[0], start + length
+        size = self.MDH_BYTES["vd"]
+        waveforms: list[dict] = []
+        counter = 0
+        while position + size <= end:
+            fh.seek(position)
+            mdh = fh.read(size)
+            dma = struct.unpack_from("<I", mdh, 0)[0] & 0x1FFFFFF
+            mask = struct.unpack_from("<Q", mdh, 40)[0]
+            if mask & 1 or dma < size:  # ACQEND
+                break
+            if mask >> 5 & 1:  # SYNCDATA
+                waveforms += self._pmu(fh.read(dma - size), mdh, counter)
+            else:
+                counter = struct.unpack_from("<I", mdh, 8)[0]
+            position += dma
+        return waveforms
+
+    def _measurement_span(self, fh) -> tuple[int, int] | None:
+        """Offset and length of the multi-RAID entry holding the image stream's first scan."""
+        fh.seek(0)
+        ident, count = struct.unpack("<II", fh.read(8))
+        if ident != 0 or not 1 <= count <= 64:
+            return None
+        first = int(self.twix["image"].memPos[0])
+        for _ in range(count):
+            _, _, offset, length, _, _ = self.RAID_ENTRY.unpack(fh.read(self.RAID_ENTRY.size))
+            if offset <= first < offset + length:
+                return offset, length
+        return None
+
+    def _pmu(self, packet: bytes, mdh: bytes, counter: int) -> list[dict]:
+        ident = packet[4:56].split(b"\0")[0].decode("ascii", "replace")
+        if not ident.startswith("PMU") or len(packet) < 76:
+            return []
+        learning = ident.startswith("PMULearnPhase")
+        _, _, time_stamp, packet_number, duration = struct.unpack_from("<5I", packet, 56)
+        signals: dict[str, np.ndarray] = {}
+        i = 76
+        while i + 8 <= len(packet):
+            magic, period = struct.unpack_from("<II", packet, i)
+            name = self.PMU_MAGIC.get(magic)
+            if magic == self.PMU_END or name is None or period == 0:
+                break
+            n = duration // period
+            i += 8
+            if i + 4 * n > len(packet):
+                break
+            signals[name] = np.frombuffer(packet, "<u2", 2 * n, i).reshape(n, 2)
+            i += 4 * n
+        base = {"version": 1, "flags": 0,
+                "measurement_uid": struct.unpack_from("<i", mdh, 4)[0] & 0xFFFFFFFF,
+                "scan_counter": counter, "time_stamp": time_stamp, "packet_number": packet_number,
+                "phase": "Learning" if learning else "Acquisition"}
+        leads = [signals.pop(k) for k in ("ECG1", "ECG2", "ECG3", "ECG4") if k in signals]
+        waveforms = []
+        if leads:
+            trigger = np.bitwise_or.reduce([lead[:, 1] for lead in leads])
+            data = np.vstack([lead[:, 0] for lead in leads] + [trigger]).astype(np.uint32)
+            waveforms.append(self._waveform(base, "ECG", data, duration, learning))
+        for name, block in signals.items():
+            data = np.ascontiguousarray(block.T).astype(np.uint32)
+            waveforms.append(self._waveform(base, name, data, duration, learning))
+        return waveforms
+
+    def _waveform(self, base: dict, name: str, data: np.ndarray, duration: int,
+                  learning: bool) -> dict:
+        channels, n = data.shape
+        return {**base, "waveform_id": self.WAVEFORM_ID[name] + 5 * learning, "name": name,
+                "channels": channels, "number_of_samples": n,
+                "sample_time_us": duration * 100 / n, "trigger_channel": channels - 1,
+                "data": data}
 
     # --- scan headers ----------------------------------------------------------------------------
 

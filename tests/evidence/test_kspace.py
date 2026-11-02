@@ -14,7 +14,9 @@
 #          their slice geometry against the image header, and a spectroscopy P-file read through   #
 #          the imaging frame layout against spec2nii, and the Philips raw export against the       #
 #          published reading of Philips' reader and its random phase as a ramp along the readout;  #
-#          a Philips Dixon scan exported as .data/.list against the scanner's DICOM of it.         #
+#          a Philips Dixon scan exported as .data/.list against the scanner's DICOM of it; the    #
+#          PMU waveforms of two twix scans against the waveform counts siemens_to_ismrmrd's test   #
+#          cases state for their conversions.                                                      #
 #                                                                                                  #
 ####################################################################################################
 
@@ -93,6 +95,47 @@ def test_twix_readouts_equal_the_ismrmrd_conversion():
     frequency = converted.meta["H1ResonanceFrequency"]
     assert image.meta["SpectrometerFrequency"] == pytest.approx(frequency)
     assert image.meta["DwellTime"] == pytest.approx(converted.meta["DwellTime"], rel=1e-2)
+
+
+@pytest.mark.parametrize("relpath, waveforms, acquisitions, channels", [
+    # siemens_to_ismrmrd test/cases/*.yaml: num_waveforms and num_acquisitions of the conversion
+    ("cmr/T1SRmapping/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256/"
+     "meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256.dat", 1115, 719, 14),
+    ("tse/meas_MID00450_FID76726_SAX_TE62_DIR_TSE/meas_MID00450_FID76726_SAX_TE62_DIR_TSE.dat",
+     1090, 136, 30),
+])
+def test_twix_pmu_waveforms_match_the_converters_counts(relpath, waveforms, acquisitions,
+                                                        channels):
+    """siemens_to_ismrmrd writes five waveforms per PMU packet (ECG with its leads, PULS, RESP,
+    EXT1, EXT2); its test cases state how many each scan yields. The ECG waveform carries four
+    leads and their combined trigger, the others one signal and its trigger; sample times follow
+    the stated periods (2.5, 5 and 20 ms) and the learning phase gets ids 5-9."""
+    path = GADGETRON / relpath
+    if not path.is_file():
+        pytest.skip(f"{relpath} not fetched")
+    datasets = load(path)
+    raw = datasets[0]
+    assert raw.n_coils == channels
+    counters = np.concatenate([d.headers["scan_counter"] for d in datasets])
+    assert len(set(counters.tolist())) == acquisitions  # lines in two streams counted once
+    assert len(raw.waveforms) == waveforms and all(not d.waveforms for d in datasets[1:])
+    by_name = {}
+    for w in raw.waveforms:
+        by_name.setdefault(w["name"], []).append(w)
+    assert sorted(by_name) == ["ECG", "EXT1", "EXT2", "PULS", "RESP"]
+    assert {len(v) for v in by_name.values()} == {waveforms // 5}
+    full = [w for w in by_name["ECG"] if w["number_of_samples"] == 40]
+    assert full and all(w["channels"] == 5 and w["sample_time_us"] == 2500 for w in full)
+    assert all(w["data"].shape == (w["channels"], w["number_of_samples"]) for w in raw.waveforms)
+    assert all(w["channels"] == 2 for n in ("PULS", "RESP") for w in by_name[n])
+    assert {w["sample_time_us"] for w in by_name["PULS"] if w["number_of_samples"] == 20} == {5000}
+    assert {w["sample_time_us"] for w in by_name["RESP"] if w["number_of_samples"] == 5} == {20000}
+    ids = {(w["name"], w["phase"]): w["waveform_id"] for w in raw.waveforms}
+    assert ids[("ECG", "Learning")] == 5 and ids[("ECG", "Acquisition")] == 0
+    assert ids[("EXT2", "Acquisition")] == 4 and ids[("RESP", "Learning")] == 7
+    stamps = [w["time_stamp"] for w in raw.waveforms]
+    assert stamps == sorted(stamps)
+    assert all(len(np.unique(w["data"][-1])) <= 8 for w in raw.waveforms)  # trigger flag bits
 
 
 def test_2013_sample_equals_the_2022_conversion():
