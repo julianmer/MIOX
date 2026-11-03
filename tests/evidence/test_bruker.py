@@ -147,7 +147,8 @@ def test_magnitude_spectrum_keys():
 def test_csi_kspace_says_so_and_points_to_the_reconstruction(scan, tmp_path):
     """The fid and rawdata of a CSI scan are k-space: they say so and name the scanner's
     reconstructions (complex first); the scan folder and Quick Look show the complex one."""
-    from miox.quicklook import load as shown, page
+    from miox.quicklook import load as shown
+    from miox.quicklook import page
 
     for raw_file in ("fid", "rawdata.job0"):
         [raw] = load(BRUKER / scan / raw_file)

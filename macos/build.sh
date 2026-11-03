@@ -21,7 +21,12 @@ TARGET="arm64-apple-macos12.0"
 EXTENSIONS=(dat 7 rda sdat spar ima basis coord table print mrui dpt ddf cmplx rsd rsp mrd data
             list mat jdx dx jdf tnt ft ft2 ucsf nmrml h5 nii mgz mgh nrrd nhdr mha mhd
             seq trk tck trx tt gii srf mz3 puls resp ecg ext acq pta tfm lta v16 fmr stc real
-            cplx short)
+            cplx short
+            mif mnc par rec brik head afni jnii bnii vti vtk gipl fdf fre idf int2 spr sdt
+            ft1 ft3 ft4 pipe 1d sec csdf spe h2o lab sin job0 gep tsv
+            trf vmr vtc vmp smp voi mtc poi glm ssm prt sdm fib tsf
+            label annot curv sulc thickness inflated pial white sphere orig smoothwm
+            exar1 examcard pro mode ymf phantom fts)
 TYPES=(io.github.julianmer.miox.mr-data org.nema.dicom gov.nih.nifti-1 org.gnu.gnu-zip-archive
        org.napari.napari.h5 com.mathworks.workspace public.data)
 
