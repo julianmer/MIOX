@@ -282,8 +282,8 @@ class Plot:
     @staticmethod
     def axis(xlim: tuple, unit: str, width: int, y: float) -> str:
         span = abs(xlim[0] - xlim[1])
-        step = next(s for s in (0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 5000)
-                    if span / s <= width // 90)  # about one tick per 90 units
+        steps = (m * 10.0 ** e for e in range(-3, 12) for m in (1, 2, 5))
+        step = next(s for s in steps if span / s <= width // 90)  # about one tick per 90 units
         ticks = np.arange(np.ceil(min(xlim) / step) * step, max(xlim) + 1e-9, step) + 0.0  # no -0
         out = [f'<line class="axis" x1="0" x2="{width}" y1="{y}" y2="{y}"/>']
         unit = f'<tspan class="unit"> {unit}</tspan>'
@@ -636,15 +636,21 @@ class Page:
     def details_pane(self) -> str:
         return details(self.main.meta)
 
+    @staticmethod
+    def ms(seconds) -> str:
+        """Seconds (one value or a list, as NIfTI-MRS stores several echo times) in ms."""
+        values = seconds if isinstance(seconds, (list, tuple)) else [seconds]
+        return "/".join(f"{float(v) * 1e3:g}" for v in values)
+
     def facts(self) -> str:
         d, meta, c = self.main, self.main.meta, self.prepared.conditions
         facts = [d.nucleus or ""]
         if d.spectrometer_frequency:
             facts.append(f"{d.spectrometer_frequency:.2f} MHz")
         if "EchoTime" in meta:
-            facts.append(f"TE {float(meta['EchoTime']) * 1e3:g} ms")
+            facts.append(f"TE {self.ms(meta['EchoTime'])} ms")
         if "RepetitionTime" in meta:
-            facts.append(f"TR {float(meta['RepetitionTime']) * 1e3:g} ms")
+            facts.append(f"TR {self.ms(meta['RepetitionTime'])} ms")
         if self.prepared.grid:
             facts.append(" x ".join(map(str, self.prepared.spatial)) + " voxels")
         facts += [f"{c.shape[3]} coils" if c.shape[3] > 1 else "",

@@ -62,6 +62,23 @@ SAMPLES = [  # file, the tabs of its page
     ("mrd/simple_gre_noise_covariance.mrd", ["Covariance", "Details"]),
     ("dicompare/dicompare/tests/fixtures/pro_files/C2P__cmrr_mbep2d_bold__p3_mb2.pro",
      ["C2P__cmrr_mbep2d_bold__p3_mb"]),
+    # the edges found by building every recorded sample's page
+    ("bruker_data_test/data/zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3/pdata/1/2rr",
+     ["Spectrum", "Details"]),  # four components: the first shown
+    ("nmrglue_repo/nmrglue/fileio/tests/data/nmrpipe_3d_freq.ft3", ["Spectrum", "Details"]),
+    ("mrsimulator/tests/spectral_integration_tests/simpson_simulated_lineshapes/"
+     "sideband_sideband/test00/test00.csdf", ["Spectrum", "Details"]),  # no f0: Hz axes
+    ("jcamp_data_test/data/nmr/cytisine/hmbc.jdx", ["Spectrum", "Details"]),  # indirect index
+    ("komamri/KomaMRICore/test/test_files/jemris_signals_epi_brain_motion.h5",
+     ["k-space", "Coils", "Readouts", "Details"]),  # waveforms without a clock
+    ("komamri/KomaMRIFiles/test/test_files/phantom/brain_mrilab.mat", ["Maps", "Details"]),
+    ("niivue/packages/niivue/demos/images/mni152.SLF1_R.tsf", ["Details"]),  # no points
+    ("nitest_freesurfer/fsaverage/label/lh.V1.label", ["Details"]),  # no faces
+    ("nibabel/nibabel/gifti/tests/data/ascii_flat_data.gii", ["Details"]),  # faces beyond
+    ("mrsi_bids/sub-01/mrs/sub-01_run-1_mrsi.nii.gz", None),  # TE as a list
+    ("osi2one/OSIIONE_Reference_System_Data_v1/OSIIONE_Reference_System_Data_v1/"
+     "2026-08-16_113205_simulation_tse_3d_T1-mapping_single_slice_CaliberMRI/ismrmrd_data.h5",
+     ["k-space", "Coils", "Readouts", "Details"]),  # no recon matrix stated
 ]
 
 
@@ -77,7 +94,8 @@ def test_page_has_its_tabs(relpath, expected):
     if not path.exists():
         pytest.skip("file not fetched")
     html = page(load(path), path.name, path)
-    assert tabs(html) == expected
+    if expected is not None:  # None: the page builds, its tabs are the spectroscopy page's
+        assert tabs(html) == expected
     assert "<svg" in html or "<img" in html or "<table" in html
 
 

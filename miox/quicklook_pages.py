@@ -156,6 +156,7 @@ class RawPage:
     def __init__(self, raw: RawData, title: str, others: int = 0, image: MRImage | None = None):
         self.raw, self.title, self.others, self.image = raw, title, others, image
         self.k, self.acquired, self.chosen = self.select(raw)
+        self.timed = [w for w in raw.waveforms if "time_stamp" in w and "sample_time_us" in w]
         self.magnitude = np.abs(self.k)
         self.rss = np.sqrt((self.magnitude ** 2).sum(axis=1))
 
@@ -191,7 +192,7 @@ class RawPage:
         if isinstance(enc, dict) and "dims" in enc:
             return int(dict(zip(enc["dims"], enc["size"], strict=True)).get("Lin", 0))
         if isinstance(enc, list) and enc and isinstance(enc[0], dict):
-            limit = enc[0].get("encodingLimits", {}).get("kspace_encoding_step_1", {})
+            limit = (enc[0].get("encodingLimits") or {}).get("kspace_encoding_step_1") or {}
             return int(limit.get("maximum", -1)) + 1
         return 0
 
@@ -201,7 +202,7 @@ class RawPage:
         0 when the file states none."""
         enc = raw.encoding
         if isinstance(enc, list) and enc and isinstance(enc[0], dict):
-            x = enc[0].get("reconSpace", {}).get("matrixSize", {}).get("x")
+            x = ((enc[0].get("reconSpace") or {}).get("matrixSize") or {}).get("x")
             return int(x) if x else 0
         base = raw.meta.get("BaseResolution")
         return int(base) if isinstance(base, (int, float)) and base else 0
@@ -298,7 +299,7 @@ class RawPage:
         """Every waveform name as one row (its first channel), on the scanner's clock from
         the first acquisition packet; learning-phase packets left out."""
         series = {}
-        for w in self.raw.waveforms:
+        for w in self.timed:
             if str(w.get("phase", "")).lower() == "learning":
                 continue
             series.setdefault(w["name"], []).append(w)
@@ -341,11 +342,11 @@ class RawPage:
                               if s > 1)
         if isinstance(enc, list) and enc and isinstance(enc[0], dict):
             e = enc[0]
-            m = e.get("encodedSpace", {}).get("matrixSize", {})
-            r = e.get("reconSpace", {}).get("matrixSize", {})
+            m = (e.get("encodedSpace") or {}).get("matrixSize") or {}
+            r = (e.get("reconSpace") or {}).get("matrixSize") or {}
             limits = ", ".join(f"{k.replace('kspace_encoding_step_', 'step ')} {v['maximum'] + 1}"
-                               for k, v in e.get("encodingLimits", {}).items()
-                               if v.get("maximum", 0) > 0)
+                               for k, v in (e.get("encodingLimits") or {}).items()
+                               if isinstance(v, dict) and v.get("maximum", 0) > 0)
             return (f"{e.get('trajectory', '')} encoded {m.get('x')} × {m.get('y')} × "
                     f"{m.get('z')}, recon {r.get('x')} × {r.get('y')} × {r.get('z')}; {limits}")
         return ""
@@ -353,7 +354,7 @@ class RawPage:
     def html(self) -> str:
         tabs = [("k-space", self.kspace_pane()), ("Coils", self.coils_pane()),
                 ("Readouts", self.readouts_pane())]
-        if self.raw.waveforms:
+        if self.timed:
             tabs.append(("Waveforms", self.waveforms_pane()))
         tabs.append(("Details", details(self.raw.meta)))
         return document(self.title, self.facts(), tabs)
@@ -582,7 +583,9 @@ class TractogramPage:
 
     def facts(self) -> str:
         t = self.tract
-        facts = [f"{t.n_streamlines} streamlines", f"{len(t.points)} points", t.space]
+        facts = [f"{t.n_streamlines} streamlines", t.space]
+        if t.points is not None:
+            facts.insert(1, f"{len(t.points)} points")
         if t.point_data:
             facts.append("per point: " + ", ".join(k.strip() for k in t.point_data))
         if t.streamline_data:
@@ -610,6 +613,7 @@ class TractogramPage:
 #**************************************************************************************************#
 class SurfacePage:
     SIZE = 460  # pixels a view
+    SMALL = 24  # faces up to this many pixels wide are rasterised together
     MESHES = ("inflated", "white", "pial")  # where values are shown, in order of preference
 
     def __init__(self, surface: Surface, title: str, source: Path | None = None):
@@ -690,20 +694,29 @@ class SurfacePage:
         width = np.ceil(x.max(axis=1)).astype(int) - x0 + 1
         height = np.ceil(y.max(axis=1)).astype(int) - y0 + 1
         columns, rows, depths, shades = [], [], [], []
-        for dy in range(min(int(height.max()), self.SIZE)):
-            for dx in range(min(int(width.max()), self.SIZE)):
-                sel = np.nonzero((dx < width) & (dy < height))[0]
-                cx, cy = x0[sel] + dx + 0.5, y0[sel] + dy + 0.5
-                xs, ys = x[sel], y[sel]
-                w0 = (xs[:, 1] - cx) * (ys[:, 2] - cy) - (ys[:, 1] - cy) * (xs[:, 2] - cx)
-                w1 = (xs[:, 2] - cx) * (ys[:, 0] - cy) - (ys[:, 2] - cy) * (xs[:, 0] - cx)
-                weights = np.stack([w0, w1, area[sel] - w0 - w1], axis=1) / area[sel][:, None]
-                inside = np.all(weights >= -1e-9, axis=1)
-                w, i = weights[inside], sel[inside]
-                columns.append(cx[inside].astype(int))
-                rows.append(cy[inside].astype(int))
-                depths.append(np.sum(w * z[i], axis=1))
-                shades.append(np.sum(w * s[i], axis=1))
+
+        def cover(sel: np.ndarray, cx: np.ndarray, cy: np.ndarray) -> None:
+            """Keep the pixel centres (cx, cy) that lie inside the faces ``sel``."""
+            xs, ys = x[sel], y[sel]
+            w0 = (xs[:, 1] - cx) * (ys[:, 2] - cy) - (ys[:, 1] - cy) * (xs[:, 2] - cx)
+            w1 = (xs[:, 2] - cx) * (ys[:, 0] - cy) - (ys[:, 2] - cy) * (xs[:, 0] - cx)
+            weights = np.stack([w0, w1, area[sel] - w0 - w1], axis=1) / area[sel][:, None]
+            inside = np.all(weights >= -1e-9, axis=1)
+            w, i = weights[inside], sel[inside]
+            columns.append(cx[inside].astype(int))
+            rows.append(cy[inside].astype(int))
+            depths.append(np.sum(w * z[i], axis=1))
+            shades.append(np.sum(w * s[i], axis=1))
+
+        small = (width <= self.SMALL) & (height <= self.SMALL)  # offsets walked together
+        for dy in range(int(height[small].max()) if small.any() else 0):
+            for dx in range(int(width[small].max())):
+                sel = np.nonzero(small & (dx < width) & (dy < height))[0]
+                cover(sel, x0[sel] + dx + 0.5, y0[sel] + dy + 0.5)
+        for i in np.flatnonzero(~small):  # a large face: its own grid, clipped to the view
+            cx, cy = np.meshgrid(np.arange(max(x0[i], 0), min(x0[i] + width[i], self.SIZE)),
+                                 np.arange(max(y0[i], 0), min(y0[i] + height[i], self.SIZE)))
+            cover(np.full(cx.size, i), cx.ravel() + 0.5, cy.ravel() + 0.5)
         columns, rows, depths, shades = map(np.concatenate, (columns, rows, depths, shades))
         order = np.argsort(depths)  # far first: the near face wins the pixel
         columns, rows, shades = columns[order], rows[order], shades[order]
@@ -729,7 +742,9 @@ class SurfacePage:
         s, mesh = self.surface, self.mesh
         facts = []
         if mesh.vertices is not None:
-            facts += [f"{len(mesh.vertices)} vertices", f"{len(mesh.faces)} faces"]
+            facts.append(f"{len(mesh.vertices)} vertices")
+        if mesh.faces is not None:
+            facts.append(f"{len(mesh.faces)} faces")
         facts += [mesh.space, "left hemisphere" if self.left else "right hemisphere"]
         if s.vertex_data:
             facts.append("values: " + ", ".join(s.vertex_data))
@@ -739,10 +754,18 @@ class SurfacePage:
 
     def html(self) -> str:
         tabs = []
-        if self.mesh.vertices is not None and self.mesh.faces is not None:
+        if self.drawable():
             tabs.append(("Views", self.views_pane()))
         tabs.append(("Details", details(self.surface.meta)))
         return document(self.title, self.facts(), tabs)
+
+    def drawable(self) -> bool:
+        """Vertices and faces, every face within the vertices (nibabel's GIFTI fixtures hold
+        an excerpt whose faces point beyond them)."""
+        mesh = self.mesh
+        if mesh.vertices is None or mesh.faces is None or not len(mesh.faces):
+            return False
+        return int(np.max(mesh.faces)) < len(mesh.vertices)
 
 
 #**************************************************************************************************#
@@ -762,31 +785,49 @@ class SpectrumPage:
 
     def __init__(self, image: MRImage, title: str, others: int = 0):
         self.image, self.title, self.others = image, title, others
-        self.data = np.asarray(image.data)[0, 0, 0]  # (direct, indirect, ...)
         self.two_d = "frequency_indirect_0" in image.dims
+        stored = np.asarray(image.data)[0, 0, 0]  # (direct, indirect, ...)
+        self.shape = stored.shape
+        while stored.ndim > (2 if self.two_d else 1):  # first component, first further plane
+            stored = stored[..., 0]
+        self.data = stored
+        self.unit = "ppm" if "SpectrometerFrequency" in image.meta else "Hz"
 
     def axes(self) -> tuple[np.ndarray, np.ndarray | None]:
+        """The direct and (2-D) indirect axes, stored downfield first: ppm when the file
+        states the spectrometer frequency, else Hz about the carrier."""
         m, n = self.image.meta, self.data.shape[0]
-        f0 = m["SpectrometerFrequency"]
+        f0 = m.get("SpectrometerFrequency")
         f0 = list(f0) if isinstance(f0, (list, tuple)) else [f0]
-        direct = Spectral.ppm_axis(n, 1.0 / m["DwellTime"], f0[0], m.get("ReferencePPM", 0.0))
+        width = 1.0 / m["DwellTime"] if m.get("DwellTime") else float(m["SpectralWidth"])
+        direct = self.axis(n, width, f0[0], m.get("ReferencePPM", 0.0))
         indirect = None
         if self.two_d:
-            width = m.get("IndirectSpectralWidth", [None])[0]
-            reference = m.get("IndirectReferencePPM", [0.0])[0]
-            if width and len(f0) > 1:
-                indirect = Spectral.ppm_axis(self.data.shape[1], width, f0[1], reference)[::-1]
+            widths = m.get("IndirectSpectralWidth") or [None]
+            reference = (m.get("IndirectReferencePPM") or [0.0])[0]
+            f1 = f0[1] if len(f0) > 1 else None
+            if widths[0]:
+                indirect = self.axis(self.data.shape[1], widths[0], f1, reference)
             else:
                 indirect = np.arange(self.data.shape[1], dtype=np.float64)
-        return direct[::-1], indirect  # stored downfield first
+        return direct, indirect
+
+    @staticmethod
+    def axis(n: int, width: float, f0: float | None, reference: float) -> np.ndarray:
+        """``n`` points over ``width`` Hz, highest first: in ppm about ``reference`` when the
+        spectrometer frequency ``f0`` is known, else in Hz about the carrier."""
+        if f0:
+            return Spectral.ppm_axis(n, width, f0, reference)[::-1]
+        return (np.arange(n, dtype=np.float64) - n // 2)[::-1] * width / n
 
     def one_d_pane(self) -> str:
         x, _ = self.axes()
         y = np.real(self.data).reshape(x.size, -1)[:, 0]
         xlim = (float(x.max()), float(x.min()))
-        return (Plot.spectrum([(x, y, "line accent")], xlim, "ppm")
-                + "<div class=note>The spectrum as stored: real part, nothing processed; the "
-                "shift falls to the right.</div>")
+        return (Plot.spectrum([(x, y, "line accent")], xlim, self.unit)
+                + f"<div class=note>The spectrum as stored: real part, nothing processed; the "
+                f"{'shift' if self.unit == 'ppm' else 'frequency'} falls to the right."
+                f"{self.reduced()}</div>")
 
     def two_d_pane(self) -> str:
         import contourpy
@@ -810,7 +851,8 @@ class SpectrumPage:
             return f'<g class="{kind}">{"".join(lines)}</g>'
 
         span = ylim[0] - ylim[1]
-        step = next(s for s in (0.5, 1, 2, 5, 10, 20, 50, 100) if span / s <= 8)
+        steps = (m * 10.0 ** e for e in range(-3, 12) for m in (1, 2, 5))
+        step = next(s for s in steps if span / s <= 8)
         ticks = "".join(f'<text x="{WIDTH}" y="{(t - ylim[1]) / span * height + 4:.1f}" '
                         f'text-anchor="end">{t:g}</text>'
                         for t in np.arange(np.ceil(ylim[1] / step) * step, ylim[0] + 1e-9, step))
@@ -818,15 +860,25 @@ class SpectrumPage:
         nuclei = list(nuclei) if isinstance(nuclei, (list, tuple)) else [nuclei, ""]
         return (f'<svg viewBox="0 0 {WIDTH} {height + 30}" class="plot">'
                 f'{paths(levels, "data")}{paths(-levels, "neg")}{ticks}'
-                f'{Plot.axis(xlim, "ppm", WIDTH, height + 4)}</svg>'
+                f'{Plot.axis(xlim, self.unit, WIDTH, height + 4)}</svg>'
                 f"<div class=note>{self.LEVELS} contour levels from {self.FIRST:g} × noise "
                 f"(robust SD {noise:.3g}) rising by {self.STEP}, negative in red; "
-                f"{nuclei[0]} across, {nuclei[1] if len(nuclei) > 1 else ''} up, both ppm axes "
-                "falling to the right and the top as Sparky and TopSpin draw them.</div>")
+                f"{nuclei[0]} across, {nuclei[1] if len(nuclei) > 1 else ''} up, both "
+                f"{self.unit} axes falling to the right and the top as Sparky and TopSpin draw "
+                f"them.{self.reduced()}</div>")
+
+    def reduced(self) -> str:
+        """What the page leaves out of a file with components or further indirect dimensions."""
+        extra = self.shape[self.data.ndim:]
+        if not extra:
+            return ""
+        names = self.image.dims[3 + self.data.ndim:]
+        return " Shown: the first of " + ", ".join(f"{n} {name}" for n, name in
+                                                  zip(extra, names, strict=True)) + "."
 
     def facts(self) -> str:
         m = self.image.meta
-        shape = " × ".join(str(n) for n in self.data.shape) + " points"
+        shape = " × ".join(str(n) for n in self.shape) + " points"
         nuclei = m.get("ResonantNucleus", "")
         nuclei = " / ".join(nuclei) if isinstance(nuclei, (list, tuple)) else str(nuclei)
         f0 = m.get("SpectrometerFrequency")
@@ -965,6 +1017,8 @@ class PhantomPage:
         inside = index[:, 2] == k
         figures = []
         for name, values in ph.properties.items():
+            if np.asarray(values).ndim != 1:  # tensors (conductivity) have no map
+                continue
             picture = np.full((shape[1], shape[0]), np.nan)
             picture[index[inside, 1], index[inside, 0]] = np.asarray(values)[inside]
             finite = picture[np.isfinite(picture)]
