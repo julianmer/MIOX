@@ -48,7 +48,7 @@ dev = [
 miox = "miox.cli:main"
 
 [project.urls]
-Repository = "https://github.com/julianmer/miox"
+Repository = "https://github.com/julianmer/MIOX"
 
 [tool.setuptools.dynamic]
 version = {attr = "miox.__version__"}
