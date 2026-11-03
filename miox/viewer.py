@@ -390,9 +390,7 @@ class SequenceView:
     def __init__(self, d: PulseSequence, figure: Figure | None = None):
         self.d = d
         self.figure = figure if figure is not None else Figure(figsize=self.SIZE)
-        self.rf_raster = float(d.definitions.get("RadiofrequencyRasterTime", 1e-6))
-        self.grad_raster = float(d.definitions.get("GradientRasterTime", 1e-5))
-        self.starts = np.concatenate(([0.0], np.cumsum([self.duration(b) for b in d.blocks])))
+        self.starts = d.starts
         self.first, self.count = 0, min(d.n_blocks, self.SHOWN)
 
         self.figure.subplots_adjust(left=0.1, right=0.97, top=0.93, bottom=0.2, hspace=0.1)
@@ -414,63 +412,6 @@ class SequenceView:
             self.count_slider.on_changed(lambda value: self.show(self.first, int(value)))
         self.show(self.first, self.count)
 
-    def shape(self, shape_id: int) -> np.ndarray:
-        return np.asarray(self.d.shapes[shape_id], dtype=float)
-
-    def rf(self, rf_id: int) -> tuple[np.ndarray, np.ndarray, float]:
-        """Sample times (s from the block start), magnitude (Hz) and end of an RF event."""
-        event = self.d.events["rf"][rf_id]
-        magnitude = abs(event["amp"]) * np.abs(self.shape(event["mag_id"]))
-        if event.get("time_id", 0) > 0:
-            t = self.shape(event["time_id"]) * self.rf_raster
-            end = np.ceil(t[-1] / self.rf_raster - 1e-9) * self.rf_raster
-        else:
-            t = (np.arange(magnitude.size) + 0.5) * self.rf_raster
-            end = magnitude.size * self.rf_raster
-        delay = event["delay"] * 1e-6
-        return t + delay, magnitude, end + delay
-
-    def gradient(self, grad_id: int) -> tuple[np.ndarray, np.ndarray, float]:
-        """Sample times (s from the block start), amplitude (Hz/m) and end of a gradient event."""
-        trap = self.d.events.get("trap", {}).get(grad_id)
-        if trap is not None:
-            t = trap.get("delay", 0) * 1e-6 + np.cumsum(
-                [0, trap["rise"], trap["flat"], trap["fall"]]) * 1e-6
-            return t, trap["amp"] * np.array([0.0, 1, 1, 0]), float(t[-1])
-        event = self.d.events["gradients"][grad_id]
-        g = event["amp"] * self.shape(event["shape_id"])
-        time_id = event.get("time_id", 0)
-        if time_id == 0:
-            t, end = (np.arange(g.size) + 0.5) * self.grad_raster, g.size * self.grad_raster
-        elif time_id == -1:
-            t = 0.5 * (np.arange(g.size) + 1) * self.grad_raster
-            end = (g.size + 1) * self.grad_raster
-        else:
-            t = self.shape(time_id) * self.grad_raster
-            end = t[-1]
-        delay = event["delay"] * 1e-6
-        return t + delay, g, end + delay
-
-    def adc(self, adc_id: int) -> tuple[float, float]:
-        """Start and end (s from the block start) of an ADC event."""
-        event = self.d.events["adc"][adc_id]
-        start = event["delay"] * 1e-6
-        return start, start + event["num"] * event["dwell"] * 1e-9
-
-    def duration(self, block) -> float:
-        """Seconds: the stated duration (from 1.4), else the end of the block's last event."""
-        if "duration" in self.d.blocks.dtype.names:
-            return float(block["duration"]) * self.d.definitions.get("BlockDurationRaster", 1e-5)
-        ends = [0.0]
-        if block["delay"]:
-            ends.append(self.d.events["delays"][int(block["delay"])]["delay"] * 1e-6)
-        if block["rf"]:
-            ends.append(self.rf(int(block["rf"]))[2])
-        ends += [self.gradient(int(block[g]))[2] for g in ("gx", "gy", "gz") if block[g]]
-        if block["adc"]:
-            ends.append(self.adc(int(block["adc"]))[1])
-        return max(ends)
-
     def show(self, first: int, count: int) -> None:
         self.first, self.count = first, count
         traces = {row: ([], []) for row in self.ROWS}
@@ -479,13 +420,13 @@ class SequenceView:
             block, start = self.d.blocks[n], self.starts[n]
             events = {}
             if block["rf"]:
-                events["rf"] = self.rf(int(block["rf"]))[:2]
+                events["rf"] = self.d.rf(int(block["rf"]))[:2]
             for g in ("gx", "gy", "gz"):
                 if block[g]:
-                    t, amplitude, _ = self.gradient(int(block[g]))
+                    t, amplitude, _ = self.d.gradient(int(block[g]))
                     events[g] = (t, amplitude / 1e3)
             if block["adc"]:
-                on, off = self.adc(int(block["adc"]))
+                on, off = self.d.adc(int(block["adc"]))
                 events["adc"] = (np.array([on, on, off, off]), np.array([0.0, 1, 1, 0]))
             for row, (t, y) in events.items():
                 traces[row][0].extend([(start + t) * 1e3, [np.nan]])

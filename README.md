@@ -25,7 +25,7 @@ miox.view(d)                     # quick look in a window
 
 ```
 git clone https://github.com/julianmer/MIOX.git
-cd miox
+cd MIOX
 uv sync --extra dev
 ```
 

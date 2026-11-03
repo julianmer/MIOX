@@ -16,7 +16,8 @@
 #          published reading of Philips' reader and its random phase as a ramp along the readout;  #
 #          a Philips Dixon scan exported as .data/.list against the scanner's DICOM of it; the    #
 #          PMU waveforms of two twix scans against the waveform counts siemens_to_ismrmrd's test   #
-#          cases state for their conversions.                                                      #
+#          cases state for their conversions; Quick Look's plain reconstruction against            #
+#          Gadgetron's images and M4Raw's stored rss.                                              #
 #                                                                                                  #
 ####################################################################################################
 
@@ -172,6 +173,45 @@ def test_gadgetron_reconstruction_images():
     assert image.meta["ImageType"] == ["MAGNITUDE"]
     fov = raw.meta["ReconFieldOfView"]
     assert image.voxel_sizes == pytest.approx((fov[0] / 128, fov[1] / 128, fov[2]))
+
+
+@pytest.mark.parametrize("relpath", [
+    "gadgetron/simple_gre/meas_MiniGadgetron_GRE.dat",
+    "gadgetron/simple_gre/simple_gre_in_20220831.mrd",
+    "mrd/simple_gre.mrd",
+], ids=["twix", "ismrmrd", "mrd"])
+def test_plain_reconstruction_of_the_gre_equals_gadgetrons_image(relpath):
+    """The Quick Look page's plain reconstruction (echo centred, 2-D FFT, root sum of squares,
+    readout cropped to the matrix) of the fully sampled GRE, in its twix, ISMRMRD and MRD
+    forms, is Gadgetron's reconstruction of it (the uint16 series of simple_gre_images.mrd;
+    correlation above 0.999), stored with the readout along the first axis."""
+    from miox.quicklook_pages import RawPage
+
+    images = PUBLIC_DATA / "mrd/simple_gre_images.mrd"
+    _need(PUBLIC_DATA / relpath, images)
+    raw = next(d for d in load(PUBLIC_DATA / relpath) if isinstance(d, RawData))  # image stream
+    reference = next(d for d in load(images) if d.name == "imageUint16/series_1")
+    theirs = np.asarray(reference.data, dtype=np.float64)[:, :, 0, 0]
+    ours, cropped = RawPage.plain_image(raw)
+    assert cropped == "readout cropped to 128" and ours.shape == (128, 128)
+    assert np.corrcoef(ours.T.ravel(), theirs.ravel())[0, 1] > 0.999
+
+
+def test_plain_reconstruction_equals_the_m4raw_stored_rss():
+    """M4Raw stores its root-sum-of-squares reconstruction beside the k-space: the page's
+    plain reconstruction of the first slice equals it up to the FFT's scale."""
+    from miox.quicklook_pages import RawPage
+
+    path = PUBLIC_DATA / "m4raw/multicoil_test/2022101103_T206.h5"
+    _need(path)
+    datasets = load(path)
+    [raw] = [d for d in datasets if isinstance(d, RawData)]
+    [stored] = [d for d in datasets if isinstance(d, MRImage)]
+    ours, cropped = RawPage.plain_image(raw)
+    theirs = np.asarray(stored.data, dtype=np.float64)[:, :, 0]
+    assert cropped == "readout as stored" and ours.shape == theirs.shape
+    scale = theirs.max() / ours.max()
+    assert np.allclose(ours * scale, theirs, rtol=1e-4, atol=1e-4 * theirs.max())
 
 
 @pytest.mark.parametrize(

@@ -551,7 +551,9 @@ class RawData:
 # "trap", "adc", "delays": the events by id with the columns named as the specification names      #
 # them), ``extensions`` (the linked list and the specifications by extension name), ``shapes``     #
 # (the decompressed samples by shape id) and ``signature``. ``duration`` is the sum of the block   #
-# durations in seconds when the file states them.                                                  #
+# durations in seconds when the file states them. ``rf``, ``gradient`` and ``adc`` lay an event    #
+# out in time (seconds from its block's start), ``block_duration`` and ``starts`` place the        #
+# blocks.                                                                                          #
 #                                                                                                  #
 #**************************************************************************************************#
 class PulseSequence:
@@ -590,6 +592,79 @@ class PulseSequence:
         if "duration" not in self.blocks.dtype.names or not isinstance(raster, (int, float)):
             return None
         return float(self.blocks["duration"].sum() * raster)
+
+    @property
+    def rf_raster(self) -> float:
+        return float(self.definitions.get("RadiofrequencyRasterTime", 1e-6))
+
+    @property
+    def gradient_raster(self) -> float:
+        return float(self.definitions.get("GradientRasterTime", 1e-5))
+
+    def shape(self, shape_id: int) -> np.ndarray:
+        return np.asarray(self.shapes[shape_id], dtype=float)
+
+    def rf(self, rf_id: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, float]:
+        """Sample times (s from the block start), magnitude (Hz), phase (rad) and end of an
+        RF event."""
+        event = self.events["rf"][rf_id]
+        magnitude = abs(event["amp"]) * np.abs(self.shape(event["mag_id"]))
+        phase = 2 * np.pi * self.shape(event["phase_id"]) + float(event.get("phase", 0.0))
+        if event.get("time_id", 0) > 0:
+            t = self.shape(event["time_id"]) * self.rf_raster
+            end = np.ceil(t[-1] / self.rf_raster - 1e-9) * self.rf_raster
+        else:
+            t = (np.arange(magnitude.size) + 0.5) * self.rf_raster
+            end = magnitude.size * self.rf_raster
+        delay = event["delay"] * 1e-6
+        return t + delay, magnitude, phase, end + delay
+
+    def gradient(self, grad_id: int) -> tuple[np.ndarray, np.ndarray, float]:
+        """Sample times (s from the block start), amplitude (Hz/m) and end of a gradient event
+        (a trapezoid's corners, an arbitrary gradient's samples)."""
+        trap = self.events.get("trap", {}).get(grad_id)
+        if trap is not None:
+            t = trap.get("delay", 0) * 1e-6 + np.cumsum(
+                [0, trap["rise"], trap["flat"], trap["fall"]]) * 1e-6
+            return t, trap["amp"] * np.array([0.0, 1, 1, 0]), float(t[-1])
+        event = self.events["gradients"][grad_id]
+        g = event["amp"] * self.shape(event["shape_id"])
+        time_id = event.get("time_id", 0)
+        if time_id == 0:
+            t, end = (np.arange(g.size) + 0.5) * self.gradient_raster, g.size * self.gradient_raster
+        elif time_id == -1:
+            t = 0.5 * (np.arange(g.size) + 1) * self.gradient_raster
+            end = (g.size + 1) * self.gradient_raster
+        else:
+            t = self.shape(time_id) * self.gradient_raster
+            end = t[-1]
+        delay = event["delay"] * 1e-6
+        return t + delay, g, end + delay
+
+    def adc(self, adc_id: int) -> tuple[float, float]:
+        """Start and end (s from the block start) of an ADC event."""
+        event = self.events["adc"][adc_id]
+        start = event["delay"] * 1e-6
+        return start, start + event["num"] * event["dwell"] * 1e-9
+
+    def block_duration(self, block) -> float:
+        """Seconds: the stated duration (from 1.4), else the end of the block's last event."""
+        if "duration" in self.blocks.dtype.names:
+            return float(block["duration"]) * self.definitions.get("BlockDurationRaster", 1e-5)
+        ends = [0.0]
+        if block["delay"]:
+            ends.append(self.events["delays"][int(block["delay"])]["delay"] * 1e-6)
+        if block["rf"]:
+            ends.append(self.rf(int(block["rf"]))[3])
+        ends += [self.gradient(int(block[g]))[2] for g in ("gx", "gy", "gz") if block[g]]
+        if block["adc"]:
+            ends.append(self.adc(int(block["adc"]))[1])
+        return max(ends)
+
+    @property
+    def starts(self) -> np.ndarray:
+        """Start of every block in seconds, and the end of the last one."""
+        return np.concatenate(([0.0], np.cumsum([self.block_duration(b) for b in self.blocks])))
 
     def to_dict(self) -> dict:
         """JSON-ready summary: counts, definitions and keys, no tables."""

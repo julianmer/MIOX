@@ -9,7 +9,8 @@
 # Purpose: The Quick Look page of a spectroscopy file: a header line, then tabs for the processed  #
 # spectrum (miox.processing, Augmentrum's raw pipeline), every coil with its weight, every average #
 # before and after alignment, the water reference and all header values; of an image file, three   #
-# planes, axial slices and all header values. Plain HTML with inline SVG, light and dark.          #
+# planes, axial slices and all header values; of the other kinds the pages of quicklook_pages.     #
+# Plain HTML with inline SVG, light and dark.                                                      #
 #                                                                                                  #
 ####################################################################################################
 
@@ -327,15 +328,16 @@ class Plot:
 
     @staticmethod
     def png(pixels: np.ndarray) -> str:
-        """8-bit grey pixels (rows, columns) as a PNG data URL."""
-        height, width = pixels.shape
+        """8-bit grey pixels (rows, columns), or RGB (rows, columns, 3), as a PNG data URL."""
+        height, width = pixels.shape[:2]
+        colour = 2 if pixels.ndim == 3 else 0
         rows = b"".join(b"\x00" + row.tobytes() for row in pixels.astype(np.uint8))
         def chunk(kind: bytes, data: bytes) -> bytes:
             return (len(data).to_bytes(4, "big") + kind + data
                     + zlib.crc32(kind + data).to_bytes(4, "big"))
         png = (b"\x89PNG\r\n\x1a\n"
                + chunk(b"IHDR", width.to_bytes(4, "big") + height.to_bytes(4, "big")
-                       + bytes([8, 0, 0, 0, 0]))
+                       + bytes([8, colour, 0, 0, 0]))
                + chunk(b"IDAT", zlib.compress(rows, 9)) + chunk(b"IEND", b""))
         return "data:image/png;base64," + base64.b64encode(png).decode()
 
@@ -1080,6 +1082,16 @@ figcaption {{ display:flex; justify-content:space-between; font-size:11px; color
 table {{ border-collapse:collapse; width:100%; font-size:12px; }}
 td {{ padding:4px 0; border-bottom:1px solid var(--rule); vertical-align:top; }}
 td:first-child {{ color:var(--soft); width:38%; padding-right:16px; }}
+.rows text.label {{ fill:var(--ink); }} .plot text.left {{ text-anchor:end; }}
+.plot .adc rect {{ fill:var(--accent); opacity:.18; }}
+.plot .stem line {{ stroke:var(--accent); stroke-width:1; vector-effect:non-scaling-stroke; }}
+.plot .neg polyline {{ stroke:var(--drop); }}
+.views {{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; align-items:end; }}
+.two {{ display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; align-items:end; }}
+.coils {{ display:grid; grid-template-columns:repeat(6, 1fr); gap:3px; }}
+.maps {{ display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; }}
+figure img.mesh {{ background:var(--bg); }}
+table.matrix td {{ width:auto; color:var(--ink); padding-right:14px; }}
 </style></head><body>
 <h1>{title}</h1><div class=facts>{facts}</div>
 {radios}<nav>{labels}</nav><main>{panes}</main>
@@ -1105,19 +1117,63 @@ def load(path: Path) -> tuple[list, tuple[str, ...]]:
 
 def page(datasets: list, title: str, source: Path | None = None,
          notes: tuple[str, ...] = ()) -> str:
-    """The page of what the file holds: a basis set, spectroscopy data, a fit, else an image."""
-    basis = next((d for d in datasets if isinstance(d, BasisSet)), None)
+    """The page of what the file holds: a basis set, spectroscopy data, a fit, an image, or
+    one of the other kinds (quicklook_pages); ValueError when nothing has a page."""
+    from miox import quicklook_pages as pages
+    from miox.data import (
+        NoiseCovariance,
+        Phantom,
+        PhysioData,
+        Protocol,
+        PulseSequence,
+        RawData,
+        RFPulse,
+        Surface,
+        Tractogram,
+        Transform,
+    )
+
+    def first(kind):
+        return next((d for d in datasets if isinstance(d, kind)), None)
+
+    def others(kind) -> int:
+        return sum(isinstance(d, kind) for d in datasets) - 1
+
+    basis = first(BasisSet)
     if basis is not None:
         return BasisPage(basis, title).html()
-    if any(isinstance(d, MRSData) for d in datasets):
+    mrs = first(MRSData)
+    if mrs is not None:
+        if "DIM_INDIRECT_0" in mrs.dim_tags:
+            return pages.RowsPage(mrs, title).html()
         return Page(datasets, title, source, notes).html()
-    fits = [d for d in datasets if isinstance(d, FitResult)]
-    if fits:
-        return FitPage(fits[0], title, len(fits) - 1).html()
-    images = [d for d in datasets if isinstance(d, MRImage)]
-    if not images:
-        raise ValueError("no spectroscopy data or image")
-    return ImagePage(images[0], title, len(images) - 1).html()
+    fit = first(FitResult)
+    if fit is not None:
+        return FitPage(fit, title, others(FitResult)).html()
+    raw = first(RawData)
+    if raw is not None:
+        return pages.RawPage(raw, title, len(datasets) - 1, first(MRImage)).html()
+    image = first(MRImage)
+    if image is not None:
+        if "frequency" in image.dims:
+            return pages.SpectrumPage(image, title, others(MRImage)).html()
+        return ImagePage(image, title, others(MRImage)).html()
+    for kind, make in ((PulseSequence, pages.SequencePage), (PhysioData, pages.PhysioPage),
+                       (Tractogram, pages.TractogramPage), (RFPulse, pages.RFPulsePage),
+                       (Phantom, pages.PhantomPage), (NoiseCovariance, pages.NoisePage)):
+        found = first(kind)
+        if found is not None:
+            return make(found, title).html()
+    surface = first(Surface)
+    if surface is not None:
+        return pages.SurfacePage(surface, title, source).html()
+    transform = first(Transform)
+    if transform is not None:
+        return pages.TransformPage(transform, title, others(Transform)).html()
+    protocols = [d for d in datasets if isinstance(d, Protocol)]
+    if protocols:
+        return pages.ProtocolPage(protocols, title).html()
+    raise ValueError("nothing in the file has a Quick Look page")
 
 
 def write(datasets: list, title: str, path: str | Path, source: Path | None = None,

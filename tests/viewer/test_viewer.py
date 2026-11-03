@@ -197,16 +197,16 @@ def _sequence(blocks, layout):
 def test_sequence_waveforms():
     view = SequenceView(_sequence([(1, 30, 1, 2, 3, 4, 1, 0), (2, 10, 0, 0, 0, 0, 0, 0)],
                                   "duration"))
-    t, magnitude, end = view.rf(1)
+    t, magnitude, _, end = view.d.rf(1)
     assert np.allclose(t, 100e-6 + np.array([0.5, 1.5, 2.5]) * 1e-6)  # raster centres
     assert np.allclose(magnitude, [250, 500, 250]) and end == pytest.approx(103e-6)
-    t, amplitude, end = view.gradient(2)
+    t, amplitude, end = view.d.gradient(2)
     assert np.allclose(t, [5e-6, 15e-6, 35e-6, 45e-6]) and np.allclose(amplitude, [0, 1e3, 1e3, 0])
-    t, amplitude, end = view.gradient(3)  # time shape in raster units
+    t, amplitude, end = view.d.gradient(3)  # time shape in raster units
     assert np.allclose(t, [0, 2e-5, 4e-5]) and np.allclose(amplitude, [0, 2e3, 0])
-    t, _, end = view.gradient(4)  # oversampled by two
+    t, _, end = view.d.gradient(4)  # oversampled by two
     assert np.allclose(t, [0.5e-5, 1e-5, 1.5e-5]) and end == pytest.approx(4e-5)
-    assert view.adc(1) == pytest.approx((10e-6, 30e-6))
+    assert view.d.adc(1) == pytest.approx((10e-6, 30e-6))
     assert np.allclose(view.starts, [0, 3e-4, 4e-4])
     x, y = view.lines["adc"].get_data()
     assert np.allclose(x[:4], [0.01, 0.01, 0.03, 0.03]) and np.isnan(x[4])  # ms
