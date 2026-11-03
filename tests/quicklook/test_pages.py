@@ -38,6 +38,8 @@ SAMPLES = [  # file, the tabs of its page
      ["k-space", "Coils", "Readouts", "Details"]),
     ("m4raw/multicoil_test/2022101103_T206.h5", ["k-space", "Coils", "Readouts", "Details"]),
     ("ge_to_ismrmrd/P20480_GRE.7", ["k-space", "Coils", "Readouts", "Details"]),
+    ("spec2nii_test_data/bruker/PV-360.3.5/3/rawdata.job0",
+     ["k-space", "Coils", "Readouts", "Details"]),
     (PULSEQ + "v1.4/epi.seq", ["Sequence", "Start", "Details"]),
     (PULSEQ + "v1.4/spiral.seq", ["Sequence", "Start", "Details"]),
     (PULSEQ + "v1.2/epi_JEMRIS.seq", ["Sequence", "Start", "Details"]),

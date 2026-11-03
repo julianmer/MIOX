@@ -209,7 +209,7 @@ def test_plain_reconstruction_equals_the_m4raw_stored_rss():
     [stored] = [d for d in datasets if isinstance(d, MRImage)]
     ours, cropped = RawPage.plain_image(raw)
     theirs = np.asarray(stored.data, dtype=np.float64)[:, :, 0]
-    assert cropped == "readout as stored" and ours.shape == theirs.shape
+    assert cropped == "as stored" and ours.shape == theirs.shape
     scale = theirs.max() / ours.max()
     assert np.allclose(ours * scale, theirs, rtol=1e-4, atol=1e-4 * theirs.max())
 

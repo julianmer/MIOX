@@ -148,8 +148,9 @@ class RawPage:
         Format.ISMRMRD: "checked against Gadgetron's reconstruction",
         Format.MRD: "checked against Gadgetron's reconstruction",
         Format.FASTMRI_H5: "equals the root-sum-of-squares image the file stores",
+        Format.BRUKER: "checked against the vendor's 2dseq images",
     }
-    INDICES = ("average", "slice", "contrast", "phase", "repetition", "set", "segment")
+    INDICES = ("average", "slice", "contrast", "phase", "repetition", "set")  # segments share
     READOUTS = 6
 
     def __init__(self, raw: RawData, title: str, others: int = 0, image: MRImage | None = None):
@@ -205,27 +206,43 @@ class RawPage:
         base = raw.meta.get("BaseResolution")
         return int(base) if isinstance(base, (int, float)) and base else 0
 
+    @staticmethod
+    def recon_matrix(raw: RawData) -> tuple[int, int]:
+        """The (readout, lines) matrix the file states for its reconstruction (ReconMatrixSize:
+        Bruker, ISMRMRD, GE, Philips), (0, 0) when it states none."""
+        size = raw.meta.get("ReconMatrixSize")
+        if isinstance(size, (list, tuple)) and len(size) >= 2:
+            return int(size[0]), int(size[1])
+        return 0, 0
+
     @classmethod
     def plain_image(cls, raw: RawData) -> tuple[np.ndarray, str]:
-        """The 2-D FFT of the selected slice (rows = phase-encode lines) with the echo centred
-        by center_sample in a readout of twice the matrix and the image cropped to the matrix,
-        root sum of squares over coils; and what was cropped."""
+        """The 2-D FFT of the selected slice (rows = phase-encode lines), root sum of squares
+        over coils, and what was done to the k-space: an oversampled readout (twix, ISMRMRD)
+        is centred by center_sample in twice the matrix and the image cropped to the matrix;
+        otherwise lines and readout are zero-filled to the reconstruction matrix the file
+        states (Bruker), as the vendor does."""
         k, acquired, _ = cls.select(raw)
         lines, coils, samples = k.shape
         base = cls.readout_matrix(raw)
-        full = max(samples, 2 * base) if base and base < samples else samples
+        oversampled = bool(base) and base < samples
+        full = max(samples, 2 * base) if oversampled else max(samples, cls.recon_matrix(raw)[0])
+        rows = lines if oversampled else max(lines, cls.recon_matrix(raw)[1])
         centres = raw.headers["center_sample"]
         centre = int(np.bincount(centres[centres > 0]).argmax()) if centres.any() else samples // 2
-        padded = np.zeros((lines, coils, full), dtype=np.complex64)
+        padded = np.zeros((rows, coils, full), dtype=np.complex64)
         start = max(0, min(full - samples, full // 2 - centre))
-        padded[:, :, start:start + samples] = k
+        top = (rows - lines) // 2
+        padded[top:top + lines, :, start:start + samples] = k
         image = np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(padded, axes=(0, 2)), axes=(0, 2)),
                                 axes=(0, 2))
         rss = np.sqrt((np.abs(image) ** 2).sum(axis=1))
-        if base and base < full:
+        if oversampled:
             first = full // 2 - base // 2
             return rss[:, first:first + base], f"readout cropped to {base}"
-        return rss, "readout as stored"
+        if (rows, full) != (lines, samples):
+            return rss, f"zero-filled from {lines} × {samples} to {rows} × {full}"
+        return rss, "as stored"
 
     def kspace_pane(self) -> str:
         lines, _, samples = self.k.shape

@@ -232,3 +232,21 @@ def test_imaging_kspace_reconstructs_to_the_2dseq_image(scan, raw_file):
             if orient(reconstruction).shape == slices[s].shape
         )
         assert best > 0.999, f"{scan} slice {s}: correlation {best:.4f}"
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("scan, raw_file", RAW_SCANS)
+def test_quick_look_plain_reconstruction_equals_the_2dseq_image(scan, raw_file):
+    """The raw Quick Look page's plain reconstruction (lines and readout zero-filled to the
+    stated matrix, root sum of squares) is the vendor's 2dseq image of the slice it shows."""
+    from miox.quicklook_pages import RawPage
+
+    [raw] = load(BRUKER / scan / raw_file)
+    images = load(BRUKER / scan / "pdata/1/2dseq")
+    slices = [np.abs(image.data[:, :, k]) for image in images for k in range(image.shape[2])]
+    _, _, chosen = RawPage.select(raw)
+    ours, _ = RawPage.plain_image(raw)
+    theirs = slices[chosen.get("slice", (0, 1))[0]]
+    assert ours.shape == theirs.shape
+    assert np.corrcoef(ours.T.ravel(), theirs.ravel())[0, 1] > 0.9999  # 2dseq: readout first
+
