@@ -102,6 +102,25 @@ def test_sequence_blocks_add_up_to_the_stated_duration():
     assert traces["rf"][1].max() == pytest.approx(abs(seq.events["rf"][1]["amp"]), rel=1e-6)
 
 
+def test_faces_are_filled_between_their_vertices():
+    """A square of two triangles seen face-on covers every pixel between its corners, with
+    one flat shade: no stipple, no holes."""
+    from miox.data import Provenance, Surface
+    from miox.meta import Meta
+    from miox.quicklook_pages import SurfacePage
+    from miox.sniff import Format
+
+    vertices = np.array([[0, 0, 0], [10, 0, 0], [10, 10, 0], [0, 10, 0]], dtype=float)
+    faces = np.array([[0, 1, 2], [0, 2, 3]])
+    square = Surface(vertices, faces, "test", {}, {}, Meta(),
+                     Provenance((), Format.FREESURFER_SURFACE, "test", {}), "rh.test")
+    image = SurfacePage(square, "square").render(((1, 0), (1, 1), (1, 2)))
+    inside = image[3:-3, 3:-3]
+    assert not np.isnan(inside).any()
+    assert np.ptp(inside) == pytest.approx(0, abs=1e-9)
+    assert np.isnan(image[0]).all() and np.isnan(image[:, 0]).all()
+
+
 def test_plain_image_recovers_a_box_from_its_k_space():
     """A 32 x 48 box, phase encoded along 64 lines, read out over 128 samples with twofold
     oversampling: the plain image is the box, cropped to the 64-sample matrix."""

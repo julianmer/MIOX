@@ -587,8 +587,8 @@ class TractogramPage:
 # A surface mesh from the side (lateral), the inside (medial) and above, lit from the viewer, as   #
 # FreeSurfer and nilearn show one; shaded by the curvature file beside it (binarised: sulci dark)  #
 # when there is one. A file of values only (curv, sulc, thickness) is drawn on the inflated,       #
-# white or pial surface beside it. Every vertex is drawn as a 2 x 2 splat through a depth buffer;  #
-# every header value.                                                                              #
+# white or pial surface beside it. Faces are rasterised through a depth buffer, the shade          #
+# interpolated between their vertices (Gouraud). Details lists every header value.                 #
 #                                                                                                  #
 #**************************************************************************************************#
 class SurfacePage:
@@ -644,7 +644,8 @@ class SurfacePage:
     def render(self, view: tuple) -> np.ndarray:
         """Grey levels (NaN = background) of the mesh seen along ``view`` = ((sign, axis) of
         the screen's x, of its y, and of its depth), lit from the viewer with a little from
-        above; vertices splat 2 x 2 through a depth buffer, one-pixel holes filled."""
+        above. Every face is rasterised at the pixel centres it covers, its depth and shade
+        interpolated from the vertices; the nearest face wins the pixel."""
         v, f = np.asarray(self.mesh.vertices, dtype=np.float64), np.asarray(self.mesh.faces)
         (sx, ax), (sy, ay), (sz, az) = view
         screen_x, screen_y, depth = sx * v[:, ax], sy * v[:, ay], sz * v[:, az]
@@ -662,20 +663,36 @@ class SurfacePage:
         low = np.array([screen_x.min(), screen_y.min()])
         span = max(screen_x.max() - low[0], screen_y.max() - low[1]) or 1.0
         scale = (self.SIZE - 4) / span
-        px = ((screen_x - low[0]) * scale).astype(int) + 2
-        py = (self.SIZE - 1) - (((screen_y - low[1]) * scale).astype(int) + 2)
-        order = np.argsort(depth)  # far first: the near vertex wins the pixel
-        image = np.full((self.SIZE + 1, self.SIZE + 1), np.nan)
-        for dy in (0, 1):
-            for dx in (0, 1):
-                image[py[order] + dy, px[order] + dx] = shade[order]
-        image = image[:self.SIZE, :self.SIZE]
-        padded = np.pad(image, 1, constant_values=np.nan)
-        around = np.stack([padded[1:-1, :-2], padded[1:-1, 2:], padded[:-2, 1:-1],
-                           padded[2:, 1:-1]])
-        known = np.sum(~np.isnan(around), axis=0)
-        holes = np.isnan(image) & (known >= 3)
-        image[holes] = np.nansum(around, axis=0)[holes] / known[holes]
+        px = (screen_x - low[0]) * scale + 2
+        py = (self.SIZE - 2) - (screen_y - low[1]) * scale
+        x, y = px[f], py[f]
+        area = (x[:, 1] - x[:, 0]) * (y[:, 2] - y[:, 0]) - (y[:, 1] - y[:, 0]) * (x[:, 2] - x[:, 0])
+        keep = area != 0  # faces seen edge-on cover no pixel
+        x, y, area, z, s = x[keep], y[keep], area[keep], depth[f][keep], shade[f][keep]
+        x0, y0 = np.floor(x.min(axis=1)).astype(int), np.floor(y.min(axis=1)).astype(int)
+        width = np.ceil(x.max(axis=1)).astype(int) - x0 + 1
+        height = np.ceil(y.max(axis=1)).astype(int) - y0 + 1
+        columns, rows, depths, shades = [], [], [], []
+        for dy in range(min(int(height.max()), self.SIZE)):
+            for dx in range(min(int(width.max()), self.SIZE)):
+                sel = np.nonzero((dx < width) & (dy < height))[0]
+                cx, cy = x0[sel] + dx + 0.5, y0[sel] + dy + 0.5
+                xs, ys = x[sel], y[sel]
+                w0 = (xs[:, 1] - cx) * (ys[:, 2] - cy) - (ys[:, 1] - cy) * (xs[:, 2] - cx)
+                w1 = (xs[:, 2] - cx) * (ys[:, 0] - cy) - (ys[:, 2] - cy) * (xs[:, 0] - cx)
+                weights = np.stack([w0, w1, area[sel] - w0 - w1], axis=1) / area[sel][:, None]
+                inside = np.all(weights >= -1e-9, axis=1)
+                w, i = weights[inside], sel[inside]
+                columns.append(cx[inside].astype(int))
+                rows.append(cy[inside].astype(int))
+                depths.append(np.sum(w * z[i], axis=1))
+                shades.append(np.sum(w * s[i], axis=1))
+        columns, rows, depths, shades = map(np.concatenate, (columns, rows, depths, shades))
+        order = np.argsort(depths)  # far first: the near face wins the pixel
+        columns, rows, shades = columns[order], rows[order], shades[order]
+        image = np.full((self.SIZE, self.SIZE), np.nan)
+        on = (rows >= 0) & (rows < self.SIZE) & (columns >= 0) & (columns < self.SIZE)
+        image[rows[on], columns[on]] = shades[on]
         return image
 
     def views_pane(self) -> str:
