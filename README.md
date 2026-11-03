@@ -43,6 +43,3 @@ uv sync --extra dev
 | **Simulation** | KomaMRI, JEMRIS and MRiLab phantoms; JEMRIS signals and motion; SIMPSON |
 | **NMR** | Bruker TopSpin; Varian/Agilent; JCAMP-DX; nmrML; JEOL Delta; Tecmag TNMR; NMRPipe; Sparky; Magritek Spinsolve; RS2D; RNMRTK |
 | **Transforms** | FreeSurfer LTA; ITK; AFNI; FSL FLIRT |
-
-Zip archives of any of these open as well. `docs/coverage/` lists, for every public test file,
-each vendor header field and whether it is read.
