@@ -8,7 +8,8 @@
 #                                                                                                  #
 # Purpose: Reader for NMR JCAMP-DX files (.jdx, .dx): FIDs and spectra, 1D and nD, as XYDATA,      #
 #          NTUPLES pages or XY tables, one dataset per block of a compound (LINK) file. Blocks and #
-#          pages are split and decoded (AFFN, ASDF) by nmrglue's JCAMP-DX parser.                  #
+#          pages are split and decoded by nmrglue's JCAMP-DX parser; a plain-number (AFFN) data    #
+#          table of an nD page is read through numpy, which is what makes 2D spectra fast.         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -58,6 +59,8 @@ class JcampReader(Reader):
     NUCLEUS = re.compile(r"\^?(\d+)([A-Za-z]+)|([A-Za-z]+)(\d+)")
     COMMENT = re.compile(r"\$\$.*")
     PAGE = re.compile(r"^\s*(\w+)\s*=\s*(\S+)")
+    PLAIN = re.compile(r"[\s,0-9.eE+-]*")  # the characters of an AFFN table
+    PACKED = re.compile(r"[0-9.][+-]")  # a sign right after a digit: PAC form
     KEYS = (  # (standard key, label, kind)
         ("SequenceName", ".PULSESEQUENCE", str),
         ("Solvent", ".SOLVENTNAME", str),
@@ -228,7 +231,7 @@ class JcampReader(Reader):
         factors = self._columns(block, "FACTOR")
         parts: dict[str, dict[str, np.ndarray]] = {}
         for page, table in zip(block.get("PAGE", []), block["DATATABLE"], strict=True):
-            values, part = jcampdx._parse_data(table)
+            values, part = self._table(table)
             if part in symbols and symbols.index(part) < len(factors):
                 values = values * float(factors[symbols.index(part)] or 1)
             label = self.PAGE.match(page)
@@ -237,6 +240,18 @@ class JcampReader(Reader):
         rows = [(p["R"], p.get("I")) for p in parts.values()]
         pages = [float(k) for k in parts if k]
         return rows, pages
+
+    @classmethod
+    def _table(cls, text: str) -> tuple[np.ndarray, str]:
+        """A data table's values and part (R or I) as nmrglue decodes it; a table of plain
+        numbers (AFFN, one X then the Y values per line) goes through numpy instead."""
+        header, _, body = text.partition("\n")
+        if cls.PLAIN.fullmatch(body) and not cls.PACKED.search(body):
+            rows = [np.fromstring(line.replace(",", " "), dtype=np.float64, sep=" ")
+                    for line in body.split("\n")]
+            values = np.concatenate([row[1:] for row in rows if row.size > 1])
+            return values, "I" if "I..I" in header else "R"
+        return jcampdx._parse_data(text)
 
     def _keys(self, block: dict) -> dict[str, tuple[Any, str]]:
         values = {}

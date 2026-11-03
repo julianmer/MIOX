@@ -710,12 +710,14 @@ class Page:
 # The page of an image file: three planes through the centre of the volume (axial, coronal and     #
 # sagittal, neurological - the left on the left - as FSLeyes shows them), axial slices from 15 to  #
 # 85 % of the volume, and every header value. The volume is turned to its nearest RAS axes; of     #
-# more volumes the first is shown, of complex values the magnitude, in a 0.5-99.5 % window.        #
+# more volumes the first is shown, of complex values the magnitude, in a 0.5-99.5 % window (of     #
+# every n-th voxel when the volume is large).                                                      #
 #                                                                                                  #
 #**************************************************************************************************#
 class ImagePage:
     SLICES = 18  # axial slices on the Slices tab
     PIXELS = 512  # longest side of a picture, larger images are thinned
+    SAMPLE = 2_000_000  # voxels the window is taken from, every n-th of a larger volume
 
     def __init__(self, image: MRImage, title: str, others: int = 0):
         self.image, self.title, self.notes = image, title, []
@@ -726,7 +728,9 @@ class ImagePage:
         data = np.abs(data) if np.iscomplexobj(data) else data.astype(np.float64)
         data = data.reshape(data.shape + (1,) * (3 - data.ndim))
         self.volume, self.sizes = self.ras(data, np.asarray(image.affine, dtype=np.float64))
-        finite = self.volume[np.isfinite(self.volume)]
+        step = max(1, int(np.ceil((self.volume.size / self.SAMPLE) ** (1 / 3))))
+        sample = self.volume[::step, ::step, ::step]
+        finite = sample[np.isfinite(sample)]
         self.window = (tuple(float(v) for v in np.percentile(finite, (0.5, 99.5)))
                        if finite.size else (0.0, 1.0))
         if others:

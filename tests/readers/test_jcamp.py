@@ -151,3 +151,22 @@ def test_topspin_parameter_file_is_not_jcamp_nmr(tmp_path):
     path = write(tmp_path / "acqus", "##TITLE= Parameter file, TopSpin 4.1\n##JCAMPDX= 5.0\n"
                  "##DATATYPE= Parameter Values\n##$TD= 16")
     assert miox.sniff(path).format != miox.Format.JCAMP_NMR
+
+
+def test_plain_tables_decode_through_numpy_as_nmrglue_does():
+    """An AFFN page (X then Ys per line, commas or spaces) gives nmrglue's values from the fast
+    path; a PAC page (signs as delimiters) and an SQZ page go to nmrglue."""
+    from nmrglue.fileio import jcampdx
+
+    from miox.readers.jcamp import JcampReader
+
+    affn = "(F2++(R..R)), XYDATA\n1.5 10 -20.5 3e2 .5\n2.5, 11, -21, 4E-2, 1.\n"
+    pac = "(F2++(I..I)), XYDATA\n1+10-20+30\n2+11-21+31\n"
+    sqz = "(F2++(R..R)), XYDATA\n1A0B0C0\n"
+    for text in (affn, pac, sqz):
+        ours, part = JcampReader._table(text)
+        theirs, their_part = jcampdx._parse_data(text)
+        assert part == their_part and np.array_equal(ours, theirs), text
+    assert JcampReader._table(affn)[0].tolist() == [10, -20.5, 300, 0.5, 11, -21, 0.04, 1.0]
+    assert JcampReader._table(pac)[1] == "I"
+

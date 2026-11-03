@@ -9,7 +9,7 @@
 # Purpose: The Quick Look pages of the kinds that are neither spectroscopy, image, basis set nor   #
 # fit: raw k-space, pulse sequences, physiological recordings, tractograms, surfaces, processed    #
 # NMR spectra (1-D and 2-D), raw 2-D NMR, RF pulses, transforms, phantoms, noise covariances and   #
-# protocols. Each page draws what the file holds on the conventions of the reference viewer of    #
+# protocols. Each page draws what the file holds on the conventions of the reference viewer of     #
 # its kind; the shared pieces (stacked rows, pictures, numbers) are the Panel class.               #
 #                                                                                                  #
 ####################################################################################################
@@ -135,11 +135,11 @@ class Panel:
 # Raw k-space: log|k| summed over coils (root sum of squares) of one slice (the first average,     #
 # slice, contrast, phase, repetition, set and segment, the best-filled partition), phase-encode    #
 # lines as rows and samples as columns as fastMRI and ismrmrdviewer draw it, lines not acquired    #
-# black; beside it, for formats whose plain reconstruction has been checked against a reference,  #
+# black; beside it, for formats whose plain reconstruction has been checked against a reference,   #
 # the 2-D FFT of that slice (the echo centred by center_sample, the readout cropped to its matrix, #
 # root sum of squares over coils, no parallel-imaging reconstruction), or the reconstruction the   #
 # file itself holds (fastMRI, M4Raw); every coil's log|k|; six readouts; the physiological         #
-# waveforms stored between the readouts; every header value.                                      #
+# waveforms stored between the readouts; every header value.                                       #
 #                                                                                                  #
 #**************************************************************************************************#
 class RawPage:
@@ -365,8 +365,8 @@ class RawPage:
 #**************************************************************************************************#
 #                                                                                                  #
 # A Pulseq sequence as its own plot draws it: RF magnitude (Hz), RF phase (rad) with the ADC       #
-# windows shaded, and the three gradients (kHz/m) against time, for the whole sequence and for    #
-# its start (up to past the first readout); every definition. Sequences of other formats (TOPPE)  #
+# windows shaded, and the three gradients (kHz/m) against time, for the whole sequence and for     #
+# its start (up to past the first readout); every definition. Sequences of other formats (TOPPE)   #
 # get their values only.                                                                           #
 #                                                                                                  #
 #**************************************************************************************************#
@@ -464,7 +464,7 @@ class SequencePage:
 #                                                                                                  #
 # A physiological recording as TAPAS PhysIO draws one: every channel against seconds, each on its  #
 # own scale, the events (triggers) as marks below the rows; the first 30 s on their own when the   #
-# recording is longer than a minute; every header value.                                          #
+# recording is longer than a minute; every header value.                                           #
 #                                                                                                  #
 #**************************************************************************************************#
 class PhysioPage:
@@ -522,10 +522,10 @@ class PhysioPage:
 #                                          TractogramPage                                          #
 #**************************************************************************************************#
 #                                                                                                  #
-# A tractogram projected on the axial, coronal and sagittal planes, every streamline (20000 at    #
+# A tractogram projected on the axial, coronal and sagittal planes, every streamline (20000 at     #
 # most, evenly picked), coloured by its local direction as mrview and DSI Studio colour one (red   #
 # left-right, green front-back, blue foot-head), brighter where more streamlines pass, the left    #
-# on the left; every header value.                                                                #
+# on the left; every header value.                                                                 #
 #                                                                                                  #
 #**************************************************************************************************#
 class TractogramPage:
@@ -772,15 +772,17 @@ class SurfacePage:
 #                                           SpectrumPage                                           #
 #**************************************************************************************************#
 #                                                                                                  #
-# A processed spectrum stored as such (TopSpin 1r/2rr, Sparky, NMRPipe ft): the first point is    #
-# the highest shift, as those programs store it. 1-D: the real part as stored on its ppm axis,    #
-# falling to the right. 2-D: contours as Sparky and TopSpin draw them, 20 levels from six times   #
+# A processed spectrum stored as such (TopSpin 1r/2rr, Sparky, NMRPipe ft): the first point is     #
+# the highest shift, as those programs store it. 1-D: the real part as stored on its ppm axis,     #
+# falling to the right. 2-D: contours as Sparky and TopSpin draw them, 20 levels from six times    #
 # the noise (robust SD) rising by 1.2, negative levels red, both ppm axes falling to the right     #
-# and the top. Every header value.                                                                 #
+# and the top; the lowest level is doubled until the contours hold at most MOST points, so a       #
+# spectrum full of artefacts still gives a page of a sane size. Every header value.                #
 #                                                                                                  #
 #**************************************************************************************************#
 class SpectrumPage:
     LEVELS, FIRST, STEP = 20, 6.0, 1.2
+    MOST = 300_000  # contour points a page may hold
     HEIGHT = 520
 
     def __init__(self, image: MRImage, title: str, others: int = 0):
@@ -835,15 +837,22 @@ class SpectrumPage:
         x, y = self.axes()
         z = np.real(self.data).reshape(x.size, y.size).T  # (indirect rows, direct columns)
         noise = 1.4826 * float(np.median(np.abs(z - np.median(z)))) or 1.0
-        levels = self.FIRST * noise * self.STEP ** np.arange(self.LEVELS)
         generator = contourpy.contour_generator(x=x, y=y, z=z)
+        first = self.FIRST
+        while True:
+            levels = first * noise * self.STEP ** np.arange(self.LEVELS)
+            contours = {float(v): generator.lines(v) for v in np.concatenate([levels, -levels])}
+            total = sum(len(line) for lines in contours.values() for line in lines)
+            if total <= self.MOST or first >= self.FIRST * 2 ** 12:
+                break
+            first *= 2
         xlim, ylim = (float(x.max()), float(x.min())), (float(y.max()), float(y.min()))
         height = self.HEIGHT
 
         def paths(values, kind):
             lines = []
             for level in values:
-                for line in generator.lines(level):
+                for line in contours[float(level)]:
                     px = (xlim[0] - line[:, 0]) / (xlim[0] - xlim[1]) * WIDTH
                     py = (line[:, 1] - ylim[1]) / (ylim[0] - ylim[1]) * height
                     lines.append('<polyline points="' + " ".join(
@@ -861,8 +870,10 @@ class SpectrumPage:
         return (f'<svg viewBox="0 0 {WIDTH} {height + 30}" class="plot">'
                 f'{paths(levels, "data")}{paths(-levels, "neg")}{ticks}'
                 f'{Plot.axis(xlim, self.unit, WIDTH, height + 4)}</svg>'
-                f"<div class=note>{self.LEVELS} contour levels from {self.FIRST:g} × noise "
-                f"(robust SD {noise:.3g}) rising by {self.STEP}, negative in red; "
+                f"<div class=note>{self.LEVELS} contour levels from {first:g} × noise "
+                f"(robust SD {noise:.3g}) rising by {self.STEP}, negative in red"
+                + (f", the lowest level raised {first / self.FIRST:g} times so the page holds "
+                   f"at most {self.MOST} contour points" if first != self.FIRST else "") + "; "
                 f"{nuclei[0]} across, {nuclei[1] if len(nuclei) > 1 else ''} up, both "
                 f"{self.unit} axes falling to the right and the top as Sparky and TopSpin draw "
                 f"them.{self.reduced()}</div>")
