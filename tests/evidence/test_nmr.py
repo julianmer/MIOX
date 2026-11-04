@@ -16,13 +16,14 @@
 #          of them, a Tecmag file against TNMR's own text export of it, Oxford Instruments and Q   #
 #          Magnetics JCAMP-DX FIDs against the line patterns of their compounds, TopSpin zip       #
 #          exports against their unpacked copies, NMRPipe FIDs against the Varian FIDs they were   #
-#          converted from and against NMRPipe's own processing of them, a Sparky 15N-HSQC against #
+#          converted from and against NMRPipe's own processing of them, a Sparky 15N-HSQC against  #
 #          the amide shifts assigned in its BMRB entry, SIMPSON output against the spin system it  #
-#          simulates and against SIMPSON's own transform, Spinsolve FIDs against their JCAMP-DX   #
+#          simulates and against SIMPSON's own transform, Spinsolve FIDs against their JCAMP-DX    #
 #          exports, Spinsolve's own spectrum and the carbonyl shift of urea, RS2D FIDs against     #
 #          the vendor's processed spectra, RNMRTK conversions against the Bruker FIDs they were    #
 #          written from, a processed TopSpin HSQC against ibuprofen's (1H, 13C) pairs, CSDM        #
-#          spectra against the SIMPSON scripts of their simulations.                               #
+#          spectra against the SIMPSON scripts of their simulations, and the Quick Look 2-D        #
+#          spectra of TopSpin ser files against TopSpin's own 2rr of the same experiments.         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -703,3 +704,63 @@ def test_csdm_axes_are_those_of_the_simpson_simulation(test):
     assert image.meta["SpectralWidth"] == pytest.approx(1e6 / value["dw2"])
     assert image.meta["IndirectSpectralWidth"] == [pytest.approx(1e6 / value["dw1"])]
     assert "SpectrometerFrequency" not in image.meta  # the files state no origin offset
+
+
+# --- raw 2-D TopSpin experiments against their 2rr ------------------------------------------------
+TWO_D = [  # uniformly sampled 2-D experiments with TopSpin's own 2rr beside them
+    BRUKER / "zipped/cyclosporin/cyclosporin_cosy/cyclosporin_cosy/1",  # COSY, QF
+    BRUKER / "zipped/cyclosporin/cyclosporin_hmbc/cyclosporin_hmbc/2",  # HMBC, QF
+    BRUKER / "zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3",  # HSQC, echo-antiecho
+]
+
+
+def _peaks(z: np.ndarray, n: int = 8, apart: int = 6) -> list[tuple[int, int]]:
+    """The ``n`` tallest points of ``z`` at least ``apart`` points from each other."""
+    z, found = z.copy(), []
+    for _ in range(n):
+        i, j = np.unravel_index(int(np.argmax(z)), z.shape)
+        found.append((int(i), int(j)))
+        z[max(0, i - apart):i + apart + 1, max(0, j - apart):j + apart + 1] = 0
+    return found
+
+
+def _hits(ours: np.ndarray, theirs: np.ndarray) -> int:
+    """How many of theirs' eight tallest peaks ours has within two points."""
+    hits = 0
+    for i, j in _peaks(theirs):
+        window = ours[max(0, i - 4):i + 5, max(0, j - 4):j + 5]
+        k, m = np.unravel_index(int(np.argmax(window)), window.shape)
+        near = abs(k + max(0, i - 4) - i) <= 2 and abs(m + max(0, j - 4) - j) <= 2
+        hits += near and window.max() > 0.2 * ours.max()
+    return hits
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("folder", TWO_D, ids=[f.parent.name[-4:] for f in TWO_D])
+def test_raw_2d_spectrum_lies_on_topspins_2rr(folder):
+    """The Quick Look 2-D spectrum of the ser (QF rows, or the first row of each echo-antiecho
+    pair, transformed along t2, the t1 series conjugated and transformed the same way,
+    magnitude) has TopSpin's eight tallest 2rr peaks within two points on the 2rr grid, on
+    axes that equal the 2rr's; the mirror image along F1 has fewer than half of them. The
+    reader's IndirectSpectralWidth and IndirectReferencePPM thereby equal proc2s."""
+    from miox.quicklook_pages import RowsPage, SpectrumPage
+
+    if not (folder / "ser").is_file():
+        pytest.skip("Bruker test data not fetched")
+    ser = next(d for d in load(folder / "ser") if isinstance(d, MRSData))
+    [rr] = load(folder / "pdata/1/2rr")
+    theirs = np.abs(np.asarray(rr.data)[0, 0, 0])  # (f2, f1), both falling
+    theirs = theirs[..., 0] if "component" in rr.dims else theirs
+    n2, n1 = theirs.shape
+    page = RowsPage(ser, "")
+    fids = page.fids()
+    full2 = max(n2, fids.shape[1]) if n2 < fids.shape[1] else n2
+    x, y, z = page.spectrum_2d((full2, n1))  # (f2, f1), both rising
+    x, z = x[::full2 // n2], z[::full2 // n2]  # TopSpin keeps SI points of a longer FID
+    ours = z[::-1, ::-1]  # falling like the 2rr
+    axes = SpectrumPage(rr, "").axes()  # the same within half a point of each axis
+    assert np.allclose(x[::-1], axes[0], atol=0.5 * abs(axes[0][1] - axes[0][0]))
+    assert np.allclose(y[::-1], axes[1], atol=0.5 * abs(axes[1][1] - axes[1][0]))
+    assert _hits(ours, theirs) == 8
+    assert _hits(ours[:, ::-1], theirs) < 4
+

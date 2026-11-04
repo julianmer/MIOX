@@ -126,6 +126,7 @@ class TopSpinReader(Reader):
             raise ReaderError(f"{folder}: {data.ndim - 3} dimensions, NIfTI-MRS holds at most 4")
         values = self._acquisition(dic, acqus, data.ndim - 3)
         values.update(self._reference(folder, direct))
+        values.update(self._indirect(folder, acqus[1:data.ndim - 3]))
         delay = self._group_delay(direct)
         if delay:
             values["GroupDelay"] = delay
@@ -176,6 +177,31 @@ class TopSpinReader(Reader):
             frequency, field = float(direct["BF1"]), "acqus/BF1"
         shift = (float(direct["SFO1"]) - frequency) / frequency * 1e6
         return {"ReferencePPM": (shift, f"(acqus/SFO1 - {field}) / {field} * 1e6")}
+
+    def _indirect(self, folder: Path, parameters: list[dict]) -> dict[str, tuple]:
+        """IndirectSpectralWidth (acqu2s, ... SW in ppm times SFO1, which is the width TopSpin
+        processes; its SW_h is not) and IndirectReferencePPM (the shift at each carrier on the
+        axis of the first processing, proc2s, ... SF, else BF1) of the indirect dimensions."""
+        if not parameters:
+            return {}
+        if not all("SW" in a and "SFO1" in a for a in parameters):
+            return {}
+        widths, shifts, fields = [], [], []
+        for n, a in enumerate(parameters, start=2):
+            procs = folder / "pdata" / "1" / f"proc{n}s"
+            if procs.is_file():
+                frequency = float(ng.bruker.read_jcamp(str(procs))["SF"])
+                fields.append(f"pdata/1/proc{n}s/SF")
+            else:
+                frequency = float(a.get("BF1") or a["SFO1"])
+                fields.append(f"acqu{n}s/BF1" if a.get("BF1") else f"acqu{n}s/SFO1")
+            widths.append(float(a["SW"]) * float(a["SFO1"]))
+            shifts.append((float(a["SFO1"]) - frequency) / frequency * 1e6)
+        return {
+            "IndirectSpectralWidth": (widths, "acqu2s, ...: SW * SFO1"),
+            "IndirectReferencePPM": (shifts, "(acqu2s, ... SFO1 - SF) / SF * 1e6, SF of "
+                                     + ", ".join(fields)),
+        }
 
     @staticmethod
     def _group_delay(direct: dict) -> tuple[float, str] | None:

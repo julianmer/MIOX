@@ -55,7 +55,11 @@ SAMPLES = [  # file, the tabs of its page
     ("bmrb/18465/o157_nhsqcv6.ucsf", ["Spectrum", "Details"]),
     ("bruker_data_test/data/flat/coffee/UV1010_M1-1003-1002_6268756_ErISKLIoeB/11/pdata/1/1r",
      ["Spectrum", "Details"]),
-    ("nmrglue/bruker_2d/ser", ["Rows", "Details"]),
+    ("nmrglue/bruker_2d/ser", ["Rows", "Details"]),  # FnMODE undefined: rows only
+    ("bruker_data_test/data/zipped/cyclosporin/cyclosporin_cosy/cyclosporin_cosy/1/ser",
+     ["Rows", "2-D", "Details"]),
+    ("bruker_data_test/data/zipped/cyclosporin/inversionRecovery2D/inversionRecovery2D/1/ser",
+     ["Rows", "Details"]),  # a varied delay list: no second frequency axis
     ("spant/inst/extdata/press_refocus.pta", ["Pulse", "Details"]),
     ("nitransforms/nitransforms/tests/data/affine-LAS.itk.tfm", ["Matrix", "Details"]),
     ("komamri/examples/2.phantoms/brain.h5", ["Maps", "Details"]),

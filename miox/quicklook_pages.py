@@ -769,6 +769,55 @@ class SurfacePage:
         return int(np.max(mesh.faces)) < len(mesh.vertices)
 
 
+def contours(x: np.ndarray, y: np.ndarray, z: np.ndarray, unit: str, nuclei: list,
+             extra: str = "") -> str:
+    """A 2-D spectrum ``z`` (rows along ``y``, columns along ``x``) as contours the way Sparky
+    and TopSpin draw them: LEVELS levels from FIRST times the noise (robust SD) rising by STEP,
+    negative levels in red, both axes falling to the right and the top; the lowest level is
+    doubled until the contours hold at most MOST points."""
+    import contourpy
+
+    noise = 1.4826 * float(np.median(np.abs(z - np.median(z)))) or 1.0
+    generator = contourpy.contour_generator(x=x, y=y, z=z)
+    first = SpectrumPage.FIRST
+    while True:
+        levels = first * noise * SpectrumPage.STEP ** np.arange(SpectrumPage.LEVELS)
+        lines = {float(v): generator.lines(v) for v in np.concatenate([levels, -levels])}
+        total = sum(len(line) for found in lines.values() for line in found)
+        if total <= SpectrumPage.MOST or first >= SpectrumPage.FIRST * 2 ** 12:
+            break
+        first *= 2
+    xlim, ylim = (float(x.max()), float(x.min())), (float(y.max()), float(y.min()))
+    height = SpectrumPage.HEIGHT
+
+    def paths(values, kind):
+        out = []
+        for level in values:
+            for line in lines[float(level)]:
+                px = (xlim[0] - line[:, 0]) / (xlim[0] - xlim[1]) * WIDTH
+                py = (line[:, 1] - ylim[1]) / (ylim[0] - ylim[1]) * height
+                out.append('<polyline points="' + " ".join(
+                    f"{a:.1f},{b:.1f}" for a, b in zip(px, py, strict=True)) + '"/>')
+        return f'<g class="{kind}">{"".join(out)}</g>'
+
+    span = ylim[0] - ylim[1]
+    steps = (m * 10.0 ** e for e in range(-3, 12) for m in (1, 2, 5))
+    step = next(s for s in steps if span / s <= 8)
+    ticks = "".join(f'<text x="{WIDTH}" y="{(t - ylim[1]) / span * height + 4:.1f}" '
+                    f'text-anchor="end">{t:g}</text>'
+                    for t in np.arange(np.ceil(ylim[1] / step) * step, ylim[0] + 1e-9, step))
+    raised = (f", the lowest level raised {first / SpectrumPage.FIRST:g} times so the page "
+              f"holds at most {SpectrumPage.MOST} contour points" if first != SpectrumPage.FIRST
+              else "")
+    return (f'<svg viewBox="0 0 {WIDTH} {height + 30}" class="plot">'
+            f'{paths(levels, "data")}{paths(-levels, "neg")}{ticks}'
+            f'{Plot.axis(xlim, unit, WIDTH, height + 4)}</svg>'
+            f"<div class=note>{SpectrumPage.LEVELS} contour levels from {first:g} × noise "
+            f"(robust SD {noise:.3g}) rising by {SpectrumPage.STEP}, negative in red{raised}; "
+            f"{nuclei[0]} across, {nuclei[1] if len(nuclei) > 1 else ''} up, both {unit} axes "
+            f"falling to the right and the top as Sparky and TopSpin draw them.{extra}</div>")
+
+
 #**************************************************************************************************#
 #                                           SpectrumPage                                           #
 #**************************************************************************************************#
@@ -833,51 +882,11 @@ class SpectrumPage:
                 f"{self.reduced()}</div>")
 
     def two_d_pane(self) -> str:
-        import contourpy
-
         x, y = self.axes()
         z = np.real(self.data).reshape(x.size, y.size).T  # (indirect rows, direct columns)
-        noise = 1.4826 * float(np.median(np.abs(z - np.median(z)))) or 1.0
-        generator = contourpy.contour_generator(x=x, y=y, z=z)
-        first = self.FIRST
-        while True:
-            levels = first * noise * self.STEP ** np.arange(self.LEVELS)
-            contours = {float(v): generator.lines(v) for v in np.concatenate([levels, -levels])}
-            total = sum(len(line) for lines in contours.values() for line in lines)
-            if total <= self.MOST or first >= self.FIRST * 2 ** 12:
-                break
-            first *= 2
-        xlim, ylim = (float(x.max()), float(x.min())), (float(y.max()), float(y.min()))
-        height = self.HEIGHT
-
-        def paths(values, kind):
-            lines = []
-            for level in values:
-                for line in contours[float(level)]:
-                    px = (xlim[0] - line[:, 0]) / (xlim[0] - xlim[1]) * WIDTH
-                    py = (line[:, 1] - ylim[1]) / (ylim[0] - ylim[1]) * height
-                    lines.append('<polyline points="' + " ".join(
-                        f"{a:.1f},{b:.1f}" for a, b in zip(px, py, strict=True)) + '"/>')
-            return f'<g class="{kind}">{"".join(lines)}</g>'
-
-        span = ylim[0] - ylim[1]
-        steps = (m * 10.0 ** e for e in range(-3, 12) for m in (1, 2, 5))
-        step = next(s for s in steps if span / s <= 8)
-        ticks = "".join(f'<text x="{WIDTH}" y="{(t - ylim[1]) / span * height + 4:.1f}" '
-                        f'text-anchor="end">{t:g}</text>'
-                        for t in np.arange(np.ceil(ylim[1] / step) * step, ylim[0] + 1e-9, step))
         nuclei = self.image.meta.get("ResonantNucleus", ["", ""])
         nuclei = list(nuclei) if isinstance(nuclei, (list, tuple)) else [nuclei, ""]
-        return (f'<svg viewBox="0 0 {WIDTH} {height + 30}" class="plot">'
-                f'{paths(levels, "data")}{paths(-levels, "neg")}{ticks}'
-                f'{Plot.axis(xlim, self.unit, WIDTH, height + 4)}</svg>'
-                f"<div class=note>{self.LEVELS} contour levels from {first:g} × noise "
-                f"(robust SD {noise:.3g}) rising by {self.STEP}, negative in red"
-                + (f", the lowest level raised {first / self.FIRST:g} times so the page holds "
-                   f"at most {self.MOST} contour points" if first != self.FIRST else "") + "; "
-                f"{nuclei[0]} across, {nuclei[1] if len(nuclei) > 1 else ''} up, both "
-                f"{self.unit} axes falling to the right and the top as Sparky and TopSpin draw "
-                f"them.{self.reduced()}</div>")
+        return contours(x, y, z, self.unit, nuclei, self.reduced())
 
     def reduced(self) -> str:
         """What the page leaves out of a file with components or further indirect dimensions."""
@@ -919,26 +928,83 @@ class SpectrumPage:
 #**************************************************************************************************#
 class RowsPage:
     RATIO = 1.6  # width over height of the raster
+    MODES = {1: "QF", 6: "echo-antiecho"}  # acqu2s FnMODE values the 2-D tab transforms
+    LISTS = ("VDLIST", "VCLIST", "VPLIST")  # a named one varies a delay, counter or power
 
     def __init__(self, d: MRSData, title: str):
         self.d, self.title = d, title
 
+    @staticmethod
+    def transform(fids: np.ndarray, n: int) -> np.ndarray:
+        """The spectra of the rows of ``fids`` (rows, t), zero-filled to ``n`` points."""
+        padded = np.zeros((fids.shape[0], n), dtype=np.complex128)
+        padded[:, :fids.shape[1]] = fids
+        return np.asarray(Spectral.fid_to_spec(padded))
+
+    def fids(self) -> np.ndarray:
+        """The stored FIDs as (rows, t) in FSL-MRS's orientation (the conjugate)."""
+        data = np.asarray(self.d.data)[0, 0, 0]  # (t, increments, ...)
+        return np.conj(data.reshape(data.shape[0], -1).T)
+
+    def why_not(self) -> str | None:
+        """Why the file gets no 2-D tab: the transform is checked against TopSpin's 2rr for
+        uniformly sampled QF and echo-antiecho experiments whose second dimension is a time."""
+        vendor = self.d.meta.vendor if isinstance(self.d.meta.vendor, dict) else {}
+        if self.d.provenance.format != Format.TOPSPIN or "acqu2s" not in vendor:
+            return "the 2-D transform is checked for TopSpin files only"
+        acqus, acqu2s = vendor.get("acqus", {}), vendor["acqu2s"]
+        if int(acqus.get("FnTYPE") or 0) == 2:
+            return "non-uniformly sampled (FnTYPE 2): TopSpin reconstructs the second dimension"
+        for name in self.LISTS:
+            text = str(acqus.get(name, "")).strip("<> ")
+            if text and len(set(text)) > 1:  # Bruker's placeholder is one letter repeated
+                return f"{name} {text}: a varied list, not a time dimension"
+        mode = int(acqu2s.get("FnMODE") or 0)
+        if mode not in self.MODES:
+            return f"FnMODE {mode}: only QF (1) and echo-antiecho (6) are transformed"
+        return None
+
+    def spectrum_2d(self, sizes: tuple[int, int] | None = None) -> tuple:
+        """The magnitude 2-D spectrum (direct f2, indirect f1) and its ppm axes, both rising:
+        QF rows (echo-antiecho: the first row of each pair) transformed along t2, the t1
+        series of every column conjugated and transformed the same way, zero-filled to
+        ``sizes`` = (n2, n1), by default twice the points. Checked against TopSpin's 2rr."""
+        d, fids = self.d, self.fids()
+        mode = int(self.d.meta.vendor["acqu2s"].get("FnMODE") or 0)
+        if mode == 6:
+            fids = fids[0::2]
+        n2, n1 = sizes or (2 * fids.shape[1], 2 * fids.shape[0])
+        f2 = self.transform(fids, n2)  # (rows, f2)
+        z = np.abs(self.transform(np.conj(f2.T), n1))  # (f2, f1)
+        f0 = d.meta["SpectrometerFrequency"]
+        x = Spectral.ppm_axis(n2, 1.0 / d.dwelltime, f0[0], float(d.meta.get("ReferencePPM", 0)))
+        y = Spectral.ppm_axis(n1, d.meta["IndirectSpectralWidth"][0], f0[1],
+                              float(d.meta["IndirectReferencePPM"][0]))
+        return x, y, z
+
+    def two_d_pane(self) -> str:
+        x, y, z = self.spectrum_2d()
+        mode = self.MODES[int(self.d.meta.vendor["acqu2s"].get("FnMODE") or 0)]
+        nuclei = self.d.meta.get("ResonantNucleus", ["", ""])
+        return contours(x, y, z.T, "ppm", list(nuclei), f" Magnitude of the plain transform of "
+                        f"the {mode} data, zero-filled twice, no window: TopSpin's 2rr is phased "
+                        "and apodised, and may be tilted or symmetrised.")
+
     def rows_pane(self) -> str:
         d = self.d
-        data = np.asarray(d.data)[0, 0, 0]  # (t, increments, ...)
-        fids = np.conj(data.reshape(data.shape[0], -1).T)  # (rows, t), FSL-MRS's orientation
-        spectra = np.abs(Spectral.fid_to_spec(fids))
+        spectra = np.abs(Spectral.fid_to_spec(self.fids()))
         x = Spectral.ppm_axis(spectra.shape[1], 1.0 / d.dwelltime, d.spectrometer_frequency,
                               float(d.meta.get("ReferencePPM", 0.0)))
         raster = Panel.grey(spectra[:, ::-1])  # high shift at the left
         xlim = (float(x.max()), float(x.min()))
+        why = self.why_not()
         return (Panel.picture(raster, "every increment: magnitude spectrum of its FID, high "
                               "shift left", f"{spectra.shape[0]} rows", self.RATIO)
                 + f'<svg viewBox="0 0 {WIDTH} 30" class="plot">{Plot.axis(xlim, "ppm", WIDTH, 4)}'
                 "</svg><div class=note>The direct dimension Fourier transformed row by row "
                 "(magnitude, nothing else); the indirect dimension as acquired, one row per "
-                "increment, top to bottom. No quadrature recombination: this is the file, not "
-                "the 2-D spectrum.</div>")
+                "increment, top to bottom."
+                + (f" No 2-D spectrum: {why}.</div>" if why else "</div>"))
 
     def facts(self) -> str:
         d = self.d
@@ -949,8 +1015,11 @@ class RowsPage:
                                       Panel.format(d)] if f)
 
     def html(self) -> str:
-        return document(self.title, self.facts(),
-                        [("Rows", self.rows_pane()), ("Details", details(self.d.meta))])
+        tabs = [("Rows", self.rows_pane())]
+        if self.why_not() is None:
+            tabs.append(("2-D", self.two_d_pane()))
+        tabs.append(("Details", details(self.d.meta)))
+        return document(self.title, self.facts(), tabs)
 
 
 #**************************************************************************************************#
