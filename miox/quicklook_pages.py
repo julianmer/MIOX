@@ -162,19 +162,21 @@ class RawPage:
         self.rss = np.sqrt((self.magnitude ** 2).sum(axis=1))
 
     @classmethod
-    def select(cls, raw: RawData) -> tuple[np.ndarray, np.ndarray, dict]:
+    def select(cls, raw: RawData, pick: dict | None = None) -> tuple[np.ndarray, np.ndarray, dict]:
         """The k-space (lines, coils, samples) of one slice, which lines it holds, and which
-        index of every counter with several values was taken."""
+        index of every counter with several values was taken: the first (the most populated
+        partition), or the one ``pick`` names for it."""
         idx = raw.headers["idx"]
+        pick = pick or {}
         selected = np.ones(len(idx), dtype=bool)
         chosen = {}
         for name in cls.INDICES:
-            first = int(idx[name][selected][0])
-            selected &= idx[name] == first
+            value = int(pick.get(name, idx[name][selected][0]))
+            selected &= idx[name] == value
             if len(np.unique(idx[name])) > 1:
-                chosen[name] = (first, len(np.unique(idx[name])))
+                chosen[name] = (value, len(np.unique(idx[name])))
         partitions, counts = np.unique(idx["kspace_encode_step_2"][selected], return_counts=True)
-        partition = int(partitions[np.argmax(counts)])
+        partition = int(pick.get("partition", partitions[np.argmax(counts)]))
         if len(partitions) > 1:
             chosen["partition"] = (partition, len(partitions))
         selected &= idx["kspace_encode_step_2"] == partition
@@ -218,13 +220,13 @@ class RawPage:
         return 0, 0
 
     @classmethod
-    def plain_image(cls, raw: RawData) -> tuple[np.ndarray, str]:
+    def plain_image(cls, raw: RawData, pick: dict | None = None) -> tuple[np.ndarray, str]:
         """The 2-D FFT of the selected slice (rows = phase-encode lines), root sum of squares
         over coils, and what was done to the k-space: an oversampled readout (twix, ISMRMRD)
         is centred by center_sample in twice the matrix and the image cropped to the matrix;
         otherwise lines and readout are zero-filled to the reconstruction matrix the file
         states (Bruker), as the vendor does."""
-        k, acquired, _ = cls.select(raw)
+        k, acquired, _ = cls.select(raw, pick)
         lines, coils, samples = k.shape
         base = cls.readout_matrix(raw)
         oversampled = bool(base) and base < samples
@@ -549,7 +551,14 @@ class TractogramPage:
         colour = np.abs(direction) / np.maximum(length, 1e-9)[:, None]
         return start, direction, colour
 
+    VIEWS = (("axial", 0, 1, ("L", "R"), "from above"), ("coronal", 0, 2, ("L", "R"),
+             "from the front"), ("sagittal", 1, 2, ("P", "A"), "from the left"))
+
     def view(self, across: int, up: int) -> str:
+        return Plot.png(np.round(self.picture(across, up) * 255))
+
+    def picture(self, across: int, up: int) -> np.ndarray:
+        """The projection on the plane (across, up) as RGB in 0-1 (rows top to bottom)."""
         start, direction, colour = self.segments()
         points = np.asarray(self.tract.points, dtype=np.float64)
         low, size = points.min(axis=0), np.ptp(points, axis=0)
@@ -569,13 +578,11 @@ class TractogramPage:
         mean = image / np.maximum(count, 1)[..., None]
         busy = float(np.percentile(count[count > 0], 75)) if (count > 0).any() else 1.0
         bright = np.sqrt(np.minimum(1.0, count / max(busy, 1.0)))
-        return Plot.png(np.round(mean * bright[..., None] * 255))
+        return mean * bright[..., None]
 
     def views_pane(self) -> str:
-        views = (("axial", 0, 1, ("L", "R"), "from above"), ("coronal", 0, 2, ("L", "R"),
-                 "from the front"), ("sagittal", 1, 2, ("P", "A"), "from the left"))
         figures = "".join(Panel.picture(self.view(a, u), name, how, sides=sides)
-                          for name, a, u, sides, how in views)
+                          for name, a, u, sides, how in self.VIEWS)
         n = self.tract.n_streamlines
         drawn = "" if n <= self.MOST else f" ({self.MOST} of {n})"
         return (f"<div class=views>{figures}</div><div class=note>Every streamline{drawn} "
@@ -690,6 +697,8 @@ class SurfacePage:
         x, y = px[f], py[f]
         area = (x[:, 1] - x[:, 0]) * (y[:, 2] - y[:, 0]) - (y[:, 1] - y[:, 0]) * (x[:, 2] - x[:, 0])
         keep = area != 0  # faces seen edge-on cover no pixel
+        if not keep.any():
+            return np.full((self.SIZE, self.SIZE), np.nan)
         x, y, area, z, s = x[keep], y[keep], area[keep], depth[f][keep], shade[f][keep]
         x0, y0 = np.floor(x.min(axis=1)).astype(int), np.floor(y.min(axis=1)).astype(int)
         width = np.ceil(x.max(axis=1)).astype(int) - x0 + 1
@@ -726,13 +735,16 @@ class SurfacePage:
         image[rows[on], columns[on]] = shades[on]
         return image
 
-    def views_pane(self) -> str:
+    def views(self) -> tuple:
+        """(name, view) of the lateral, medial and top views of this hemisphere."""
         outward = -1 if self.left else 1  # the lateral side of a left hemisphere faces -x
-        views = (("lateral", ((outward, 1), (1, 2), (outward, 0))),
-                 ("medial", ((-outward, 1), (1, 2), (-outward, 0))),
-                 ("from above", ((1, 0), (1, 1), (1, 2))))
+        return (("lateral", ((outward, 1), (1, 2), (outward, 0))),
+                ("medial", ((-outward, 1), (1, 2), (-outward, 0))),
+                ("from above", ((1, 0), (1, 1), (1, 2))))
+
+    def views_pane(self) -> str:
         figures = []
-        for name, view in views:
+        for name, view in self.views():
             image = self.render(view)
             picture = Plot.grey(np.where(np.isnan(image), 1.0, image), (0.0, 1.0))
             figures.append(Panel.picture(picture, name, cls="mesh"))
@@ -777,11 +789,11 @@ def contours(x: np.ndarray, y: np.ndarray, z: np.ndarray, unit: str, nuclei: lis
     doubled until the contours hold at most MOST points."""
     import contourpy
 
-    noise = 1.4826 * float(np.median(np.abs(z - np.median(z)))) or 1.0
+    noise = SpectrumPage.noise(z)
     generator = contourpy.contour_generator(x=x, y=y, z=z)
     first = SpectrumPage.FIRST
     while True:
-        levels = first * noise * SpectrumPage.STEP ** np.arange(SpectrumPage.LEVELS)
+        levels = SpectrumPage.levels(noise, first)
         lines = {float(v): generator.lines(v) for v in np.concatenate([levels, -levels])}
         total = sum(len(line) for found in lines.values() for line in found)
         if total <= SpectrumPage.MOST or first >= SpectrumPage.FIRST * 2 ** 12:
@@ -834,6 +846,16 @@ class SpectrumPage:
     LEVELS, FIRST, STEP = 20, 6.0, 1.2
     MOST = 300_000  # contour points a page may hold
     HEIGHT = 520
+
+    @staticmethod
+    def noise(z: np.ndarray) -> float:
+        """The robust standard deviation of ``z`` (1.4826 times the median absolute deviation)."""
+        return 1.4826 * float(np.median(np.abs(z - np.median(z)))) or 1.0
+
+    @classmethod
+    def levels(cls, noise: float, first: float | None = None) -> np.ndarray:
+        """LEVELS contour levels from ``first`` (FIRST) times the noise, rising by STEP."""
+        return (cls.FIRST if first is None else first) * noise * cls.STEP ** np.arange(cls.LEVELS)
 
     def __init__(self, image: MRImage, title: str, others: int = 0):
         self.image, self.title, self.others = image, title, others
@@ -1086,27 +1108,40 @@ class PhantomPage:
     def __init__(self, phantom: Phantom, title: str):
         self.phantom, self.title = phantom, title
 
-    def maps_pane(self) -> str:
+    @property
+    def gridded(self) -> bool:
+        return (self.phantom.grid or {}).get("indices") is not None
+
+    def maps(self, k: int | None = None) -> tuple[int, list[tuple]]:
+        """The slice ``k`` (the one with most spins when None) of the grid: (k, [(name, unit,
+        picture (rows = y, columns = x, NaN off the grid), window 0.5-99.5 %)]) of every scalar
+        property; tensors (conductivity) have no map."""
         ph = self.phantom
-        grid = ph.grid or {}
-        if grid.get("indices") is None:
-            return ("<div class=empty>The phantom states no grid: its spins are listed in "
-                    "Details.</div>")
-        shape, index = grid["shape"], np.asarray(grid["indices"])
-        slices = np.bincount(index[:, 2])
-        k = int(np.argmax(slices))
+        shape, index = ph.grid["shape"], np.asarray(ph.grid["indices"])
+        if k is None:
+            k = int(np.argmax(np.bincount(index[:, 2])))
         inside = index[:, 2] == k
-        figures = []
+        maps = []
         for name, values in ph.properties.items():
-            if np.asarray(values).ndim != 1:  # tensors (conductivity) have no map
+            if np.asarray(values).ndim != 1:
                 continue
             picture = np.full((shape[1], shape[0]), np.nan)
             picture[index[inside, 1], index[inside, 0]] = np.asarray(values)[inside]
             finite = picture[np.isfinite(picture)]
             window = ((float(np.percentile(finite, 0.5)), float(np.percentile(finite, 99.5)))
                       if finite.size else (0.0, 1.0))
+            maps.append((name, ph.units.get(name, ""), picture, window))
+        return k, maps
+
+    def maps_pane(self) -> str:
+        if not self.gridded:
+            return ("<div class=empty>The phantom states no grid: its spins are listed in "
+                    "Details.</div>")
+        shape = self.phantom.grid["shape"]
+        k, maps = self.maps()
+        figures = []
+        for name, unit, picture, window in maps:
             filled = np.where(np.isnan(picture), window[0], picture)[::-1]
-            unit = ph.units.get(name, "")
             figures.append(Panel.picture(Plot.grey(filled, window), f"{name} {unit}".strip(),
                                          f"{window[0]:.3g} – {window[1]:.3g}",
                                          shape[0] / shape[1]))
@@ -1156,10 +1191,15 @@ class PriorPage:
         self.prior, self.title, self.others = prior, title, others
         self.key = "area" if any("area" in line for line in prior.lines) else "amplitude"
 
-    def sticks(self) -> str:
+    def values(self) -> tuple[list[dict], np.ndarray, np.ndarray]:
+        """The lines with a shift, their shifts and the magnitude of their area or amplitude."""
         lines = [line for line in self.prior.lines if line.get("ppm") is not None]
         ppm = np.array([float(line["ppm"]) for line in lines])
         size = np.abs(np.array([float(line.get(self.key) or 0.0) for line in lines]))
+        return lines, ppm, size
+
+    def sticks(self) -> str:
+        lines, ppm, size = self.values()
         pad = 0.05 * (np.ptp(ppm) or 1.0)
         xlim = (float(ppm.max()) + pad, float(ppm.min()) - pad)
         base, tallest = self.HEIGHT - 24, max(float(size.max()), 1e-12)
@@ -1184,9 +1224,7 @@ class PriorPage:
                 f'{Plot.axis(xlim, "ppm", WIDTH, base + 2)}</svg>')
 
     def rows(self) -> str:
-        lines = [line for line in self.prior.lines if line.get("ppm") is not None]
-        ppm = np.array([float(line["ppm"]) for line in lines])
-        size = np.abs(np.array([float(line.get(self.key) or 0.0) for line in lines]))
+        lines, ppm, size = self.values()
         pad = 0.05 * (np.ptp(ppm) or 1.0)
         xlim = (float(ppm.max()) + pad, float(ppm.min()) - pad)
         left, top, parts = Panel.LABEL, 8, []

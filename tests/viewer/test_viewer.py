@@ -32,10 +32,19 @@ from miox.viewer import (
     FitView,
     ImageView,
     NoiseView,
+    PhantomView,
     PhysioView,
+    PriorView,
+    ProtocolView,
     RawView,
+    RFPulseView,
     SequenceView,
+    SpectrumImageView,
     SpectrumView,
+    SurfaceView,
+    TractogramView,
+    TransformView,
+    view_class,
 )
 
 FREQUENCY = 123.2  # MHz
@@ -247,9 +256,152 @@ def test_cli_view_saves_figures(tmp_path):
     assert (tmp_path / "both-1.png").exists() and (tmp_path / "both-2.png").exists()
 
 
-def test_cli_view_without_a_view(tmp_path, capsys):
+def test_cli_view_without_a_view(tmp_path, capsys, monkeypatch):
+    import miox.viewer
+
+    monkeypatch.delitem(miox.viewer.VIEWS, miox.Transform)  # as a kind without a view
     path = tmp_path / "flirt.mat"
     path.write_text("1 0 0 2\n0 1 0 3\n0 0 1 4\n0 0 0 1\n")
     assert main(["view", str(path), "--save", str(tmp_path / "t.png")]) == 1
     assert "no view for Transform yet" in capsys.readouterr().err
     assert not (tmp_path / "t.png").exists()
+
+
+def test_spectrum_processed_mode_shows_the_pipelines_peak():
+    """A two-coil, two-transient line at 2.01 ppm: the processed mode combines and averages, and
+    its peak lies where the raw spectrum's does; the mode shows in the title."""
+    view = SpectrumView(_spectroscopy(coils=2))
+    assert view.page is not None and "raw" in [label.get_text() for label in view.modes.labels]
+    raw = _peak(view)
+    view.set_mode("processed")
+    assert abs(_peak(view) - raw) < 0.2  # the pipeline's creatine shift may move it a little
+    assert "processed" in view.ax.get_title()
+
+
+def test_tractogram_three_projections():
+    points = np.array([[0, 0, 0], [10, 0, 0], [10, 10, 0], [0, 0, 5], [0, 10, 5]], float)
+    d = miox.Tractogram(points, np.array([0, 3, 5]), "RAS mm", {}, {}, None, Meta(),
+                        _provenance(), "two")
+    view = TractogramView(d)
+    assert len(view.axes) == 3 and [ax.get_title() for ax in view.axes][0].startswith("axial")
+    picture = view.axes[0].images[0].get_array()
+    assert picture.ndim == 3 and picture.max() > 0  # RGB, something drawn
+    empty = TractogramView(miox.Tractogram(None, np.array([0]), "RAS mm", {}, {}, None, Meta(),
+                                           _provenance(), "none"))
+    assert empty.axes == []
+
+
+def test_surface_three_views_of_a_square():
+    vertices = np.array([[0, 0, 0], [10, 0, 0], [10, 10, 0], [0, 10, 0]], float)
+    d = miox.Surface(vertices, np.array([[0, 1, 2], [0, 2, 3]]), "test", {}, {}, Meta(),
+                     _provenance(), "rh.square")
+    view = SurfaceView(d)
+    assert [ax.get_title() for ax in view.axes] == ["lateral", "medial", "from above"]
+    image = view.axes[2].images[0].get_array()
+    assert np.isfinite(image).all() and (image < 1).any()  # the square is drawn from above
+    values = SurfaceView(miox.Surface(None, None, "test", {"curv": np.zeros(4)}, {}, Meta(),
+                                      _provenance(), "rh.curv"))
+    assert values.axes == []
+
+
+def test_transform_matrices_as_tables():
+    matrix = np.diag([1.0, 2.0, 3.0, 1.0])
+    d = miox.Transform("affine", "FSL scaled voxel", matrix, None, None, matrix[::-1], {}, {},
+                       Meta(), _provenance(), "flirt")
+    view = TransformView(d)
+    assert [ax.get_title() for ax in view.figure.axes] == ["as stored (FSL scaled voxel)", "RAS"]
+    cells = view.figure.axes[0].tables[0].get_celld()
+    assert cells[(1, 1)].get_text().get_text() == "2"
+
+
+def test_phantom_maps_follow_the_slice_slider():
+    index = np.array([[x, y, z] for z in range(2) for y in range(3) for x in range(4)])
+    rho = np.arange(24, dtype=float)
+    d = miox.Phantom(index.astype(float), {"rho": rho, "tensor": np.zeros((24, 3))}, {"rho": ""},
+                     [], Meta(), _provenance(), "grid", grid={"shape": (4, 3, 2), "indices": index})
+    view = PhantomView(d)
+    assert list(view.images) == ["rho"] and view.slider is not None
+    assert view.images["rho"].get_array()[0, 0] == 0
+    view.slider.set_val(1)
+    assert view.k == 1 and view.images["rho"].get_array()[0, 0] == 12
+
+
+def test_rf_pulse_amplitude_and_phase():
+    d = miox.RFPulse(np.array([0.0, 1.0, 0.0]), np.array([0.0, 90.0, 180.0]), "%", 3e-3, Meta(),
+                     _provenance(), "sinc")
+    view = RFPulseView(d)
+    x, y = view.axes[1].lines[0].get_data()
+    assert np.allclose(x, [0, 1000, 2000]) and np.allclose(y, [0, 90, 180])  # us
+
+
+def test_protocol_values_scroll():
+    meta = Meta()
+    for n in range(45):
+        meta.set(f"key{n:02d}", n, "test")
+    view = ProtocolView(miox.Protocol("pro", (), meta, _provenance()))
+    first = view.ax.tables[0].get_celld()[(1, 0)].get_text().get_text()
+    assert first == "key00" and view.slider is not None
+    view.slider.set_val(15)
+    assert view.ax.tables[0].get_celld()[(1, 0)].get_text().get_text() == "key15"
+    assert "values 16 to 45 of 45" in view.figure._suptitle.get_text()
+
+
+def test_prior_sticks_and_rows():
+    lines = [{"metabolite": "NAA", "ppm": 2.01, "area": 3.0}, {"metabolite": "Cr", "ppm": 3.03,
+                                                                 "area": 1.0}]
+    view = PriorView(miox.PriorSet(lines, Meta(), _provenance(), "priors"))
+    [sticks] = view.top.collections
+    assert len(sticks.get_segments()) == 2 and view.top.get_xlim()[0] > view.top.get_xlim()[1]
+    assert [label.get_text() for label in view.bottom.get_yticklabels()] == ["NAA", "Cr"]
+
+
+def _processed_spectrum(two_d: bool):
+    meta = Meta()
+    meta.set("SpectrometerFrequency", [FREQUENCY] + ([FREQUENCY] if two_d else []), "test")
+    meta.set("DwellTime", DWELL, "test")
+    meta.set("ReferencePPM", 4.65, "test")
+    meta.set("ResonantNucleus", ["1H"] * (2 if two_d else 1), "test")
+    x = np.linspace(0, 1, 256)
+    line = np.exp(-((x - 0.6) / 0.01) ** 2)  # one peak, 60 % along the stored axis
+    if two_d:
+        meta.set("IndirectSpectralWidth", [1 / DWELL], "test")
+        meta.set("IndirectReferencePPM", [4.65], "test")
+        data = (line[:, None] * line[None, :]).reshape(1, 1, 1, 256, 256)
+        dims = ("frequency", "frequency_indirect_0")
+    else:
+        data = line.reshape(1, 1, 1, 256)
+        dims = ("frequency",)
+    return miox.MRImage(data, np.eye(4), meta, _provenance(), "spectrum", dims)
+
+
+def test_processed_spectrum_views():
+    one = _processed_spectrum(False)
+    assert view_class(one) is SpectrumImageView
+    view = SpectrumImageView(one)
+    x, y = view.line.get_data()
+    assert x[0] > x[-1] and x[np.argmax(y)] < x[len(x) // 2]  # stored downfield first
+    assert "surface" not in view.ax.get_title()
+    view.set_part("magnitude")
+    assert view.ax.get_title().endswith("magnitude")
+    two = SpectrumImageView(_processed_spectrum(True))
+    assert two.ax.collections and two.slider is not None
+    two.slider.set_val(3)
+    assert "48 x noise" in two.ax.get_title()
+
+
+def test_raw_sorted_kspace_and_counters():
+    """Two slices of four lines each: the sorted k-space has the lines at their steps and the
+    slice slider moves to the second slice."""
+    headers = np.zeros(8, miox.RawData.HEADER)
+    headers["idx"]["kspace_encode_step_1"] = np.tile(np.arange(4), 2)
+    headers["idx"]["slice"] = np.repeat(np.arange(2), 4)
+    data = np.ones((8, 1, 6), complex) * (1 + headers["idx"]["slice"])[:, None, None]
+    data[2, 0, 3] = 50  # line 2 of slice 1
+    view = RawView(miox.RawData(data, headers, Meta(), _provenance()))
+    assert list(view.sliders) == ["slice"] and view.ax_image is None  # unknown format
+    k = view.sorted.get_array()
+    assert k.shape == (4, 6) and np.argmax(k) == 2 * 6 + 3
+    view.sliders["slice"].set_val(1)
+    assert view.pick == {"slice": 1} and view.sorted.get_array().max() == pytest.approx(np.log1p(2))
+    assert "slice 2 of 2" in view.figure._suptitle.get_text()
+
