@@ -462,3 +462,45 @@ def test_philips_dixon_raw_against_the_scanner_image():
     assert corr(second[:, ::-1], middle[3]) > 0.75
     assert corr(first, middle[2]) > corr(first[:, ::-1], middle[2]) + 0.05  # the object is
     assert corr(second[:, ::-1], middle[3]) > corr(second, middle[3]) + 0.05  # near symmetric
+
+
+HALBACH = PUBLIC_DATA / "lowfield_halbach"  # 47 mT Halbach TSE (CC BY 4.0), BIDS k-space beside it
+
+
+@pytest.mark.data
+def test_halbach_acquisitions_are_the_published_kspace_up_to_a_field_of_view_shift():
+    """The ISMRMRD acquisitions of the 47 mT TSE, placed by their encoding steps, have the
+    magnitudes of the k-space NIfTI published beside them; the published k-space differs by
+    one constant phase per acquisition that rises linearly along the partitions (about 1.43
+    rad each: a field-of-view shift of 8.7 voxels along the slice direction that no header
+    field states). With that ramp the plain 3-D reconstruction equals the published T1w image
+    as well as the published k-space does."""
+    h5 = HALBACH / "k-space_data/9092/T1w_TSE_340_ICU1.h5"
+    if not h5.is_file():
+        pytest.skip("Halbach sample not fetched")
+    raw = next(d for d in load(h5) if isinstance(d, RawData))
+    idx = raw.headers["idx"]
+    k = np.zeros((136, 38, 150), dtype=complex)  # (lines, partitions, readout)
+    k[idx["kspace_encode_step_1"], idx["kspace_encode_step_2"]] = raw.data[:, 0]
+    misc = HALBACH / "sub-9092/ses-icu01/misc"
+    [published] = load(misc / "sub-9092_ses-icu01_run-02_T1w_kspace.nii.gz")
+    theirs = np.transpose(np.asarray(published.data), (1, 2, 0))
+    assert np.corrcoef(np.abs(k).ravel(), np.abs(theirs).ravel())[0, 1] > 0.999
+    ratio = theirs * np.conj(k) / (np.abs(k) ** 2 + 1e-12)
+    assert np.median(np.angle(ratio).std(axis=2)) < 1e-6  # one phase per acquisition
+    phases = np.unwrap(np.angle(np.sum(theirs * np.conj(k), axis=(0, 2))))
+    slope, _ = np.polyfit(np.arange(38), phases, 1)
+    assert abs(slope - 1.434) < 0.01
+    assert np.abs(phases - np.polyval((slope, _), np.arange(38))).max() < 0.05
+
+    def image(kspace: np.ndarray) -> np.ndarray:
+        return np.abs(np.fft.fftshift(np.fft.ifftn(np.fft.ifftshift(kspace))))
+
+    [t1w] = load(HALBACH / "sub-9092/ses-icu01/anat/sub-9092_ses-icu01_T1w.nii.gz")
+    reference = np.abs(np.asarray(t1w.data, dtype=float))[::-1, ::-1, ::-1]  # (read, lines, parts)
+    ramp = np.exp(1j * slope * np.arange(38))[None, :, None]
+    ours = np.transpose(image(k * ramp), (2, 0, 1))
+    assert np.corrcoef(ours.ravel(), reference.ravel())[0, 1] > 0.85
+    published_image = np.transpose(image(theirs), (2, 0, 1))
+    assert np.corrcoef(published_image.ravel(), reference.ravel())[0, 1] > 0.84
+
