@@ -69,6 +69,8 @@ SAMPLES = [  # file, the tabs of its page
     ("basis_toolbox/sample_basis_sets/GAVA/gava_priors.txt",
      ["Lines", "Per metabolite", "Details"]),
     ("pyamares/tests/singlet.csv", ["Lines", "Per metabolite", "Details"]),
+    ("pyamares/tests/Table1.csv", ["Lines", "Per metabolite", "Details"]),  # amplitudes by name
+    ("pyamares/tests/FigS2A.csv", ["Lines", "Per metabolite", "Details"]),  # a phase by name
     ("lcmodel/test_lcm/out_ref_build.ps", ["Table", "Details"]),
     # the edges found by building every recorded sample's page
     ("bruker_data_test/data/zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3/pdata/1/2rr",

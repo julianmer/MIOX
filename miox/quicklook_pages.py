@@ -1194,9 +1194,23 @@ class PriorPage:
     def values(self) -> tuple[list[dict], np.ndarray, np.ndarray]:
         """The lines with a shift, their shifts and the magnitude of their area or amplitude."""
         lines = [line for line in self.prior.lines if line.get("ppm") is not None]
-        ppm = np.array([float(line["ppm"]) for line in lines])
-        size = np.abs(np.array([float(line.get(self.key) or 0.0) for line in lines]))
+        ppm = np.array([self.number(line, "ppm") for line in lines])
+        size = np.abs(np.array([self.size(line) for line in lines]))
         return lines, ppm, size
+
+    def size(self, line: dict) -> float:
+        return self.number(line, self.key)
+
+    def number(self, line: dict, key: str) -> float:
+        """A line's value of ``key``; a PyAMARES prior may tie it to another line by name."""
+        value = line.get(key)
+        if isinstance(value, str):
+            named = [other for other in self.prior.lines if other.get("metabolite") == value]
+            value = named[0].get(key) if named else None
+        try:
+            return float(value or 0.0)
+        except (TypeError, ValueError):
+            return 0.0
 
     def sticks(self) -> str:
         lines, ppm, size = self.values()
@@ -1250,10 +1264,10 @@ class PriorPage:
         rows = []
         for name in self.prior.metabolites:
             lines = [line for line in self.prior.lines if line["metabolite"] == name]
-            ppm = [float(line["ppm"]) for line in lines if line.get("ppm") is not None]
-            total = sum(abs(float(line.get(self.key) or 0.0)) for line in lines)
-            phases = sorted({f"{float(line.get('phase') or 0.0):.3g}" for line in lines})
-            widths = sorted({f"{float(line['linewidth']):.3g}" for line in lines
+            ppm = [self.number(line, "ppm") for line in lines if line.get("ppm") is not None]
+            total = sum(abs(self.size(line)) for line in lines)
+            phases = sorted({f"{self.number(line, 'phase'):.3g}" for line in lines})
+            widths = sorted({f"{self.number(line, 'linewidth'):.3g}" for line in lines
                              if line.get("linewidth") is not None})
             span = (f"{min(ppm):.3f}" if min(ppm) == max(ppm) else
                     f"{min(ppm):.3f} – {max(ppm):.3f}") if ppm else ""
