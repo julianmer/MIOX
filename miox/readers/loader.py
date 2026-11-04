@@ -99,7 +99,7 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
     ("miox.readers.lcmodel_basis", "LcmodelBasisReader", (Format.LCMODEL_BASIS,)),
     ("miox.readers.lcmodel_control", "LcmodelControlReader", (Format.LCMODEL_CONTROL,)),
     ("miox.readers.lcmodel_output", "LcmodelOutputReader", (
-        Format.LCMODEL_COORD, Format.LCMODEL_TABLE, Format.LCMODEL_CSV,
+        Format.LCMODEL_COORD, Format.LCMODEL_TABLE, Format.LCMODEL_CSV, Format.LCMODEL_PS,
     )),
     ("miox.readers.lcmodel_raw", "LcmodelRawReader", (Format.LCMODEL_RAW,)),
     ("miox.readers.marss_basis", "MarssBasisReader", (Format.MARSS_BASIS,)),

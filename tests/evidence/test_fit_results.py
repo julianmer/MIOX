@@ -173,3 +173,23 @@ def test_fsl_mrs_dynamic_fit_files_agree(run):
     mapped = np.mean([r.row("NAA")["concentration"] for r in results])
     independent = np.mean([r.meta.vendor["init_results"]["conc_NAA"] for r in results])
     assert mapped == pytest.approx(independent, rel=0.01)
+
+
+def test_lcmodel_ps_tables_match_the_control_file_of_the_same_run():
+    """The PostScript page prints the input changes LCModel ran with: they equal the control
+    file of the same run (hzpppm, deltat, nunfil, file names). The rows come from the second
+    page, which prints the names the plot page cut, and the ratio column is relative to Cr+PCr."""
+    ps = result("lcmodel/test_lcm/out_ref_build.ps")
+    [control] = load(PUBLIC_DATA / "lcmodel/test_lcm/control.file")
+    for key in ("SpectrometerFrequency", "DwellTime", "NumberOfPoints"):
+        assert ps.meta[key] == control.meta[key]
+    inputs = ps.meta.vendor["inputs"]
+    assert inputs["filraw"] == "data.raw" and inputs["filbas"] == "3t.basis"
+    names = [row["metabolite"] for row in ps.rows]
+    assert len(names) == 35 and "MM14+Lip13a+Lip13b+MM12" in names
+    by_name = {row["metabolite"]: row for row in ps.rows}
+    assert by_name["Cr+PCr"]["/Cr+PCr"] == 1.0
+    assert by_name["NAA"]["/Cr+PCr"] == pytest.approx(  # concentrations printed to 3 digits
+        by_name["NAA"]["concentration"] / by_name["Cr+PCr"]["concentration"], rel=5e-3)
+    assert ps.diagnostics["FWHM (ppm)"] == 0.084 and ps.diagnostics["S/N"] == 21
+    assert not ps.curves

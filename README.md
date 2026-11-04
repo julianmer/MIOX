@@ -37,7 +37,7 @@ uv sync --extra dev
 | **Images** | DICOM (classic, mosaic, enhanced, study folders); NIfTI with BIDS sidecar; NIfTI-Zarr; JNIfTI; Analyze; MGH; MINC 1 and 2; PAR/REC; AFNI; NRRD; MetaImage; GIPL; Vista; Stimulate; VTK; MRtrix; SIVIC IDF; DSI Studio src and fib; BrainVoyager VMR, V16, VTC, FMR, VMP, GLM and VOI; Bruker 2dseq; Varian fdf; GE Signa |
 | **Raw k-space** | ISMRMRD; MRD v2; Siemens twix; GE P-file and ScanArchive; Philips raw/lab/sin; Bruker fid and rawdata; Varian fid; fastMRI; BART .cfl; Gadgetron array dumps |
 | **Basis sets and priors** | LCModel .BASIS; FSL-MRS; SpinWizard; Osprey/MRSCloud; INSPECTOR; MARSS; ProFit; MRS-Sim; spant; metabolite folders; Vespa, GAVA, MIDAS and PyAMARES priors |
-| **Fit results** | LCModel COORD, TABLE and CSV; TARQUIN results and fit; PyAMARES; Osprey MRSCont; FSL-MRS dynamic; spant; DMIWizard maps |
+| **Fit results** | LCModel COORD, TABLE, CSV and PostScript tables; TARQUIN results and fit; PyAMARES; Osprey MRSCont; FSL-MRS dynamic; spant; DMIWizard maps |
 | **Sequences and protocols** | Pulseq .seq; TOPPE; FSL-MRS simulator sequences; Siemens .pta and Bruker RF pulse shapes; Siemens .pro, .exar and printed protocols; Philips ExamCards; LCModel control files; Yarra modes and modules; SPM.mat, FSL and BrainVoyager designs and stimulation protocols |
 | **Physio** | Siemens PMU; CMRR; Philips SCANPHYSLOG; GE; BIDS; HCP; BIOPAC AcqKnowledge |
 | **Simulation** | KomaMRI, JEMRIS and MRiLab phantoms; JEMRIS signals and motion; SIMPSON |

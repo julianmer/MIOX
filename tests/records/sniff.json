@@ -16307,7 +16307,7 @@
  "lcmodel/test_lcm/out_ref_build.ps": {
   "format": "lcmodel_ps",
   "vendor": null,
-  "kind": "report"
+  "kind": "fit_result"
  },
  "lipsia/LICENSE": {
   "format": "unknown",

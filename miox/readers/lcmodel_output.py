@@ -7,8 +7,9 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Reader for LCModel fit results: .COORD (tables and the plotted curves), .TABLE (the     #
-#          tables) and .CSV (one row per voxel). The vendor header keeps the title lines, the misc #
-#          and diagnostic tables as written and the table of input changes by key.                 #
+#          tables), .CSV (one row per voxel) and the .ps page (its printed tables; the plotted     #
+#          curves stay undecoded). The vendor header keeps the title lines, the misc and           #
+#          diagnostic tables as written and the table of input changes by key.                     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -39,11 +40,15 @@ from miox.sniff import Format, Sniff
 # The input changes give SpectrometerFrequency (HZPPPM), DwellTime (DELTAT), EchoTime (ECHOT, ms)  #
 # and NumberOfPoints (NUNFIL). Input lines are cut at a fixed width (even inside a name) and       #
 # padded, the rest on lines indented by three spaces; the width is taken from the longest cut      #
-# line. A line may hold several comma-separated KEY=value pairs (namelist style).                  #
+# line. A line may hold several comma-separated KEY=value pairs (namelist style). The PostScript   #
+# page shows the same tables as strings, one per line, under the headings DIAGNOSTICS,             #
+# MISCELLANEOUS OUTPUT and INPUT CHANGES; a second page repeats them with the names and inputs     #
+# the plot page had to cut, so the rows come from the page with the longest names and the inputs   #
+# of every page are merged.                                                                        #
 #                                                                                                  #
 #**************************************************************************************************#
 class LcmodelOutputReader(Reader):
-    FORMATS = (Format.LCMODEL_COORD, Format.LCMODEL_TABLE, Format.LCMODEL_CSV)
+    FORMATS = (Format.LCMODEL_COORD, Format.LCMODEL_TABLE, Format.LCMODEL_CSV, Format.LCMODEL_PS)
     SOURCE = "LCModel table of input changes"
     SECTION = re.compile(r"^\s*(?:\$\$\w+\s+)?(\d+)\s+lines in following (\w+)")
     CURVE = re.compile(
@@ -70,19 +75,30 @@ class LcmodelOutputReader(Reader):
         "NumberOfPoints": ("nunfil", 1),
     }
 
+    STRING = re.compile(r"\{\(((?:[^()\\]|\\.)*)\)s\}[lcr]st")  # a shown string: {(text)s}lst
+    ESCAPE = re.compile(r"\\([()\\])")
+    HEADINGS = {"DIAGNOSTICS": "diagnostic", "MISCELLANEOUS OUTPUT": "misc",
+                "INPUT CHANGES": "table"}
+
     def read(self, sniff: Sniff) -> list[FitResult]:
         if sniff.format == Format.LCMODEL_CSV:
             return self._csv(sniff)
         lines = sniff.path.read_text(errors="replace").splitlines()
         notes = []
-        tables, curves, title = self._sections(lines, sniff.format == Format.LCMODEL_COORD, notes)
+        if sniff.format == Format.LCMODEL_PS:
+            tables, curves, title = self._pages(lines), {}, []
+            notes.append("the plotted curves are not decoded from the PostScript")
+        else:
+            tables, curves, title = self._sections(
+                lines, sniff.format == Format.LCMODEL_COORD, notes
+            )
         if "concentration" not in tables:
             raise ReaderError(f"{sniff.path.name} has no concentration table")
         rows = self._rows(tables["concentration"])
         diagnostics = self._misc(tables.get("misc", []))
         inputs = self._inputs(tables.get("table", []))
         vendor = {
-            "title": title,
+            "title": tables.pop("title", title),
             "misc": tables.get("misc", []),
             "diagnostic": tables.get("diagnostic", []),
             "inputs": inputs,
@@ -124,6 +140,37 @@ class LcmodelOutputReader(Reader):
                 title.append(line.strip())
             i += 1
         return tables, curves, title
+
+    def _pages(self, lines: list[str]) -> dict:
+        """The tables printed on the PostScript pages: rows from the page with the longest
+        metabolite names, the input changes of all pages merged."""
+        pages = [self._strings(page) for page in "\n".join(lines).split("%%Page:")[1:]]
+        pages = [p for p in pages if "concentration" in p]
+        if not pages:
+            return {}
+        best = max(pages, key=lambda p: len("".join(p["concentration"])))
+        tables = {**best, "table": [line for p in pages for line in p.get("table", [])]}
+        tables["title"] = best["title"]
+        return tables
+
+    def _strings(self, page: str) -> dict:
+        tables, title, current = {}, [], None
+        for match in self.STRING.finditer(page):
+            text = self.ESCAPE.sub(r"\1", match[1])
+            word = text.strip()
+            if word.startswith("Conc."):
+                current = "concentration"
+                tables[current] = [text]
+            elif word == "NO DIAGNOSTICS":
+                current = None
+            elif word in self.HEADINGS:
+                current = self.HEADINGS[word]
+                tables[current] = []
+            elif current:
+                tables[current].append(text)
+            elif "concentration" not in tables and word:
+                title.append(word)
+        return {**tables, "title": title}
 
     def _starts(self, line: str) -> bool:
         return bool(self.SECTION.match(line) or self.CURVE.match(line))

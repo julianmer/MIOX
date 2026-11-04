@@ -1544,7 +1544,8 @@ class Sniffer:
             return Sniff(path, fmt, Kind.BASIS_SET, confidence=0.9, evidence=evidence)
         if stripped.startswith(b"%!PS") and b"Creator: LCModel" in head:
             evidence = ("LCModel PostScript",)
-            return Sniff(path, Format.LCMODEL_PS, Kind.REPORT, confidence=1.0, evidence=evidence)
+            return Sniff(path, Format.LCMODEL_PS, Kind.FIT_RESULT, confidence=1.0,
+                         evidence=evidence)
         for markers, fmt, kind, evidence in self.TEXT_MARKERS:
             if any(m in upper for m in markers):
                 companions = self._text_companions(path, fmt)
