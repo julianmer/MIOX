@@ -1146,9 +1146,11 @@ class NoisePage:
 
 class PriorPage:
     """Prior knowledge of a fit (GAVA, MIDAS, Vespa, PyAMARES): every line as a stick at its
-    shift, as tall as its area or amplitude, the metabolite named at its tallest line; the
-    lines of every metabolite in a table."""
+    shift, as tall as its area or amplitude, the metabolite named at its tallest line, with
+    the lines of every metabolite in a table; and a second tab with one row of sticks per
+    metabolite, each row on its own scale."""
     HEIGHT = 320
+    ROW = 34  # height of a metabolite's row
 
     def __init__(self, prior: PriorSet, title: str, others: int = 0):
         self.prior, self.title, self.others = prior, title, others
@@ -1181,6 +1183,29 @@ class PriorPage:
                 f'<g class="stem">{stems}</g>{"".join(labels)}'
                 f'{Plot.axis(xlim, "ppm", WIDTH, base + 2)}</svg>')
 
+    def rows(self) -> str:
+        lines = [line for line in self.prior.lines if line.get("ppm") is not None]
+        ppm = np.array([float(line["ppm"]) for line in lines])
+        size = np.abs(np.array([float(line.get(self.key) or 0.0) for line in lines]))
+        pad = 0.05 * (np.ptp(ppm) or 1.0)
+        xlim = (float(ppm.max()) + pad, float(ppm.min()) - pad)
+        left, top, parts = Panel.LABEL, 8, []
+        for name in self.prior.metabolites:
+            own = [i for i, line in enumerate(lines) if line["metabolite"] == name]
+            base, tallest = top + self.ROW - 6, max(float(size[own].max()), 1e-12)
+            xs = left + (xlim[0] - ppm[own]) / (xlim[0] - xlim[1]) * (WIDTH - left)
+            tops = base - size[own] / tallest * (self.ROW - 12)
+            parts.append('<g class="stem">' + "".join(
+                f'<line x1="{x:.1f}" x2="{x:.1f}" y1="{base}" y2="{y:.1f}"/>'
+                for x, y in zip(xs, tops, strict=True)) + "</g>")
+            parts.append(f'<text x="0" y="{top + 20}" class="label">{html.escape(name)}</text>'
+                         f'<line class="axis" x1="{left}" x2="{WIDTH}" y1="{base}" y2="{base}"/>')
+            top += self.ROW
+        axis = (f'<g transform="translate({left},0)">'
+                f"{Plot.axis(xlim, 'ppm', WIDTH - left, top + 2)}</g>")
+        return (f'<svg viewBox="0 0 {WIDTH} {top + 30}" class="plot rows">{"".join(parts)}{axis}'
+                "</svg>")
+
     def table(self) -> str:
         head = ("<tr><th>metabolite</th><th>lines</th><th>ppm</th>"
                 f"<th>{self.key}</th><th>phase °</th><th>linewidth</th></tr>")
@@ -1210,8 +1235,10 @@ class PriorPage:
         if self.others:
             facts.append(f"{self.others} more prior set{'s' if self.others > 1 else ''} in the "
                          "file")
+        rows = (self.rows() + f"<div class=note>One row per metabolite, its lines as sticks "
+                f"as tall as their {self.key} on the row's own scale (the tallest fills it).</div>")
         return document(self.title, " · ".join(facts),
-                        [("Lines", pane), ("Details", details(p.meta))])
+                        [("Lines", pane), ("Per metabolite", rows), ("Details", details(p.meta))])
 
 
 class ProtocolPage:
