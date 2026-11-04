@@ -39,6 +39,7 @@ from miox.data import (
     Protocol,
     PulseSequence,
     RawData,
+    RelaxationData,
     RFPulse,
     Surface,
     Tractogram,
@@ -148,6 +149,9 @@ class CLI:
             duration = f", {d.duration * 1e3:.4g} ms" if d.duration is not None else ""
             lines.append(f"  {d.name}: RF pulse, {d.n_samples} samples{duration}, "
                          f"amplitude in {d.amplitude_unit}")
+        elif isinstance(d, RelaxationData):
+            curves = f" x {d.n_curves} curves" if d.n_curves > 1 else ""
+            lines.append(f"  {d.name}: {d.sequence} relaxation, {d.n_points} points{curves}")
         elif isinstance(d, NoiseCovariance):
             lines.append(
                 f"  {d.name}: noise covariance of {d.n_coils} channels, {d.sample_count} samples"

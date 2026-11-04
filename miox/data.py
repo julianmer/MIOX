@@ -762,6 +762,73 @@ class RFPulse:
 
 
 #**************************************************************************************************#
+#                                          RelaxationData                                          #
+#**************************************************************************************************#
+#                                                                                                  #
+# One relaxation measurement of a benchtop or low-field instrument: the ``signal`` at each of the  #
+# ``times`` in seconds (echo times of a CPMG train, recovery times of an inversion or saturation   #
+# recovery), the ``sequence`` as the file names it ("CPMG", "IR", "SR", ...), several curves as    #
+# rows of ``signal`` (one row per repetition or sample when the file holds more than one decay).   #
+#                                                                                                  #
+#**************************************************************************************************#
+class RelaxationData:
+    def __init__(
+        self,
+        times: np.ndarray,
+        signal: np.ndarray,
+        sequence: str,
+        meta: Meta,
+        provenance: Provenance,
+        name: str = "",
+    ):
+        self.times = times
+        self.signal = signal
+        self.sequence = sequence
+        self.meta = meta
+        self.provenance = provenance
+        self.name = name
+
+    @property
+    def n_points(self) -> int:
+        return len(self.times)
+
+    @property
+    def n_curves(self) -> int:
+        return 1 if self.signal.ndim == 1 else int(np.prod(self.signal.shape[:-1]))
+
+    @property
+    def curves(self) -> np.ndarray:
+        """The signal as (curves, points)."""
+        return self.signal.reshape(-1, self.signal.shape[-1])
+
+    def to_dict(self) -> dict:
+        """JSON-ready summary: everything except the samples and the vendor header itself."""
+        return {
+            "name": self.name,
+            "format": self.provenance.format,
+            "reader": self.provenance.reader,
+            "paths": [str(p) for p in self.provenance.paths],
+            "sequence": self.sequence,
+            "n_points": self.n_points,
+            "n_curves": self.n_curves,
+            "time_range": [float(self.times[0]), float(self.times[-1])] if self.n_points else [],
+            "complex": bool(np.iscomplexobj(self.signal)),
+            "meta": dict(self.meta),
+            "source": dict(self.meta.source),
+            "vendor_fields": len(self.meta.vendor_fields()),
+            "notes": list(self.provenance.notes),
+            "versions": self.provenance.versions,
+        }
+
+    def __repr__(self) -> str:
+        name = f" {self.name}" if self.name else ""
+        curves = f" x {self.n_curves} curves" if self.n_curves > 1 else ""
+        span = f" to {self.times[-1]:.4g} s" if self.n_points else ""
+        return (f"<RelaxationData{name} {self.provenance.format}: {self.sequence}, "
+                f"{self.n_points} points{curves}{span}>")
+
+
+#**************************************************************************************************#
 #                                         NoiseCovariance                                          #
 #**************************************************************************************************#
 #                                                                                                  #

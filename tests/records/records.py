@@ -39,6 +39,7 @@ from miox import (
     Protocol,
     PulseSequence,
     RawData,
+    RelaxationData,
     RFPulse,
     Sniffer,
     Surface,
@@ -229,6 +230,17 @@ class ReadRecords:
                 "amplitude_head": d.amplitude[:3].tolist(),
                 "amplitude_sum": float(np.sum(d.amplitude)),
                 "phase_sum": float(np.sum(d.phase)),
+                "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
+            }
+            return json.loads(json.dumps(record, default=str))
+        if isinstance(d, RelaxationData):
+            record = {
+                "name": d.name,
+                "sequence": d.sequence,
+                "shape": list(d.signal.shape),
+                "times_head": d.times[:3].tolist(),
+                "signal_head": [[c.real, c.imag] for c in d.curves[0, :3]],
+                "signal_norm": float(np.linalg.norm(d.signal)),
                 "meta": {k: v for k, v in d.meta.items() if k not in self.VOLATILE},
             }
             return json.loads(json.dumps(record, default=str))

@@ -39,6 +39,7 @@ from miox.data import (
     Protocol,
     PulseSequence,
     RawData,
+    RelaxationData,
     RFPulse,
     Surface,
     Tractogram,
@@ -50,6 +51,7 @@ from miox.sniff import Format, Sniff, Sniffer
 Dataset = (
     MRSData | MRImage | RawData | PriorSet | FitResult | PulseSequence | NoiseCovariance
     | PhysioData | Protocol | Phantom | Tractogram | Surface | Transform | RFPulse
+    | RelaxationData
 )
 
 
@@ -264,7 +266,7 @@ class Loader:
     ) -> list[Dataset]:
         """Every dataset in ``path``: one MRSData, MRImage, RawData, PriorSet, FitResult,
         PulseSequence, NoiseCovariance, PhysioData, Protocol, Phantom, Tractogram, Surface,
-        Transform or RFPulse each.
+        Transform, RFPulse or RelaxationData each.
 
         ``given`` maps standard keys to values for what the file does not state
         (SpectrometerFrequency, ResonantNucleus, DwellTime or SpectralWidth, ...); a stated
