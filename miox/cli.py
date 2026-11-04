@@ -83,8 +83,8 @@ class CLI:
                           "(several datasets: name-1.png, name-2.png, ...)")
         view.set_defaults(func=self.view)
 
-        preview = commands.add_parser("preview", help="one picture of a spectroscopy file, as "
-                                      "the Quick Look extension shows it")
+        preview = commands.add_parser("preview", help="one picture of a spectroscopy file; with "
+                                      "--to x.html the Quick Look page of a file of any kind")
         preview.add_argument("path", type=Path)
         preview.add_argument("--to", default=None, help="file to write (format by suffix: html "
                              "for the Quick Look page, pdf, png, svg), or - for PDF on standard "
@@ -235,8 +235,8 @@ class CLI:
         page = bool(args.to) and str(args.to).endswith(".html")  # the Quick Look page: every kind
         declined = {Kind.REPORT} if page else set(self.NOT_SPECTROSCOPY)
         if sniffed.format == Format.UNKNOWN or sniffed.kind in declined:
-            print(f"miox preview: {args.path.name} is not spectroscopy ({sniffed.format})",
-                  file=sys.stderr)
+            what = "has no page" if page else "is not spectroscopy"
+            print(f"miox preview: {args.path.name} {what} ({sniffed.format})", file=sys.stderr)
             return 2
         if page:
             from miox.quicklook import load, write
