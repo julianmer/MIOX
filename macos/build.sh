@@ -26,7 +26,7 @@ EXTENSIONS=(dat 7 rda sdat spar ima basis coord table print mrui dpt ddf cmplx r
             ft1 ft3 ft4 pipe 1d sec csdf spe h2o lab sin job0 gep tsv
             trf vmr vtc vmp smp voi mtc poi glm ssm prt sdm fib tsf
             label annot curv sulc thickness inflated pial white sphere orig smoothwm
-            exar1 examcard pro mode ymf phantom fts)
+            exar1 examcard pro mode ymf phantom fts v mod con src)
 TYPES=(io.github.julianmer.miox.mr-data org.nema.dicom gov.nih.nifti-1 org.gnu.gnu-zip-archive
        org.napari.napari.h5 com.mathworks.workspace public.data)
 
