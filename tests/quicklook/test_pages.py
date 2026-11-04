@@ -62,6 +62,8 @@ SAMPLES = [  # file, the tabs of its page
     ("mrd/simple_gre_noise_covariance.mrd", ["Covariance", "Details"]),
     ("dicompare/dicompare/tests/fixtures/pro_files/C2P__cmrr_mbep2d_bold__p3_mb2.pro",
      ["C2P__cmrr_mbep2d_bold__p3_mb"]),
+    ("basis_toolbox/sample_basis_sets/GAVA/gava_priors.txt", ["Lines", "Details"]),
+    ("pyamares/tests/singlet.csv", ["Lines", "Details"]),
     # the edges found by building every recorded sample's page
     ("bruker_data_test/data/zipped/cyclosporin/cyclosporin_hsqc/cyclosporin_hsqc/3/pdata/1/2rr",
      ["Spectrum", "Details"]),  # four components: the first shown

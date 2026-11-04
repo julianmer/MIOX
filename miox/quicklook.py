@@ -1134,6 +1134,7 @@ def page(datasets: list, title: str, source: Path | None = None,
         NoiseCovariance,
         Phantom,
         PhysioData,
+        PriorSet,
         Protocol,
         PulseSequence,
         RawData,
@@ -1183,6 +1184,9 @@ def page(datasets: list, title: str, source: Path | None = None,
     protocols = [d for d in datasets if isinstance(d, Protocol)]
     if protocols:
         return pages.ProtocolPage(protocols, title).html()
+    prior = first(PriorSet)
+    if prior is not None:
+        return pages.PriorPage(prior, title, others(PriorSet)).html()
     raise ValueError("nothing in the file has a Quick Look page")
 
 

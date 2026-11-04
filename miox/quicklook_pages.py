@@ -32,6 +32,7 @@ from miox.data import (
     NoiseCovariance,
     Phantom,
     PhysioData,
+    PriorSet,
     Protocol,
     PulseSequence,
     RawData,
@@ -1072,6 +1073,76 @@ class NoisePage:
                  Panel.format(nc)]
         return document(self.title, " · ".join(f for f in facts if f),
                         [("Covariance", pane), ("Details", details(nc.meta))])
+
+
+class PriorPage:
+    """Prior knowledge of a fit (GAVA, MIDAS, Vespa, PyAMARES): every line as a stick at its
+    shift, as tall as its area or amplitude, the metabolite named at its tallest line; the
+    lines of every metabolite in a table."""
+    HEIGHT = 320
+
+    def __init__(self, prior: PriorSet, title: str, others: int = 0):
+        self.prior, self.title, self.others = prior, title, others
+        self.key = "area" if any("area" in line for line in prior.lines) else "amplitude"
+
+    def sticks(self) -> str:
+        lines = [line for line in self.prior.lines if line.get("ppm") is not None]
+        ppm = np.array([float(line["ppm"]) for line in lines])
+        size = np.abs(np.array([float(line.get(self.key) or 0.0) for line in lines]))
+        pad = 0.05 * (np.ptp(ppm) or 1.0)
+        xlim = (float(ppm.max()) + pad, float(ppm.min()) - pad)
+        base, tallest = self.HEIGHT - 24, max(float(size.max()), 1e-12)
+        xs = (xlim[0] - ppm) / (xlim[0] - xlim[1]) * WIDTH
+        tops = base - size / tallest * (base - 90)  # the label rows above
+        stems = "".join(f'<line x1="{x:.1f}" x2="{x:.1f}" y1="{base}" y2="{y:.1f}"/>'
+                        for x, y in zip(xs, tops, strict=True))
+        labels, named = [], {}
+        for i, line in enumerate(lines):
+            name = line["metabolite"]
+            if name not in named or size[i] > size[named[name]]:
+                named[name] = i
+        ends = [-1e9] * 6  # where the last label of each label row ends (names packed in rows)
+        for name, i in sorted(named.items(), key=lambda kv: xs[kv[1]]):
+            half = 3.2 * len(name) + 4  # about half the width of the name at 11 px
+            row = next((r for r, end in enumerate(ends) if xs[i] - half > end), len(ends) - 1)
+            ends[row] = xs[i] + half
+            labels.append(f'<text x="{xs[i]:.1f}" y="{14 + 12 * row}" text-anchor="middle">'
+                          f"{html.escape(name)}</text>")
+        return (f'<svg viewBox="0 0 {WIDTH} {self.HEIGHT}" class="plot">'
+                f'<g class="stem">{stems}</g>{"".join(labels)}'
+                f'{Plot.axis(xlim, "ppm", WIDTH, base + 2)}</svg>')
+
+    def table(self) -> str:
+        head = ("<tr><th>metabolite</th><th>lines</th><th>ppm</th>"
+                f"<th>{self.key}</th><th>phase °</th><th>linewidth</th></tr>")
+        rows = []
+        for name in self.prior.metabolites:
+            lines = [line for line in self.prior.lines if line["metabolite"] == name]
+            ppm = [float(line["ppm"]) for line in lines if line.get("ppm") is not None]
+            total = sum(abs(float(line.get(self.key) or 0.0)) for line in lines)
+            phases = sorted({f"{float(line.get('phase') or 0.0):.3g}" for line in lines})
+            widths = sorted({f"{float(line['linewidth']):.3g}" for line in lines
+                             if line.get("linewidth") is not None})
+            span = (f"{min(ppm):.3f}" if min(ppm) == max(ppm) else
+                    f"{min(ppm):.3f} – {max(ppm):.3f}") if ppm else ""
+            rows.append(f"<tr><td>{html.escape(name)}</td><td class=n>{len(lines)}</td>"
+                        f"<td class=n>{span}</td><td class=n>{total:.4g}</td>"
+                        f"<td class=n>{', '.join(phases[:4])}{'…' if len(phases) > 4 else ''}"
+                        f"</td><td class=n>{', '.join(widths[:4])}"
+                        f"{'…' if len(widths) > 4 else ''}</td></tr>")
+        return f"<table class=matrix>{head}{''.join(rows)}</table>"
+
+    def html(self) -> str:
+        p = self.prior
+        pane = (self.sticks() + f"<div class=note>Every line as a stick at its shift, as tall "
+                f"as its {self.key} (the tallest fills the height); the shift falls to the "
+                "right. Below, the lines summed per metabolite.</div>" + self.table())
+        facts = [f"{len(p.metabolites)} metabolites", f"{len(p.lines)} lines", Panel.format(p)]
+        if self.others:
+            facts.append(f"{self.others} more prior set{'s' if self.others > 1 else ''} in the "
+                         "file")
+        return document(self.title, " · ".join(facts),
+                        [("Lines", pane), ("Details", details(p.meta))])
 
 
 class ProtocolPage:
