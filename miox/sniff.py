@@ -219,6 +219,9 @@ class Format(StrEnum):
     PHILIPS_DICOM_RAW = "philips_dicom_raw"
     SIEMENS_DICOM_RAW = "siemens_dicom_raw"
     SIEMENS_PHOENIX_REPORT = "siemens_phoenix_report"
+    MINISPEC_DPS = "minispec_dps"  # Bruker minispec decay (.dps text: index, ms, %)
+    MINISPEC_CONTIN = "minispec_contin"  # CONTIN T2 distribution exported beside a .dps
+    MINISPEC_REPORT = "minispec_report"  # minispec "Curve Fit Results" report (.mdt)
     UNKNOWN = "unknown"
 
 
@@ -242,6 +245,7 @@ class Kind(StrEnum):
     TRACTOGRAM = "tractogram"  # streamlines from diffusion tractography
     SURFACE = "surface"  # surface meshes and per-vertex data
     TRANSFORM = "transform"  # spatial transforms between image spaces
+    RELAXOMETRY = "relaxometry"  # relaxation decays (CPMG echo trains, inversion recovery)
     REPORT = "report"  # graphics for reading, no data
     ARCHIVE = "archive"  # a container of other files (zip)
     UNKNOWN = "unknown"
@@ -455,6 +459,7 @@ class Sniffer:
             self.bart,
             self.gadgetron_array,
             self.yardl,
+            self.minispec,
             self.text_formats,
             self.hdf5,
             self.archive,
@@ -1453,6 +1458,36 @@ class Sniffer:
             path, Format.MRD, Kind.RAW, confidence=1.0,
             evidence=(f"yardl {encoding}", f"protocol {protocol}"),
         )
+
+    MINISPEC_ROW = re.compile(rb"^\d+\t-?\d+\.\d+\t-?\d+\.\d+\s*$", re.M)
+    MINISPEC_TITLE = re.compile(r"Title of this Data File:\s*\n(\S.*?)\s*\n"
+                                r"|'[^']*[\\/]([^\\/']+)\.dps'")
+
+    def minispec(self, path: Path, head: bytes) -> Sniff | None:
+        """Bruker minispec files: a .dps decay (rows of index, time in ms and amplitude in %,
+        tab-separated, no header; companions: the fit reports of the folder that name the file
+        and its CONTIN exports), a CONTIN export (<decay>_CONTIN_<time>.txt, two numeric
+        columns; companion: its decay) and a fit report (.mdt, "Curve Fit Results")."""
+        suffix, name = path.suffix.lower(), path.name
+        if suffix == ".dps" and len(self.MINISPEC_ROW.findall(head)) >= 3:
+            reports = tuple(m for m in sorted(path.parent.glob("*.mdt"))
+                            if any(path.stem in found for found in self.MINISPEC_TITLE.findall(
+                                m.read_text(encoding="latin-1", errors="replace"))))
+            contin = tuple(sorted(path.parent.glob(f"{path.stem}_CONTIN_*.txt")))
+            return Sniff(path, Format.MINISPEC_DPS, Kind.RELAXOMETRY, vendor="bruker",
+                         confidence=1.0, evidence=(".dps rows of index, ms, %",),
+                         companions=reports + contin)
+        if suffix == ".txt" and "_CONTIN_" in name and self._is_text(head) and re.match(
+            rb"\s*-?\d+\.\d+\t-?\d+\.\d+\s*\n", head
+        ):
+            decay = path.with_name(name.split("_CONTIN_")[0] + ".dps")
+            return Sniff(path, Format.MINISPEC_CONTIN, Kind.RELAXOMETRY, vendor="bruker",
+                         confidence=0.9, evidence=("_CONTIN_ export, two numeric columns",),
+                         companions=(decay,) if decay.is_file() else ())
+        if suffix == ".mdt" and b"Curve Fit Results" in head:
+            return Sniff(path, Format.MINISPEC_REPORT, Kind.PROTOCOL, vendor="bruker",
+                         confidence=1.0, evidence=("Curve Fit Results report",))
+        return None
 
     def text_formats(self, path: Path, head: bytes) -> Sniff | None:
         if head.startswith(b"NRRD000"):

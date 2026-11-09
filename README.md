@@ -48,6 +48,7 @@ uv sync --extra dev
 | **Physio** | Siemens PMU; CMRR; Philips SCANPHYSLOG; GE; BIDS; HCP; BIOPAC AcqKnowledge |
 | **Simulation** | KomaMRI, JEMRIS and MRiLab phantoms; JEMRIS signals and motion; SIMPSON |
 | **NMR** | Bruker TopSpin; Varian/Agilent; JCAMP-DX; nmrML; JEOL Delta; Tecmag TNMR; NMRPipe; Sparky; CSDM; Magritek Spinsolve; RS2D; RNMRTK |
+| **Relaxometry** | Bruker minispec CPMG decays (.dps) with their fit reports (.mdt) and CONTIN T2 distributions |
 | **Tractograms** | TrackVis .trk; MRtrix .tck and .tsf; TRX; VTK polydata; DSI Studio .tt |
 | **Transforms** | FreeSurfer LTA; ITK/ANTs .tfm and .h5; AFNI affine matrices; FSL FLIRT; BrainVoyager TRF |
 | **Surfaces** | FreeSurfer surfaces, per-vertex values, annotations and labels; GIFTI; BrainVoyager SRF, SMP, MTC, SSM and POI; MZ3 |

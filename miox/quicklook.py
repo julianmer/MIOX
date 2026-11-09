@@ -1138,6 +1138,7 @@ def page(datasets: list, title: str, source: Path | None = None,
         Protocol,
         PulseSequence,
         RawData,
+        RelaxationData,
         RFPulse,
         Surface,
         Tractogram,
@@ -1181,6 +1182,9 @@ def page(datasets: list, title: str, source: Path | None = None,
     transform = first(Transform)
     if transform is not None:
         return pages.TransformPage(transform, title, others(Transform)).html()
+    decay = first(RelaxationData)
+    if decay is not None:
+        return pages.RelaxationPage(decay, title, others(RelaxationData)).html()
     protocols = [d for d in datasets if isinstance(d, Protocol)]
     if protocols:
         return pages.ProtocolPage(protocols, title).html()

@@ -37,6 +37,7 @@ from miox.data import (
     Protocol,
     PulseSequence,
     RawData,
+    RelaxationData,
     RFPulse,
     Surface,
     Tractogram,
@@ -1088,6 +1089,174 @@ class RFPulsePage:
                  Panel.format(p)]
         return document(self.title, " · ".join(facts),
                         [("Pulse", pane), ("Details", details(p.meta))])
+
+
+#**************************************************************************************************#
+#                                          RelaxationPage                                          #
+#**************************************************************************************************#
+#                                                                                                  #
+# A relaxation decay: every stored point against time (ms), with the vendor's fitted curve drawn   #
+# from the reported numbers (no fitting here); the same on a logarithmic amplitude axis, where     #
+# one exponential is a straight line; the relaxation-time distribution when the file has one, on  #
+# a logarithmic time axis from the first stored time (the part below it, which the data cannot    #
+# resolve, is named in the note); Details.                                                         #
+#                                                                                                  #
+#**************************************************************************************************#
+class RelaxationPage:
+    LEFT, HEIGHT = 58, 300
+
+    def __init__(self, d: RelaxationData, title: str, others: int = 0):
+        self.d, self.title, self.others = d, title, others
+        self.t = np.asarray(d.times, dtype=np.float64) * 1e3  # ms
+        self.y = np.real(np.asarray(d.curves[0], dtype=np.complex128))
+
+    def fitted(self, t: np.ndarray) -> np.ndarray | None:
+        f = self.d.fit
+        if not f or not f.get("time"):
+            return None
+        amplitudes = f.get("amplitude") or [1.0] * len(f["time"])
+        components = zip(amplitudes, f["time"], strict=True)
+        return sum(a * np.exp(-t * 1e-3 / tau) for a, tau in components) + f.get("offset", 0.0)
+
+    @classmethod
+    def frame(cls, ylim: tuple, box: tuple, log: bool = False) -> str:
+        """Horizontal rules with their values at the left of the box."""
+        left, top, width, height = box
+        lo, hi = ylim
+        if log:
+            ticks = [10.0 ** e for e in range(int(np.floor(lo)), int(np.ceil(hi)) + 1)
+                     if lo <= e <= hi]
+            pos = [top + (hi - np.log10(v)) / (hi - lo) * height for v in ticks]
+        else:
+            span = (hi - lo) or 1.0
+            step = next(s for e in range(-4, 8) for s in (10.0 ** e, 2 * 10.0 ** e, 5 * 10.0 ** e)
+                        if span / s <= 6)
+            ticks = list(np.arange(np.ceil(lo / step) * step, hi + 1e-9, step))
+            pos = [top + (hi - v) / span * height for v in ticks]
+        return "".join(f'<line class="axis" x1="{left}" x2="{left + width}" y1="{p:.1f}" '
+                       f'y2="{p:.1f}"/><text x="{left - 8}" y="{p + 4:.1f}" text-anchor="end">'
+                       f"{Panel.number(v)}</text>" for v, p in zip(ticks, pos, strict=True))
+
+    def decay_svg(self, log: bool = False) -> str:
+        t, y = self.t, self.y
+        box = (self.LEFT, 14, WIDTH - self.LEFT - 12, self.HEIGHT - 58)
+        xlim = (float(t[-1]), 0.0)  # Plot.path draws xlim[0] at the left edge
+        fit = self.fitted(t)
+        if log:
+            keep = y > 0
+            floor = float(np.log10(max(y[keep].min(), 1e-6))) if keep.any() else -1.0
+            ylim = (np.floor(floor), np.ceil(np.log10(y.max())) if y.max() > 0 else 1.0)
+            parts = [f'<g class="data">{Plot.path(t[keep], np.log10(y[keep]), box, xlim, ylim)}'
+                     "</g>"]
+            if fit is not None and (fit > 0).any():
+                ok = fit > 0
+                curve = Plot.path(t[ok], np.log10(fit[ok]), box, xlim, ylim)
+                parts.append(f'<g class="fitted">{curve}</g>')
+        else:
+            top = float(max(y.max(), fit.max() if fit is not None else 0.0)) or 1.0
+            ylim = (min(0.0, float(y.min())) - 0.03 * top, top * 1.05)
+            parts = [f'<g class="data">{Plot.path(t, y, box, xlim, ylim)}</g>']
+            if fit is not None:
+                parts.append(f'<g class="fitted">{Plot.path(t, fit, box, xlim, ylim)}</g>')
+        unit = "log" if log else ""
+        axis = (f'<g transform="translate({self.LEFT},0)">'
+                f'{Plot.axis(xlim, "ms", box[2], box[1] + box[3] + 6)}</g>')
+        return (f'<svg viewBox="0 0 {WIDTH} {self.HEIGHT}" class="plot">'
+                f"{self.frame(ylim, box, log)}"
+                f'<text x="{self.LEFT - 8}" y="{box[1] - 2}" text-anchor="end" class="unit">{unit}'
+                f"</text>{''.join(parts)}{axis}</svg>")
+
+    def distribution_svg(self) -> tuple[str, str]:
+        """The distribution from the first stored time on, and what was left out."""
+        times, amplitude = self.d.distribution
+        first = float(self.d.times[0])
+        keep = times >= first
+        cut = ""
+        if (~keep).any():
+            cut = (f"{int((~keep).sum())} of {len(times)} values below the first stored time "
+                   f"({first * 1e3:g} ms), up to {Panel.number(float(amplitude[~keep].max()))} "
+                   "high, are not drawn: the data cannot resolve them.")
+        x, a = np.log10(times[keep] * 1e3), amplitude[keep]
+        box = (self.LEFT, 14, WIDTH - self.LEFT - 12, 240 - 58)
+        xlim = (float(x.min()), float(x.max()))
+        ylim = (0.0, float(a.max()) * 1.08 or 1.0)
+        path = Plot.path(x[::-1], a[::-1], box, (xlim[1], xlim[0]), ylim)
+        ticks = []
+        for e in range(int(np.floor(xlim[0])), int(np.ceil(xlim[1])) + 1):
+            for m in (1, 2, 5):
+                v = np.log10(m * 10.0 ** e)
+                if xlim[0] <= v <= xlim[1]:
+                    px = box[0] + (v - xlim[0]) / (xlim[1] - xlim[0]) * box[2]
+                    bottom = box[1] + box[3]
+                    ticks.append(f'<line class="axis" x1="{px:.1f}" x2="{px:.1f}" y1="{bottom}" '
+                                 f'y2="{bottom + (6 if m == 1 else 3)}"/>')
+                    if m == 1:
+                        ticks.append(f'<text x="{px:.1f}" y="{bottom + 18}" text-anchor="middle">'
+                                     f"{m * 10.0 ** e:g}</text>")
+        bottom = box[1] + box[3]
+        svg = (f'<svg viewBox="0 0 {WIDTH} 240" class="plot">'
+               f'<line class="axis" x1="{box[0]}" x2="{box[0] + box[2]}" y1="{bottom}" '
+               f'y2="{bottom}"/>{self.frame(ylim, box)}{"".join(ticks)}'
+               f'<text x="{box[0] + box[2]}" y="{bottom + 18}" text-anchor="end" class="unit">'
+               f'ms</text><g class="accent">{path}</g></svg>')
+        return svg, cut
+
+    def fit_caption(self) -> str:
+        f = self.d.fit
+        if not f:
+            return "No fit: no report of the vendor names this file."
+        parts = []
+        for i, tau in enumerate(f["time"]):
+            amp = f["amplitude"][i] if i < len(f.get("amplitude", [])) else None
+            err = f.get("time_error", [None] * len(f["time"]))[i]
+            amp_err = (f.get("amplitude_error") or [None] * len(f["time"]))[i]
+            text = f"T2 {tau * 1e3:g}" + (f" ± {err * 1e3:g}" if err else "") + " ms"
+            if amp is not None:
+                text = (f"amplitude {amp:g}" + (f" ± {amp_err:g}" if amp_err else "")
+                        + f" {f.get('unit', '')}, " + text)
+            parts.append(text)
+        offset = f.get("offset")
+        if offset is not None:
+            parts.append(f"offset {offset:g}"
+                         + (f" ± {f['offset_error']:g}" if f.get("offset_error") else "")
+                         + f" {f.get('unit', '')}")
+        return (f"<b class=fit>Red</b>: the vendor's fit as reported in {html.escape(f['report'])} "
+                f"({html.escape('; '.join(parts))}), the curve drawn from those numbers, no "
+                "fitting here.")
+
+    def facts(self) -> str:
+        d = self.d
+        facts = [d.sequence, f"{d.n_points} points"]
+        if d.n_curves > 1:
+            facts.append(f"{d.n_curves} curves (the first shown)")
+        if d.n_points:
+            facts.append(f"{self.t[0]:g} to {self.t[-1]:g} ms")
+        if "EchoTime" in d.meta:
+            facts.append(f"TE {d.meta['EchoTime'] * 1e3:g} ms")
+        if "SampleID" in d.meta:
+            facts.append(str(d.meta["SampleID"]))
+        facts.append(Panel.format(d))
+        if self.others:
+            facts.append(f"+ {self.others} more")
+        return " · ".join(facts)
+
+    def html(self) -> str:
+        unit = (self.d.fit or {}).get("unit", "")
+        stored = f"in {unit}" if unit else "as stored"
+        tabs = [("Decay", self.decay_svg()
+                 + f"<div class=note>Every stored point: amplitude {stored} against time. "
+                 f"{self.fit_caption()}</div>"),
+                ("Log", self.decay_svg(log=True)
+                 + "<div class=note>The same on a logarithmic amplitude axis, where one "
+                 "exponential is a straight line; points at or below zero are left out.</div>")]
+        if self.d.distribution is not None:
+            svg, cut = self.distribution_svg()
+            name = html.escape(str(self.d.meta.vendor.get("contin", "the distribution file")))
+            tabs.append(("T2 distribution", svg
+                         + f"<div class=note>Relaxation-time distribution from {name}, as "
+                         f"exported, on a logarithmic time axis. {html.escape(cut)}</div>"))
+        tabs.append(("Details", details(self.d.meta)))
+        return document(self.title, self.facts(), tabs)
 
 
 class TransformPage:

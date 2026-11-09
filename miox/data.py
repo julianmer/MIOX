@@ -780,6 +780,8 @@ class RelaxationData:
         meta: Meta,
         provenance: Provenance,
         name: str = "",
+        fit: dict | None = None,
+        distribution: tuple[np.ndarray, np.ndarray] | None = None,
     ):
         self.times = times
         self.signal = signal
@@ -787,6 +789,10 @@ class RelaxationData:
         self.meta = meta
         self.provenance = provenance
         self.name = name
+        self.fit = fit
+        """The vendor's fit of the decay, as reported: amplitudes, times (s), offset, errors."""
+        self.distribution = distribution
+        """A relaxation-time distribution (times in s, amplitudes) fitted to the decay."""
 
     @property
     def n_points(self) -> int:
@@ -813,6 +819,8 @@ class RelaxationData:
             "n_curves": self.n_curves,
             "time_range": [float(self.times[0]), float(self.times[-1])] if self.n_points else [],
             "complex": bool(np.iscomplexobj(self.signal)),
+            "fit": self.fit,
+            "distribution_points": len(self.distribution[0]) if self.distribution else 0,
             "meta": dict(self.meta),
             "source": dict(self.meta.source),
             "vendor_fields": len(self.meta.vendor_fields()),

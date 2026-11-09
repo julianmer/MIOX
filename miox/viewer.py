@@ -45,6 +45,7 @@ from miox.data import (
     Protocol,
     PulseSequence,
     RawData,
+    RelaxationData,
     RFPulse,
     Surface,
     Tractogram,
@@ -785,6 +786,49 @@ class RFPulseView:
         self.figure.suptitle(f"{d.name}: {n} samples{duration}", fontsize=10)
 
 
+class RelaxationView:
+    """A relaxation decay with the vendor's fitted curve (from the reported numbers), the same on
+    a logarithmic amplitude axis, and the relaxation-time distribution when the file has one."""
+    SIZE = (9, 6.4)
+
+    def __init__(self, d: RelaxationData, figure: Figure | None = None):
+        self.d = d
+        self.figure = figure if figure is not None else Figure(figsize=self.SIZE)
+        t = np.asarray(d.times, dtype=np.float64) * 1e3
+        y = np.real(np.asarray(d.curves[0], dtype=np.complex128))
+        rows = 3 if d.distribution is not None else 2
+        self.axes = self.figure.subplots(rows, 1)
+        fit = None
+        if d.fit and d.fit.get("time"):
+            amplitudes = d.fit.get("amplitude") or [1.0] * len(d.fit["time"])
+            components = zip(amplitudes, d.fit["time"], strict=True)
+            offset = d.fit.get("offset", 0.0)
+            fit = sum(a * np.exp(-t * 1e-3 / tau) for a, tau in components) + offset
+        unit = (d.fit or {}).get("unit", "")
+        for ax, log in zip(self.axes[:2], (False, True), strict=True):
+            keep = y > 0 if log else np.ones(len(y), dtype=bool)
+            ax.plot(t[keep], y[keep], lw=0.8, color="k", label="stored")
+            if fit is not None:
+                ok = fit > 0 if log else np.ones(len(fit), dtype=bool)
+                ax.plot(t[ok], fit[ok], lw=1.2, color="C3",
+                        label=f"vendor fit, T2 {d.fit['time'][0] * 1e3:g} ms")
+            if log:
+                ax.set_yscale("log")
+            ax.set_ylabel(f"amplitude {unit}".strip(), fontsize=9)
+            ax.set_xlabel("ms")
+        if fit is not None:
+            self.axes[0].legend(fontsize=8, frameon=False)
+        if d.distribution is not None:
+            times, amplitude = d.distribution
+            keep = times >= float(d.times[0])
+            self.axes[2].plot(times[keep] * 1e3, amplitude[keep], lw=1.0, color="C0")
+            self.axes[2].set_xscale("log")
+            self.axes[2].set_ylabel("distribution", fontsize=9)
+            self.axes[2].set_xlabel("T2 ms (from the first stored time)")
+        self.figure.suptitle(f"{d.name}: {d.sequence}, {d.n_points} points", fontsize=10)
+        self.figure.tight_layout()
+
+
 class ProtocolView:
     SIZE = (9, 7)
     ROWS = 30  # values shown at once
@@ -959,6 +1003,7 @@ VIEWS = {
     Transform: TransformView,
     Phantom: PhantomView,
     RFPulse: RFPulseView,
+    RelaxationData: RelaxationView,
     Protocol: ProtocolView,
     PriorSet: PriorView,
 }

@@ -276,6 +276,25 @@ class KeyTable(dict):
             "(e.g. msec, Volumes).",
             "miox",
         ),
+        Key("SampleID", None, (str,), "Identifier of the sample as the instrument names it.",
+            "miox"),
+        Key(
+            "RelaxationFitAmplitude", None, (list, float),
+            "Amplitude of each exponential component of a relaxation decay as the vendor's fit "
+            "reports it, in the signal's unit.",
+            "miox",
+        ),
+        Key(
+            "RelaxationFitTime", "s", (list, float),
+            "Relaxation time of each exponential component of a decay (T2 for an echo train, T1 "
+            "for a recovery) as the vendor's fit reports it.",
+            "miox",
+        ),
+        Key(
+            "RelaxationFitOffset", None, (float,),
+            "Constant offset of the vendor's fit of a relaxation decay, in the signal's unit.",
+            "miox",
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning

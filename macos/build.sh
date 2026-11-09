@@ -23,7 +23,7 @@ EXTENSIONS=(dat 7 rda sdat spar ima basis coord table print mrui dpt ddf cmplx r
             seq trk tck trx tt gii srf mz3 puls resp ecg ext acq pta tfm lta v16 fmr stc real
             cplx short
             mif mnc par rec brik head afni jnii bnii vti vtk gipl fdf fre idf int2 spr sdt
-            ft1 ft3 ft4 pipe 1d sec csdf spe h2o lab sin job0 gep tsv
+            ft1 ft3 ft4 pipe 1d sec csdf spe h2o lab sin job0 gep tsv dps mdt
             trf vmr vtc vmp smp voi mtc poi glm ssm prt sdm fib tsf
             label annot curv sulc thickness inflated pial white sphere orig smoothwm
             exar1 examcard pro mode ymf phantom fts v mod con src)

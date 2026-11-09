@@ -58,7 +58,8 @@ from miox.sniff import Format, Kind, Sniffer
 #**************************************************************************************************#
 class CLI:
     NOT_SPECTROSCOPY = (Kind.IMAGING, Kind.TRACTOGRAM, Kind.SURFACE, Kind.TRANSFORM, Kind.PHYSIO,
-                        Kind.SEQUENCE, Kind.PROTOCOL, Kind.PHANTOM, Kind.REPORT)
+                        Kind.SEQUENCE, Kind.PROTOCOL, Kind.PHANTOM, Kind.REPORT,
+                        Kind.RELAXOMETRY)
     def __init__(self):
         self.parser = argparse.ArgumentParser(prog="miox", description="Open any MR file.")
         self.parser.add_argument("--version", action="version", version=f"miox {__version__}")
