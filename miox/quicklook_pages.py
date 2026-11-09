@@ -24,6 +24,7 @@ import html
 from pathlib import Path
 
 import numpy as np
+import scipy.fft
 
 # own
 from miox.data import (
@@ -251,8 +252,8 @@ class RawPage:
         start = max(0, min(full - samples, full // 2 - centre))
         top = (rows - lines) // 2
         padded[top:top + lines, :, start:start + samples] = k
-        image = np.fft.fftshift(np.fft.ifft2(np.fft.ifftshift(padded, axes=(0, 2)), axes=(0, 2)),
-                                axes=(0, 2))
+        image = np.fft.fftshift(scipy.fft.ifft2(np.fft.ifftshift(padded, axes=(0, 2)),
+                                                axes=(0, 2), workers=-1), axes=(0, 2))
         rss = np.sqrt((np.abs(image) ** 2).sum(axis=1))
         if oversampled:
             first = full // 2 - base // 2

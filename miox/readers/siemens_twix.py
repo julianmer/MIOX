@@ -21,6 +21,7 @@ import re
 import warnings
 
 import numpy as np
+import scipy.fft
 import spec2nii.GSL.gslfunctions as GSL
 from mapvbvd import mapVBVD
 from nifti_mrs.create_nmrs import gen_nifti_mrs_hdr_ext
@@ -267,8 +268,8 @@ class TwixCsi:
         grid[(slice(None),) + tuple(slice(m // 2 - n // 2, m // 2 - n // 2 + n)
                                     for n, m in zip(k.shape[1:4], final, strict=True))] = k
         axes = (1, 2, 3)
-        image = np.fft.fftshift(np.fft.fftn(np.fft.ifftshift(grid, axes=axes), axes=axes),
-                                axes=axes)
+        image = np.fft.fftshift(scipy.fft.fftn(np.fft.ifftshift(grid, axes=axes), axes=axes,
+                                               workers=-1), axes=axes)
         orientation = self.orientation()
         if orientation in (self.SAGITTAL, self.TRANSVERSE):
             image = np.flip(image, 2)  # the readout mirrored
