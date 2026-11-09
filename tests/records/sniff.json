@@ -16399,6 +16399,1131 @@
   "vendor": null,
   "kind": "raw"
  },
+ "minispec/2024-10-08 T-21C/08074045.mdt": {
+  "format": "minispec_report",
+  "vendor": "bruker",
+  "kind": "protocol"
+ },
+ "minispec/2024-10-08 T-21C/08161550.mdt": {
+  "format": "minispec_report",
+  "vendor": "bruker",
+  "kind": "protocol"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_21_20241008130556.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_21_20241008130556_CONTIN_1008143338.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_22_20241008130816.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_22_20241008130816_CONTIN_1008143435.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_23_20241008131011.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_23_20241008131011_CONTIN_1008143533.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_24_20241008131206.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_24_20241008131206_CONTIN_1008143641.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_25_20241008131401.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 100 mg-L_25_20241008131401_CONTIN_1008143743.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_46_20241008135816.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_46_20241008135816_CONTIN_1008172244.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_47_20241008140010.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_47_20241008140010_CONTIN_1008172340.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_48_20241008140202.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_48_20241008140202_CONTIN_1008172436.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_49_20241008140350.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_49_20241008140350_CONTIN_1008173223.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_50_20241008140551.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 1000 mg-L_50_20241008140551_CONTIN_1008173320.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_10_20241008102625.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_10_20241008102625_CONTIN_1008141730.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_6_20241008101849.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_6_20241008101849_CONTIN_1008141235.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_7_20241008102044.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_7_20241008102044_CONTIN_1008141337.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_8_20241008102239.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_8_20241008102239_CONTIN_1008141513.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_9_20241008102432.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 15 mg-L_9_20241008102432_CONTIN_1008141633.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_26_20241008131601.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_26_20241008131601_CONTIN_1008143841.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_27_20241008131759.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_27_20241008131759_CONTIN_1008143937.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_28_20241008131951.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_28_20241008131951_CONTIN_1008154354.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_29_20241008132150.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_29_20241008132150_CONTIN_1008154451.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_30_20241008132349.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 200 mg-L_30_20241008132349_CONTIN_1008155635.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_11_20241008102828.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_11_20241008102828_CONTIN_1008141951.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_12_20241008103021.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_12_20241008103021_CONTIN_1008142125.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_13_20241008103210.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_13_20241008103210_CONTIN_1008142351.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_14_20241008103404.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_14_20241008103404_CONTIN_1008142454.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_15_20241008103558.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 30 mg-L_15_20241008103558_CONTIN_1008142555.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_31_20241008132545.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_31_20241008132545_CONTIN_1008155730.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_32_20241008132734.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_32_20241008132734_CONTIN_1008160734.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_33_20241008133311.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_33_20241008133311_CONTIN_1008161659.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_34_20241008133511.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_34_20241008133511_CONTIN_1008161754.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_35_20241008133710.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 300 mg-L_35_20241008133710_CONTIN_1008163119.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_1_20241008093123.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_1_20241008093123_CONTIN_1008140714.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_2_20241008101117.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_2_20241008101117_CONTIN_1008140834.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_3_20241008101312.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_3_20241008101312_CONTIN_1008140933.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_4_20241008101504.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_4_20241008101504_CONTIN_1008141031.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_5_20241008101655.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 5 mg-L_5_20241008101655_CONTIN_1008141129.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_16_20241008125453.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_16_20241008125453_CONTIN_1008142704.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_17_20241008125706.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_17_20241008125706_CONTIN_1008142831.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_18_20241008125912.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_18_20241008125912_CONTIN_1008142940.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_19_20241008130142.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_19_20241008130142_CONTIN_1008143143.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_20_20241008130354.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 50 mg-L_20_20241008130354_CONTIN_1008143241.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_36_20241008133908.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_36_20241008133908_CONTIN_1008163217.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_37_20241008134057.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_37_20241008134057_CONTIN_1008164313.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_38_20241008134248.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_38_20241008134248_CONTIN_1008164415.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_39_20241008134439.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_39_20241008134439_CONTIN_1008164511.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_40_20241008134630.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 500 mg-L_40_20241008134630_CONTIN_1008164822.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_41_20241008134825.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_41_20241008134825_CONTIN_1008164920.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_42_20241008135025.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_42_20241008135025_CONTIN_1008165017.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_43_20241008135220.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_43_20241008135220_CONTIN_1008171419.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_44_20241008135427.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_44_20241008135427_CONTIN_1008171517.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_45_20241008135621.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/chitosan 750 mg-L_45_20241008135621_CONTIN_1008171613.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/2024-10-08 T-21C/t2_cpmg_table_mq_nf.cdt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "minispec/New folder/06125112.mdt": {
+  "format": "minispec_report",
+  "vendor": "bruker",
+  "kind": "protocol"
+ },
+ "minispec/New folder/07072004.mdt": {
+  "format": "minispec_report",
+  "vendor": "bruker",
+  "kind": "protocol"
+ },
+ "minispec/New folder/07101235.mdt": {
+  "format": "minispec_report",
+  "vendor": "bruker",
+  "kind": "protocol"
+ },
+ "minispec/New folder/08071017.mdt": {
+  "format": "minispec_report",
+  "vendor": "bruker",
+  "kind": "protocol"
+ },
+ "minispec/New folder/12090701.mdt": {
+  "format": "minispec_report",
+  "vendor": "bruker",
+  "kind": "protocol"
+ },
+ "minispec/New folder/12131244.mdt": {
+  "format": "minispec_report",
+  "vendor": "bruker",
+  "kind": "protocol"
+ },
+ "minispec/New folder/chitosan 100 mg-L_21_20241008130556_CONTIN_1107100521.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100 mg-L_22_20241008130816_CONTIN_1107100623.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100 mg-L_23_20241008131011_CONTIN_1107100728.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100 mg-L_24_20241008131206_CONTIN_1107100835.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100 mg-L_25_20241008131401_CONTIN_1107100947.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000 mg-L_46_20241008135816_CONTIN_1108072230.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000 mg-L_47_20241008140010_CONTIN_1108072334.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000 mg-L_48_20241008140202_CONTIN_1108072437.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000 mg-L_49_20241008140350_CONTIN_1108072540.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000 mg-L_50_20241008140551_CONTIN_1108072647.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000mgL_1_20240912111023.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000mgL_1_20240912111023_CONTIN_0912112932.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000mgL_1_20240912131519.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000mgL_1_20240912131519_CONTIN_0912141800.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000mgL_1_20240912135845.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 1000mgL_1_20240912135845_CONTIN_0912142826.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100mgL_6_20240912111955.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100mgL_6_20240912111955_CONTIN_0912113507.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100mgL_6_20240912132547.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100mgL_6_20240912132547_CONTIN_0912142320.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100mgL_6_20240912140825.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 100mgL_6_20240912140825_CONTIN_0912143340.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15 mg-L_10_20241008102625_CONTIN_1107094718.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15 mg-L_6_20241008101849_CONTIN_1107094230.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15 mg-L_7_20241008102044_CONTIN_1107094344.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15 mg-L_8_20241008102239_CONTIN_1107094504.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15 mg-L_9_20241008102432_CONTIN_1107094610.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15mgL_9_20240912112543.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15mgL_9_20240912112543_CONTIN_0912113806.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15mgL_9_20240912133217.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15mgL_9_20240912133217_CONTIN_0912142626.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15mgL_9_20240912141417.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 15mgL_9_20240912141417_CONTIN_0912143644.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200 mg-L_26_20241008131601_CONTIN_1107101048.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200 mg-L_27_20241008131759_CONTIN_1107101150.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200 mg-L_27_20241008131759_CONTIN_1107101331.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200 mg-L_28_20241008131951_CONTIN_1107101435.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200 mg-L_29_20241008132150_CONTIN_1107101539.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200 mg-L_30_20241008132349_CONTIN_1107101641.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200mgL_5_20240912111800.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200mgL_5_20240912111800_CONTIN_0912113406.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200mgL_5_20240912132336.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200mgL_5_20240912132336_CONTIN_0912142213.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200mgL_5_20240912140632.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 200mgL_5_20240912140632_CONTIN_0912143240.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30 mg-L_11_20241008102828_CONTIN_1107094859.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30 mg-L_12_20241008103021_CONTIN_1107095002.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30 mg-L_13_20241008103210_CONTIN_1107095111.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30 mg-L_14_20241008103404_CONTIN_1107095312.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30 mg-L_15_20241008103558_CONTIN_1107095419.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300 mg-L_31_20241008132545_CONTIN_1107102111.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300 mg-L_32_20241008132734_CONTIN_1107103237.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300 mg-L_33_20241008133311_CONTIN_1107103340.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300 mg-L_34_20241008133511_CONTIN_1107103449.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300 mg-L_35_20241008133710_CONTIN_1107103551.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300mgL_4_20240912111607.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300mgL_4_20240912111607_CONTIN_0912113305.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300mgL_4_20240912132133.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300mgL_4_20240912132133_CONTIN_0912142114.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300mgL_4_20240912140438.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300mgL_4_20240912140438_CONTIN_0912143129.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 300mgL_4_20240912140438_CONTIN_0912143946.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30mgL_8_20240912112348.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30mgL_8_20240912112348_CONTIN_0912113706.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30mgL_8_20240912133013.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30mgL_8_20240912133013_CONTIN_0912142529.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30mgL_8_20240912141221.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30mgL_8_20240912141221_CONTIN_0912143538.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 30mgL_8_20240912141221_CONTIN_0912143844.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5 mg-L_1_20241008093123_CONTIN_1107093215.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5 mg-L_2_20241008101117_CONTIN_1107093355.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5 mg-L_3_20241008101312_CONTIN_1107093458.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5 mg-L_4_20241008101504_CONTIN_1107093606.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5 mg-L_5_20241008101655_CONTIN_1107093711.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50 mg-L_16_20241008125453_CONTIN_1107095949.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50 mg-L_17_20241008125706_CONTIN_1107100057.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50 mg-L_18_20241008125912_CONTIN_1107100200.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50 mg-L_19_20241008130142_CONTIN_1107100305.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50 mg-L_20_20241008130354_CONTIN_1107100419.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500 mg-L_36_20241008133908_CONTIN_1108071125.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500 mg-L_37_20241008134057_CONTIN_1108071237.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500 mg-L_38_20241008134248_CONTIN_1108071343.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500 mg-L_39_20241008134439_CONTIN_1108071446.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500 mg-L_40_20241008134630_CONTIN_1108071552.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500mgL_3_20240912111413.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500mgL_3_20240912111413_CONTIN_0912113201.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500mgL_3_20240912131933.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500mgL_3_20240912131933_CONTIN_0912142013.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500mgL_3_20240912140241.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500mgL_3_20240912140241_CONTIN_0912143029.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 500mgL_3_20240912140241_CONTIN_0912144046.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50mgL_7_20240912112152.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50mgL_7_20240912112152_CONTIN_0912113607.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50mgL_7_20240912132805.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50mgL_7_20240912132805_CONTIN_0912142420.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50mgL_7_20240912141023.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 50mgL_7_20240912141023_CONTIN_0912143440.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5mgL_10_20240912112736.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5mgL_10_20240912112736_CONTIN_0912113926.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5mgL_10_20240912133409.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5mgL_10_20240912133409_CONTIN_0912142723.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5mgL_10_20240912141632.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 5mgL_10_20240912141632_CONTIN_0912143745.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750 mg-L_41_20241008134825_CONTIN_1108071657.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750 mg-L_42_20241008135025_CONTIN_1108071804.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750 mg-L_43_20241008135220_CONTIN_1108071914.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750 mg-L_44_20241008135427_CONTIN_1108072016.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750 mg-L_45_20241008135621_CONTIN_1108072124.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750mgL_2_20240912111218.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750mgL_2_20240912111218_CONTIN_0912113053.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750mgL_2_20240912131720.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750mgL_2_20240912131720_CONTIN_0912141913.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750mgL_2_20240912140044.dps": {
+  "format": "minispec_dps",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/chitosan 750mgL_2_20240912140044_CONTIN_0912142928.txt": {
+  "format": "minispec_contin",
+  "vendor": "bruker",
+  "kind": "relaxometry"
+ },
+ "minispec/New folder/contin_ilt_mq_nf.cdt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
+ "minispec/New folder/t2_cpmg_table_mq_nf.cdt": {
+  "format": "unknown",
+  "vendor": null,
+  "kind": "unknown"
+ },
  "mrd/LICENSE": {
   "format": "unknown",
   "vendor": null,
