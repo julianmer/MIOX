@@ -136,6 +136,14 @@ def test_synthetic_files_sniff(tmp_path):
     assert d.meta["EchoTime"] == pytest.approx(0.002)
     assert d.distribution[0][0] == pytest.approx(1e-3)
     assert miox.sniff(tmp_path / "r.mdt").format == miox.Format.MINISPEC_REPORT
+    contin_log = ("CONTIN Results:\r\n'C:\\data\\a.dps'\r\n1 Decay Components Found.\r\n"
+                  "T2[1]      :  0.071 +/-  0.007 ms\r\nA [1]      :   3317  %\r\n"
+                  "Integral   : 205683\r\n")
+    (tmp_path / "c.mdt").write_bytes(contin_log.encode())
+    assert miox.sniff(tmp_path / "c.mdt").format == miox.Format.MINISPEC_REPORT
+    [log] = miox.load(tmp_path / "c.mdt")
+    assert log.name == "a" and log.meta["RelaxationFitTime"] == [pytest.approx(71e-6)]
+    assert log.meta["RelaxationFitAmplitude"] == [3317.0]
     assert miox.sniff(tmp_path / "a_CONTIN_1.txt").format == miox.Format.MINISPEC_CONTIN
     (tmp_path / "lone.dps").write_text(rows + "\n")
     [lone] = miox.load(tmp_path / "lone.dps")

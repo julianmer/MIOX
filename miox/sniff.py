@@ -1484,9 +1484,9 @@ class Sniffer:
             return Sniff(path, Format.MINISPEC_CONTIN, Kind.RELAXOMETRY, vendor="bruker",
                          confidence=0.9, evidence=("_CONTIN_ export, two numeric columns",),
                          companions=(decay,) if decay.is_file() else ())
-        if suffix == ".mdt" and b"Curve Fit Results" in head:
+        if suffix == ".mdt" and (b"Curve Fit Results" in head or b"CONTIN Results:" in head):
             return Sniff(path, Format.MINISPEC_REPORT, Kind.PROTOCOL, vendor="bruker",
-                         confidence=1.0, evidence=("Curve Fit Results report",))
+                         confidence=1.0, evidence=("Curve Fit or CONTIN Results report",))
         return None
 
     def text_formats(self, path: Path, head: bytes) -> Sniff | None:
