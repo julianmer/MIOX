@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "miox"
+name = "pymiox"
 # version is single-sourced from miox/__init__.py (__version__)
 dynamic = ["version"]
 description = "Open any MR file from any vendor into one object: data, geometry, all metadata."

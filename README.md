@@ -24,6 +24,12 @@ miox.view(d)                     # quick look in a window
 ## Installation
 
 ```
+pip install pymiox
+```
+
+or, for development,
+
+```
 git clone https://github.com/julianmer/MIOX.git
 cd MIOX
 uv sync --extra dev
