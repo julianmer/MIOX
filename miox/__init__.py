@@ -38,7 +38,7 @@ from miox.data import (
 from miox.readers import IncompleteError, Loader, ReaderError, load
 from miox.sniff import Format, Kind, Sniff, Sniffer, sniff
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = [
     "BasisSet",
     "FitResult",

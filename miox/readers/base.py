@@ -41,6 +41,22 @@ from miox.sniff import Format, Sniff
 
 
 #**************************************************************************************************#
+#                                        package_version                                           #
+#**************************************************************************************************#
+#                                                                                                  #
+# The version of a package a reader relies on. MIOX reports its own module version: the installed  #
+# distribution is named pymiox, so its metadata is not found under the package name.               #
+#                                                                                                  #
+#**************************************************************************************************#
+def package_version(name: str) -> str:
+    if name == "miox":
+        from miox import __version__
+
+        return __version__
+    return version(name)
+
+
+#**************************************************************************************************#
 #                                           ReaderError                                            #
 #**************************************************************************************************#
 #                                                                                                  #
@@ -254,7 +270,7 @@ class Reader:
             paths=(sniff.path,) + sniff.companions,
             format=sniff.format,
             reader=type(self).__name__,
-            versions={name: version(name) for name in self.PACKAGES},
+            versions={name: package_version(name) for name in self.PACKAGES},
             notes=notes,
         )
 

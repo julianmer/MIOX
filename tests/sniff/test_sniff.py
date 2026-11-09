@@ -253,7 +253,7 @@ def test_empty_dir(tmp_path):
             "fit_result",
         ),
         ("x.CSV", "Row, Col, NAA, NAA %SD\n 1, 1, 1.0, 3\n", "lcmodel_csv", "fit_result"),
-        ("x.ps", "%!PS-Adobe-2.0\n%%Creator: LCModel\n", "lcmodel_ps", "report"),
+        ("x.ps", "%!PS-Adobe-2.0\n%%Creator: LCModel\n", "lcmodel_ps", "fit_result"),
         ("x.dpt", "Dangerplot_version\t1.0\nNumber_of_points\t2\n", "tarquin_dpt", "spectroscopy"),
         ("r.txt", "Signal     Conc (au)       %SD   SD (au)\n", "tarquin_results", "fit_result"),
         ("f.txt", "Row : 1, Col : 1, Slice : 1\nPPMScale,Data,Fit\n", "tarquin_fit", "fit_result"),
