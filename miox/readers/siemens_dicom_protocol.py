@@ -53,6 +53,9 @@ class SiemensDicomProtocolReader(SiemensProtocolReader):
     GUID = re.compile(r"[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}")
 
     def read(self, sniff: Sniff) -> list[Protocol]:
+        return self.per_file(sniff, self._one)
+
+    def _one(self, sniff: Sniff) -> list[Protocol]:
         with open_dicom(sniff.path) as fh:
             ds = pydicom.dcmread(fh)
         texts, others = {}, {}

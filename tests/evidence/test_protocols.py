@@ -221,3 +221,23 @@ def test_fsl_design_files_as_fslpy_reads_them(name):
         pytest.skip("FSL-MRS test data not fetched")
     [protocol] = load(path)
     assert protocol.meta.vendor["matrix"] == VEST[name]
+
+
+@pytest.mark.data
+def test_dicom_folders_decide_by_their_images_and_read_their_protocols():
+    """A series folder mixing enhanced images with raw-data (protocol) DICOMs is an image
+    folder; a folder holding only protocol DICOMs loads one Protocol per file."""
+    from miox.data import MRImage, Protocol
+    from miox.sniff import Kind, sniff
+
+    mixed = PUBLIC_DATA / "dcm_qa_philips_enh/In/enh"
+    assert sniff(mixed).kind == Kind.IMAGING
+    assert all(isinstance(d, MRImage) for d in load(mixed))
+    single = PUBLIC_DATA / "dcm_qa_xa30/In/15_DWI_dir80_PA"
+    assert sniff(single).kind == Kind.PROTOCOL
+    [protocol] = load(single)
+    assert isinstance(protocol, Protocol) and protocol.meta["RepetitionTime"] > 0
+    reports = PUBLIC_DATA / "dcm_qa_xa30/In/99_Phoenix_Document"
+    protocols = load(reports)
+    assert len(protocols) == len(list(reports.glob("*.dcm"))) == 7
+    assert all(p.name for p in protocols)

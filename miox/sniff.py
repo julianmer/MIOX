@@ -538,7 +538,7 @@ class Sniffer:
         subdirs = any(c.is_dir() for c in path.iterdir())
         if dicoms:
             first, child = self._deciding_dicom(dicoms)
-            if first.format != Format.DICOM_OTHER or not subdirs:
+            if first.kind not in (Kind.PROTOCOL, Kind.UNKNOWN) or not subdirs:
                 return dataclasses.replace(
                     first,
                     path=path,
@@ -565,7 +565,7 @@ class Sniffer:
         for child in paths[: self.DIR_PROBE_LIMIT]:
             sniff = self._read_dicom(child)
             first = first or (sniff, child)
-            if sniff.format != Format.DICOM_OTHER:
+            if sniff.kind not in (Kind.PROTOCOL, Kind.UNKNOWN):
                 return sniff, child
         return first
 

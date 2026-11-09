@@ -22,7 +22,7 @@ import io
 import re
 import sys
 import warnings
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from importlib.metadata import version
 from types import SimpleNamespace
 from typing import Any
@@ -37,7 +37,7 @@ from spec2nii.spec2nii import spec2nii as Spec2niiCommand
 # own
 from miox.data import BasisSet, FitResult, MRSData, PriorSet, Provenance
 from miox.meta.meta import Meta
-from miox.sniff import Format, Sniff
+from miox.sniff import Format, Sniff, Sniffer
 
 
 #**************************************************************************************************#
@@ -273,6 +273,26 @@ class Reader:
             versions={name: package_version(name) for name in self.PACKAGES},
             notes=notes,
         )
+
+    def per_file(self, sniff: Sniff, one: Callable[[Sniff], list]) -> list:
+        """``one(sniff)`` of a file; of a directory, ``one`` of every companion that sniffs
+        as one of this reader's formats, raising only when none of them could be read."""
+        if not sniff.path.is_dir():
+            return one(sniff)
+        sniffer = Sniffer()
+        read, errors = [], []
+        for path in sniff.companions:
+            child = sniffer.sniff(path)
+            if child.format not in self.FORMATS:
+                continue
+            try:
+                read += one(child)
+            except ReaderError as e:
+                errors.append(str(e))
+        if not read:
+            raise ReaderError(errors[0] if errors
+                              else f"{sniff.path.name}: no file of this format in the folder")
+        return read
 
     @contextlib.contextmanager
     def captured(self, notes: list[str]) -> Iterator[None]:

@@ -53,6 +53,9 @@ class PhilipsDicomRawReader(PhilipsExamCardReader):
     NAME = re.compile(rb"^[A-Za-z][A-Za-z0-9_]{2,32}$")  # a parameter name of a table
 
     def read(self, sniff: Sniff) -> list[Protocol]:
+        return self.per_file(sniff, self._one)
+
+    def _one(self, sniff: Sniff) -> list[Protocol]:
         with open_dicom(sniff.path) as fh:
             ds = pydicom.dcmread(fh)
         name = str(ds.get("SeriesDescription") or ds.get("ProtocolName") or sniff.path.stem)
