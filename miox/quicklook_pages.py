@@ -153,6 +153,7 @@ class RawPage:
     }
     INDICES = ("average", "slice", "contrast", "phase", "repetition", "set")  # segments share
     READOUTS = 6
+    COLUMNS = 1024  # k-space pictures pool their samples down to at most this many columns
 
     def __init__(self, raw: RawData, title: str, others: int = 0, image: MRImage | None = None):
         self.raw, self.title, self.others, self.image = raw, title, others, image
@@ -160,6 +161,18 @@ class RawPage:
         self.timed = [w for w in raw.waveforms if "time_stamp" in w and "sample_time_us" in w]
         self.magnitude = np.abs(self.k)
         self.rss = np.sqrt((self.magnitude ** 2).sum(axis=1))
+
+    @classmethod
+    def shrunk(cls, values: np.ndarray) -> np.ndarray:
+        """``values`` (lines, samples) with the samples pooled by their maximum down to at
+        most COLUMNS, so a long readout draws as a picture of ordinary size."""
+        lines, samples = values.shape
+        if samples <= cls.COLUMNS:
+            return values
+        step = -(-samples // cls.COLUMNS)
+        pad = (-samples) % step
+        padded = np.concatenate([values, np.zeros((lines, pad))], axis=1) if pad else values
+        return padded.reshape(lines, -1, step).max(axis=2)
 
     @classmethod
     def select(cls, raw: RawData, pick: dict | None = None) -> tuple[np.ndarray, np.ndarray, dict]:
@@ -251,7 +264,7 @@ class RawPage:
     def kspace_pane(self) -> str:
         lines, _, samples = self.k.shape
         ratio = samples / lines
-        pictures = Panel.picture(Panel.grey(self.rss, log=True),
+        pictures = Panel.picture(Panel.grey(self.shrunk(self.rss), log=True),
                                  "k-space, all coils (root sum of squares), log scale",
                                  f"{lines} lines × {samples} samples", ratio)
         verified = self.VERIFIED.get(self.raw.provenance.format)
@@ -284,7 +297,8 @@ class RawPage:
 
     def coils_pane(self) -> str:
         lines, coils, samples = self.k.shape
-        cells = "".join(Panel.picture(Panel.grey(self.magnitude[:, c], log=True), f"coil {c + 1}",
+        cells = "".join(Panel.picture(Panel.grey(self.shrunk(self.magnitude[:, c]), log=True),
+                                      f"coil {c + 1}",
                                       "", samples / lines) for c in range(coils))
         return (f"<div class=coils>{cells}</div><div class=note>log |k| per coil, each in its "
                 "own window.</div>")

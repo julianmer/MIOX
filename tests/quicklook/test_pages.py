@@ -181,3 +181,25 @@ def test_plain_image_recovers_a_box_from_its_k_space():
 def test_scale_numbers_are_short():
     assert [Panel.number(v) for v in (0, 1090.4, -0.25, 3.14159, 240000, 0.000289)] == [
         "0", "1090", "-0.25", "3.14", "2.4e+05", "0.000289"]
+
+
+def test_long_readouts_are_pooled_before_drawing():
+    """A readout of 25000 samples draws as at most RawPage.COLUMNS columns, pooled by the
+    maximum so an isolated peak survives; short readouts are untouched."""
+    from miox.data import Provenance, RawData
+    from miox.meta import Meta
+    from miox.sniff import Format
+
+    lines, samples = 8, 25000
+    headers = np.zeros(lines, dtype=RawData.HEADER)
+    headers["idx"]["kspace_encode_step_1"] = np.arange(lines)
+    headers["number_of_samples"] = samples
+    data = np.zeros((lines, 2, samples), dtype=np.complex64)
+    data[3, 1, 12345] = 7.0
+    raw = RawData(data, headers, Meta(), Provenance((), Format.GE_PFILE, "test", {}), "long")
+    page = RawPage(raw, "long")
+    small = page.shrunk(page.rss)
+    assert small.shape[0] == lines and small.shape[1] <= RawPage.COLUMNS
+    assert small.max() == 7.0 and np.argmax(small[3]) == 12345 // (-(-samples // RawPage.COLUMNS))
+    assert page.shrunk(np.ones((4, 100))).shape == (4, 100)
+    assert len(page.coils_pane()) < 200000
