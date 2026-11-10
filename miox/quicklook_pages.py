@@ -136,13 +136,15 @@ class Panel:
 #**************************************************************************************************#
 #                                                                                                  #
 # Raw k-space: log|k| summed over coils (root sum of squares) of one slice (the first average,     #
-# slice, contrast, phase, repetition, set and segment, the best-filled partition), phase-encode    #
-# lines as rows and samples as columns as fastMRI and ismrmrdviewer draw it, lines not acquired    #
-# black; beside it, for formats whose plain reconstruction has been checked against a reference,   #
-# the 2-D FFT of that slice (the echo centred by center_sample, the readout cropped to its matrix, #
-# root sum of squares over coils, no parallel-imaging reconstruction), or the reconstruction the   #
-# file itself holds (fastMRI, M4Raw); every coil's log|k|; six readouts; the physiological         #
-# waveforms stored between the readouts; every header value.                                       #
+# slice, contrast, phase, repetition, set and segment, the central one of the best-filled          #
+# partitions), phase-encode lines as rows and samples as columns as fastMRI and ismrmrdviewer draw #
+# it, lines not acquired black; beside it, for formats whose plain reconstruction has been checked #
+# against a reference, the 2-D FFT of that slice (the echo centred by center_sample, the readout   #
+# cropped to its matrix, root sum of squares over coils, no parallel-imaging reconstruction), or   #
+# the reconstruction the file itself holds (fastMRI, M4Raw); every coil's log|k|; six readouts;    #
+# the physiological waveforms stored between the readouts; every header value. Readouts that are   #
+# all noise measurements (a MaRGE Noise file) get their real and imaginary parts against time and  #
+# their magnitude spectra instead, as MaRGE plots them.                                            #
 #                                                                                                  #
 #**************************************************************************************************#
 class RawPage:
@@ -156,9 +158,12 @@ class RawPage:
     INDICES = ("average", "slice", "contrast", "phase", "repetition", "set")  # segments share
     READOUTS = 6
     COLUMNS = 1024  # k-space pictures pool their samples down to at most this many columns
+    NOISE = "IS_NOISE_MEASUREMENT"
+    NOISE_COILS = 8  # coils drawn on the noise panes
 
     def __init__(self, raw: RawData, title: str, others: int = 0, image: MRImage | None = None):
         self.raw, self.title, self.others, self.image = raw, title, others, image
+        self.noise = self.NOISE in raw.flag_names.values() and bool(raw.flagged(self.NOISE).all())
         self.k, self.acquired, self.chosen = self.select(raw)
         self.timed = [w for w in raw.waveforms if "time_stamp" in w and "sample_time_us" in w]
         self.magnitude = np.abs(self.k)
@@ -179,8 +184,8 @@ class RawPage:
     @classmethod
     def select(cls, raw: RawData, pick: dict | None = None) -> tuple[np.ndarray, np.ndarray, dict]:
         """The k-space (lines, coils, samples) of one slice, which lines it holds, and which
-        index of every counter with several values was taken: the first (the most populated
-        partition), or the one ``pick`` names for it."""
+        index of every counter with several values was taken: the first (the central one of the
+        most populated partitions), or the one ``pick`` names for it."""
         idx = raw.headers["idx"]
         pick = pick or {}
         selected = np.ones(len(idx), dtype=bool)
@@ -191,7 +196,9 @@ class RawPage:
             if len(np.unique(idx[name])) > 1:
                 chosen[name] = (value, len(np.unique(idx[name])))
         partitions, counts = np.unique(idx["kspace_encode_step_2"][selected], return_counts=True)
-        partition = int(pick.get("partition", partitions[np.argmax(counts)]))
+        fullest = partitions[counts == counts.max()]
+        centre = (int(partitions.min()) + int(partitions.max()) + 1) // 2
+        partition = int(pick.get("partition", fullest[np.argmin(np.abs(fullest - centre))]))
         if len(partitions) > 1:
             chosen["partition"] = (partition, len(partitions))
         selected &= idx["kspace_encode_step_2"] == partition
@@ -341,6 +348,51 @@ class RawPage:
                 "channel of each), on the scanner's clock from the first packet; learning-phase "
                 "packets left out.</div>")
 
+    def dwell_us(self) -> float:
+        """The sample time the headers state, 0 when they state none."""
+        times = self.raw.headers["sample_time_us"]
+        dwell = np.unique(times[times > 0])
+        return float(dwell[0]) if dwell.size == 1 else 0.0
+
+    def time_pane(self) -> str:
+        """The real and imaginary parts of the first noise readout, one pair of rows per coil."""
+        raw = self.raw
+        samples = raw.data.shape[-1]
+        dwell = self.dwell_us()
+        t = np.arange(samples) * (dwell * 1e-3 if dwell else 1.0)
+        unit = "ms" if dwell else "sample"
+        coils = min(raw.n_coils, self.NOISE_COILS)
+        rows = []
+        for c in range(coils):
+            label = f"coil {c + 1} " if raw.n_coils > 1 else ""
+            rows.append((f"{label}real", t, raw.data[0, c].real.astype(np.float64), ""))
+            rows.append((f"{label}imaginary", t, raw.data[0, c].imag.astype(np.float64), ""))
+        rms = ", ".join(f"{np.sqrt(np.mean(np.abs(raw.data[:, c]) ** 2)):.3g}"
+                        for c in range(coils))
+        shown = f"{coils} of {raw.n_coils} coils shown; " if coils < raw.n_coils else ""
+        which = "the first of " if raw.n_readouts > 1 else ""
+        return (Panel.rows(rows, unit, (0.0, float(t[-1]) if samples > 1 else 1.0))
+                + f"<div class=note>Real and imaginary parts of {which}{raw.n_readouts} noise "
+                f"readout{'s' if raw.n_readouts > 1 else ''} as stored; {shown}root mean square "
+                f"over all readouts per coil: {rms}.</div>")
+
+    def spectrum_pane(self) -> str:
+        """The magnitude spectrum of the noise readouts, averaged over readouts, per coil."""
+        raw = self.raw
+        samples = raw.data.shape[-1]
+        dwell = self.dwell_us()
+        spectra = np.abs(np.fft.fftshift(np.fft.fft(raw.data, axis=-1), axes=-1)).mean(axis=0)
+        f = np.fft.fftshift(np.fft.fftfreq(samples, d=dwell * 1e-6 if dwell else 1.0))
+        f, unit = (f * 1e-3, "kHz") if dwell else (f, "cycles/sample")
+        coils = min(raw.n_coils, self.NOISE_COILS)
+        rows = [(f"coil {c + 1}" if raw.n_coils > 1 else "magnitude", f,
+                 spectra[c].astype(np.float64), "") for c in range(coils)]
+        shown = f"; {coils} of {raw.n_coils} coils shown" if coils < raw.n_coils else ""
+        return (Panel.rows(rows, unit, (float(f[0]), float(f[-1]) if samples > 1 else 1.0))
+                + f"<div class=note>|FFT| of the noise readouts, averaged over "
+                f"{raw.n_readouts} readout{'s' if raw.n_readouts > 1 else ''}, over the "
+                f"acquisition band{shown}: the noise floor and any interference lines.</div>")
+
     def facts(self) -> str:
         raw, h = self.raw, self.raw.headers
         facts = [f"{raw.n_readouts} readouts × {raw.n_coils} coils × {raw.data.shape[-1]} samples",
@@ -371,6 +423,10 @@ class RawPage:
         return ""
 
     def html(self) -> str:
+        if self.noise:
+            tabs = [("Time", self.time_pane()), ("Spectrum", self.spectrum_pane()),
+                    ("Details", details(self.raw.meta))]
+            return document(self.title, self.facts(), tabs)
         tabs = [("k-space", self.kspace_pane()), ("Coils", self.coils_pane()),
                 ("Readouts", self.readouts_pane())]
         if self.timed:

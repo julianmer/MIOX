@@ -203,3 +203,47 @@ def test_long_readouts_are_pooled_before_drawing():
     assert small.max() == 7.0 and np.argmax(small[3]) == 12345 // (-(-samples // RawPage.COLUMNS))
     assert page.shrunk(np.ones((4, 100))).shape == (4, 100)
     assert len(page.coils_pane()) < 200000
+
+
+def test_central_partition_of_a_3d_acquisition_is_shown():
+    """Equally filled partitions: the central one (index N // 2) is drawn, not the first."""
+    from miox.data import Provenance, RawData
+    from miox.meta import Meta
+    from miox.sniff import Format
+
+    lines, partitions = 6, 20
+    headers = np.zeros(lines * partitions, dtype=RawData.HEADER)
+    headers["idx"]["kspace_encode_step_1"] = np.tile(np.arange(lines), partitions)
+    headers["idx"]["kspace_encode_step_2"] = np.repeat(np.arange(partitions), lines)
+    headers["number_of_samples"] = 16
+    data = np.zeros((lines * partitions, 1, 16), dtype=np.complex64)
+    data[headers["idx"]["kspace_encode_step_2"] == 10] = 1.0
+    raw = RawData(data, headers, Meta(), Provenance((), Format.ISMRMRD, "test", {}), "3d")
+    k, acquired, chosen = RawPage.select(raw)
+    assert chosen["partition"] == (10, 20) and acquired.all() and np.all(k == 1.0)
+    assert RawPage.select(raw, {"partition": 3})[2]["partition"] == (3, 20)
+    assert "partition 11 of 20" in RawPage(raw, "3d").html()
+
+
+def test_noise_readouts_get_time_and_spectrum_panes():
+    """Readouts that are all noise measurements draw as real and imaginary parts against time
+    and as magnitude spectra over the acquisition band, not as k-space."""
+    from miox.data import Provenance, RawData
+    from miox.meta import Meta
+    from miox.readers.ismrmrd import IsmrmrdReader
+    from miox.sniff import Format
+
+    rng = np.random.default_rng(0)
+    data = (rng.standard_normal((3, 2, 256)) + 1j * rng.standard_normal((3, 2, 256)))
+    headers = np.zeros(3, dtype=RawData.HEADER)
+    headers["flags"] = 1 << (IsmrmrdReader.NOISE_BIT - 1)
+    headers["number_of_samples"] = 256
+    headers["sample_time_us"] = 20.0
+    raw = RawData(data, headers, Meta(), Provenance((), Format.MARGE_MAT, "test", {}),
+                  "noise", flag_names=IsmrmrdReader.ACQUISITION_FLAGS)
+    html = RawPage(raw, "noise").html()
+    assert "Time" in html and "Spectrum" in html and "k-space" not in html
+    assert "coil 2 imaginary" in html and "kHz" in html and "3 noise readouts" in html
+    assert "root mean square over all readouts per coil" in html
+    headers["flags"][0] = 0
+    assert "k-space" in RawPage(raw, "mixed").html()
