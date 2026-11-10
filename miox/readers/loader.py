@@ -138,6 +138,8 @@ READERS = (  # (module, class, formats it reads): imported when a file of its fo
      (Format.SIEMENS_DICOM_RAW, Format.SIEMENS_PHOENIX_REPORT)),
     ("miox.readers.philips_raw_lab", "PhilipsRawLabReader", (Format.PHILIPS_RAW_LAB,)),
     ("miox.readers.philips_spar_sdat", "PhilipsSparSdatReader", (Format.PHILIPS_SPAR_SDAT,)),
+    ("miox.readers.marge", "MargeReader", (Format.MARGE_MAT,)),
+    ("miox.readers.marge", "MargeProtocolReader", (Format.MARGE_CSV,)),
     ("miox.readers.minispec", "MinispecReader", (Format.MINISPEC_DPS, Format.MINISPEC_CONTIN)),
     ("miox.readers.minispec", "MinispecReportReader", (Format.MINISPEC_REPORT,)),
     ("miox.readers.physio", "BidsPhysioReader", (Format.BIDS_PHYSIO,)),

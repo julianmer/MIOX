@@ -194,6 +194,8 @@ class Format(StrEnum):
     BART_CFL = "bart_cfl"
     GADGETRON_ARRAY = "gadgetron_array"  # Gadgetron hoNDArray dump (.real, .cplx, .short)
     MRD = "mrd"
+    MARGE_MAT = "marge_mat"  # MaRGE acquisition (seqName, name_string; kSpace3D or data)
+    MARGE_CSV = "marge_csv"  # the parameters of a MaRGE acquisition (keys, names, values)
     SIEMENS_PMU = "siemens_pmu"
     CMRR_PHYSIO = "cmrr_physio"
     PHILIPS_PHYSLOG = "philips_physlog"
@@ -1490,6 +1492,9 @@ class Sniffer:
         return None
 
     def text_formats(self, path: Path, head: bytes) -> Sniff | None:
+        if head.startswith(b"seqName,"):
+            return Sniff(path, Format.MARGE_CSV, Kind.PROTOCOL, vendor="marge", confidence=1.0,
+                         evidence=("seqName header row (MaRGE parameters)",))
         if head.startswith(b"NRRD000"):
             where = "detached" if b"data file:" in head or b"datafile:" in head else "attached"
             return self._image(path, Format.NRRD, f"NRRD magic, data {where}")
@@ -1765,6 +1770,14 @@ class Sniffer:
         if {"header", "metabolites", "artifacts"} <= set(variables):
             return Sniff(path, Format.MRS_SIM_BASIS, Kind.BASIS_SET, confidence=0.8,
                          evidence=("MATLAB header, metabolites and artifacts (MRS-Sim)",),
+                         detail={"variables": variables})
+        if {"seqName", "name_string"} <= set(variables):
+            table = path.with_suffix(".csv")
+            if not table.is_file():
+                table = path.parent.parent / "csv" / table.name
+            return Sniff(path, Format.MARGE_MAT, Kind.RAW, vendor="marge", confidence=0.9,
+                         evidence=("MATLAB seqName and name_string (MaRGE acquisition)",),
+                         companions=(table,) if table.is_file() else (),
                          detail={"variables": variables})
         for pattern, fmt, kind in self.MATLAB_VARIABLES:
             names = [name for name in variables if pattern.match(name)]
