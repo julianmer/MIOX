@@ -18,8 +18,11 @@
 #*************#
 from __future__ import annotations
 
+import contextlib
+import tempfile
 import warnings
 from argparse import Namespace
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -57,7 +60,9 @@ from miox.sniff import Format, Kind, Sniff, Sniffer
 # single-voxel FIDs then equal the processed fid of the same scan. Processed images (2dseq with    #
 # spatial dimensions only) are assembled from visu_pars, one MRImage per slice pack; magnitude     #
 # spectra (MAGNITUDE_IMAGE frames over a spectroscopic dimension) hold no phase and become         #
-# MRImages with a frequency axis. Image geometry and values equal the vendor's own DICOM export.   #
+# MRImages with a frequency axis. Image geometry and values equal the vendor's own DICOM export. A #
+# scan folder without a file named method takes its one file named <name>_method instead, for MIOX #
+# and for spec2nii, with a note.                                                                   #
 #                                                                                                  #
 #**************************************************************************************************#
 class BrukerReader(Spec2niiReader):
@@ -67,6 +72,7 @@ class BrukerReader(Spec2niiReader):
     MODES = {"fid": "FID", "fid_proc.64": "FID", "2dseq": "2DSEQ", "rawdata.job0": "RAWDATA"}
     PROCESSED = ("2dseq", "fid_proc.64")  # stored in <study>/<scan>/pdata/<n>/
     PARAMETER_FILES = ("acqp", "method", "visu_pars", "reco", "subject")
+    RENAMED_METHOD = "_method"  # a method file renamed <name>_method
     SOURCE = "Bruker visu_pars"
     LPS_TO_RAS = np.diag([-1.0, -1.0, 1.0, 1.0])
     MS = 1e-3
@@ -168,25 +174,26 @@ class BrukerReader(Spec2niiReader):
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         path = self._data_file(sniff.path)
-        args = Namespace(
-            file=str(path),
-            mode=self.MODES[path.name],
-            query=[],
-            dump_headers=False,
-            zeropad=False,
-            nospectrum=False,
-            fileout=None,
-        )
         header = self._header(path)
         if "method" not in header:
             raise ReaderError(f"{path}: the scan folder has no method file, which spec2nii needs")
-        if self.raw_csi(path, header):
-            with warnings.catch_warnings():  # replaced by the definite note below
-                warnings.filterwarnings("ignore", "MRSI .* might not be reconstructed")
+        with self._renamed_method(path) as given:
+            args = Namespace(
+                file=str(given),
+                mode=self.MODES[path.name],
+                query=[],
+                dump_headers=False,
+                zeropad=False,
+                nospectrum=False,
+                fileout=None,
+            )
+            if self.raw_csi(path, header):
+                with warnings.catch_warnings():  # replaced by the definite note below
+                    warnings.filterwarnings("ignore", "MRSI .* might not be reconstructed")
+                    images, names = read_bruker(args)
+                warnings.warn(self._kspace_note(path), stacklevel=2)
+            else:
                 images, names = read_bruker(args)
-            warnings.warn(self._kspace_note(path), stacklevel=2)
-        else:
-            images, names = read_bruker(args)
         if path.name == "2dseq":
             dataset = Bruker2dseq(path, header["visu_pars"])
             shift = header.get("method", {}).get("PVM_DigShift", 0)
@@ -549,9 +556,37 @@ class BrukerReader(Spec2niiReader):
         header = {}
         for folder in folders:
             for name in self.PARAMETER_FILES:
-                if name not in header and (folder / name).is_file():
-                    header[name] = self._parameters(folder / name)
+                file = self.method_file(folder) if name == "method" else folder / name
+                if name not in header and file is not None and file.is_file():
+                    header[name] = self._parameters(file)
         return header
+
+    @classmethod
+    def method_file(cls, scan: Path) -> Path | None:
+        """The scan folder's method file: ``method``, or else its one file named <name>_method."""
+        if (scan / "method").is_file():
+            return scan / "method"
+        renamed = [p for p in scan.iterdir() if p.is_file() and not p.name.startswith("._")
+                   and p.name.endswith(cls.RENAMED_METHOD)]
+        return renamed[0] if len(renamed) == 1 else None
+
+    @contextlib.contextmanager
+    def _renamed_method(self, path: Path) -> Iterator[Path]:
+        """The data file to give spec2nii, which reads the method file by its name: for a renamed
+        one, the same file in a temporary scan folder of links, ``method`` linking to it."""
+        scan = path.parents[2] if path.name in self.PROCESSED else path.parent
+        method = self.method_file(scan)
+        if method is None or method.name == "method":
+            yield path
+            return
+        warnings.warn(f"method file read from {method.name}", stacklevel=3)
+        with tempfile.TemporaryDirectory() as folder:
+            links = Path(folder) / scan.name
+            links.mkdir()
+            for entry in scan.iterdir():
+                (links / entry.name).symlink_to(entry)
+            (links / "method").symlink_to(method)
+            yield links / path.relative_to(scan)
 
     def _parameters(self, path: Path) -> dict[str, Any]:
         parameters = {}
