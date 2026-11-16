@@ -61,6 +61,12 @@ class PhilipsDataListReader(Spec2niiReader):
     SCAN = re.compile(r"^raw_(\d+)$", re.IGNORECASE)  # raw_<scan number>.data
     EXPORT = re.compile(r"_(\d+)_\d+_raw_act$", re.IGNORECASE)  # <name>_<scan>_<n>_raw_act.SPAR
     HEADER = re.compile(r"^#\s+([^:=]+?)\s*:\s*(.*)$")  # comment header line
+    HERCULES_EDIT_PULSES = {  # ppm, 20 ms pulses
+        "A": {"PulseOffset": [4.58, 1.9], "PulseDuration": 0.02},
+        "B": {"PulseOffset": [4.18, 1.9], "PulseDuration": 0.02},
+        "C": {"PulseOffset": 4.58, "PulseDuration": 0.02},
+        "D": {"PulseOffset": 4.18, "PulseDuration": 0.02},
+    }
 
     def __init__(self):
         self.spar = PhilipsSparSdatReader()
@@ -107,6 +113,10 @@ class PhilipsDataListReader(Spec2niiReader):
         echo time, starting with 80 ms, so their echo time goes per index into the dimension header.
         """
         self._aux_reader(d.meta.vendor).correct(d)
+        if "EditPulse" in d.meta and d.name.endswith("_hyper_edited"):
+            self.fix(d, "EditPulse", self.HERCULES_EDIT_PULSES, "HERCULES conditions as the "
+                     "sequence defines them (Oeltzschner et al. 2019): A 4.58 + 1.9, B 4.18 + "
+                     "1.9, C 4.58, D 4.18 ppm")
         if d.name.endswith("_hyper_short_te"):
             self.fix(d, "EchoTime", self.spar.HYPER_SHORT_TE, "HYPER short-TE block is 35 ms")
         elif d.name.endswith("_hyper_water_ref") and d.data.ndim == 6:
