@@ -34,7 +34,7 @@ from nifti_mrs.nifti_mrs import NIFTI_MRS
 from spec2nii.bruker import read_bruker
 
 # own
-from miox.data import MRImage
+from miox.data import MRImage, MRSData
 from miox.meta.meta import Meta
 from miox.readers.base import ReaderError, Spec2niiReader
 from miox.readers.bruker_2dseq import Bruker2dseq
@@ -60,9 +60,11 @@ from miox.sniff import Format, Kind, Sniff, Sniffer
 # single-voxel FIDs then equal the processed fid of the same scan. Processed images (2dseq with    #
 # spatial dimensions only) are assembled from visu_pars, one MRImage per slice pack; magnitude     #
 # spectra (MAGNITUDE_IMAGE frames over a spectroscopic dimension) hold no phase and become         #
-# MRImages with a frequency axis. Image geometry and values equal the vendor's own DICOM export. A #
-# scan folder without a file named method takes its one file named <name>_method instead, for MIOX #
-# and for spec2nii, with a note.                                                                   #
+# MRImages with a frequency axis. Image geometry and values equal the vendor's own DICOM export.   #
+# Spectroscopy reconstructions take the echo and repetition time from the method file where        #
+# visu_pars states 0 or none (as for STEAM), as the fid of the same scan reads them. A scan folder #
+# without a file named method takes its one file named <name>_method instead, for MIOX and for     #
+# spec2nii, with a note.                                                                           #
 #                                                                                                  #
 #**************************************************************************************************#
 class BrukerReader(Spec2niiReader):
@@ -457,6 +459,7 @@ class BrukerReader(Spec2niiReader):
             notes = ["magnitude spectra of a CSI grid: no phase, so no FID"]
         dims = ("frequency",) + tuple(reversed(names))
         meta = self._image_meta(header, dataset, 0)
+        self._method_timing(meta, header)
         axis = dataset.spectral_axis()
         points = dataset.size[axis]
         width_ppm = dataset.extent[axis]
@@ -501,6 +504,21 @@ class BrukerReader(Spec2niiReader):
 
     def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
         return self.SOURCES_2DSEQ if "visu_pars" in vendor else self.SOURCES_FID
+
+    def correct(self, d: MRSData) -> None:
+        super().correct(d)
+        if "visu_pars" in d.meta.vendor:
+            self._method_timing(d.meta, d.meta.vendor)
+
+    def _method_timing(self, meta: Meta, header: dict) -> None:
+        """Spectroscopy reconstructions: visu_pars states the echo time as 0 and no repetition
+        time; the method file states the acquisition's, as the fid of the same scan reads them."""
+        method = header.get("method", {})
+        for key, field in (("EchoTime", "PVM_EchoTime"), ("RepetitionTime", "PVM_RepetitionTime")):
+            value = method.get(field)
+            if isinstance(value, (int, float)) and value > 0 and not meta.get(key):
+                source = f"method: {field} (ms); visu_pars states none or 0"
+                meta.set(key, value * self.MS, source, f"method/{field}")
 
     def _data_file(self, path: Path) -> Path:
         if path.name in self.MODES:

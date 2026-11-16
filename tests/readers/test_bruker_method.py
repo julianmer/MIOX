@@ -7,7 +7,8 @@
 # Created: 16/11/26                                                                                #
 #                                                                                                  #
 # Purpose: A Bruker scan folder whose method file is renamed <name>_method reads as with the file  #
-#          named method; two such files are not guessed between.                                   #
+#          named method; two such files are not guessed between. Spectroscopy reconstructions take #
+#          the echo and repetition time from the method file where visu_pars states 0 or none.     #
 #                                                                                                  #
 ####################################################################################################
 
@@ -49,6 +50,20 @@ def test_renamed_method_file_reads_as_method(scans):
     assert {k: v for k, v in got.meta.items() if k not in PER_READ} == {
         k: v for k, v in expected.meta.items() if k not in PER_READ}
     assert "method file read from scan_15_method" in got.provenance.notes
+
+
+@pytest.mark.parametrize("reconstruction", ["1", "2"])
+def test_spectroscopy_reconstruction_takes_the_method_timing(public_data, reconstruction):
+    """visu_pars of a STEAM spectrum states TE 0 and no TR; the method file, and the fid of the
+    same scan, 3 ms and 2.5 s."""
+    path = public_data / "spec2nii_test_data/bruker/PV-6.0.1/9/pdata" / reconstruction / "2dseq"
+    if not path.exists():
+        pytest.skip("file not fetched")
+    [d] = miox.load(path)
+    [fid] = miox.load(path.parents[2] / "fid")
+    assert d.meta["EchoTime"] == pytest.approx(fid.meta["EchoTime"]) == pytest.approx(0.003)
+    assert d.meta["RepetitionTime"] == pytest.approx(fid.meta["RepetitionTime"]) == 2.5
+    assert d.meta.fields["EchoTime"] == "method/PVM_EchoTime"
 
 
 def test_two_renamed_method_files_are_not_guessed(scans):
