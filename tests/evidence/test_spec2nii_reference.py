@@ -24,18 +24,21 @@ import warnings
 from pathlib import Path
 
 import numpy as np
+import pydicom
 import pytest
 
 # own
 import miox
+from miox import Format, Sniffer
 from miox.readers.base import ReaderError
 from miox.readers.philips_data_list import PhilipsDataListReader
+from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
 from miox.readers.philips_list_raw import PhilipsListRaw
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    from spec2nii.Philips import philips, philips_data_list
+    from spec2nii.Philips import philips, philips_data_list, philips_dcm
     from spec2nii.spec2nii import remove_zero_higher_dim_indices
 
 KEYS = ("EchoTime", "RepetitionTime", "SpectrometerFrequency", "ResonantNucleus", "TxOffset",
@@ -239,3 +242,115 @@ def test_data_list_with_dicom_equals_spec2nii(public_data, tmp_path):
 def test_private_data_list_equals_spec2nii(private_roots):
     files = [data for root in private_roots for data in _data_lists(root)]
     assert _compare_all(files, _compare_data_list) > 0
+
+
+#**************************************************************************************************#
+#                                          Philips DICOM                                           #
+#**************************************************************************************************#
+#                                                                                                  #
+# Against spec2nii's philips_dicom (multi_file_dicom with its default tag DIM_DYN), one file or    #
+# one series of files. Differences named: spec2nii tags a 5th dimension on single spectra, which   #
+# have none; classic files: echo time ((2005,1310)) and repetition time in s (spec2nii: ms), the   #
+# flip angle from FlipAngle (spec2nii: the repetition time where per-frame groups exist). Files    #
+# spec2nii cannot convert (newer software's frame flags, one slab, spectroscopic imaging) are      #
+# passed over; the imaging grids are checked against the SPAR/SDAT in test_philips_spectroscopy.   #
+#                                                                                                  #
+#**************************************************************************************************#
+DICOM_KEYS = KEYS + ("ExcitationFlipAngle", "ManufacturersModelName", "DeviceSerialNumber",
+                     "InstitutionName", "InstitutionAddress", "SequenceName", "PatientPosition",
+                     "PatientWeight", "PatientSex")
+
+
+def _philips_dicoms(roots: list[Path]) -> list[list[Path]]:
+    """Philips spectroscopy DICOM series: [file] each, and the files of a folder that share one
+    series as one list."""
+    sniffer, series = Sniffer(), {}
+    for root in roots:
+        for path in sorted(root.rglob("*")):
+            if not path.is_file() or path.name.startswith(".") or path.suffix.lower() in (
+                    ".spar", ".sdat", ".data", ".list", ".dat", ".nii", ".gz", ".json", ".txt"):
+                continue
+            with contextlib.suppress(Exception):
+                sniff = sniffer.sniff(path)
+                if sniff.format == Format.DICOM_MRS and sniff.vendor == "philips":
+                    uid = pydicom.dcmread(path, stop_before_pixels=True).SeriesInstanceUID
+                    series.setdefault((path.parent, uid), []).append(path)
+    singles = [[p] for paths in series.values() for p in paths]
+    return singles + [paths for paths in series.values() if len(paths) > 1]
+
+
+def _compare_philips_dicom(paths: list[Path], tmp_path: Path) -> None:
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            images, names = philips_dcm.multi_file_dicom(paths, None, "DIM_DYN", False)
+    except Exception as e:  # noqa: BLE001  any failure of spec2nii's own reading
+        pytest.skip(f"spec2nii cannot convert it: {type(e).__name__}")
+    expected = [remove_zero_higher_dim_indices(image, remove=True)[0] for image in images]
+    if any(np.asarray(image[:]).size == 0 for image in expected):
+        pytest.skip("spec2nii's edit split leaves no frames (numeric edit flags)")
+    target = paths[0]
+    if len(paths) > 1:  # the series alone in a folder
+        target = tmp_path / f"series_{abs(hash(tuple(paths)))}"
+        target.mkdir()
+        for path in paths:
+            (target / path.name).symlink_to(path.resolve())
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        got = miox.load(target)
+    ds = pydicom.dcmread(paths[0], stop_before_pixels=True)
+    classic = ds.file_meta.MediaStorageSOPClassUID != PhilipsDicomMrs.ENHANCED
+    datas = [np.asarray(image[:]).conj() for image in expected]  # image[:] conjugates
+    items, split = ds.get((0x2005, 0x140F)), False
+    if len(expected) == 1 and len(got) == 2 and items is not None and (0x2005, 0x1004) in \
+            items.value[0] and (0x2005, 0x1304) not in items.value[0]:
+        # newer software flags the water references in (2005,1004); spec2nii keeps them as data
+        reference = np.array([int(item[0x2005, 0x1004].value) == 1 for item in items.value])
+        datas = [datas[0][..., ~reference], datas[0][..., reference]]
+        expected, names, split = expected * 2, [names[0], names[0] + "_ref"], True
+    assert [d.name for d in got] == list(names)
+    for d, image, data in zip(got, expected, datas, strict=True):
+        np.testing.assert_array_equal(d.data, data)
+        np.testing.assert_allclose(d.affine, image.getAffine("voxel", "world"), atol=1e-9)
+        assert d.dwelltime == pytest.approx(image.dwelltime, abs=1e-12)
+        tags = list(image.dim_tags)
+        if d.data.ndim == 4:  # spec2nii tags a 5th dimension the data do not have
+            tags = [None, None, None]
+        assert list(d.dim_tags) == tags, (d.name, d.dim_tags, tags)
+        header_ext = image.hdr_ext.to_dict()
+        for key in DICOM_KEYS:
+            value, reference = d.meta.get(key), header_ext.get(key)
+            if classic and key in ("EchoTime", "RepetitionTime") and reference is not None:
+                reference = float(reference) * 1e-3
+            elif key == "WaterSuppressed" and split and d.name.endswith("_ref"):
+                reference = False
+            elif classic and key == "ExcitationFlipAngle":
+                assert value == float(ds.FlipAngle)
+                continue
+            if isinstance(reference, float):
+                assert value == pytest.approx(reference, abs=1e-12), key
+            else:
+                assert value == reference, key
+
+
+def _compare_all_dicoms(series: list[list[Path]], tmp_path: Path) -> int:
+    compared = 0
+    for paths in series:
+        with contextlib.suppress(pytest.skip.Exception):
+            _compare_philips_dicom(paths, tmp_path)
+            compared += 1
+    return compared
+
+
+def test_philips_dicom_equals_spec2nii(public_data, tmp_path):
+    roots = [public_data / name for name in ("spec2nii_test_data", "nema_wg16", "suspect",
+                                              "tarquin") if (public_data / name).is_dir()]
+    series = _philips_dicoms(roots)
+    if not series:
+        pytest.skip("no Philips DICOM fetched")
+    assert _compare_all_dicoms(series, tmp_path) > 0
+
+
+@pytest.mark.data
+def test_private_philips_dicom_equals_spec2nii(private_roots, tmp_path):
+    assert _compare_all_dicoms(_philips_dicoms(private_roots), tmp_path) > 0

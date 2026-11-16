@@ -7,8 +7,8 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Reader for DICOM spectroscopy from Siemens, Philips and UIH, one file or a series       #
-#          folder. spec2nii converts with the vendor's converter; the vendor header holds every    #
-#          element of the first file (sequences nested, private tags by number, bulk data          #
+#          folder. MIOX reads Philips, spec2nii converts Siemens and UIH; the vendor header holds  #
+#          every element of the first file (sequences nested, private tags by number, bulk data    #
 #          summarised by size) and, for Siemens, both CSA headers and the protocol.                #
 #                                                                                                  #
 ####################################################################################################
@@ -37,9 +37,6 @@ from spec2nii.dcm2niiOrientation.orientationFuncs import dcm_to_nifti_orientatio
 with warnings.catch_warnings():  # nibabel.nicom warns on import that it is experimental
     warnings.simplefilter("ignore", UserWarning)
     from nibabel.nicom import csareader
-    from nibabel.nicom.dicomwrappers import wrapper_from_file
-    from spec2nii.Philips import philips_dcm
-    from spec2nii.Philips.philips_dcm import multi_file_dicom as philips_dicom
     from spec2nii.Siemens import dicomfunctions as siemens_dcm
     from spec2nii.Siemens.dicomfunctions import multi_file_dicom as siemens_dicom
     from spec2nii.uih import multi_file_dicom as uih_dicom
@@ -47,6 +44,7 @@ with warnings.catch_warnings():  # nibabel.nicom warns on import that it is expe
 # own
 from miox.data import MRSData
 from miox.readers.base import ReaderError, Spec2niiReader
+from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
 from miox.readers.siemens_twix import SiemensTwixReader
 from miox.sniff import Format, Sniff, open_dicom
 
@@ -55,23 +53,15 @@ from miox.sniff import Format, Sniff, open_dicom
 #                                          DicomMrsReader                                          #
 #**************************************************************************************************#
 #                                                                                                  #
-# A folder is read series by series (SeriesInstanceUID): the files of each series go to the        #
-# converter together, which splits off references; the converters expect one series at a time      #
-# and stack or misname several. The source tables follow spec2nii's extraction per vendor and      #
-# variant (Siemens VB-VE with CSA headers or XA enhanced; Philips enhanced or classic; UIH).       #
-# Siemens VA single-voxel files (CSA headers in (0029,12xx), protocol "MrProtocol"), which         #
-# spec2nii does not read, are converted here: data in (7FE1,1010) as stored, the dwell time        #
-# RealDwellTime (the ADC dwell of the protocol is oversampled), the voxel from the protocol's sVoI #
-# (ImagePositionPatient is its corner there) and the CSA ImageOrientationPatient. Philips enhanced #
-# files with one localisation slab (spec2nii needs three) take the voxel from the plane position   #
-# (the slab centre), the plane orientation negated as spec2nii negates the slab orientations,      #
-# PixelSpacing in plane and the slab thickness along the normal. Philips enhanced CSI, which       #
-# spec2nii does not read: SpectroscopyData as (frames, rows, columns, points), the frames split    #
-# into metabolite and reference by (2005,1304) of the private per-frame items (newer software:     #
-# (frames, columns, rows, points) and (2005,1004); both equal the SPAR/SDAT of the same scans),    #
-# conjugated as spec2nii conjugates Philips SVS (checked: NAA, Cr, Cho at 2.02, 3.03, 3.23 ppm),   #
-# the grid from the plane position (first voxel), orientation and pixel spacing. The MR            #
-# Spectroscopy module's Chemical Shift Reference (ppm at the transmitter frequency) is             #
+# A folder is read series by series (SeriesInstanceUID). Philips series are read by MIOX           #
+# (PhilipsDicomMrs). Siemens and UIH series go to spec2nii's converter together, which splits off  #
+# references; the converters expect one series at a time and stack or misname several. The source  #
+# tables follow spec2nii's extraction per vendor and variant (Siemens VB-VE with CSA headers or XA #
+# enhanced; UIH). Siemens VA single-voxel files (CSA headers in (0029,12xx), protocol              #
+# "MrProtocol"), which spec2nii does not read, are converted here: data in (7FE1,1010) as stored,  #
+# the dwell time RealDwellTime (the ADC dwell of the protocol is oversampled), the voxel from the  #
+# protocol's sVoI (ImagePositionPatient is its corner there) and the CSA ImageOrientationPatient.  #
+# The MR Spectroscopy module's Chemical Shift Reference (ppm at the transmitter frequency) is      #
 # ReferencePPM. Keys the file states in top-level elements that spec2nii does not read (series,    #
 # station, acquisition date and duration, localisation technique, ...) are added to every dataset  #
 # of a DICOM file; the stated field strength replaces the one derived from the frequency.          #
@@ -79,15 +69,14 @@ from miox.sniff import Format, Sniff, open_dicom
 #**************************************************************************************************#
 class DicomMrsReader(Spec2niiReader):
     FORMATS = (Format.DICOM_MRS,)
-    CONVERTERS = {"siemens": "dicom", "philips": "philips_dicom", "uih": "uih"}
+    CONVERTERS = {"siemens": "dicom", "uih": "uih"}
     REFERENCE = "dicom/ChemicalShiftReference"
-    TAGS = {"dicom": "DIM_DYN", "philips_dicom": "DIM_DYN", "uih": None}  # spec2nii defaults
+    TAGS = {"dicom": "DIM_DYN", "uih": None}  # spec2nii defaults
+    PHILIPS_SOURCE = "DICOM"
     BINARY_VRS = {"OB", "OW", "OF", "OD", "OL", "OV", "UN"}
     XA_SERIES_HEADER = (0x0021, 0x1019)  # Siemens XA: XProtocol text with the ASCCONV block
     BULK = 1024  # binary values longer than this are summarised by their size
-    ENHANCED_MRS = "1.2.840.10008.5.1.4.1.1.4.2"
     SHARED = "dicom/SharedFunctionalGroupsSequence/0"
-    PER_FRAME = "dicom/PerFrameFunctionalGroupsSequence/0"
 
     SOURCES_COMMON = {
         "Manufacturer": "dicom/Manufacturer",
@@ -138,35 +127,6 @@ class DicomMrsReader(Spec2niiReader):
         "PatientID": "dicom/PatientID",
         "DwellTime": "dicom/SpectralWidth",
     }
-    SOURCES_PHILIPS_ENHANCED = SOURCES_COMMON | {
-        "SpectrometerFrequency": "dicom/TransmitterFrequency",
-        "ResonantNucleus": "dicom/ResonantNucleus",
-        "EchoTime": f"{PER_FRAME}/MREchoSequence/0/EffectiveEchoTime",
-        "RepetitionTime": (
-            f"{PER_FRAME}/MRTimingAndRelatedParametersSequence/0/RepetitionTime",
-            f"{SHARED}/MRTimingAndRelatedParametersSequence/0/RepetitionTime",
-        ),
-        "ExcitationFlipAngle": (
-            f"{PER_FRAME}/MRTimingAndRelatedParametersSequence/0/FlipAngle",
-            f"{SHARED}/MRTimingAndRelatedParametersSequence/0/FlipAngle",
-        ),
-        "SequenceName": "dicom/PulseSequenceName",
-        "DwellTime": "dicom/SpectralWidth",
-    }
-    SOURCES_PHILIPS_CLASSIC = SOURCES_COMMON | {
-        "SpectrometerFrequency": "dicom/(2001,1083)",
-        "ResonantNucleus": "dicom/(2001,1087)",
-        "EchoTime": (f"{PER_FRAME}/MREchoSequence/0/EffectiveEchoTime", "dicom/(2005,1310)"),
-        "RepetitionTime": (
-            f"{PER_FRAME}/MRTimingAndRelatedParametersSequence/0/RepetitionTime",
-            "dicom/RepetitionTime",
-        ),
-        "ExcitationFlipAngle": (  # spec2nii reads the repetition time when per-frame data exist
-            f"{PER_FRAME}/MRTimingAndRelatedParametersSequence/0/RepetitionTime",
-            "dicom/FlipAngle",
-        ),
-        "DwellTime": "dicom/(2005,1357)",
-    }
     SOURCES_UIH = SOURCES_COMMON | {
         "SpectrometerFrequency": "dicom/TransmitterFrequency",
         "ResonantNucleus": "dicom/ResonantNucleus",
@@ -201,11 +161,28 @@ class DicomMrsReader(Spec2niiReader):
 
     def read(self, sniff: Sniff) -> list[MRSData]:
         series = self._series(sniff)
-        parts = [dataclasses.replace(sniff, companions=tuple(files)) for files in series.values()]
-        datasets = super().read(sniff) if len(series) == 1 else [
-            d for part in parts for d in super().read(part)]
+        parts = [sniff] if len(series) == 1 else [
+            dataclasses.replace(sniff, companions=tuple(files)) for files in series.values()]
+        read = self._philips if sniff.vendor == "philips" else super().read
+        datasets = [d for part in parts for d in read(part)]
         for d in datasets:
             self._acquisition_time(d)
+        return datasets
+
+    def _philips(self, sniff: Sniff) -> list[MRSData]:
+        """One Philips series, read by MIOX (PhilipsDicomMrs)."""
+        files = self._files(sniff)
+        header = self.header(files[0])
+        notes: list[str] = []
+        with self.captured(notes):
+            spectra = PhilipsDicomMrs().read(files)
+        datasets = []
+        for s in spectra:
+            d = self.dataset(sniff, s.data, s.dwelltime, s.values, header, s.name, notes + s.notes,
+                             self.PHILIPS_SOURCE, s.affine, s.tags)
+            self._reference(d)
+            self._header_keys(d)
+            datasets.append(d)
         return datasets
 
     @staticmethod
@@ -241,16 +218,12 @@ class DicomMrsReader(Spec2niiReader):
         converter = self.converter(sniff)
         files = self._files(sniff)
         header = self.header(files[0])
-        if converter == "philips_dicom":
-            self._check_philips_classic(files)
-        if converter == "philips_dicom" and self._is_philips_csi(header):
-            return self._philips_csi(files[0], header)
         if converter == "dicom" and "MrProtocol" in header:
             images = [self._siemens_va(f, self.header(f)) for f in files]
             names = [str(header["dicom"].get("SeriesDescription") or f.stem) for f in files]
             return images, names, header
-        function = {"dicom": siemens_dicom, "philips_dicom": philips_dicom, "uih": uih_dicom}
-        with self._one_slab(), self._philips_frames(), self._siemens_orientation():
+        function = {"dicom": siemens_dicom, "uih": uih_dicom}
+        with self._siemens_orientation():
             images, names = function[converter](files, None, self.TAGS[converter], False)
         return list(images), list(names), header
 
@@ -260,29 +233,14 @@ class DicomMrsReader(Spec2niiReader):
             if "MrProtocol" in vendor:
                 return self.SOURCES_SIEMENS_VA
             return self.SOURCES_SIEMENS_VX if "csa_image" in vendor else self.SOURCES_SIEMENS_XA
-        if "philips" in manufacturer:
-            enhanced = vendor["file_meta"].get("MediaStorageSOPClassUID") == self.ENHANCED_MRS
-            return self.SOURCES_PHILIPS_ENHANCED if enhanced else self.SOURCES_PHILIPS_CLASSIC
         return self.SOURCES_UIH
 
     def correct(self, d: MRSData) -> None:
-        """Units spec2nii leaves in ms, and the flip angle it reads from the wrong field."""
+        """The inversion time spec2nii leaves in ms (Siemens CSA)."""
         super().correct(d)
         fields = d.meta.fields
         if fields.get("InversionTime") == "csa_image/InversionTime":
             self.fix(d, "InversionTime", d.meta["InversionTime"] * 1e-3, "CSA value in ms")
-        if self.sources(d.meta.vendor) is not self.SOURCES_PHILIPS_CLASSIC:
-            return
-        if fields.get("EchoTime") == "dicom/(2005,1310)":
-            self.fix(d, "EchoTime", d.meta["EchoTime"] * 1e-3, "private tag in ms")
-        if fields.get("RepetitionTime") == "dicom/RepetitionTime":
-            self.fix(d, "RepetitionTime", d.meta["RepetitionTime"] * 1e-3, "DICOM value in ms")
-        if fields.get("ExcitationFlipAngle", "").endswith("/RepetitionTime"):
-            field = fields["ExcitationFlipAngle"].removesuffix("RepetitionTime") + "FlipAngle"
-            flip = d.meta.vendor_fields().get(field)
-            if flip is None:
-                field, flip = "dicom/FlipAngle", d.meta.vendor["dicom"].get("FlipAngle")
-            d.meta.set("ExcitationFlipAngle", flip, f"{field}; spec2nii read RepetitionTime", field)
 
     def _files(self, sniff: Sniff) -> list[Path]:
         if not sniff.path.is_dir():
@@ -325,32 +283,6 @@ class DicomMrsReader(Spec2niiReader):
         }
 
     @contextlib.contextmanager
-    def _one_slab(self) -> Iterator[None]:
-        """spec2nii's Philips enhanced geometry, with the one-slab case added."""
-        original = philips_dcm._enhanced_dcm_svs_to_orientation
-
-        def orientation(img, verbose=False):
-            ds = img.dcm_data
-            slabs = len(ds.get("VolumeLocalizationSequence", []))
-            if not philips_dcm._is_new_format(img) or not 0 < slabs < 3:
-                return original(img, verbose)
-            iop = self._plane(ds, "PlaneOrientationSequence", "ImageOrientationPatient")
-            iop = -np.asarray(iop)
-            ipp = np.asarray(self._plane(ds, "PlanePositionSequence", "ImagePositionPatient"))
-            spacing = self._plane(ds, "PixelMeasuresSequence", "PixelSpacing")
-            thickness = float(ds.VolumeLocalizationSequence[0].SlabThickness)
-            size = np.asarray([float(spacing[1]), float(spacing[0]), thickness])
-            warnings.warn("one localisation slab: voxel from the plane position, orientation and "
-                          "pixel spacing", stacklevel=2)
-            return dcm_to_nifti_orientation(iop.reshape(2, 3), ipp, size, (1, 1, 1), verbose)
-
-        philips_dcm._enhanced_dcm_svs_to_orientation = orientation
-        try:
-            yield
-        finally:
-            philips_dcm._enhanced_dcm_svs_to_orientation = original
-
-    @contextlib.contextmanager
     def _siemens_orientation(self) -> Iterator[None]:
         """spec2nii's Siemens enhanced orientation, for files whose ImageOrientationPatient does
         not hold six direction cosines (one syngo B15 export stores "1"): identity, noted."""
@@ -374,132 +306,6 @@ class DicomMrsReader(Spec2niiReader):
             yield
         finally:
             siemens_dcm._get_enhanced_dcm_img_orientation_pat = original
-
-    @contextlib.contextmanager
-    def _philips_frames(self) -> Iterator[None]:
-        """spec2nii's split of Philips enhanced single-voxel frames into data and reference and
-        into edit conditions, also for newer software: the reference flag in (2005,1004) when
-        (2005,1304) is absent, the edit flag (2005,1598) a number rather than text."""
-        original = philips_dcm._process_philips_svs_new
-
-        def process(img, verbose):
-            ds = img.dcm_data
-            frames, items = int(ds.NumberOfFrames), ds.get((0x2005, 0x140F))
-            if items is None or frames < 2 or len(items.value) != frames:
-                return original(img, verbose)
-            items = items.value
-            flag = next((t for t in ((0x2005, 0x1304), (0x2005, 0x1004)) if t in items[0]), None)
-            if flag is None:
-                return original(img, verbose)
-            values = np.frombuffer(ds.SpectroscopyData, dtype="<f4")
-            data = (values[0::2] + 1j * values[1::2]).reshape(frames, -1)
-            reference = np.array([int(item[flag].value) == 1 for item in items])
-            meta = philips_dcm._extractDicomMetadata_new(img)
-            meta_r = (philips_dcm._extractDicomMetadata_new(img, water_suppressed=False)
-                      if reference.any() else None)
-            edited = (0x2005, 0x1597) in ds and str(ds[0x2005, 0x1597].value).strip() == "Y"
-            main = None
-            if edited and all((0x2005, 0x1598) in item for item in items):
-                on = np.array([str(item[0x2005, 0x1598].value).strip() == "1" for item in items])
-                on, off = on & ~reference, ~on & ~reference
-                if on.sum() == off.sum() > 0:
-                    main = np.stack((data[on].T, data[off].T), axis=-1)
-                    meta.set_dim_info("5th", "DIM_DYN")
-                    meta.set_dim_info("6th", "DIM_EDIT", hdr={"EditCondition": ["ON", "OFF"]})
-                else:
-                    warnings.warn(f"edit flags of {on.sum()} ON and {off.sum()} OFF frames do not "
-                                  "pair: the frames are kept as dynamics", stacklevel=2)
-            if main is None:
-                main = data[~reference].T
-                if main.shape[1] > 1:
-                    meta.set_dim_info("5th", "DIM_DYN")
-                else:
-                    main = main[:, 0]
-            ref = data[reference].T if reference.any() else None
-            if ref is not None and ref.shape[1] > 1:
-                meta_r.set_dim_info("5th", "DIM_DYN")
-            elif ref is not None:
-                ref = ref[:, 0]
-            orientation = philips_dcm._enhanced_dcm_svs_to_orientation(img, verbose)
-            return main, ref, orientation, 1.0 / float(ds.SpectralWidth), meta, meta_r
-
-        philips_dcm._process_philips_svs_new = process
-        try:
-            yield
-        finally:
-            philips_dcm._process_philips_svs_new = original
-
-    @staticmethod
-    def _check_philips_classic(files: list[Path]) -> None:
-        """Classic Philips files hold the spectrum in (2005,1270), (2005,1315) points of it."""
-        for path in files:
-            ds = pydicom.dcmread(path)
-            if (0x2005, 0x1270) not in ds or (0x2005, 0x1315) not in ds:
-                continue
-            if not isinstance(ds[0x2005, 0x1270].value, (bytes, bytearray)):
-                continue  # newer software uses these tags for other values
-            size, points = len(ds[0x2005, 0x1270].value), int(ds[0x2005, 0x1315].value)
-            if size < 8 * points:
-                raise ReaderError(
-                    f"{path.name}: spectrum element (2005,1270) holds {size} bytes, "
-                    f"less than one spectrum of {points} complex points"
-                )
-
-    @staticmethod
-    def _is_philips_csi(header: dict) -> bool:
-        dicom = header["dicom"]
-        rows = int(dicom.get("SpectroscopyAcquisitionPhaseRows") or 1)
-        columns = int(dicom.get("SpectroscopyAcquisitionPhaseColumns") or 1)
-        return "SpectroscopyData" in dicom and rows * columns > 1
-
-    def _philips_csi(self, path: Path, header: dict) -> tuple[list[NIFTI_MRS], list[str], dict]:
-        img = wrapper_from_file(path)
-        ds = img.dcm_data
-        rows = int(ds.SpectroscopyAcquisitionPhaseRows)
-        columns = int(ds.SpectroscopyAcquisitionPhaseColumns)
-        points, frames = int(ds.SpectroscopyAcquisitionDataColumns), int(ds.NumberOfFrames)
-        values = np.frombuffer(ds.SpectroscopyData, dtype="<f4")
-        data = np.conj(values[0::2] + 1j * values[1::2])
-        items = ds[0x2005, 0x140F].value
-        if (0x2005, 0x1304) in items[0]:
-            data = data.reshape(frames, rows, columns, points)
-            flags = [int(item[0x2005, 0x1304].value) for item in items]
-        else:  # newer software: columns outer, the reference flag in (2005,1004)
-            data = data.reshape(frames, columns, rows, points).transpose(0, 2, 1, 3)
-            flags = [int(item[0x2005, 0x1004].value) for item in items]
-        is_ref = np.asarray(flags).reshape(frames, rows * columns)[:, 0] == 1
-        iop = np.asarray(self._plane(ds, "PlaneOrientationSequence", "ImageOrientationPatient"))
-        ipp = np.asarray(self._plane(ds, "PlanePositionSequence", "ImagePositionPatient"))
-        spacing = self._plane(ds, "PixelMeasuresSequence", "PixelSpacing")
-        normal = np.cross(iop[:3], iop[3:])
-        slab = max(ds.VolumeLocalizationSequence,
-                   key=lambda s: abs(np.dot(np.asarray(s.SlabOrientation, float), normal)))
-        size = np.asarray([spacing[1], spacing[0], float(slab.SlabThickness)])
-        affine = dcm_to_nifti_orientation(iop.reshape(2, 3), ipp, size, (columns, rows, 1)).Q44
-        dwelltime = 1 / float(ds.SpectralWidth)
-        name = str(ds.get("SeriesDescription") or path.stem)
-        images, names = [], []
-        for reference, suffix in ((False, ""), (True, "_ref")):
-            selected = data[is_ref == reference]
-            if not selected.size:
-                continue
-            grid = selected.transpose(2, 1, 3, 0)[:, :, None]  # columns, rows, 1, points, frames
-            grid = grid[..., 0] if grid.shape[-1] == 1 else grid
-            meta = philips_dcm._extractDicomMetadata_new(img, water_suppressed=not reference)
-            if grid.ndim == 5:
-                meta.set_dim_info(0, "DIM_DYN")
-            images.append(gen_nifti_mrs_hdr_ext(grid, dwelltime, meta, affine, no_conj=True))
-            names.append(name + suffix)
-        return images, names, header
-
-    @staticmethod
-    def _plane(ds: pydicom.Dataset, sequence: str, keyword: str) -> list[float]:
-        """A value from the first frame's functional groups, else the shared ones."""
-        for groups in ("PerFrameFunctionalGroupsSequence", "SharedFunctionalGroupsSequence"):
-            group = ds.get(groups, [None])[0]
-            if group is not None and sequence in group and keyword in group[sequence].value[0]:
-                return [float(v) for v in group[sequence].value[0].get(keyword)]
-        raise ReaderError(f"no {keyword} in the functional groups")
 
     def _siemens_va(self, path: Path, header: dict) -> NIFTI_MRS:
         """One Siemens VA single-voxel file as NIfTI-MRS, with the keys spec2nii sets for VB."""

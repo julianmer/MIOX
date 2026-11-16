@@ -18,24 +18,16 @@
 #*************#
 from __future__ import annotations
 
-import json
 import re
-import warnings
 from pathlib import Path
 
 import numpy as np
-from pydicom.errors import InvalidDicomError
-
-with warnings.catch_warnings():  # nibabel.nicom, imported here, warns that it is experimental
-    warnings.simplefilter("ignore", UserWarning)
-    from nibabel.nicom.dicomwrappers import wrapper_from_file
-    from spec2nii.Philips import philips_dcm
 
 # own
-from miox import __version__
 from miox.data import MRSData, RawData
 from miox.readers.base import Reader, ReaderError
 from miox.readers.dicom_mrs import DicomMrsReader
+from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
 from miox.readers.philips_list_raw import PhilipsListRaw
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 from miox.sniff import Format, Sniff, Sniffer
@@ -51,7 +43,7 @@ from miox.sniff import Format, Sniff, Sniffer
 # or dwell time make the read fail rather than guess. Without one there, the SPAR of the same scan #
 # in a folder beside it is used: raw_<n>.data belongs to <name>_<n>_<m>_raw_act.SPAR, as the       #
 # scanner numbers its exports. Keys, dwell time and voxel come from the SPAR as the SPAR/SDAT      #
-# reader reads them, or from the DICOM's header (through spec2nii's Philips DICOM functions).      #
+# reader reads them, or from the DICOM's header as PhilipsDicomMrs reads it.                       #
 # Every vector of the .list is a complex float32 readout at its offset in the .data. Vectors of    #
 # one type and mix (STD_0, STD_1, ..., NOI) form one dataset of (points, chan, aver, dyn, card,    #
 # echo, loca, extr1, extr2), each counter holding the values it takes in order; counters with one  #
@@ -66,14 +58,13 @@ from miox.sniff import Format, Sniff, Sniffer
 #**************************************************************************************************#
 class PhilipsDataListReader(Reader):
     FORMATS = (Format.PHILIPS_DATA_LIST,)
-    PACKAGES = Reader.PACKAGES + ("spec2nii",)  # the header of a DICOM auxiliary file
     INFO = re.compile(r"^\.\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S.*?)\s*:\s*(.*)$")  # general info
     SCAN = re.compile(r"^raw_(\d+)$", re.IGNORECASE)  # raw_<scan number>.data
     EXPORT = re.compile(r"_(\d+)_\d+_raw_act$", re.IGNORECASE)  # <name>_<scan>_<n>_raw_act.SPAR
     HEADER = re.compile(r"^#\s+([^:=]+?)\s*:\s*(.*)$")  # comment header line
     COUNTERS = ("chan", "aver", "dyn", "card", "echo", "loca", "extr1", "extr2")
     TAGS = {"chan": "DIM_COIL", "aver": "DIM_DYN", "dyn": "DIM_DYN", "echo": "DIM_INDIRECT_0"}
-    DICOM_SOURCE = "spec2nii philips_dl"  # keys of a DICOM auxiliary file
+    DICOM_SOURCE = "DICOM"
     WATER_REFERENCES = "HYPER water references, echo time alternating 80 / 35 ms"
 
     def __init__(self):
@@ -103,7 +94,7 @@ class PhilipsDataListReader(Reader):
             affine, source = self.spar.voxel(header), self.spar.SOURCE
             vendor = {key: self.plain(value) for key, value in header.items()}
         else:
-            values, dwelltime, affine, vendor = self._dicom_values(aux)
+            values, dwelltime, affine, vendor = self._dicom_values(aux, notes)
             source = self.DICOM_SOURCE
         vendor.update(parsed)
         vendor["auxiliary_file"] = aux.name
@@ -121,13 +112,6 @@ class PhilipsDataListReader(Reader):
                                              f"{data.stem}_{suffix}", part_notes, source, affine,
                                              tags))
         return datasets
-
-    def correct(self, d: MRSData) -> None:
-        """The DICOM reader's corrections of the keys spec2nii reads from a DICOM."""
-        if "dicom" in d.meta.vendor:
-            self.dicom.correct(d)
-        else:
-            super().correct(d)
 
     # --- data ------------------------------------------------------------------------------------
 
@@ -211,30 +195,14 @@ class PhilipsDataListReader(Reader):
 
     # --- auxiliary file --------------------------------------------------------------------------
 
-    def _dicom_values(self, path: Path) -> tuple[dict, float, np.ndarray, dict]:
-        """Keys (value, field), dwell time, voxel and vendor header of a Philips DICOM, through
-        spec2nii's Philips DICOM functions."""
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                image = wrapper_from_file(path)
-        except (InvalidDicomError, FileNotFoundError) as e:
-            raise ReaderError(f"{path.name}: not a Philips DICOM of the scan") from e
-        affine = philips_dcm._enhanced_dcm_svs_to_orientation(image).Q44
-        if philips_dcm._is_new_format(image):
-            meta = philips_dcm._extractDicomMetadata_new(image)
-            dwelltime = 1.0 / float(image.dcm_data.SpectralWidth)
-        else:
-            meta = philips_dcm._extractDicomMetadata_old(image)
-            dwelltime = 1.0 / float(image.dcm_data[0x2005, 0x1357].value)
-        vendor = self.dicom.header(path)
-        fields = self.dicom._fields(vendor)
-        values = {key: (value, fields.get(key))  # as written into a NIfTI-MRS header
-                  for key, value in json.loads(meta.to_json()).items()
-                  if not key.startswith("dim_")}
-        values["DwellTime"] = (dwelltime, fields.get("DwellTime"))
-        values["ConversionMethod"] = (f"miox {__version__}", None)
-        return values, dwelltime, affine, vendor
+    def _dicom_values(self, path: Path, notes: list[str]) -> tuple[dict, float, np.ndarray, dict]:
+        """Keys (value, field), dwell time, voxel and vendor header of a Philips DICOM."""
+        philips = PhilipsDicomMrs()
+        ds = philips.dataset(path)
+        affine, voxel_notes = philips.voxel(ds)
+        notes += voxel_notes
+        values = philips.values(ds, [path.name])
+        return values, philips.dwelltime(ds), affine, self.dicom.header(path)
 
     def _pair(self, sniff: Sniff) -> tuple[Path, Path]:
         files = (sniff.path,) + sniff.companions

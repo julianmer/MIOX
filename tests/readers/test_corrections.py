@@ -20,6 +20,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+import pydicom
 import pytest
 from nifti_mrs.create_nmrs import gen_nifti_mrs
 
@@ -34,6 +35,7 @@ from miox.readers import (
     SiemensTwixReader,
     VarianReader,
 )
+from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
 
 
 def _dataset(vendor: dict, values: dict[str, tuple]) -> MRSData:
@@ -73,22 +75,18 @@ def test_siemens_dicom_inversion_time_in_ms():
 
 
 def test_philips_classic_dicom_times_in_ms():
-    vendor = {
-        "dicom": {"Manufacturer": "Philips", "FlipAngle": 90.0},
-        "file_meta": {"MediaStorageSOPClassUID": "1.3.46.670589.11.0.0.12.1"},
-    }
-    d = _dataset(
-        vendor,
-        {
-            "EchoTime": (34.0, "dicom/(2005,1310)"),
-            "RepetitionTime": (910.0, "dicom/RepetitionTime"),
-            "ExcitationFlipAngle": (90.0, "dicom/FlipAngle"),
-        },
-    )
-    DicomMrsReader().correct(d)
-    assert d.meta["EchoTime"] == pytest.approx(0.034)
-    assert d.meta["RepetitionTime"] == pytest.approx(0.910)
-    assert d.meta["ExcitationFlipAngle"] == 90.0
+    ds = pydicom.Dataset()
+    ds.file_meta = pydicom.dataset.FileMetaDataset()
+    ds.file_meta.MediaStorageSOPClassUID = PhilipsDicomMrs.CLASSIC
+    ds.add_new((0x2001, 0x1083), "DS", "127.7")
+    ds.add_new((0x2001, 0x1087), "CS", "1H")
+    ds.add_new((0x2005, 0x1310), "FL", 34.0)
+    ds.add_new((0x2005, 0x1357), "FL", 2000.0)
+    ds.RepetitionTime, ds.FlipAngle = 910.0, 90.0
+    values = PhilipsDicomMrs().values(ds, ["x"])
+    assert values["EchoTime"][0] == pytest.approx(0.034)
+    assert values["RepetitionTime"][0] == pytest.approx(0.910)
+    assert values["ExcitationFlipAngle"][0] == 90.0
 
 
 def test_philips_enhanced_dicom_untouched():
