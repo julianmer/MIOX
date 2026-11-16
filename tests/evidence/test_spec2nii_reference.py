@@ -31,6 +31,7 @@ import pytest
 import miox
 from miox import Format, Sniffer
 from miox.readers.base import ReaderError
+from miox.readers.ge_rdb import GeRdbHeader
 from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
 from miox.readers.philips_list_raw import PhilipsListRaw
@@ -38,6 +39,8 @@ from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
+    from spec2nii.GE import ge_pfile
+    from spec2nii.GE.ge_read_pfile import Pfile
     from spec2nii.Philips import philips, philips_data_list, philips_dcm
     from spec2nii.spec2nii import remove_zero_higher_dim_indices
 
@@ -354,3 +357,77 @@ def test_philips_dicom_equals_spec2nii(public_data, tmp_path):
 @pytest.mark.data
 def test_private_philips_dicom_equals_spec2nii(private_roots, tmp_path):
     assert _compare_all_dicoms(_philips_dicoms(private_roots), tmp_path) > 0
+
+
+#**************************************************************************************************#
+#                                            GE P-file                                             #
+#**************************************************************************************************#
+#                                                                                                  #
+# Against spec2nii's own Pfile and processing (svs or mrsi), every spectroscopy P-file. HBCD PRESS #
+# is split by the header's water (user19) and metabolite (user4) counts in MIOX, at 16 / nex in    #
+# spec2nii: the frames of both splits, references first, are checked equal. Files spec2nii cannot  #
+# read (revisions before 12, protocol names it does not map) are passed over.                      #
+#                                                                                                  #
+#**************************************************************************************************#
+GE_KEYS = KEYS + ("ExcitationFlipAngle", "InversionTime", "ManufacturersModelName",
+                  "DeviceSerialNumber", "InstitutionName", "RxCoil", "SequenceName",
+                  "PatientSex")
+
+
+def _ge_pfiles(roots: list[Path]) -> list[Path]:
+    files = []
+    for root in roots:
+        for path in sorted(root.rglob("*.7")):
+            if path.is_file() and not path.name.startswith("._"):
+                with contextlib.suppress(Exception):
+                    if GeRdbHeader.from_file(path).spectroscopy_mapper():
+                        files.append(path)
+    return files
+
+
+def _compare_ge(path: Path) -> None:
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            pfile = Pfile(str(path))
+            process = ge_pfile._process_svs_pfile if pfile.is_svs else ge_pfile._process_mrsi_pfile
+            images, suffixes = process(pfile)
+    except Exception as e:  # noqa: BLE001  any failure of spec2nii's own reading
+        pytest.skip(f"spec2nii cannot convert it: {type(e).__name__}")
+    expected = [remove_zero_higher_dim_indices(image, remove=True)[0] for image in images]
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        got = miox.load(path)
+    assert [d.name for d in got] == [path.stem + suffix for suffix in suffixes]
+    datas = [np.asarray(image[:]).conj() for image in expected]  # image[:] conjugates
+    hbcd_press = pfile.hdr.rhi_psdname.lower().startswith(b"hbcd") and b"press" in \
+        pfile.hdr.rhs_se_desc.lower()
+    if hbcd_press:  # [metabolites, references]: frames in file order, references first
+        ours = np.concatenate([np.asarray(got[1].data), np.asarray(got[0].data)], axis=-1)
+        np.testing.assert_array_equal(ours, np.concatenate([datas[1], datas[0]], axis=-1))
+    for d, image, data in zip(got, expected, datas, strict=True):
+        if not hbcd_press:
+            np.testing.assert_array_equal(d.data, data)
+        np.testing.assert_allclose(d.affine, image.getAffine("voxel", "world"), atol=1e-9)
+        assert d.dwelltime == pytest.approx(image.dwelltime, abs=1e-12)
+        assert list(d.dim_tags) == list(image.dim_tags), (d.name, d.dim_tags, image.dim_tags)
+        header_ext = image.hdr_ext.to_dict()
+        for key in GE_KEYS:
+            value, reference = d.meta.get(key), header_ext.get(key)
+            if isinstance(reference, float):
+                assert value == pytest.approx(reference, abs=1e-12), key
+            else:
+                assert value == reference, key
+
+
+def test_ge_pfile_equals_spec2nii(public_data):
+    files = _ge_pfiles([public_data / name for name in ("spec2nii_test_data", "tarquin")
+                        if (public_data / name).is_dir()])
+    if not files:
+        pytest.skip("no GE P-files fetched")
+    assert _compare_all(files, _compare_ge) > 0
+
+
+@pytest.mark.data
+def test_private_ge_pfile_equals_spec2nii(private_roots):
+    assert _compare_all(_ge_pfiles(private_roots), _compare_ge) > 0

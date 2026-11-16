@@ -245,29 +245,9 @@ class PhilipsSparSdatReader(Reader):
         dwelltime = 1.0 / float(vendor["sample_frequency"])
         values = dict(values, DwellTime=(dwelltime, "sample_frequency"))
         notes = list(notes)
-        data, tags = self._without_zero_indices(data, tags, notes)
+        data, tags = self.without_zero_indices(data, tags, notes)
         return self.dataset(sniff, data, dwelltime, values, vendor, name, notes, self.SOURCE,
                             affine, tags)
-
-    @staticmethod
-    def _without_zero_indices(data: np.ndarray, tags: tuple, notes: list[str]) -> tuple:
-        """Indices of dimension 5 and up that are zero everywhere left out (unless all are), and
-        their entries of a per-index header with them."""
-        tags = list(tags)
-        for axis in range(4, data.ndim):
-            others = tuple(a for a in range(data.ndim) if a != axis)
-            zero = np.all(data == 0, axis=others)
-            if not zero.any() or zero.all():
-                continue
-            keep = np.flatnonzero(~zero)
-            notes.append(f"all-zero indices of dimension {axis + 1} left out: "
-                         f"{np.flatnonzero(zero).tolist()}")
-            data = np.take(data, keep, axis=axis)
-            tag = tags[axis - 4] if axis - 4 < len(tags) else None
-            if isinstance(tag, tuple) and tag[2]:
-                header = {k: [v[i] for i in keep] for k, v in tag[2].items()}
-                tags[axis - 4] = (tag[0], tag[1], header)
-        return data, tuple(tags)
 
     def _hyper(self, data, values, name, sniff, vendor, notes, affine) -> list[MRSData]:
         blocks, extra = self.hyper_blocks(data, values)

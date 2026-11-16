@@ -106,7 +106,7 @@ class PhilipsDataListReader(Reader):
             for suffix, part, part_values, tags, part_notes in self._parts(
                     name, array, counters, values, hyper):
                 part_notes = notes + part_notes
-                part, tags = self.spar._without_zero_indices(part, tags, part_notes)
+                part, tags = self.without_zero_indices(part, tags, part_notes)
                 part, tags = self._edit_pairs(part, tags, part_notes)
                 datasets.append(self.dataset(sniff, part, dwelltime, part_values, vendor,
                                              f"{data.stem}_{suffix}", part_notes, source, affine,

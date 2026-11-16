@@ -30,10 +30,10 @@ from __future__ import annotations
 import numpy as np
 import pydicom
 import pytest
+from spec2nii.GE.ge_read_pfile import Pfile
 
 # own
 from miox import MRImage, RawData, load
-from miox.readers.ge_pfile import GePfile
 from miox.readers.ge_pfile_raw import GePfileRaw
 from miox.readers.ge_rdb import GeRdbHeader
 from tests.conftest import PUBLIC_DATA
@@ -324,7 +324,7 @@ def test_ge_mrs_pfile_frames_through_the_imaging_layout():
     assert header.spectroscopy_mapper()
     provenance = load(GE_MRS)[0].provenance
     image, baseline = GePfileRaw(GE_MRS, header, provenance).datasets()
-    theirs = GePfile(str(GE_MRS)).map.raw_data[0, 0, 0]  # frames, coils, points
+    theirs = Pfile(str(GE_MRS)).map.raw_data[0, 0, 0]  # frames, coils, points
     assert image.shape == theirs.shape == (4, 32, 4096)
     assert np.array_equal(image.data, theirs)
     assert baseline.shape == (1, 32, 4096)

@@ -178,8 +178,10 @@ class DicomMrsReader(Spec2niiReader):
             spectra = PhilipsDicomMrs().read(files)
         datasets = []
         for s in spectra:
-            d = self.dataset(sniff, s.data, s.dwelltime, s.values, header, s.name, notes + s.notes,
-                             self.PHILIPS_SOURCE, s.affine, s.tags)
+            spectrum_notes = notes + s.notes
+            data, tags = self.without_zero_indices(s.data, s.tags, spectrum_notes)
+            d = self.dataset(sniff, data, s.dwelltime, s.values, header, s.name, spectrum_notes,
+                             self.PHILIPS_SOURCE, s.affine, tags)
             self._reference(d)
             self._header_keys(d)
             datasets.append(d)

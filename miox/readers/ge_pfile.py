@@ -6,9 +6,9 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Reader for GE P-files (.7). Spectroscopy sequences spec2nii knows are converted by it;  #
-#          every other P-file is read as raw k-space. The vendor header holds the named fields of  #
-#          the rdb header (GeRdbHeader).                                                           #
+# Purpose: Reader for GE P-files (.7). Spectroscopy sequences with a known layout are read as      #
+#          MRS, every other P-file as raw k-space. The vendor header holds the named fields of the #
+#          rdb header (GeRdbHeader).                                                               #
 #                                                                                                  #
 ####################################################################################################
 
@@ -18,20 +18,14 @@
 #*************#
 from __future__ import annotations
 
-import contextlib
-import warnings
-from collections.abc import Iterator
 from pathlib import Path
 
-import numpy as np
-from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.GE import ge_pfile
-from spec2nii.GE.ge_pfile import _process_mrsi_pfile, _process_svs_pfile
 from spec2nii.GE.ge_read_pfile import Pfile
 
 # own
 from miox.data import MRSData, RawData
-from miox.readers.base import Spec2niiReader
+from miox.readers.base import Reader
+from miox.readers.ge_pfile_mrs import GePfileLayout, GePfileMrs
 from miox.readers.ge_pfile_raw import GePfileRaw
 from miox.readers.ge_rdb import GeRdbHeader
 from miox.sniff import Format, Sniff
@@ -41,15 +35,13 @@ from miox.sniff import Format, Sniff
 #                                             GePfile                                              #
 #**************************************************************************************************#
 #                                                                                                  #
-# spec2nii's Pfile with the check for revisions below 12 fixed: the logo field is bytes, and       #
-# spec2nii looks for the text "GE" in it, which raises. HBCD PRESS (psd "hbcd", protocol with      #
-# "press") is mapped as spec2nii's "mrs-press" whatever the protocol is called; spec2nii maps it   #
-# only when the protocol is named exactly that.                                                    #
+# spec2nii's Pfile as the rdb header parser only: the data are laid out by GePfileMrs. The check   #
+# for revisions below 12 is fixed (the logo field is bytes; spec2nii looks for the text "GE" in    #
+# it, which raises); revisions before 11 have no data-offset field, so it is derived (the data     #
+# fill the end of the file).                                                                       #
 #                                                                                                  #
 #**************************************************************************************************#
 class GePfile(Pfile):
-    HBCD_PRESS = b"mrs-press"  # spec2nii's name for HBCD PRESS
-
     @property
     def is_ge_file(self) -> bool:
         if self.version < 12:
@@ -57,61 +49,32 @@ class GePfile(Pfile):
         return Pfile.is_ge_file.fget(self)
 
     def map_data(self) -> None:
-        """spec2nii's map_data; revisions before 11 have no data-offset field, so it is derived."""
-        psd = bytes(self.hdr.rhi_psdname).split(b"\0")[0].lower()
-        protocol = bytes(self.hdr.rhs_se_desc).split(b"\0")[0].lower()
-        self.hbcd_press = psd == b"hbcd" and b"press" in protocol
-        if self.hbcd_press:
-            self.hdr.rhi_psdname = self.HBCD_PRESS
-        self.map = self.get_mapper(self.file_name, self.hdr, self.version, self.endian)
         if not hasattr(self.hdr, "rhr_rdb_hdr_off_data"):
             self.hdr.rhr_rdb_hdr_off_data = self._data_offset()
-        self.map.read_data()
 
     def _data_offset(self) -> int:
-        """The data fill the end of the file; same byte count as spec2nii's read_data."""
-        m, hdr = self.map, self.hdr
+        layout, hdr = GePfileLayout(self.hdr, self.version), self.hdr
         spectrum = hdr.rhr_rh_frame_size * 2 * hdr.rhr_rh_point_size
-        per_coil = m.get_num_kspace_points * spectrum * m.get_num_time_points
-        per_coil += int(m.get_num_dummy_scans * spectrum / m.get_num_coils)
-        return Path(self.file_name).stat().st_size - per_coil * m.get_num_coils
+        per_coil = layout.kspace_points * spectrum * layout.time_points
+        per_coil += int(layout.dummy_scans * spectrum / layout.coils)
+        return Path(self.file_name).stat().st_size - per_coil * layout.coils
 
 
 #**************************************************************************************************#
 #                                          GePfileReader                                           #
 #**************************************************************************************************#
 #                                                                                                  #
-# Reads one P-file. A spectroscopy sequence spec2nii has a mapper for is converted by it; a file   #
-# with water references or several sub-experiments gives one MRSData per output spec2nii makes     #
-# (``_ref``, ``_edited``, ...). Any other P-file is raw k-space (GePfileRaw). HBCD PRESS files     #
-# store user19 water frames, then user4 metabolite frames (checked by their amplitudes);           #
-# spec2nii's PRESS split (16 / nex water frames) moves water frames into the metabolites, so they  #
-# are split here. The sequence name comes from the header, not from the name used for mapping.     #
+# Reads one P-file. Spectroscopy sequences with a known layout (GePfileMrs) give one MRSData per   #
+# dataset the sequence holds (metabolites, _ref, _edited, ...); any other P-file is raw k-space    #
+# (GePfileRaw). Keys the rdb header's own reading adds (study, series, station, scan duration,     #
+# patient, stated field strength) are set on every dataset.                                        #
 #                                                                                                  #
 #**************************************************************************************************#
-class GePfileReader(Spec2niiReader):
+class GePfileReader(Reader):
     FORMATS = (Format.GE_PFILE,)
-    CONVERTER = "ge"
-    SOURCES = {
-        "SpectrometerFrequency": "rhr_rh_ps_mps_freq",
-        "EchoTime": "rhi_te",
-        "RepetitionTime": "rhi_tr",
-        "InversionTime": "rhi_ti",
-        "ExcitationFlipAngle": "rhi_mr_flip",
-        "ManufacturersModelName": "rhe_ex_sysid",
-        "DeviceSerialNumber": "rhe_uniq_sys_id",
-        "SoftwareVersions": "rhe_ex_verscre",
-        "InstitutionName": "rhe_hospname",
-        "RxCoil": "rhi_cname",
-        "SequenceName": "rhi_psdname",
-        "ProtocolName": "rhs_se_desc",
-        "PatientName": "rhe_patname",
-        "PatientDoB": "rhe_dateofbirth",
-        "PatientSex": "rhe_patsex",
-        "DwellTime": "rhr_spectral_width",
-    }
-
-    RDB_KEYS = (  # keys of the rdb header's own reading that spec2nii does not set
+    SOURCE = "P-file header"
+    STATED = ("FieldStrength",)  # stated in the header: replaces the one derived from frequency
+    RDB_KEYS = (  # keys of the rdb header's own reading
         "StudyID", "StudyDescription", "StationName", "SeriesDescription", "SeriesNumber",
         "PulseSequenceName", "ScanDuration", "AcquisitionDateTime", "PatientID", "PatientAge",
         "PatientWeight", "PatientPosition", "FieldStrength",
@@ -121,54 +84,20 @@ class GePfileReader(Spec2niiReader):
         header = GeRdbHeader.from_file(sniff.path)
         if not header.spectroscopy_mapper():
             return GePfileRaw(sniff.path, header, self.provenance(sniff)).datasets()
-        datasets = super().read(sniff)
+        pfile = GePfile(str(sniff.path))
+        mrs = GePfileMrs(sniff.path, pfile.hdr, pfile.version, pfile.endian)
+        notes: list[str] = []
+        with self.captured(notes):
+            spectra, affine = mrs.spectra()
         rdb = header.meta()
-        for d in datasets:
+        datasets = []
+        for s in spectra:
+            spectrum_notes = notes + s.notes
+            data, tags = self.without_zero_indices(s.data, s.tags, spectrum_notes)
+            d = self.dataset(sniff, data, mrs.dwelltime, s.values, header.values,
+                             sniff.path.stem + s.suffix, spectrum_notes, self.SOURCE, affine, tags)
             for key in self.RDB_KEYS:
                 if key in rdb and (key not in d.meta or key in self.STATED):
                     d.meta.set(key, rdb[key], rdb.source[key], rdb.fields.get(key))
+            datasets.append(d)
         return datasets
-
-    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
-        """spec2nii's read_pfile, with GePfile in place of its Pfile."""
-        pfile = GePfile(str(sniff.path))
-        process = _process_svs_pfile if pfile.is_svs else _process_mrsi_pfile
-        with self._hbcd_press(pfile):
-            images, suffixes = process(pfile)
-        names = [sniff.path.stem + suffix for suffix in suffixes]
-        return list(images), names, self._header(sniff.path)
-
-    def correct(self, d: MRSData) -> None:
-        super().correct(d)
-        psdname = d.meta.vendor.get("rhi_psdname")
-        if psdname and d.meta.get("SequenceName") != psdname:
-            self.fix(d, "SequenceName", psdname, "spec2nii reported the name it mapped by")
-
-    @contextlib.contextmanager
-    def _hbcd_press(self, pfile: GePfile) -> Iterator[None]:
-        """spec2nii's PRESS processing with the frames split by the HBCD header counts."""
-        original = ge_pfile._process_probe_p
-        hdr = pfile.hdr
-        water, metabolite = int(hdr.rhr_rh_user19), int(hdr.rhr_rh_user4)
-        frames = pfile.map.raw_data.shape[3] if pfile.hbcd_press else 0
-
-        def split(pfile):
-            raw = pfile.map.raw_data  # (1, 1, 1, frames, coils, points)
-            order = [0, 1, 2, 5, 4, 3]  # to (1, 1, 1, points, coils, frames)
-            images, metas, dwelltime, suffixes = original(pfile)
-            ref = np.transpose(raw[:, :, :, :water], order)
-            metab = np.transpose(raw[:, :, :, water:], order)
-            return [metab, ref], metas, dwelltime, suffixes
-
-        if pfile.hbcd_press and water + metabolite == frames:
-            ge_pfile._process_probe_p = split
-        elif pfile.hbcd_press:
-            warnings.warn(f"HBCD PRESS: {water} water + {metabolite} metabolite frames do not "
-                          f"make the {frames} frames; spec2nii's split kept", stacklevel=2)
-        try:
-            yield
-        finally:
-            ge_pfile._process_probe_p = original
-
-    def _header(self, path: Path) -> dict:
-        return GeRdbHeader.from_file(path).values
