@@ -149,16 +149,18 @@ class PhilipsSparSdatReader(Reader):
         grid = self._grid(data, header)
         if grid is not None:
             return grid
-        if header.get("volume_selection_enable") == "yes":
-            angles = [-header["lr_angulation"], -header["ap_angulation"], header["cc_angulation"]]
-            sizes = [header["lr_size"], header["ap_size"], header["cc_size"]]
-            centre = [-header["lr_off_center"], -header["ap_off_center"],
-                      header["cc_off_center"]]
-            affine = self.box(angles, sizes, centre)
-        else:
-            affine = self.NO_VOXEL
         shape = (1, 1, 1) + data.shape if data.shape[1] > 1 else (1, 1, 1, data.shape[0])
-        return data.reshape(shape), affine, []
+        return data.reshape(shape), self.voxel(header), []
+
+    @classmethod
+    def voxel(cls, header: dict) -> np.ndarray:
+        """Affine of the single voxel, or of a 10 m voxel where the SPAR selects none."""
+        if header.get("volume_selection_enable") != "yes":
+            return cls.NO_VOXEL
+        angles = [-header["lr_angulation"], -header["ap_angulation"], header["cc_angulation"]]
+        sizes = [header["lr_size"], header["ap_size"], header["cc_size"]]
+        centre = [-header["lr_off_center"], -header["ap_off_center"], header["cc_off_center"]]
+        return cls.box(angles, sizes, centre)
 
     @staticmethod
     def box(angles: list[float], sizes: list[float], centre: list[float]) -> np.ndarray:
@@ -267,28 +269,34 @@ class PhilipsSparSdatReader(Reader):
                 tags[axis - 4] = (tag[0], tag[1], header)
         return data, tuple(tags)
 
-    def _hyper(self, data, values, name, *args) -> list[MRSData]:
-        """Short-TE block (first 32 rows) and the HERCULES conditions A to D in turn."""
-        short, edited = data[..., : self.HYPER_SHORT_ROWS], data[..., self.HYPER_SHORT_ROWS:]
+    def _hyper(self, data, values, name, sniff, vendor, notes, affine) -> list[MRSData]:
+        blocks, extra = self.hyper_blocks(data, values)
+        return [self._dataset(block, block_values, name + suffix, tags, sniff, vendor,
+                              notes + extra, affine)
+                for suffix, block, block_values, tags in blocks]
+
+    @classmethod
+    def hyper_blocks(cls, data: np.ndarray, values: dict, lead: tuple = ()) -> tuple[list, list]:
+        """A HYPER act scan's short-TE block (the first 32 transients of the last axis) and its
+        HERCULES conditions A to D in turn: (name suffix, data, values, dimension tags) of each,
+        ``lead`` the tags before the transients, and the notes."""
+        short, edited = data[..., : cls.HYPER_SHORT_ROWS], data[..., cls.HYPER_SHORT_ROWS:]
         complete = edited.shape[-1] // 4 * 4
         notes = []
         if complete < edited.shape[-1]:
             notes.append(f"edited block: {edited.shape[-1] - complete} transients of an "
                          "incomplete set of four conditions left out")
         edited = edited[..., :complete]
-        edited = edited.reshape(edited.shape[:4] + (complete // 4, 4)).swapaxes(4, 5)
-        short_values = dict(values, EchoTime=(self.HYPER_SHORT_TE, None),
+        edited = edited.reshape(edited.shape[:-1] + (complete // 4, 4)).swapaxes(-2, -1)
+        short_values = dict(values, EchoTime=(cls.HYPER_SHORT_TE, None),
                             WaterSuppressed=(True, None))
-        edited_values = dict(values, EchoTime=(self.HYPER_EDITED_TE, None),
+        edited_values = dict(values, EchoTime=(cls.HYPER_EDITED_TE, None),
                              WaterSuppressed=(True, None),
-                             EditPulse=(self.HERCULES_EDIT_PULSES, None))
+                             EditPulse=(cls.HERCULES_EDIT_PULSES, None))
         conditions = ("DIM_EDIT", "HERCULES j-difference editing, four conditions",
-                      {"EditCondition": list(self.HERCULES)})
-        sniff, vendor, base_notes, affine = args
-        args = (sniff, vendor, base_notes + notes, affine)
-        return [self._dataset(short, short_values, f"{name}_hyper_short_te", ("DIM_DYN",), *args),
-                self._dataset(edited, edited_values, f"{name}_hyper_edited",
-                              (conditions, "DIM_DYN"), *args)]
+                      {"EditCondition": list(cls.HERCULES)})
+        return [("_hyper_short_te", short, short_values, lead + ("DIM_DYN",)),
+                ("_hyper_edited", edited, edited_values, lead + (conditions, "DIM_DYN"))], notes
 
     def _hyper_ref(self, data, values, name, *args) -> list[MRSData]:
         """Water references: every 32nd row, the first at the edited (80 ms) echo time, then

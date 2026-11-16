@@ -8,8 +8,7 @@
 #                                                                                                  #
 # Purpose: Reader for Philips .data/.list raw spectroscopy. The pair has no frequency, dwell time  #
 #          or geometry, so a SPAR or DICOM export of the same scan must sit in the same folder.    #
-#          spec2nii converts; the vendor header holds the auxiliary file's header plus every line  #
-#          of the .list file.                                                                      #
+#          The vendor header holds the auxiliary file's header plus every line of the .list file.  #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,24 +18,23 @@
 #*************#
 from __future__ import annotations
 
-import contextlib
-import dataclasses
+import json
 import re
 import warnings
-from collections.abc import Iterator
 from pathlib import Path
 
 import numpy as np
-from nifti_mrs.nifti_mrs import NIFTI_MRS
+from pydicom.errors import InvalidDicomError
 
 with warnings.catch_warnings():  # nibabel.nicom, imported here, warns that it is experimental
     warnings.simplefilter("ignore", UserWarning)
-    from spec2nii.Philips import philips, philips_data_list
-    from spec2nii.Philips.philips_data_list import read_data_list_pair
+    from nibabel.nicom.dicomwrappers import wrapper_from_file
+    from spec2nii.Philips import philips_dcm
 
 # own
+from miox import __version__
 from miox.data import MRSData, RawData
-from miox.readers.base import ReaderError, Spec2niiReader
+from miox.readers.base import Reader, ReaderError
 from miox.readers.dicom_mrs import DicomMrsReader
 from miox.readers.philips_list_raw import PhilipsListRaw
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
@@ -52,33 +50,31 @@ from miox.sniff import Format, Sniff, Sniffer
 # _act first, then any SPAR, then a Philips spectroscopy DICOM; SPARs that disagree on frequency   #
 # or dwell time make the read fail rather than guess. Without one there, the SPAR of the same scan #
 # in a folder beside it is used: raw_<n>.data belongs to <name>_<n>_<m>_raw_act.SPAR, as the       #
-# scanner numbers its exports. Sources and corrections are those of the auxiliary file's own       #
-# reader. Spectroscopic imaging (k-space ranges in the .list) is refused: spec2nii would put every #
-# k-space position on one spectrum.                                                                #
+# scanner numbers its exports. Keys, dwell time and voxel come from the SPAR as the SPAR/SDAT      #
+# reader reads them, or from the DICOM's header (through spec2nii's Philips DICOM functions).      #
+# Every vector of the .list is a complex float32 readout at its offset in the .data. Vectors of    #
+# one type and mix (STD_0, STD_1, ..., NOI) form one dataset of (points, chan, aver, dyn, card,    #
+# echo, loca, extr1, extr2), each counter holding the values it takes in order; counters with one  #
+# value are dropped (more than three left is refused), the data conjugated as the SDAT. Tags: chan #
+# DIM_COIL, aver and dyn DIM_DYN, echo DIM_INDIRECT_0, the others DIM_USER_n. HYPER (protocol name #
+# with hyper): STD_0 splits as the SPAR/SDAT reader splits the act file, STD_1 holds the water     #
+# references, echo time alternating 80 / 35 ms per index. Edited scans (MEGA: extr1 the transient, #
+# extr2 its edit condition) become transient pairs (extr1 // 2, DIM_DYN) by condition (DIM_EDIT,   #
+# ON = extr2 1 first, as the scan's DICOM flags its frames). Spectroscopic imaging (k-space ranges #
+# in the .list) is refused.                                                                        #
 #                                                                                                  #
 #**************************************************************************************************#
-class PhilipsDataListReader(Spec2niiReader):
+class PhilipsDataListReader(Reader):
     FORMATS = (Format.PHILIPS_DATA_LIST,)
-    CONVERTER = "philips_dl"
+    PACKAGES = Reader.PACKAGES + ("spec2nii",)  # the header of a DICOM auxiliary file
     INFO = re.compile(r"^\.\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S.*?)\s*:\s*(.*)$")  # general info
     SCAN = re.compile(r"^raw_(\d+)$", re.IGNORECASE)  # raw_<scan number>.data
     EXPORT = re.compile(r"_(\d+)_\d+_raw_act$", re.IGNORECASE)  # <name>_<scan>_<n>_raw_act.SPAR
     HEADER = re.compile(r"^#\s+([^:=]+?)\s*:\s*(.*)$")  # comment header line
-    REQUIRED_BY_SPEC2NII = {"spectrum_inversion_time": 0}  # 0: no inversion (spec2nii skips it)
-    SOURCES_SPAR = {  # where spec2nii reads each key of a SPAR
-        "SpectrometerFrequency": "synthesizer_frequency",
-        "ResonantNucleus": "nucleus",
-        "EchoTime": "echo_time",
-        "RepetitionTime": "repetition_time",
-        "InversionTime": "spectrum_inversion_time",
-        "TxOffset": "offset_frequency",
-        "SoftwareVersions": "equipment_sw_verions",
-        "ProtocolName": "scan_id",
-        "PatientPosition": "patient_position",
-        "PatientName": "patient_name",
-        "PatientDoB": "patient_birth_date",
-        "DwellTime": "sample_frequency",
-    }
+    COUNTERS = ("chan", "aver", "dyn", "card", "echo", "loca", "extr1", "extr2")
+    TAGS = {"chan": "DIM_COIL", "aver": "DIM_DYN", "dyn": "DIM_DYN", "echo": "DIM_INDIRECT_0"}
+    DICOM_SOURCE = "spec2nii philips_dl"  # keys of a DICOM auxiliary file
+    WATER_REFERENCES = "HYPER water references, echo time alternating 80 / 35 ms"
 
     def __init__(self):
         self.spar = PhilipsSparSdatReader()
@@ -86,100 +82,117 @@ class PhilipsDataListReader(Spec2niiReader):
         self.sniffer = Sniffer()
 
     def read(self, sniff: Sniff) -> list[MRSData | RawData]:
-        """Imaging k-space as RawData; spectroscopy through spec2nii and the auxiliary file."""
         data, list_file = self._pair(sniff)
         parsed = self._list(list_file)
         rows = PhilipsListRaw.vectors(parsed["list_vectors"])
         if PhilipsListRaw.imaging(parsed["list_info"], rows):
             raw = PhilipsListRaw(data, list_file, parsed["list_info"], self.provenance(sniff))
             return raw.datasets(rows)
-        return super().read(sniff)
-
-    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
-        data, list_file = self._pair(sniff)
-        info = self._list(list_file)["list_info"]
+        info = parsed["list_info"]
         if any(len(set(r.split())) > 1 for k in ("kx_range", "ky_range", "kz_range")
                for r in info.get(k, {}).values()):
             raise ReaderError(f"{data.name}: spectroscopic imaging k-space (kx, ky, kz), which is "
                               "not reconstructed here: read the scan's SPAR/SDAT or DICOM")
         aux = self._auxiliary(data.parent, data.stem)
+        notes: list[str] = []
         if aux.suffix.lower() == ".spar":
-            spar = self.spar.read_spar(aux)
-            with self._spec2nii_spar(spar):
-                images, names = read_data_list_pair(data, list_file, aux, None)
-            header = {k: self.plain(v) for k, v in spar.items()}
+            header = self.spar.read_spar(aux)
+            values = self.spar._values(header, aux, notes)
+            dwelltime = 1.0 / float(header["sample_frequency"])
+            values["DwellTime"] = (dwelltime, "sample_frequency")
+            affine, source = self.spar.voxel(header), self.spar.SOURCE
+            vendor = {key: self.plain(value) for key, value in header.items()}
         else:
-            images, names = read_data_list_pair(data, list_file, aux, None)
-            header = self.dicom.header(aux)
-        header.update(self._list(list_file))
-        header["auxiliary_file"] = aux.name
-        return list(images), [f"{data.stem}_{name}" for name in names], header
-
-    @contextlib.contextmanager
-    def _spec2nii_spar(self, header: dict) -> Iterator[None]:
-        """spec2nii reads the SPAR as MIOX does, and sees the keys it reads unconditionally if this
-        SPAR lacks them."""
-        missing = {k: v for k, v in self.REQUIRED_BY_SPEC2NII.items() if k not in header}
-        for key in missing:
-            warnings.warn(f"SPAR has no {key}; read as {missing[key]!r}", stacklevel=2)
-        originals = philips.read_spar, philips_data_list.read_spar
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")  # noted once, when the header was read
-            philips.read_spar = philips_data_list.read_spar = lambda path: {
-                **missing, **self.spar.read_spar(Path(path))}
-            try:
-                yield
-            finally:
-                philips.read_spar, philips_data_list.read_spar = originals
-
-    def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
-        if "dicom" in vendor:
-            return self.dicom.sources(vendor)
-        return self.SOURCES_SPAR
+            values, dwelltime, affine, vendor = self._dicom_values(aux)
+            source = self.DICOM_SOURCE
+        vendor.update(parsed)
+        vendor["auxiliary_file"] = aux.name
+        values["OriginalFile"] = ([data.name, list_file.name, aux.name], None)
+        hyper = "hyper" in str(values.get("ProtocolName", ("",))[0]).lower()
+        blob = np.fromfile(data, dtype="<c8")
+        datasets = []
+        for name, array, counters in self._arrays(blob, rows):
+            for suffix, part, part_values, tags, part_notes in self._parts(
+                    name, array, counters, values, hyper):
+                part_notes = notes + part_notes
+                part, tags = self.spar._without_zero_indices(part, tags, part_notes)
+                part, tags = self._edit_pairs(part, tags, part_notes)
+                datasets.append(self.dataset(sniff, part, dwelltime, part_values, vendor,
+                                             f"{data.stem}_{suffix}", part_notes, source, affine,
+                                             tags))
+        return datasets
 
     def correct(self, d: MRSData) -> None:
-        """The auxiliary reader's corrections, and the HYPER echo times spec2nii leaves at 80 ms.
-
-        The water references of a HYPER scan alternate between the edited (80 ms) and short (35 ms)
-        echo time, starting with 80 ms, so their echo time goes per index into the dimension header.
-        """
+        """The DICOM reader's corrections of the keys spec2nii reads from a DICOM."""
         if "dicom" in d.meta.vendor:
             self.dicom.correct(d)
         else:
             super().correct(d)
-            if d.meta.fields.get("InversionTime") == "spectrum_inversion_time":
-                self.fix(d, "InversionTime", d.meta["InversionTime"] * 1e-3, "SPAR value in ms")
-        if "EditPulse" in d.meta and d.name.endswith("_hyper_edited"):
-            self.fix(d, "EditPulse", self.spar.HERCULES_EDIT_PULSES, "HERCULES conditions as the "
-                     "sequence defines them (Oeltzschner et al. 2019): A 1.9 + 4.58, B 1.9 + "
-                     "4.18, C 4.58, D 4.18 ppm")
-        if d.name.endswith("_hyper_short_te"):
-            self.fix(d, "EchoTime", self.spar.HYPER_SHORT_TE, "HYPER short-TE block is 35 ms")
-        elif d.name.endswith("_hyper_water_ref") and d.data.ndim == 6:
-            n = d.shape[5]
+
+    # --- data ------------------------------------------------------------------------------------
+
+    def _arrays(self, blob: np.ndarray, rows: list[dict]) -> list[tuple[str, np.ndarray, list]]:
+        """One array per vector type and mix, (1, 1, 1, points, counters...) conjugated, with the
+        names of the counters kept."""
+        groups: dict[str, dict[int, list[dict]]] = {}
+        for row in rows:
+            groups.setdefault(row["typ"], {}).setdefault(row["mix"], []).append(row)
+        arrays = []
+        for typ, mixes in groups.items():
+            for mix in sorted(mixes):
+                vectors = mixes[mix]
+                taken = [sorted({row[c] for row in vectors}) for c in self.COUNTERS]
+                position = [{value: n for n, value in enumerate(v)} for v in taken]
+                array = np.zeros((max(row["size"] for row in vectors) // 8,)
+                                 + tuple(len(v) for v in taken), np.complex64)
+                for row in vectors:
+                    start, size = row["offset"] // 8, row["size"] // 8
+                    index = tuple(p[row[c]] for p, c in zip(position, self.COUNTERS, strict=True))
+                    array[(slice(0, size),) + index] = blob[start:start + size]
+                kept = [c for c, v in zip(self.COUNTERS, taken, strict=True) if len(v) > 1]
+                if len(kept) > 3:
+                    raise ReaderError(f"{typ}_{mix}: more than three counters vary ({kept}); "
+                                      "NIfTI-MRS has three dimensions for them")
+                shape = (1, 1, 1, array.shape[0]) + tuple(len(v) for v in taken if len(v) > 1)
+                name = typ if typ == "NOI" else f"{typ}_{mix}"
+                arrays.append((name, array.reshape(shape).conj(), kept))
+        return arrays
+
+    def _parts(self, name: str, array: np.ndarray, counters: list[str], values: dict,
+               hyper: bool) -> list[tuple[str, np.ndarray, dict, tuple, list]]:
+        """The datasets of one array: (name suffix, data, values, dimension tags, notes)."""
+        if hyper and name == "STD_0":
+            blocks, notes = self.spar.hyper_blocks(array, values, ("DIM_COIL",))
+            return [(suffix.removeprefix("_"), data, block_values, tags, notes)
+                    for suffix, data, block_values, tags in blocks]
+        if hyper and name == "STD_1":
+            n = array.shape[-1]
             times = [(self.spar.HYPER_EDITED_TE, self.spar.HYPER_SHORT_TE)[i % 2] for i in range(n)]
-            d.dim_info.setdefault(6, {})["header"] = {"EchoTime": times}
-            d.dim_info[6]["info"] = "HYPER water references, echo time alternating 80 / 35 ms"
-            for record in (d.meta, d.meta.source, d.meta.fields):
-                record.pop("EchoTime", None)
-        self._edit_pairs(d)
+            tags = ("DIM_COIL", ("DIM_USER_0", self.WATER_REFERENCES, {"EchoTime": times}))
+            references = {k: v for k, v in values.items() if k != "EchoTime"}
+            return [("hyper_water_ref", array, references, tags, [])]
+        tags, users = [], 0
+        for counter in counters:
+            tag = self.TAGS.get(counter)
+            if tag is None:
+                tag, users = f"DIM_USER_{users}", users + 1
+            tags.append((tag, f"data/list dim {counter}", None))
+        return [(name, array, values, tuple(tags), [])]
 
     @staticmethod
-    def _edit_pairs(d: MRSData) -> None:
-        """Edited scans (MEGA): spec2nii puts every transient on its own extr1 index and in the
-        extr2 slot of its edit condition, the other slot empty. Here transient pairs (extr1 // 2)
-        are DIM_DYN and extr2 DIM_EDIT, ON (extr2 1, as the scan's DICOM flags it) first; a pair
-        with a transient (or a coil of one) missing from the export is left out, with a note."""
-        infos = [d.dim_info.get(n, {}).get("info") for n in (6, 7)]
-        if d.data.ndim != 7 or infos != ["data/list dim extr1", "data/list dim extr2"]:
-            return
-        data = np.asarray(d.data)  # (x, y, z, points, coils, extr1, extr2)
-        if data.shape[6] != 2:
-            return
+    def _edit_pairs(data: np.ndarray, tags: tuple, notes: list[str]) -> tuple[np.ndarray, tuple]:
+        """Edited scans (MEGA) hold every transient on its own extr1 index, in the extr2 slot of
+        its edit condition, the other slot empty. Here transient pairs (extr1 // 2) are DIM_DYN and
+        extr2 DIM_EDIT, ON (extr2 1) first; a pair with a transient (or a coil of one) missing from
+        the export is left out, with a note."""
+        infos = [tag[1] if isinstance(tag, tuple) else None for tag in tags]
+        if (data.ndim != 7 or data.shape[6] != 2
+                or infos[1:] != ["data/list dim extr1", "data/list dim extr2"]):
+            return data, tags
         per_coil = np.abs(data).sum(axis=(0, 1, 2, 3)) > 0  # (coils, extr1, extr2)
         filled, complete = per_coil.any(axis=0), per_coil.all(axis=0)
         if (filled.sum(axis=1) > 1).any():
-            return
+            return data, tags
         pairs, missing = [], []
         for j in range(data.shape[5] // 2):
             slots = [next((i for i in (2 * j, 2 * j + 1) if complete[i, e]), None) for e in (1, 0)]
@@ -188,16 +201,40 @@ class PhilipsDataListReader(Spec2niiReader):
                 continue
             pairs.append([data[..., i, e] for i, e in zip(slots, (1, 0), strict=True)])
         if not pairs:
-            return
-        d.data = np.stack([np.stack(p, axis=-1) for p in pairs], axis=-2)  # (..., pairs, 2)
-        d.dim_tags = ("DIM_COIL", "DIM_DYN", "DIM_EDIT")
-        d.dim_info = {6: {"info": "transient pairs (extr1 // 2)"},
-                      7: {"info": "edit condition (extr2)",
-                          "header": {"EditCondition": ["ON", "OFF"]}}}
+            return data, tags
         if missing:
-            d.provenance = dataclasses.replace(d.provenance, notes=d.provenance.notes + (
-                f"transients {', '.join(map(str, missing))} (extr1) left out: their pair is "
-                "incomplete in the export (a transient or a coil of one missing)",))
+            notes.append(f"transients {', '.join(map(str, missing))} (extr1) left out: their pair "
+                         "is incomplete in the export (a transient or a coil of one missing)")
+        data = np.stack([np.stack(p, axis=-1) for p in pairs], axis=-2)  # (..., pairs, 2)
+        return data, ("DIM_COIL", ("DIM_DYN", "transient pairs (extr1 // 2)", None),
+                      ("DIM_EDIT", "edit condition (extr2)", {"EditCondition": ["ON", "OFF"]}))
+
+    # --- auxiliary file --------------------------------------------------------------------------
+
+    def _dicom_values(self, path: Path) -> tuple[dict, float, np.ndarray, dict]:
+        """Keys (value, field), dwell time, voxel and vendor header of a Philips DICOM, through
+        spec2nii's Philips DICOM functions."""
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                image = wrapper_from_file(path)
+        except (InvalidDicomError, FileNotFoundError) as e:
+            raise ReaderError(f"{path.name}: not a Philips DICOM of the scan") from e
+        affine = philips_dcm._enhanced_dcm_svs_to_orientation(image).Q44
+        if philips_dcm._is_new_format(image):
+            meta = philips_dcm._extractDicomMetadata_new(image)
+            dwelltime = 1.0 / float(image.dcm_data.SpectralWidth)
+        else:
+            meta = philips_dcm._extractDicomMetadata_old(image)
+            dwelltime = 1.0 / float(image.dcm_data[0x2005, 0x1357].value)
+        vendor = self.dicom.header(path)
+        fields = self.dicom._fields(vendor)
+        values = {key: (value, fields.get(key))  # as written into a NIfTI-MRS header
+                  for key, value in json.loads(meta.to_json()).items()
+                  if not key.startswith("dim_")}
+        values["DwellTime"] = (dwelltime, fields.get("DwellTime"))
+        values["ConversionMethod"] = (f"miox {__version__}", None)
+        return values, dwelltime, affine, vendor
 
     def _pair(self, sniff: Sniff) -> tuple[Path, Path]:
         files = (sniff.path,) + sniff.companions
