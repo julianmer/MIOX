@@ -20,9 +20,13 @@ from __future__ import annotations
 import collections
 import html
 import re
+import warnings
 
 import pydicom
-from nibabel.nicom import csareader
+
+with warnings.catch_warnings():  # nibabel.nicom warns on import that it is experimental
+    warnings.simplefilter("ignore", UserWarning)
+    from nibabel.nicom import csareader
 
 # own
 from miox.data import Protocol

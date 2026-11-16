@@ -22,6 +22,8 @@ import importlib
 import subprocess
 import sys
 
+import pytest
+
 # own
 import miox
 from miox.readers.loader import READERS
@@ -51,3 +53,12 @@ def test_import_loads_no_reader_module():
     out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert out.stdout.strip() == "[]"
     assert miox.readers.SiemensTwixReader.__name__ == "SiemensTwixReader"
+
+
+@pytest.mark.parametrize("module", sorted({module for module, _, _ in READERS}))
+def test_reader_import_prints_no_library_notice(module):
+    """nibabel.nicom announces on import that it is experimental; whichever reader imports it
+    first must keep that from the user's terminal."""
+    out = subprocess.run([sys.executable, "-c", f"import {module}"], capture_output=True,
+                         text=True, check=True)
+    assert "experimental" not in out.stderr

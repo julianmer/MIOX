@@ -21,11 +21,15 @@ from __future__ import annotations
 
 import dataclasses
 import re
+import warnings
 from pathlib import Path
 
 import numpy as np
 from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.Philips.philips_data_list import read_data_list_pair
+
+with warnings.catch_warnings():  # nibabel.nicom, imported here, warns that it is experimental
+    warnings.simplefilter("ignore", UserWarning)
+    from spec2nii.Philips.philips_data_list import read_data_list_pair
 
 # own
 from miox.data import MRSData, RawData

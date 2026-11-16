@@ -27,9 +27,12 @@ from pathlib import Path
 import numpy as np
 from nifti_mrs.nifti_mrs import NIFTI_MRS
 from spec2nii.nifti_orientation import calc_affine
-from spec2nii.Philips import philips, philips_data_list
-from spec2nii.Philips.philips import read_sdat_spar_pair
 from spec2nii.utils import detect_file_encoding
+
+with warnings.catch_warnings():  # nibabel.nicom, imported here, warns that it is experimental
+    warnings.simplefilter("ignore", UserWarning)
+    from spec2nii.Philips import philips, philips_data_list
+    from spec2nii.Philips.philips import read_sdat_spar_pair
 
 # own
 from miox.data import MRSData
