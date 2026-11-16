@@ -178,25 +178,25 @@ class DicomMrsReader(Spec2niiReader):
         "DwellTime": "dicom/SpectralWidth",
     }
 
-    TAG_KEYS = {  # standard key: (DICOM keyword of a top-level element, type)
-        "Modality": ("Modality", str),
-        "StationName": ("StationName", str),
-        "InstitutionalDepartmentName": ("InstitutionalDepartmentName", str),
-        "StudyDescription": ("StudyDescription", str),
-        "ProcedureStepDescription": ("PerformedProcedureStepDescription", str),
-        "SeriesDescription": ("SeriesDescription", str),
-        "SeriesNumber": ("SeriesNumber", int),
-        "AcquisitionNumber": ("AcquisitionNumber", int),
-        "ImageType": ("ImageType", list),
-        "BodyPart": ("BodyPartExamined", str),
-        "ScanOptions": ("ScanOptions", str),
-        "PatientID": ("PatientID", str),
-        "FieldStrength": ("MagneticFieldStrength", float),
-        "AcquisitionDuration": ("AcquisitionDuration", float),
-        "EchoTrainLength": ("EchoTrainLength", int),
-        "VolumeLocalizationTechnique": ("VolumeLocalizationTechnique", str),
-        "MRSpectroscopyAcquisitionType": ("MRSpectroscopyAcquisitionType", str),
-        "Decoupling": ("Decoupling", str),
+    HEADER_KEYS = {  # top-level elements
+        "Modality": (("dicom/Modality",), str),
+        "StationName": (("dicom/StationName",), str),
+        "InstitutionalDepartmentName": (("dicom/InstitutionalDepartmentName",), str),
+        "StudyDescription": (("dicom/StudyDescription",), str),
+        "ProcedureStepDescription": (("dicom/PerformedProcedureStepDescription",), str),
+        "SeriesDescription": (("dicom/SeriesDescription",), str),
+        "SeriesNumber": (("dicom/SeriesNumber",), int),
+        "AcquisitionNumber": (("dicom/AcquisitionNumber",), int),
+        "ImageType": (("dicom/ImageType",), list),
+        "BodyPart": (("dicom/BodyPartExamined",), str),
+        "ScanOptions": (("dicom/ScanOptions",), str),
+        "PatientID": (("dicom/PatientID",), str),
+        "FieldStrength": (("dicom/MagneticFieldStrength",), float),
+        "AcquisitionDuration": (("dicom/AcquisitionDuration",), float),
+        "EchoTrainLength": (("dicom/EchoTrainLength",), int),
+        "VolumeLocalizationTechnique": (("dicom/VolumeLocalizationTechnique",), str),
+        "MRSpectroscopyAcquisitionType": (("dicom/MRSpectroscopyAcquisitionType",), str),
+        "Decoupling": (("dicom/Decoupling",), str),
     }
 
     def read(self, sniff: Sniff) -> list[MRSData]:
@@ -205,19 +205,13 @@ class DicomMrsReader(Spec2niiReader):
         datasets = super().read(sniff) if len(series) == 1 else [
             d for part in parts for d in super().read(part)]
         for d in datasets:
-            self._tag_keys(d)
+            self._acquisition_time(d)
         return datasets
 
-    def _tag_keys(self, d: MRSData) -> None:
-        """Keys the file states in top-level elements that spec2nii does not read; the stated field
-        strength replaces the one derived from the frequency."""
+    @staticmethod
+    def _acquisition_time(d: MRSData) -> None:
+        """AcquisitionDateTime in ISO 8601, from the element or from AcquisitionDate and Time."""
         dicom = d.meta.vendor["dicom"]
-        for key, (keyword, kind) in self.TAG_KEYS.items():
-            value = dicom.get(keyword)
-            if value in (None, "", []) or (key in d.meta and key != "FieldStrength"):
-                continue
-            value = [str(v) for v in value] if kind is list else kind(value)
-            d.meta.set(key, value, f"DICOM: {keyword}", f"dicom/{keyword}")
         stamp = str(dicom.get("AcquisitionDateTime") or "")
         source, field = "AcquisitionDateTime", "dicom/AcquisitionDateTime"
         if not stamp and dicom.get("AcquisitionDate") and dicom.get("AcquisitionTime"):

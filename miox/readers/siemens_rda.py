@@ -61,6 +61,17 @@ class SiemensRdaReader(Spec2niiReader):
         "PatientSex": "PatientSex",
         "DwellTime": "DwellTime",
     }
+    HEADER_KEYS = {
+        "StudyDescription": (("StudyDescription",), str),
+        "SeriesDescription": (("SeriesDescription",), str),
+        "SeriesNumber": (("SeriesNumber",), int),
+        "StationName": (("StationName",), str),
+        "AcquisitionNumber": (("AcquisitionNumber",), int),
+        "EchoNumber": (("EchoNumber",), int),
+        "FieldStrength": (("MagneticFieldStrength",), float),
+        "TxRefAmp": (("TransmitRefAmplitude[1H]",), float),
+        "SliceThickness": (("SliceThickness",), float),
+    }
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         images, names = convert_rda(sniff.path, None, False)

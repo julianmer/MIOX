@@ -111,11 +111,23 @@ class GePfileReader(Spec2niiReader):
         "DwellTime": "rhr_spectral_width",
     }
 
+    RDB_KEYS = (  # keys of the rdb header's own reading that spec2nii does not set
+        "StudyID", "StudyDescription", "StationName", "SeriesDescription", "SeriesNumber",
+        "PulseSequenceName", "ScanDuration", "AcquisitionDateTime", "PatientID", "PatientAge",
+        "PatientWeight", "PatientPosition", "FieldStrength",
+    )
+
     def read(self, sniff: Sniff) -> list[MRSData | RawData]:
         header = GeRdbHeader.from_file(sniff.path)
-        if header.spectroscopy_mapper():
-            return super().read(sniff)
-        return GePfileRaw(sniff.path, header, self.provenance(sniff)).datasets()
+        if not header.spectroscopy_mapper():
+            return GePfileRaw(sniff.path, header, self.provenance(sniff)).datasets()
+        datasets = super().read(sniff)
+        rdb = header.meta()
+        for d in datasets:
+            for key in self.RDB_KEYS:
+                if key in rdb and (key not in d.meta or key in self.STATED):
+                    d.meta.set(key, rdb[key], rdb.source[key], rdb.fields.get(key))
+        return datasets
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         """spec2nii's read_pfile, with GePfile in place of its Pfile."""

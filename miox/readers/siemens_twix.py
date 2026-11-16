@@ -31,6 +31,7 @@ from spec2nii.Siemens.twixfunctions import id_sequence_type, process_twix, xa_or
 # own
 from miox.data import MRSData, RawData
 from miox.readers.base import ReaderError, Spec2niiReader
+from miox.readers.dicom_derived import DerivedKeys
 from miox.readers.siemens_twix_raw import SiemensTwixRaw
 from miox.sniff import Format, Sniff
 
@@ -99,6 +100,22 @@ class SiemensTwixReader(Spec2niiReader):
         "PatientName": "Meas/PatientName",
     }
 
+    HEADER_KEYS = {
+        "FieldStrength": (("Dicom/flMagneticFieldStrength",), float),
+        "TxRefAmp": (("Phoenix/sTXSPEC.asNucleusInfo[0].flReferenceAmplitude",), float),
+        "ScanDuration": (("Meas/lTotalScanTimeSec",), float),
+        "Modality": (("Dicom/Modality",), str),
+        "BodyPart": (("Dicom/tBodyPartExamined",), str),
+        "ScanningSequence": (("Dicom/tScanningSequence",), str),
+        "SequenceVariant": (("Dicom/tSequenceVariant",), str),
+        "MRAcquisitionType": (("Dicom/tMRAcquisitionType",), str),
+        "ScanOptions": (("Dicom/tScanOptions",), str),
+        "EchoTrainLength": (("Dicom/EchoTrainLength",), int),
+        "ConsistencyInfo": (("Phoenix/sProtConsistencyInfo.tMeasuredBaselineString",
+                             "Phoenix/sProtConsistencyInfo.tBaselineString"), str),
+    }
+    RF_PULSE = re.compile(r"Phoenix/sTXSPEC\.aRFPULSE\[(\d+)\]\.tName")
+
     def read(self, sniff: Sniff) -> list[MRSData | RawData]:
         notes: list[str] = []
         with self.captured(notes):
@@ -157,6 +174,22 @@ class SiemensTwixReader(Spec2niiReader):
                 "MeasYaps/alTI[0] in µs, converted to s",
                 "MeasYaps/alTI[0]",
             )
+        self._protocol_keys(d)
+
+    def _protocol_keys(self, d: MRSData) -> None:
+        """Shim setting and RF pulse names from the protocol."""
+        fields = d.meta.vendor_fields()
+        shim = [next((fields[f"Phoenix/{f}"] for f in options if f"Phoenix/{f}" in fields), 0.0)
+                for options in DerivedKeys.SIEMENS_SHIM]
+        if all(isinstance(v, (int, float)) for v in shim) and shim[0]:
+            shim = [int(v) if float(v).is_integer() else v for v in shim]
+            d.meta.set("ShimSetting", shim, "twix header: Phoenix sGRADSPEC offsets and shim "
+                       "currents", "Phoenix/sGRADSPEC.asGPAData[0].lOffsetX")
+        pulses = {int(m[1]): str(v).strip('"') for f, v in fields.items()
+                  if (m := self.RF_PULSE.fullmatch(f))}
+        if pulses:
+            d.meta.set("RFPulseName", [pulses[i] for i in sorted(pulses)],
+                       "twix header: Phoenix/sTXSPEC.aRFPULSE[n].tName", "Phoenix/sTXSPEC.aRFPULSE")
 
     def _stream(self, twix, sniff: Sniff, stream: str) -> tuple[list[NIFTI_MRS], list[str]]:
         images, names = process_twix(

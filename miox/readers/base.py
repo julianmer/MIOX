@@ -352,6 +352,9 @@ class Spec2niiReader(Reader):
     CONVERTER = ""  # spec2nii subcommand
     SOURCES: dict[str, str | tuple[str, ...]] = {}  # standard key -> vendor field(s), first found
     REFERENCE: str | None = None  # vendor field stating ReferencePPM (a list: its first value)
+    # standard key: (vendor fields, the first one found; type), for keys spec2nii does not read
+    HEADER_KEYS: dict[str, tuple[tuple[str, ...], type]] = {}
+    STATED = ("FieldStrength",)  # keys whose stated value replaces the derived one
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         """The converted images, their names and the complete vendor header."""
@@ -382,8 +385,30 @@ class Spec2niiReader(Reader):
                     d.meta.set(key, d.meta[key], f"{source}: {field}", field)
             self._reference(d)
             self.correct(d)
+            self._header_keys(d)
             datasets.append(d)
         return datasets
+
+    def _header_keys(self, d: MRSData) -> None:
+        """The HEADER_KEYS the vendor header states, where spec2nii set none (or a derived one)."""
+        fields = d.meta.vendor_fields()
+        for key, (alternatives, kind) in self.HEADER_KEYS.items():
+            field = next((f for f in alternatives if fields.get(f) not in (None, "", [])), None)
+            if field is None or (key in d.meta and key not in self.STATED):
+                continue
+            value = fields[field]
+            if kind is list:
+                value = [str(v) for v in value]
+            elif kind is str and isinstance(value, list):  # DICOM multi-value
+                value = "\\".join(str(v) for v in value)
+            elif kind is str:
+                value = value.strip().strip('"')
+            else:
+                try:  # a decimal comma where the scanner's locale writes one
+                    value = kind(float(str(value).replace(",", ".")))
+                except ValueError:
+                    continue
+            d.meta.set(key, value, f"vendor header: {field}", field)
 
     def _reference(self, d: MRSData) -> None:
         """ReferencePPM from the vendor header, which spec2nii does not read."""

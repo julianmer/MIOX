@@ -312,6 +312,11 @@ class KeyTable(dict):
             "Whether decoupling was applied during acquisition (DICOM (0018,9059): YES, NO).",
             "miox",
         ),
+        Key(
+            "RFPulseName", None, (list, str),
+            "Names of the RF pulses the sequence plays, in the order the protocol lists them.",
+            "miox",
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning
