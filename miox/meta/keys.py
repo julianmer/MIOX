@@ -295,6 +295,23 @@ class KeyTable(dict):
             "Constant offset of the vendor's fit of a relaxation decay, in the signal's unit.",
             "miox",
         ),
+        Key(
+            "VolumeLocalizationTechnique", None, (str,),
+            "Technique that localises the spectroscopy volume as the file names it (DICOM "
+            "(0018,9054): PRESS, STEAM, ISIS, SLASER, ..., or the vendor's own name).",
+            "miox",
+        ),
+        Key(
+            "MRSpectroscopyAcquisitionType", None, (str,),
+            "Spatial extent of the spectroscopy acquisition (DICOM (0018,9200): SINGLE_VOXEL, "
+            "ROW, PLANE, VOLUME).",
+            "miox",
+        ),
+        Key(
+            "Decoupling", None, (str,),
+            "Whether decoupling was applied during acquisition (DICOM (0018,9059): YES, NO).",
+            "miox",
+        ),
     )
 
     # BIDS MRI sidecar fields without a NIfTI-MRS or MIOX counterpart: name, unit, types, meaning

@@ -72,7 +72,9 @@ from miox.sniff import Format, Sniff, open_dicom
 # conjugated as spec2nii conjugates Philips SVS (checked: NAA, Cr, Cho at 2.02, 3.03, 3.23 ppm),   #
 # the grid from the plane position (first voxel), orientation and pixel spacing. The MR            #
 # Spectroscopy module's Chemical Shift Reference (ppm at the transmitter frequency) is             #
-# ReferencePPM.                                                                                    #
+# ReferencePPM. Keys the file states in top-level elements that spec2nii does not read (series,    #
+# station, acquisition date and duration, localisation technique, ...) are added to every dataset  #
+# of a DICOM file; the stated field strength replaces the one derived from the frequency.          #
 #                                                                                                  #
 #**************************************************************************************************#
 class DicomMrsReader(Spec2niiReader):
@@ -176,15 +178,55 @@ class DicomMrsReader(Spec2niiReader):
         "DwellTime": "dicom/SpectralWidth",
     }
 
+    TAG_KEYS = {  # standard key: (DICOM keyword of a top-level element, type)
+        "Modality": ("Modality", str),
+        "StationName": ("StationName", str),
+        "InstitutionalDepartmentName": ("InstitutionalDepartmentName", str),
+        "StudyDescription": ("StudyDescription", str),
+        "ProcedureStepDescription": ("PerformedProcedureStepDescription", str),
+        "SeriesDescription": ("SeriesDescription", str),
+        "SeriesNumber": ("SeriesNumber", int),
+        "AcquisitionNumber": ("AcquisitionNumber", int),
+        "ImageType": ("ImageType", list),
+        "BodyPart": ("BodyPartExamined", str),
+        "ScanOptions": ("ScanOptions", str),
+        "PatientID": ("PatientID", str),
+        "FieldStrength": ("MagneticFieldStrength", float),
+        "AcquisitionDuration": ("AcquisitionDuration", float),
+        "EchoTrainLength": ("EchoTrainLength", int),
+        "VolumeLocalizationTechnique": ("VolumeLocalizationTechnique", str),
+        "MRSpectroscopyAcquisitionType": ("MRSpectroscopyAcquisitionType", str),
+        "Decoupling": ("Decoupling", str),
+    }
+
     def read(self, sniff: Sniff) -> list[MRSData]:
         series = self._series(sniff)
-        if len(series) == 1:
-            return super().read(sniff)
-        datasets = []
-        for files in series.values():
-            part = dataclasses.replace(sniff, companions=tuple(files))
-            datasets += super().read(part)
+        parts = [dataclasses.replace(sniff, companions=tuple(files)) for files in series.values()]
+        datasets = super().read(sniff) if len(series) == 1 else [
+            d for part in parts for d in super().read(part)]
+        for d in datasets:
+            self._tag_keys(d)
         return datasets
+
+    def _tag_keys(self, d: MRSData) -> None:
+        """Keys the file states in top-level elements that spec2nii does not read; the stated field
+        strength replaces the one derived from the frequency."""
+        dicom = d.meta.vendor["dicom"]
+        for key, (keyword, kind) in self.TAG_KEYS.items():
+            value = dicom.get(keyword)
+            if value in (None, "", []) or (key in d.meta and key != "FieldStrength"):
+                continue
+            value = [str(v) for v in value] if kind is list else kind(value)
+            d.meta.set(key, value, f"DICOM: {keyword}", f"dicom/{keyword}")
+        stamp = str(dicom.get("AcquisitionDateTime") or "")
+        source, field = "AcquisitionDateTime", "dicom/AcquisitionDateTime"
+        if not stamp and dicom.get("AcquisitionDate") and dicom.get("AcquisitionTime"):
+            stamp = f"{dicom['AcquisitionDate']}{dicom['AcquisitionTime']}"
+            source, field = "AcquisitionDate + AcquisitionTime", "dicom/AcquisitionTime"
+        if len(stamp) >= 14 and "AcquisitionDateTime" not in d.meta:
+            clock = re.split(r"[+-]", stamp[8:])[0]  # without a UTC offset
+            value = f"{stamp[:4]}-{stamp[4:6]}-{stamp[6:8]}T{clock[:2]}:{clock[2:4]}:{clock[4:]}"
+            d.meta.set("AcquisitionDateTime", value, f"DICOM: {source}", field)
 
     def _series(self, sniff: Sniff) -> dict[str, list[Path]]:
         """The DICOM files of a folder grouped by SeriesInstanceUID, in folder order."""
