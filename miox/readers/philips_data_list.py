@@ -19,9 +19,11 @@
 #*************#
 from __future__ import annotations
 
+import contextlib
 import dataclasses
 import re
 import warnings
+from collections.abc import Iterator
 from pathlib import Path
 
 import numpy as np
@@ -29,11 +31,12 @@ from nifti_mrs.nifti_mrs import NIFTI_MRS
 
 with warnings.catch_warnings():  # nibabel.nicom, imported here, warns that it is experimental
     warnings.simplefilter("ignore", UserWarning)
+    from spec2nii.Philips import philips, philips_data_list
     from spec2nii.Philips.philips_data_list import read_data_list_pair
 
 # own
 from miox.data import MRSData, RawData
-from miox.readers.base import Reader, ReaderError, Spec2niiReader
+from miox.readers.base import ReaderError, Spec2niiReader
 from miox.readers.dicom_mrs import DicomMrsReader
 from miox.readers.philips_list_raw import PhilipsListRaw
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
@@ -61,11 +64,20 @@ class PhilipsDataListReader(Spec2niiReader):
     SCAN = re.compile(r"^raw_(\d+)$", re.IGNORECASE)  # raw_<scan number>.data
     EXPORT = re.compile(r"_(\d+)_\d+_raw_act$", re.IGNORECASE)  # <name>_<scan>_<n>_raw_act.SPAR
     HEADER = re.compile(r"^#\s+([^:=]+?)\s*:\s*(.*)$")  # comment header line
-    HERCULES_EDIT_PULSES = {  # ppm, 20 ms pulses
-        "A": {"PulseOffset": [4.58, 1.9], "PulseDuration": 0.02},
-        "B": {"PulseOffset": [4.18, 1.9], "PulseDuration": 0.02},
-        "C": {"PulseOffset": 4.58, "PulseDuration": 0.02},
-        "D": {"PulseOffset": 4.18, "PulseDuration": 0.02},
+    REQUIRED_BY_SPEC2NII = {"spectrum_inversion_time": 0}  # 0: no inversion (spec2nii skips it)
+    SOURCES_SPAR = {  # where spec2nii reads each key of a SPAR
+        "SpectrometerFrequency": "synthesizer_frequency",
+        "ResonantNucleus": "nucleus",
+        "EchoTime": "echo_time",
+        "RepetitionTime": "repetition_time",
+        "InversionTime": "spectrum_inversion_time",
+        "TxOffset": "offset_frequency",
+        "SoftwareVersions": "equipment_sw_verions",
+        "ProtocolName": "scan_id",
+        "PatientPosition": "patient_position",
+        "PatientName": "patient_name",
+        "PatientDoB": "patient_birth_date",
+        "DwellTime": "sample_frequency",
     }
 
     def __init__(self):
@@ -93,7 +105,7 @@ class PhilipsDataListReader(Spec2niiReader):
         aux = self._auxiliary(data.parent, data.stem)
         if aux.suffix.lower() == ".spar":
             spar = self.spar.read_spar(aux)
-            with self.spar.defaults(spar):
+            with self._spec2nii_spar(spar):
                 images, names = read_data_list_pair(data, list_file, aux, None)
             header = {k: self.plain(v) for k, v in spar.items()}
         else:
@@ -103,8 +115,27 @@ class PhilipsDataListReader(Spec2niiReader):
         header["auxiliary_file"] = aux.name
         return list(images), [f"{data.stem}_{name}" for name in names], header
 
+    @contextlib.contextmanager
+    def _spec2nii_spar(self, header: dict) -> Iterator[None]:
+        """spec2nii reads the SPAR as MIOX does, and sees the keys it reads unconditionally if this
+        SPAR lacks them."""
+        missing = {k: v for k, v in self.REQUIRED_BY_SPEC2NII.items() if k not in header}
+        for key in missing:
+            warnings.warn(f"SPAR has no {key}; read as {missing[key]!r}", stacklevel=2)
+        originals = philips.read_spar, philips_data_list.read_spar
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")  # noted once, when the header was read
+            philips.read_spar = philips_data_list.read_spar = lambda path: {
+                **missing, **self.spar.read_spar(Path(path))}
+            try:
+                yield
+            finally:
+                philips.read_spar, philips_data_list.read_spar = originals
+
     def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
-        return self._aux_reader(vendor).sources(vendor)
+        if "dicom" in vendor:
+            return self.dicom.sources(vendor)
+        return self.SOURCES_SPAR
 
     def correct(self, d: MRSData) -> None:
         """The auxiliary reader's corrections, and the HYPER echo times spec2nii leaves at 80 ms.
@@ -112,11 +143,16 @@ class PhilipsDataListReader(Spec2niiReader):
         The water references of a HYPER scan alternate between the edited (80 ms) and short (35 ms)
         echo time, starting with 80 ms, so their echo time goes per index into the dimension header.
         """
-        self._aux_reader(d.meta.vendor).correct(d)
+        if "dicom" in d.meta.vendor:
+            self.dicom.correct(d)
+        else:
+            super().correct(d)
+            if d.meta.fields.get("InversionTime") == "spectrum_inversion_time":
+                self.fix(d, "InversionTime", d.meta["InversionTime"] * 1e-3, "SPAR value in ms")
         if "EditPulse" in d.meta and d.name.endswith("_hyper_edited"):
-            self.fix(d, "EditPulse", self.HERCULES_EDIT_PULSES, "HERCULES conditions as the "
-                     "sequence defines them (Oeltzschner et al. 2019): A 4.58 + 1.9, B 4.18 + "
-                     "1.9, C 4.58, D 4.18 ppm")
+            self.fix(d, "EditPulse", self.spar.HERCULES_EDIT_PULSES, "HERCULES conditions as the "
+                     "sequence defines them (Oeltzschner et al. 2019): A 1.9 + 4.58, B 1.9 + "
+                     "4.18, C 4.58, D 4.18 ppm")
         if d.name.endswith("_hyper_short_te"):
             self.fix(d, "EchoTime", self.spar.HYPER_SHORT_TE, "HYPER short-TE block is 35 ms")
         elif d.name.endswith("_hyper_water_ref") and d.data.ndim == 6:
@@ -162,9 +198,6 @@ class PhilipsDataListReader(Spec2niiReader):
             d.provenance = dataclasses.replace(d.provenance, notes=d.provenance.notes + (
                 f"transients {', '.join(map(str, missing))} (extr1) left out: their pair is "
                 "incomplete in the export (a transient or a coil of one missing)",))
-
-    def _aux_reader(self, vendor: dict) -> Reader:
-        return self.dicom if "dicom" in vendor else self.spar
 
     def _pair(self, sniff: Sniff) -> tuple[Path, Path]:
         files = (sniff.path,) + sniff.companions

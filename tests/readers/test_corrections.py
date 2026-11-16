@@ -28,7 +28,6 @@ from miox.meta import Meta
 from miox.readers import (
     DicomMrsReader,
     PhilipsDataListReader,
-    PhilipsSparSdatReader,
     SiemensTwixReader,
     VarianReader,
 )
@@ -101,7 +100,7 @@ def test_philips_enhanced_dicom_untouched():
 
 def test_spar_inversion_time_in_ms():
     d = _dataset({}, {"InversionTime": (150.0, "spectrum_inversion_time")})
-    PhilipsSparSdatReader().correct(d)
+    PhilipsDataListReader().correct(d)  # a data/list read with its SPAR, through spec2nii
     assert d.meta["InversionTime"] == pytest.approx(0.15)
 
 
