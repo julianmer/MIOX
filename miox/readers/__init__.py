@@ -18,7 +18,7 @@
 import importlib
 
 # own
-from miox.readers.base import IncompleteError, Reader, ReaderError, Spec2niiReader
+from miox.readers.base import IncompleteError, Reader, ReaderError
 from miox.readers.loader import READERS, Loader, load
 
 __all__ = [
@@ -60,7 +60,6 @@ __all__ = [
     "SiemensTwixReader",
     "SivicDdfReader",
     "SivicIdfReader",
-    "Spec2niiReader",
     "SpinwizardBasisReader",
     "StimulateReader",
     "TarquinDptReader",

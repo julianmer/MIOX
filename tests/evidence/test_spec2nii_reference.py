@@ -47,12 +47,14 @@ with warnings.catch_warnings():
     from spec2nii.bruker import read_bruker
     from spec2nii.GE import ge_pfile
     from spec2nii.GE.ge_read_pfile import Pfile
+    from spec2nii.jmrui import jmrui_format
     from spec2nii.Philips import philips, philips_data_list, philips_dcm
     from spec2nii.Siemens.dicomfunctions import multi_file_dicom as siemens_multi_file_dicom
     from spec2nii.Siemens.rda import convert_rda
     from spec2nii.Siemens.twixfunctions import process_twix
     from spec2nii.spec2nii import remove_zero_higher_dim_indices
     from spec2nii.uih import multi_file_dicom as uih_multi_file_dicom
+    from spec2nii.varian_importer import read_varian
 
 KEYS = ("EchoTime", "RepetitionTime", "SpectrometerFrequency", "ResonantNucleus", "TxOffset",
         "ProtocolName", "SoftwareVersions", "PatientName", "PatientDoB", "Manufacturer",
@@ -857,3 +859,103 @@ def test_bruker_equals_spec2nii(public_data, tmp_path):
 @pytest.mark.data
 def test_private_bruker_equals_spec2nii(private_roots, tmp_path):
     assert _compare_all_bruker(_bruker_files(private_roots), tmp_path) > 0
+
+
+#**************************************************************************************************#
+#                                              jMRUI                                               #
+#**************************************************************************************************#
+#                                                                                                  #
+# Against spec2nii's jmrui_format, every jMRUI text and binary file: data, geometry, tags, dwell   #
+# time and keys equal (a .mrui frequency stated in Hz in MHz, as spec2nii's command line leaves    #
+# it for MIOX to correct). Basis sets are compared as the data they hold.                          #
+#                                                                                                  #
+#**************************************************************************************************#
+JMRUI_KEYS = ("SpectrometerFrequency", "ResonantNucleus", "ManufacturersModelName", "PatientName",
+              "TxOffset", "AdditionalInformation", "SignalNames", "OriginalFile")
+
+
+def _jmrui_files(roots: list[Path]) -> list[Path]:
+    sniffer, files = Sniffer(), []
+    for root in roots:
+        for path in sorted(root.rglob("*")):
+            if path.suffix.lower() in (".txt", ".mrui") and path.is_file() and \
+                    not path.name.startswith(".") and ".git" not in path.parts:
+                with contextlib.suppress(Exception):
+                    if sniffer.sniff(path).format in (Format.JMRUI_TEXT, Format.JMRUI_BINARY):
+                        files.append(path)
+    return files
+
+
+def _compare_jmrui(path: Path) -> None:
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            images, names = jmrui_format(argparse.Namespace(file=path, affine=None, fileout=None))
+    except Exception as e:  # noqa: BLE001  any failure of spec2nii's own reading
+        pytest.skip(f"spec2nii cannot convert it: {type(e).__name__}")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        got = miox.load(path)
+    assert [d.name for d in got] == list(names)
+    for d, image in zip(got, images, strict=True):
+        np.testing.assert_array_equal(d.data, np.asarray(image[:]).conj())  # [:] conjugates
+        np.testing.assert_allclose(d.affine, image.getAffine("voxel", "world"), atol=1e-9)
+        assert list(d.dim_tags) == list(image.dim_tags)
+        assert d.dwelltime == pytest.approx(image.dwelltime, abs=1e-15)
+        header_ext = image.hdr_ext.to_dict()
+        for key in JMRUI_KEYS:
+            value, reference = d.meta.get(key), _stated(header_ext.get(key))
+            if key == "SpectrometerFrequency" and reference[0] > 1e5:
+                reference = [reference[0] / 1e6]
+            assert value == reference, key
+
+
+def test_jmrui_equals_spec2nii(public_data):
+    files = _jmrui_files([public_data])
+    if not files:
+        pytest.skip("no jMRUI file fetched")
+    assert _compare_all(files, _compare_jmrui) == len(files)
+
+
+#**************************************************************************************************#
+#                                             Varian                                               #
+#**************************************************************************************************#
+#                                                                                                  #
+# Against spec2nii's read_varian (tag DIM_DYN), imaging-console spectroscopy (im1D...): data,      #
+# geometry, tags, dwell time and keys equal. Difference named: the echo time te in s, else the     #
+# pulse plus alfa from µs in s (spec2nii: the pulse plus alfa, unscaled, over te).                 #
+#                                                                                                  #
+#**************************************************************************************************#
+VARIAN_KEYS = ("SpectrometerFrequency", "ResonantNucleus", "RepetitionTime", "Manufacturer",
+               "ProtocolName", "PatientName", "SoftwareVersions", "TxCoil", "RxCoil",
+               "InversionTime", "ExcitationFlipAngle", "OriginalFile", "kSpace")
+
+
+def test_varian_console_equals_spec2nii(public_data):
+    folders = sorted(p for p in public_data.rglob("*.fid") if p.is_dir() and
+                     (p / "procpar").is_file() and "im1D" in (p / "procpar").read_text(
+                         errors="replace").split("apptype", 1)[-1][:60])
+    if not folders:
+        pytest.skip("no imaging-console Varian spectroscopy fetched")
+    for folder in folders:
+        with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            images, names = read_varian(argparse.Namespace(file=str(folder), tag6="DIM_DYN",
+                                                           dump_headers=False, fileout=None))
+            got = miox.load(folder)
+        assert [d.name for d in got] == list(names)
+        for d, image in zip(got, images, strict=True):
+            np.testing.assert_array_equal(d.data, np.asarray(image[:]).conj())  # [:] conjugates
+            np.testing.assert_allclose(d.affine, image.getAffine("voxel", "world"), atol=1e-9)
+            assert list(d.dim_tags) == list(image.dim_tags)
+            assert d.dwelltime == pytest.approx(image.dwelltime, abs=1e-15)
+            header_ext = image.hdr_ext.to_dict()
+            for key in VARIAN_KEYS:
+                value, reference = d.meta.get(key), _stated(header_ext.get(key))
+                assert value == reference, key
+            procpar = d.meta.vendor["procpar"]
+            pulse = "p1" if "p1" in procpar else "pw"
+            assert header_ext["EchoTime"] == pytest.approx(
+                float(procpar[pulse][0]) + float(procpar["alfa"][0]))
+            assert d.meta["EchoTime"] == pytest.approx(
+                float(procpar["te"][0]) if "te" in procpar else header_ext["EchoTime"] * 1e-6)

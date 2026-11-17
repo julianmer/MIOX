@@ -164,4 +164,4 @@ def test_jmrui_text(tmp_path):
     assert d.spectrometer_frequency == pytest.approx(123.25)
     assert d.meta.vendor["PointsInDataset"] == 64
     assert d.meta.vendor["Name of Study"] == "spaced key"
-    assert d.meta.source["DwellTime"] == "spec2nii jmrui: SamplingInterval"
+    assert d.meta.source["DwellTime"] == "jMRUI header: SamplingInterval"

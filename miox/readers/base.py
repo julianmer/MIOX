@@ -6,8 +6,8 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Base classes of the readers (plain, and converting through spec2nii) and the error a    #
-#          reader raises when a file of its format cannot be read.                                 #
+# Purpose: Base class of the readers and the error a reader raises when a file of its format       #
+#          cannot be read.                                                                         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -24,15 +24,12 @@ import sys
 import warnings
 from collections.abc import Callable, Iterator
 from importlib.metadata import version
-from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
 from nifti_mrs.create_nmrs import gen_nifti_mrs_hdr_ext
 from nifti_mrs.hdr_ext import Hdr_Ext
 from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.spec2nii import remove_zero_higher_dim_indices
-from spec2nii.spec2nii import spec2nii as Spec2niiCommand
 
 # own
 from miox.data import BasisSet, FitResult, MRSData, PriorSet, Provenance
@@ -387,75 +384,4 @@ class Reader:
         if isinstance(value, bytes):
             return value.decode("latin-1").rstrip("\0")
         return value
-
-
-#**************************************************************************************************#
-#                                          Spec2niiReader                                          #
-#**************************************************************************************************#
-#                                                                                                  #
-# Base of the readers that convert through spec2nii. A subclass parses the file once, keeps the    #
-# complete vendor header and calls the spec2nii converter; this class then does what spec2nii's    #
-# command line does after every converter (spectral width from the dwell time, all-zero indices of #
-# the higher dimensions removed) and builds the MRSData. ``SOURCES`` names the vendor field        #
-# spec2nii takes each standard key from, so the metadata says where every value came from.         #
-#                                                                                                  #
-#**************************************************************************************************#
-class Spec2niiReader(Reader):
-    PACKAGES = Reader.PACKAGES + ("spec2nii",)
-    CONVERTER = ""  # spec2nii subcommand
-    SOURCES: dict[str, str | tuple[str, ...]] = {}  # standard key -> vendor field(s), first found
-
-    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
-        """The converted images, their names and the complete vendor header."""
-        raise NotImplementedError
-
-    def converter(self, sniff: Sniff) -> str:
-        """The spec2nii subcommand that converts this file."""
-        return self.CONVERTER
-
-    def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
-        """Where spec2nii takes each standard key from in this vendor header."""
-        return self.SOURCES
-
-    def read(self, sniff: Sniff) -> list[MRSData]:
-        notes = []
-        with self.captured(notes):
-            images, names, vendor = self.convert(sniff)
-            self._frequency_in_mhz(images, notes)
-            images = self._as_spec2nii_command(images, notes)
-        provenance = self.provenance(sniff, tuple(notes))
-        source = f"spec2nii {self.converter(sniff)}"
-        fields = self._fields(vendor)
-        datasets = []
-        for image, name in zip(images, names, strict=True):
-            d = MRSData.from_nifti_mrs(image, provenance, source, vendor=vendor, name=name)
-            for key, field in fields.items():
-                if d.meta.source.get(key) == source:
-                    d.meta.set(key, d.meta[key], f"{source}: {field}", field)
-            self._reference(d)
-            self.correct(d)
-            self._header_keys(d)
-            datasets.append(d)
-        return datasets
-
-    def _fields(self, vendor: dict) -> dict[str, str]:
-        """The source field of every key: the first alternative present in the header."""
-        present = Meta(vendor).vendor_fields()
-        fields = {}
-        for key, alternatives in self.sources(vendor).items():
-            options = (alternatives,) if isinstance(alternatives, str) else alternatives
-            fields[key] = next((f for f in options if f in present), options[0])
-        return fields
-
-    def _as_spec2nii_command(self, images: list[NIFTI_MRS], notes: list[str]) -> list[NIFTI_MRS]:
-        Spec2niiCommand.insert_spectralwidth(SimpleNamespace(imageOut=images))
-        cleaned = []
-        for image in images:
-            before = image.shape
-            image, zeros = remove_zero_higher_dim_indices(image, remove=True)
-            removed = {d: i for d, i in zeros.items() if image.shape[d - 1] < before[d - 1]}
-            if removed:
-                notes.append(f"all-zero indices removed (dimension: indices): {removed}")
-            cleaned.append(image)
-        return cleaned
 

@@ -114,13 +114,12 @@ def test_spar_inversion_time_in_ms():
 
 
 def test_varian_echo_time_from_te_or_pulse_delay():
-    procpar = {"te": ["0.03"], "p1": ["0"], "alfa": ["20"]}
-    d = _dataset({"procpar": procpar}, {"EchoTime": (20.0, "x")})
-    VarianReader().correct(d)
-    assert d.meta["EchoTime"] == pytest.approx(0.03)
-    d = _dataset({"procpar": {"p1": ["0"], "alfa": ["20"]}}, {"EchoTime": (20.0, "x")})
-    VarianReader().correct(d)
-    assert d.meta["EchoTime"] == pytest.approx(20e-6)
+    """te in s; else the pulse plus alfa, in µs (spec2nii: their sum unscaled)."""
+    echo = VarianReader._echo_time({"te": ["0.03"], "p1": ["0"], "alfa": ["20"]}, True)
+    assert echo == (pytest.approx(0.03), "procpar/te")
+    echo = VarianReader._echo_time({"p1": ["0"], "alfa": ["20"]}, True)
+    assert echo == (pytest.approx(20e-6), "procpar/p1")
+    assert VarianReader._echo_time({"p1": ["0"], "alfa": ["20"]}, False) is None
 
 
 def test_hyper_echo_times():
