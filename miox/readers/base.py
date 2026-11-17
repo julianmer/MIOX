@@ -99,6 +99,10 @@ class Reader:
     QUOTED_KEYS = ("RxCoil", "TxCoil")
     MAX_MHZ = 1e5  # a larger spectrometer frequency is in Hz
     BASIS_TAG = ("DIM_USER_0", "basis set metabolites", None)
+    REFERENCE: str | None = None  # vendor field stating ReferencePPM (a list: its first value)
+    # standard key: (vendor fields, the first one found; type), set by _header_keys
+    HEADER_KEYS: dict[str, tuple[tuple[str, ...], type]] = {}
+    STATED = ("FieldStrength",)  # keys whose stated value replaces the derived one
 
     def read(self, sniff: Sniff) -> list[MRSData]:
         raise NotImplementedError
@@ -280,6 +284,35 @@ class Reader:
                 tags[axis - 4] = (tag[0], tag[1], header)
         return data, tuple(tags)
 
+    def _header_keys(self, d: MRSData) -> None:
+        """The HEADER_KEYS the vendor header states where the dataset has none (or a derived)."""
+        fields = d.meta.vendor_fields()
+        for key, (alternatives, kind) in self.HEADER_KEYS.items():
+            field = next((f for f in alternatives if fields.get(f) not in (None, "", [])), None)
+            if field is None or (key in d.meta and key not in self.STATED):
+                continue
+            value = fields[field]
+            if kind is list:
+                value = [str(v) for v in value]
+            elif kind is str and isinstance(value, list):  # DICOM multi-value
+                value = "\\".join(str(v) for v in value)
+            elif kind is str:
+                value = value.strip().strip('"')
+            else:
+                try:  # a decimal comma where the scanner's locale writes one
+                    value = kind(float(str(value).replace(",", ".")))
+                except ValueError:
+                    continue
+            d.meta.set(key, value, f"vendor header: {field}", field)
+
+    def _reference(self, d: MRSData) -> None:
+        """ReferencePPM from the vendor field REFERENCE."""
+        value = d.meta.vendor_fields().get(self.REFERENCE) if self.REFERENCE else None
+        value = value[0] if isinstance(value, list) and value else value
+        if isinstance(value, (int, float)):
+            source = f"vendor header: {self.REFERENCE}"
+            d.meta.set("ReferencePPM", float(value), source, self.REFERENCE)
+
     @staticmethod
     def fix(d: MRSData, key: str, value: Any, reason: str) -> None:
         source = d.meta.source.get(key, "")
@@ -371,10 +404,6 @@ class Spec2niiReader(Reader):
     PACKAGES = Reader.PACKAGES + ("spec2nii",)
     CONVERTER = ""  # spec2nii subcommand
     SOURCES: dict[str, str | tuple[str, ...]] = {}  # standard key -> vendor field(s), first found
-    REFERENCE: str | None = None  # vendor field stating ReferencePPM (a list: its first value)
-    # standard key: (vendor fields, the first one found; type), for keys spec2nii does not read
-    HEADER_KEYS: dict[str, tuple[tuple[str, ...], type]] = {}
-    STATED = ("FieldStrength",)  # keys whose stated value replaces the derived one
 
     def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
         """The converted images, their names and the complete vendor header."""
@@ -408,35 +437,6 @@ class Spec2niiReader(Reader):
             self._header_keys(d)
             datasets.append(d)
         return datasets
-
-    def _header_keys(self, d: MRSData) -> None:
-        """The HEADER_KEYS the vendor header states, where spec2nii set none (or a derived one)."""
-        fields = d.meta.vendor_fields()
-        for key, (alternatives, kind) in self.HEADER_KEYS.items():
-            field = next((f for f in alternatives if fields.get(f) not in (None, "", [])), None)
-            if field is None or (key in d.meta and key not in self.STATED):
-                continue
-            value = fields[field]
-            if kind is list:
-                value = [str(v) for v in value]
-            elif kind is str and isinstance(value, list):  # DICOM multi-value
-                value = "\\".join(str(v) for v in value)
-            elif kind is str:
-                value = value.strip().strip('"')
-            else:
-                try:  # a decimal comma where the scanner's locale writes one
-                    value = kind(float(str(value).replace(",", ".")))
-                except ValueError:
-                    continue
-            d.meta.set(key, value, f"vendor header: {field}", field)
-
-    def _reference(self, d: MRSData) -> None:
-        """ReferencePPM from the vendor header, which spec2nii does not read."""
-        value = d.meta.vendor_fields().get(self.REFERENCE) if self.REFERENCE else None
-        value = value[0] if isinstance(value, list) and value else value
-        if isinstance(value, (int, float)):
-            source = f"vendor header: {self.REFERENCE}"
-            d.meta.set("ReferencePPM", float(value), source, self.REFERENCE)
 
     def _fields(self, vendor: dict) -> dict[str, str]:
         """The source field of every key: the first alternative present in the header."""

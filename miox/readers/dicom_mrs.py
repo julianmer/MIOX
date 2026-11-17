@@ -7,9 +7,9 @@
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
 # Purpose: Reader for DICOM spectroscopy from Siemens, Philips and UIH, one file or a series       #
-#          folder. MIOX reads Philips, spec2nii converts Siemens and UIH; the vendor header holds  #
-#          every element of the first file (sequences nested, private tags by number, bulk data    #
-#          summarised by size) and, for Siemens, both CSA headers and the protocol.                #
+#          folder; the vendor header holds every element of the first file (sequences nested,      #
+#          private tags by number, bulk data summarised by size) and, for Siemens, both CSA        #
+#          headers and the protocol.                                                               #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,33 +19,25 @@
 #*************#
 from __future__ import annotations
 
-import contextlib
 import dataclasses
 import re
 import warnings
-from collections.abc import Iterator
 from pathlib import Path
 
-import numpy as np
 import pydicom
 from mapvbvd.read_twix_hdr import parse_buffer
-from nifti_mrs.create_nmrs import gen_nifti_mrs_hdr_ext
-from nifti_mrs.hdr_ext import Hdr_Ext
-from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.dcm2niiOrientation.orientationFuncs import dcm_to_nifti_orientation
 
 with warnings.catch_warnings():  # nibabel.nicom warns on import that it is experimental
     warnings.simplefilter("ignore", UserWarning)
     from nibabel.nicom import csareader
-    from spec2nii.Siemens import dicomfunctions as siemens_dcm
-    from spec2nii.Siemens.dicomfunctions import multi_file_dicom as siemens_dicom
-    from spec2nii.uih import multi_file_dicom as uih_dicom
 
 # own
 from miox.data import MRSData
-from miox.readers.base import ReaderError, Spec2niiReader
+from miox.readers.base import Reader, ReaderError
 from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
+from miox.readers.siemens_dicom_mrs import SiemensDicomMrs
 from miox.readers.siemens_twix import SiemensTwixReader
+from miox.readers.uih_dicom_mrs import UihDicomMrs
 from miox.sniff import Format, Sniff, open_dicom
 
 
@@ -53,90 +45,23 @@ from miox.sniff import Format, Sniff, open_dicom
 #                                          DicomMrsReader                                          #
 #**************************************************************************************************#
 #                                                                                                  #
-# A folder is read series by series (SeriesInstanceUID). Philips series are read by MIOX           #
-# (PhilipsDicomMrs). Siemens and UIH series go to spec2nii's converter together, which splits off  #
-# references; the converters expect one series at a time and stack or misname several. The source  #
-# tables follow spec2nii's extraction per vendor and variant (Siemens VB-VE with CSA headers or XA #
-# enhanced; UIH). Siemens VA single-voxel files (CSA headers in (0029,12xx), protocol              #
-# "MrProtocol"), which spec2nii does not read, are converted here: data in (7FE1,1010) as stored,  #
-# the dwell time RealDwellTime (the ADC dwell of the protocol is oversampled), the voxel from the  #
-# protocol's sVoI (ImagePositionPatient is its corner there) and the CSA ImageOrientationPatient.  #
-# The MR Spectroscopy module's Chemical Shift Reference (ppm at the transmitter frequency) is      #
-# ReferencePPM. Keys the file states in top-level elements that spec2nii does not read (series,    #
-# station, acquisition date and duration, localisation technique, ...) are added to every dataset  #
-# of a DICOM file; the stated field strength replaces the one derived from the frequency.          #
+# A folder is read series by series (SeriesInstanceUID), each by its vendor's reader:              #
+# PhilipsDicomMrs, SiemensDicomMrs or UihDicomMrs. The MR Spectroscopy module's Chemical Shift     #
+# Reference (ppm at the transmitter frequency) is ReferencePPM. Keys the file states in top-level  #
+# elements (series, station, acquisition date and duration, localisation technique, ...) are       #
+# added to every dataset of a DICOM file; the stated field strength replaces the one derived from  #
+# the frequency.                                                                                   #
 #                                                                                                  #
 #**************************************************************************************************#
-class DicomMrsReader(Spec2niiReader):
+class DicomMrsReader(Reader):
     FORMATS = (Format.DICOM_MRS,)
-    CONVERTERS = {"siemens": "dicom", "uih": "uih"}
+    PACKAGES = Reader.PACKAGES + ("pydicom",)
+    VENDORS = {"philips": PhilipsDicomMrs, "siemens": SiemensDicomMrs, "uih": UihDicomMrs}
+    SOURCE = "DICOM"
     REFERENCE = "dicom/ChemicalShiftReference"
-    TAGS = {"dicom": "DIM_DYN", "uih": None}  # spec2nii defaults
-    PHILIPS_SOURCE = "DICOM"
     BINARY_VRS = {"OB", "OW", "OF", "OD", "OL", "OV", "UN"}
     XA_SERIES_HEADER = (0x0021, 0x1019)  # Siemens XA: XProtocol text with the ASCCONV block
     BULK = 1024  # binary values longer than this are summarised by their size
-    SHARED = "dicom/SharedFunctionalGroupsSequence/0"
-
-    SOURCES_COMMON = {
-        "Manufacturer": "dicom/Manufacturer",
-        "ManufacturersModelName": "dicom/ManufacturerModelName",
-        "DeviceSerialNumber": "dicom/DeviceSerialNumber",
-        "SoftwareVersions": "dicom/SoftwareVersions",
-        "InstitutionName": "dicom/InstitutionName",
-        "InstitutionAddress": "dicom/InstitutionAddress",
-        "ProtocolName": "dicom/ProtocolName",
-        "PatientPosition": "dicom/PatientPosition",
-        "PatientName": "dicom/PatientName",
-        "PatientWeight": "dicom/PatientWeight",
-        "PatientDoB": "dicom/PatientBirthDate",
-        "PatientSex": "dicom/PatientSex",
-    }
-    SOURCES_SIEMENS_VX = SOURCES_COMMON | {
-        "SpectrometerFrequency": "csa_image/ImagingFrequency",
-        "ResonantNucleus": "csa_image/ImagedNucleus",
-        "EchoTime": "MrPhoenixProtocol/alTE[0]",
-        "RepetitionTime": "csa_image/RepetitionTime",
-        "InversionTime": "csa_image/InversionTime",
-        "ExcitationFlipAngle": "csa_image/FlipAngle",
-        "TxCoil": "csa_image/TransmittingCoil",
-        "RxCoil": ("csa_image/ReceivingCoil", "csa_image/ImaCoilString"),
-        "SequenceName": "csa_image/SequenceName",
-        "PulseSequenceFile": "csa_image/SequenceName",
-        "DwellTime": "csa_image/RealDwellTime",
-    }
-    SOURCES_SIEMENS_VA = SOURCES_COMMON | {
-        "SpectrometerFrequency": "csa_image/ImagingFrequency",
-        "ResonantNucleus": "csa_image/ImagedNucleus",
-        "EchoTime": "MrProtocol/alTE[0]",
-        "RepetitionTime": "csa_image/RepetitionTime",
-        "ExcitationFlipAngle": "csa_image/FlipAngle",
-        "TxCoil": "csa_image/TransmittingCoil",
-        "SequenceName": "csa_image/SequenceName",
-        "DwellTime": "csa_image/RealDwellTime",
-    }
-    SOURCES_SIEMENS_XA = SOURCES_COMMON | {
-        "SpectrometerFrequency": "dicom/TransmitterFrequency",
-        "ResonantNucleus": "dicom/ResonantNucleus",
-        "EchoTime": f"{SHARED}/MREchoSequence/0/EffectiveEchoTime",
-        "RepetitionTime": f"{SHARED}/MRTimingAndRelatedParametersSequence/0/RepetitionTime",
-        "ExcitationFlipAngle": f"{SHARED}/MRTimingAndRelatedParametersSequence/0/FlipAngle",
-        "TxCoil": f"{SHARED}/MRTransmitCoilSequence/0/TransmitCoilName",
-        "RxCoil": f"{SHARED}/MRReceiveCoilSequence/0/ReceiveCoilName",
-        "SequenceName": "dicom/PulseSequenceName",
-        "PatientID": "dicom/PatientID",
-        "DwellTime": "dicom/SpectralWidth",
-    }
-    SOURCES_UIH = SOURCES_COMMON | {
-        "SpectrometerFrequency": "dicom/TransmitterFrequency",
-        "ResonantNucleus": "dicom/ResonantNucleus",
-        "EchoTime": "dicom/EchoTime",
-        "RepetitionTime": "dicom/RepetitionTime",
-        "InversionTime": "dicom/InversionTime",
-        "ExcitationFlipAngle": "dicom/FlipAngle",
-        "SequenceName": "dicom/SequenceName",
-        "DwellTime": "dicom/SpectralWidth",
-    }
 
     HEADER_KEYS = {  # top-level elements
         "Modality": (("dicom/Modality",), str),
@@ -160,28 +85,31 @@ class DicomMrsReader(Spec2niiReader):
     }
 
     def read(self, sniff: Sniff) -> list[MRSData]:
+        if sniff.vendor not in self.VENDORS:
+            raise ReaderError(f"no reader for {sniff.vendor} DICOM spectroscopy")
         series = self._series(sniff)
         parts = [sniff] if len(series) == 1 else [
             dataclasses.replace(sniff, companions=tuple(files)) for files in series.values()]
-        read = self._philips if sniff.vendor == "philips" else super().read
-        datasets = [d for part in parts for d in read(part)]
+        datasets = [d for part in parts for d in self._one_series(part)]
         for d in datasets:
             self._acquisition_time(d)
         return datasets
 
-    def _philips(self, sniff: Sniff) -> list[MRSData]:
-        """One Philips series, read by MIOX (PhilipsDicomMrs)."""
+    def _one_series(self, sniff: Sniff) -> list[MRSData]:
+        """One series, read by its vendor's reader."""
         files = self._files(sniff)
         header = self.header(files[0])
         notes: list[str] = []
+        vendor = self.VENDORS[sniff.vendor]()
         with self.captured(notes):
-            spectra = PhilipsDicomMrs().read(files)
+            spectra = vendor.read(files)
+        notes += getattr(vendor, "notes", [])
         datasets = []
         for s in spectra:
             spectrum_notes = notes + s.notes
             data, tags = self.without_zero_indices(s.data, s.tags, spectrum_notes)
             d = self.dataset(sniff, data, s.dwelltime, s.values, header, s.name, spectrum_notes,
-                             self.PHILIPS_SOURCE, s.affine, tags)
+                             self.SOURCE, s.affine, tags)
             self._reference(d)
             self._header_keys(d)
             datasets.append(d)
@@ -210,39 +138,6 @@ class DicomMrsReader(Spec2niiReader):
                 ds = pydicom.dcmread(fh, stop_before_pixels=True, specific_tags=tags)
             series.setdefault(str(ds.get("SeriesInstanceUID", "")), []).append(path)
         return series
-
-    def converter(self, sniff: Sniff) -> str:
-        if sniff.vendor not in self.CONVERTERS:
-            raise ReaderError(f"no spec2nii converter for {sniff.vendor} DICOM spectroscopy")
-        return self.CONVERTERS[sniff.vendor]
-
-    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
-        converter = self.converter(sniff)
-        files = self._files(sniff)
-        header = self.header(files[0])
-        if converter == "dicom" and "MrProtocol" in header:
-            images = [self._siemens_va(f, self.header(f)) for f in files]
-            names = [str(header["dicom"].get("SeriesDescription") or f.stem) for f in files]
-            return images, names, header
-        function = {"dicom": siemens_dicom, "uih": uih_dicom}
-        with self._siemens_orientation():
-            images, names = function[converter](files, None, self.TAGS[converter], False)
-        return list(images), list(names), header
-
-    def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
-        manufacturer = str(vendor["dicom"].get("Manufacturer", "")).lower()
-        if "siemens" in manufacturer:
-            if "MrProtocol" in vendor:
-                return self.SOURCES_SIEMENS_VA
-            return self.SOURCES_SIEMENS_VX if "csa_image" in vendor else self.SOURCES_SIEMENS_XA
-        return self.SOURCES_UIH
-
-    def correct(self, d: MRSData) -> None:
-        """The inversion time spec2nii leaves in ms (Siemens CSA)."""
-        super().correct(d)
-        fields = d.meta.fields
-        if fields.get("InversionTime") == "csa_image/InversionTime":
-            self.fix(d, "InversionTime", d.meta["InversionTime"] * 1e-3, "CSA value in ms")
 
     def _files(self, sniff: Sniff) -> list[Path]:
         if not sniff.path.is_dir():
@@ -283,63 +178,6 @@ class DicomMrsReader(Spec2niiReader):
         return {
             SiemensTwixReader.protocol_key(k): self.plain(v) for k, v in parse_buffer(text).items()
         }
-
-    @contextlib.contextmanager
-    def _siemens_orientation(self) -> Iterator[None]:
-        """spec2nii's Siemens enhanced orientation, for files whose ImageOrientationPatient does
-        not hold six direction cosines (one syngo B15 export stores "1"): identity, noted."""
-        original = siemens_dcm._get_enhanced_dcm_img_orientation_pat
-        warned = []
-
-        def orientation(img):
-            try:
-                return original(img)
-            except ValueError as e:  # the stated values do not reshape to two rows of three
-                if "reshape" not in str(e):
-                    raise
-            if not warned:
-                warnings.warn("ImageOrientationPatient does not hold six values: identity "
-                              "orientation assumed, the orientation is not known", stacklevel=2)
-                warned.append(True)
-            return np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
-
-        siemens_dcm._get_enhanced_dcm_img_orientation_pat = orientation
-        try:
-            yield
-        finally:
-            siemens_dcm._get_enhanced_dcm_img_orientation_pat = original
-
-    def _siemens_va(self, path: Path, header: dict) -> NIFTI_MRS:
-        """One Siemens VA single-voxel file as NIfTI-MRS, with the keys spec2nii sets for VB."""
-        values = np.frombuffer(pydicom.dcmread(path)[0x7FE1, 0x1010].value, dtype="<f4")
-        fid = (values[0::2] + 1j * values[1::2]).reshape(1, 1, 1, -1)
-        csa, protocol, dicom = header["csa_image"], header["MrProtocol"], header["dicom"]
-        voi = "sSpecPara.sVoI."
-        position = [float(protocol.get(f"{voi}sPosition.d{a}", 0)) for a in ("Sag", "Cor", "Tra")]
-        size = [float(protocol[f"{voi}d{k}"]) for k in ("PhaseFOV", "ReadoutFOV", "Thickness")]
-        orientation = np.asarray(csa["ImageOrientationPatient"], dtype=float).reshape(2, 3)
-        affine = dcm_to_nifti_orientation(orientation, position, np.asarray(size), (1, 1, 1)).Q44
-        hdr = Hdr_Ext(float(csa["ImagingFrequency"]), csa["ImagedNucleus"])
-        echo = sum(v for k, v in protocol.items() if re.fullmatch(r"alTE\[\d+\]", k))
-        hdr.set_standard_def("EchoTime", echo * 1e-6)
-        hdr.set_standard_def("RepetitionTime", float(csa["RepetitionTime"]) * 1e-3)
-        hdr.set_standard_def("ExcitationFlipAngle", float(csa["FlipAngle"]))
-        hdr.set_standard_def("TxCoil", csa["TransmittingCoil"])
-        hdr.set_standard_def("SequenceName", csa["SequenceName"])
-        for key, name in (
-            ("Manufacturer", "Manufacturer"),
-            ("ManufacturersModelName", "ManufacturerModelName"),
-            ("DeviceSerialNumber", "DeviceSerialNumber"),
-            ("SoftwareVersions", "SoftwareVersions"),
-            ("InstitutionName", "InstitutionName"),
-            ("ProtocolName", "ProtocolName"),
-            ("PatientPosition", "PatientPosition"),
-            ("PatientSex", "PatientSex"),
-        ):
-            if dicom.get(name) not in (None, ""):
-                hdr.set_standard_def(key, str(dicom[name]))
-        dwelltime = float(csa["RealDwellTime"]) * 1e-9
-        return gen_nifti_mrs_hdr_ext(fid, dwelltime, hdr, affine, no_conj=True)
 
     def _dataset(self, ds: pydicom.Dataset) -> dict:
         elements = {}

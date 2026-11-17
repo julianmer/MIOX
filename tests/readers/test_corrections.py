@@ -29,12 +29,12 @@ import miox
 from miox.data import MRSData, Provenance
 from miox.meta import Meta
 from miox.readers import (
-    DicomMrsReader,
     PhilipsDataListReader,
     PhilipsSparSdatReader,
     VarianReader,
 )
 from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
+from miox.readers.siemens_dicom_mrs import SiemensDicomMrs
 from miox.readers.siemens_twix_mrs import TwixMrs
 
 
@@ -81,10 +81,14 @@ def test_twix_inversion_time_from_protocol():
 
 
 def test_siemens_dicom_inversion_time_in_ms():
-    vendor = {"dicom": {"Manufacturer": "SIEMENS"}, "csa_image": {"InversionTime": 300.0}}
-    d = _dataset(vendor, {"InversionTime": (300.0, "csa_image/InversionTime")})
-    DicomMrsReader().correct(d)
-    assert d.meta["InversionTime"] == pytest.approx(0.3)
+    """The CSA inversion time in ms, in s (spec2nii: ms)."""
+    reader = SiemensDicomMrs()
+    reader.protocol = lambda ds: {("alTE", "0"): 30000.0}
+    csa = {"ImagingFrequency": [123.2], "ImagedNucleus": ["1H"], "RepetitionTime": [2000.0],
+           "FlipAngle": [90.0], "TransmittingCoil": ["Body"], "SequenceName": ["svs_se"],
+           "InversionTime": [300.0], "ReceivingCoil": ["Head_32"]}
+    values = reader._values_vx(pydicom.Dataset(), csa)
+    assert values["InversionTime"] == (pytest.approx(0.3), "csa_image/InversionTime")
 
 
 def test_philips_classic_dicom_times_in_ms():
@@ -100,16 +104,6 @@ def test_philips_classic_dicom_times_in_ms():
     assert values["EchoTime"][0] == pytest.approx(0.034)
     assert values["RepetitionTime"][0] == pytest.approx(0.910)
     assert values["ExcitationFlipAngle"][0] == 90.0
-
-
-def test_philips_enhanced_dicom_untouched():
-    vendor = {
-        "dicom": {"Manufacturer": "Philips"},
-        "file_meta": {"MediaStorageSOPClassUID": "1.2.840.10008.5.1.4.1.1.4.2"},
-    }
-    d = _dataset(vendor, {"RepetitionTime": (0.91, "dicom/RepetitionTime")})
-    DicomMrsReader().correct(d)
-    assert d.meta["RepetitionTime"] == 0.91
 
 
 def test_spar_inversion_time_in_ms():

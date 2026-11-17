@@ -44,9 +44,11 @@ with warnings.catch_warnings():
     from spec2nii.GE import ge_pfile
     from spec2nii.GE.ge_read_pfile import Pfile
     from spec2nii.Philips import philips, philips_data_list, philips_dcm
+    from spec2nii.Siemens.dicomfunctions import multi_file_dicom as siemens_multi_file_dicom
     from spec2nii.Siemens.rda import convert_rda
     from spec2nii.Siemens.twixfunctions import process_twix
     from spec2nii.spec2nii import remove_zero_higher_dim_indices
+    from spec2nii.uih import multi_file_dicom as uih_multi_file_dicom
 
 KEYS = ("EchoTime", "RepetitionTime", "SpectrometerFrequency", "ResonantNucleus", "TxOffset",
         "ProtocolName", "SoftwareVersions", "PatientName", "PatientDoB", "Manufacturer",
@@ -623,3 +625,108 @@ def test_xa_reference_scans_are_unsuppressed(public_data):
         assert ref.name.endswith("_ref") and ref.meta["WaterSuppressed"] is False
         ratios.append(np.abs(ref.data[0, 0, 0, :8]).mean() / np.abs(scan.data[0, 0, 0, :8]).mean())
     assert ratios[0] > 100 and 0.8 < ratios[1] < 1.25
+
+
+#**************************************************************************************************#
+#                                       Siemens and UIH DICOM                                      #
+#**************************************************************************************************#
+#                                                                                                  #
+# Against spec2nii's Siemens (tag DIM_DYN) and UIH multi_file_dicom, one file or one series of     #
+# files. Differences named: OriginalFile holds the file names (spec2nii's Siemens converter: the   #
+# paths as given); no tag on a 5th dimension the data lack (spec2nii tags one on single spectra);  #
+# the CSA inversion time in s (spec2nii: ms). Files spec2nii cannot convert (syngo VA, an          #
+# orientation of fewer than six values) are passed over.                                           #
+#                                                                                                  #
+#**************************************************************************************************#
+SIEMENS_DICOM_KEYS = tuple(k for k in KEYS if k != "OriginalFile") + (
+                             "ExcitationFlipAngle", "ManufacturersModelName",
+                             "DeviceSerialNumber", "InstitutionName", "InstitutionAddress",
+                             "TxCoil", "RxCoil", "SequenceName", "PatientPosition", "PatientID",
+                             "PatientWeight", "PatientSex", "PulseSequenceFile", "VOI")
+
+
+def _vendor_dicoms(roots: list[Path], vendors: tuple[str, ...]) -> list[list[Path]]:
+    """DICOM spectroscopy series of these vendors: [file] each, and the files of a folder that
+    share one series as one list."""
+    sniffer, series = Sniffer(), {}
+    for root in roots:
+        for path in sorted(root.rglob("*")):
+            if not path.is_file() or path.name.startswith(".") or ".git" in path.parts or \
+                    path.suffix.lower() in (".spar", ".sdat", ".data", ".list", ".dat", ".nii",
+                                            ".gz", ".json", ".txt", ".rda", ".7"):
+                continue
+            with contextlib.suppress(Exception):
+                sniff = sniffer.sniff(path)
+                if sniff.format == Format.DICOM_MRS and sniff.vendor in vendors:
+                    uid = pydicom.dcmread(path, stop_before_pixels=True).SeriesInstanceUID
+                    series.setdefault((path.parent, uid, sniff.vendor), []).append(path)
+    singles = [[p] for paths in series.values() for p in paths]
+    return singles + [paths for paths in series.values() if len(paths) > 1]
+
+
+def _compare_vendor_dicom(paths: list[Path], tmp_path: Path) -> None:
+    uih = Sniffer().sniff(paths[0]).vendor == "uih"
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            convert = uih_multi_file_dicom if uih else siemens_multi_file_dicom
+            images, names = convert(paths, None, None if uih else "DIM_DYN", False)
+    except Exception as e:  # noqa: BLE001  any failure of spec2nii's own reading
+        pytest.skip(f"spec2nii cannot convert it: {type(e).__name__}")
+    expected = [remove_zero_higher_dim_indices(image, remove=True)[0] for image in images]
+    target = paths[0]
+    if len(paths) > 1:  # the series alone in a folder
+        target = tmp_path / f"series_{abs(hash(tuple(paths)))}"
+        target.mkdir()
+        for path in paths:
+            (target / path.name).symlink_to(path.resolve())
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        got = miox.load(target)
+    assert [d.name for d in got] == list(names)
+    for d, image in zip(got, expected, strict=True):
+        np.testing.assert_array_equal(d.data, np.asarray(image[:]).conj())  # [:] conjugates
+        np.testing.assert_allclose(d.affine, image.getAffine("voxel", "world"), atol=1e-9)
+        assert d.dwelltime == pytest.approx(image.dwelltime, abs=1e-15)
+        tags = list(image.dim_tags)
+        if d.data.ndim == 4:  # spec2nii tags a 5th dimension the data do not have
+            tags = [None, None, None]
+        assert list(d.dim_tags) == tags, (d.name, d.dim_tags, tags)
+        header_ext = image.hdr_ext.to_dict()
+        assert d.meta["OriginalFile"] == [Path(f).name for f in header_ext["OriginalFile"]]
+        for key in SIEMENS_DICOM_KEYS:
+            value, reference = d.meta.get(key), header_ext.get(key)
+            if key == "PatientID" and reference is None:
+                continue  # MIOX adds it from the element (syngo VB to VE: spec2nii does not)
+            if isinstance(reference, float):
+                assert value == pytest.approx(reference, abs=1e-12), key
+            elif key == "VOI" and reference is not None:
+                np.testing.assert_allclose(value, reference, atol=1e-9)
+            else:
+                assert value == reference, key
+        reference = header_ext.get("InversionTime")
+        scale = 1 if uih else 1e-3  # the CSA value in ms
+        assert d.meta.get("InversionTime") == (None if reference is None else
+                                               pytest.approx(reference * scale, abs=1e-12))
+
+
+def _compare_all_vendor_dicoms(series: list[list[Path]], tmp_path: Path) -> int:
+    compared = 0
+    for paths in series:
+        with contextlib.suppress(pytest.skip.Exception):
+            _compare_vendor_dicom(paths, tmp_path)
+            compared += 1
+    return compared
+
+
+def test_siemens_uih_dicom_equals_spec2nii(public_data, tmp_path):
+    series = _vendor_dicoms([public_data], ("siemens", "uih"))
+    if not series:
+        pytest.skip("no Siemens or UIH DICOM fetched")
+    assert _compare_all_vendor_dicoms(series, tmp_path) == len(series) - 4  # 3 VA, 1 orientation
+
+
+@pytest.mark.data
+def test_private_siemens_dicom_equals_spec2nii(private_roots, tmp_path):
+    series = _vendor_dicoms(private_roots, ("siemens", "uih"))
+    assert _compare_all_vendor_dicoms(series, tmp_path) == len(series) > 0
