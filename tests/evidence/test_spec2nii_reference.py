@@ -8,7 +8,8 @@
 #                                                                                                  #
 # Purpose: Formats MIOX converts itself, checked against spec2nii's conversion of the same files:  #
 #          data, affine, dimension tags, dwell time and keys equal, apart from the differences     #
-#          named here (each one a spec2nii defect MIOX corrects).                                  #
+#          named here (each one a spec2nii defect MIOX corrects); in every format an empty text    #
+#          spec2nii writes is no value in MIOX.                                                    #
 #                                                                                                  #
 ####################################################################################################
 
@@ -54,6 +55,11 @@ KEYS = ("EchoTime", "RepetitionTime", "SpectrometerFrequency", "ResonantNucleus"
         "ProtocolName", "SoftwareVersions", "PatientName", "PatientDoB", "Manufacturer",
         "EditPulse", "WaterSuppressed", "kSpace", "OriginalFile")
 HYPER_REF_SHORT_TE = "_hyper_ref_short_te"  # spec2nii writes 80 ms on it; the block is 35 ms
+
+
+def _stated(reference):
+    """spec2nii's value as MIOX states it: an empty text is no value."""
+    return None if isinstance(reference, str) and not reference.strip() else reference
 
 
 def _pairs(root: Path) -> list[Path]:
@@ -102,6 +108,7 @@ def _compare(sdat: Path) -> None:
                 assert d.meta[key] == PhilipsSparSdatReader.HYPER_SHORT_TE
                 continue
             value, reference = d.meta.get(key), header_ext.get(key)
+            reference = _stated(reference)
             if isinstance(reference, float):
                 assert value == pytest.approx(reference, abs=1e-12), key
             else:
@@ -196,6 +203,7 @@ def _compare_data_list(data: Path) -> None:
         header_ext = image.hdr_ext.to_dict()
         for key in KEYS:
             value, reference = d.meta.get(key), header_ext.get(key)
+            reference = _stated(reference)
             if key == "EchoTime" and name == "hyper_short_te":
                 reference = PhilipsSparSdatReader.HYPER_SHORT_TE
             elif key == "EchoTime" and name == "hyper_water_ref":
@@ -329,6 +337,7 @@ def _compare_philips_dicom(paths: list[Path], tmp_path: Path) -> None:
         header_ext = image.hdr_ext.to_dict()
         for key in DICOM_KEYS:
             value, reference = d.meta.get(key), header_ext.get(key)
+            reference = _stated(reference)
             if classic and key in ("EchoTime", "RepetitionTime") and reference is not None:
                 reference = float(reference) * 1e-3
             elif key == "WaterSuppressed" and split and d.name.endswith("_ref"):
@@ -420,6 +429,7 @@ def _compare_ge(path: Path) -> None:
         header_ext = image.hdr_ext.to_dict()
         for key in GE_KEYS:
             value, reference = d.meta.get(key), header_ext.get(key)
+            reference = _stated(reference)
             if isinstance(reference, float):
                 assert value == pytest.approx(reference, abs=1e-12), key
             else:
@@ -473,6 +483,7 @@ def _compare_rda(path: Path) -> None:
         header_ext = image.hdr_ext.to_dict()
         for key in RDA_KEYS:
             value, reference = d.meta.get(key), header_ext.get(key)
+            reference = _stated(reference)
             if isinstance(reference, str):
                 reference = reference.strip() or None
             if isinstance(reference, float):
@@ -581,6 +592,7 @@ def _compare_twix(path: Path) -> None:
         header_ext = image.hdr_ext.to_dict()
         for key in TWIX_KEYS:
             value, reference = d.meta.get(key), header_ext.get(key)
+            reference = _stated(reference)
             if key in ("DeviceSerialNumber", "PatientDoB") and isinstance(reference, str):
                 reference = reference.removesuffix(".0")
             elif key in ("RxCoil", "TxCoil") and isinstance(reference, str):
@@ -696,6 +708,7 @@ def _compare_vendor_dicom(paths: list[Path], tmp_path: Path) -> None:
         assert d.meta["OriginalFile"] == [Path(f).name for f in header_ext["OriginalFile"]]
         for key in SIEMENS_DICOM_KEYS:
             value, reference = d.meta.get(key), header_ext.get(key)
+            reference = _stated(reference)
             if key == "PatientID" and reference is None:
                 continue  # MIOX adds it from the element (syngo VB to VE: spec2nii does not)
             if isinstance(reference, float):
@@ -730,3 +743,4 @@ def test_siemens_uih_dicom_equals_spec2nii(public_data, tmp_path):
 def test_private_siemens_dicom_equals_spec2nii(private_roots, tmp_path):
     series = _vendor_dicoms(private_roots, ("siemens", "uih"))
     assert _compare_all_vendor_dicoms(series, tmp_path) == len(series) > 0
+

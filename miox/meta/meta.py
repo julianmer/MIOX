@@ -38,7 +38,12 @@ class Meta(dict):
         self.vendor: dict = vendor if vendor is not None else {}
 
     def set(self, key: str, value: Any, source: str, field: str | None = None) -> None:
-        """Store ``value`` under ``key`` and record where it came from."""
+        """Store ``value`` under ``key`` and record where it came from. An empty text states
+        nothing: the key is left out (and dropped where it was set before)."""
+        if isinstance(value, str) and not value.strip():
+            for store in (self, self.source, self.fields):
+                store.pop(key, None)
+            return
         self[key] = value
         self.source[key] = source
         if field is not None:
