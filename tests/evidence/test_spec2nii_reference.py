@@ -42,6 +42,7 @@ with warnings.catch_warnings():
     from spec2nii.GE import ge_pfile
     from spec2nii.GE.ge_read_pfile import Pfile
     from spec2nii.Philips import philips, philips_data_list, philips_dcm
+    from spec2nii.Siemens.rda import convert_rda
     from spec2nii.spec2nii import remove_zero_higher_dim_indices
 
 KEYS = ("EchoTime", "RepetitionTime", "SpectrometerFrequency", "ResonantNucleus", "TxOffset",
@@ -431,3 +432,58 @@ def test_ge_pfile_equals_spec2nii(public_data):
 @pytest.mark.data
 def test_private_ge_pfile_equals_spec2nii(private_roots):
     assert _compare_all(_ge_pfiles(private_roots), _compare_ge) > 0
+
+
+#**************************************************************************************************#
+#                                               RDA                                                #
+#**************************************************************************************************#
+#                                                                                                  #
+# Against spec2nii's convert_rda, every RDA file. Differences named: text values without the       #
+# padding spaces the scanner writes after them, and fields the header leaves empty not set         #
+# (spec2nii: an empty text).                                                                       #
+#                                                                                                  #
+#**************************************************************************************************#
+RDA_KEYS = KEYS + ("InversionTime", "MixingTime", "ExcitationFlipAngle",
+                   "ManufacturersModelName", "DeviceSerialNumber", "InstitutionName", "TxCoil",
+                   "SequenceName", "PatientPosition", "PatientID", "PatientWeight", "PatientSex")
+
+
+def _rdas(roots: list[Path]) -> list[Path]:
+    return sorted(p for root in roots for p in root.rglob("*") if p.suffix.lower() == ".rda"
+                  and not p.name.startswith("._") and p.is_file())
+
+
+def _compare_rda(path: Path) -> None:
+    with contextlib.redirect_stdout(io.StringIO()):
+        images, names = convert_rda(path, None, False)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        got = miox.load(path)
+    assert [d.name for d in got] == list(names)
+    for d, image in zip(got, images, strict=True):
+        np.testing.assert_array_equal(d.data, np.asarray(image[:]).conj())  # image[:] conjugates
+        np.testing.assert_allclose(d.affine, image.getAffine("voxel", "world"), atol=1e-9)
+        assert d.dwelltime == pytest.approx(image.dwelltime, abs=1e-12)
+        assert list(d.dim_tags) == list(image.dim_tags)
+        header_ext = image.hdr_ext.to_dict()
+        for key in RDA_KEYS:
+            value, reference = d.meta.get(key), header_ext.get(key)
+            if isinstance(reference, str):
+                reference = reference.strip() or None
+            if isinstance(reference, float):
+                assert value == pytest.approx(reference, abs=1e-12), key
+            else:
+                assert value == reference, key
+
+
+def test_rda_equals_spec2nii(public_data):
+    files = _rdas([public_data])
+    if not files:
+        pytest.skip("no RDA fetched")
+    assert _compare_all(files, _compare_rda) == len(files)
+
+
+@pytest.mark.data
+def test_private_rda_equals_spec2nii(private_roots):
+    files = _rdas(private_roots)
+    assert _compare_all(files, _compare_rda) == len(files) > 0
