@@ -26,6 +26,7 @@ from pathlib import Path
 import numpy as np
 import pydicom
 import pytest
+from mapvbvd import mapVBVD
 
 # own
 import miox
@@ -36,6 +37,7 @@ from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
 from miox.readers.philips_list_raw import PhilipsListRaw
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
+from miox.readers.siemens_twix import SiemensTwixReader, TwixCsi
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -43,6 +45,7 @@ with warnings.catch_warnings():
     from spec2nii.GE.ge_read_pfile import Pfile
     from spec2nii.Philips import philips, philips_data_list, philips_dcm
     from spec2nii.Siemens.rda import convert_rda
+    from spec2nii.Siemens.twixfunctions import process_twix
     from spec2nii.spec2nii import remove_zero_higher_dim_indices
 
 KEYS = ("EchoTime", "RepetitionTime", "SpectrometerFrequency", "ResonantNucleus", "TxOffset",
@@ -487,3 +490,136 @@ def test_rda_equals_spec2nii(public_data):
 def test_private_rda_equals_spec2nii(private_roots):
     files = _rdas(private_roots)
     assert _compare_all(files, _compare_rda) == len(files) > 0
+
+
+#**************************************************************************************************#
+#                                              twix                                                #
+#**************************************************************************************************#
+#                                                                                                  #
+# Against spec2nii's process_twix (oversampling kept, no dimension overrides), every stream of     #
+# every spectroscopy twix file; a stream spec2nii cannot lay out is one MIOX does not convert      #
+# either. Differences named: DeviceSerialNumber and PatientDoB without the '.0' of a float, coil   #
+# names without quotes, the inversion time from MeasYaps alTI[0] in s (spec2nii: µs on XA, none or #
+# TI_Time unscaled on VB to VE), XA product reference scans not water suppressed (spec2nii: they   #
+# are; test_xa_reference_scans_are_unsuppressed); grids MIOX reconstructs (TwixCsi) hold data      #
+# where spec2nii's are empty: there only the geometry and keys are compared.                       #
+#                                                                                                  #
+#**************************************************************************************************#
+TWIX_KEYS = KEYS + ("ExcitationFlipAngle", "ManufacturersModelName", "DeviceSerialNumber",
+                    "InstitutionName", "InstitutionAddress", "RxCoil", "TxCoil", "SequenceName",
+                    "PatientPosition", "PatientWeight", "PatientSex", "PulseSequenceFile",
+                    "IceProgramFile")
+NO_OVERRIDES = {"dims": (None, None, None), "tags": (None, None, None)}
+
+
+def _twix_measurement(path: Path):
+    twix = mapVBVD(str(path), quiet=True)
+    if isinstance(twix, list):
+        twix = twix[min(SiemensTwixReader.MULTIRAID, len(twix)) - 1]
+    return twix
+
+
+def _twixes(roots: list[Path]) -> list[Path]:
+    """Spectroscopy twix files."""
+    sniffer, files = Sniffer(), []
+    for root in roots:
+        for path in sorted(root.rglob("*.dat")):
+            if not path.is_file() or path.name.startswith("._"):
+                continue
+            with contextlib.suppress(Exception):
+                if sniffer.sniff(path).format == Format.SIEMENS_TWIX:
+                    with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        if SiemensTwixReader.is_spectroscopy(_twix_measurement(path)):
+                            files.append(path)
+    return files
+
+
+def _spec2nii_twix(path: Path) -> list[tuple[str, object]]:
+    """spec2nii's datasets of every stream it can lay out, named as MIOX names them."""
+    with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        twix = _twix_measurement(path)
+        out = []
+        streams = [s for s in twix.keys() if s != "hdr"]
+        for stream in ["image"] + [s for s in streams if s != "image"]:
+            try:
+                images, names = process_twix(twix, None, path.name, stream, NO_OVERRIDES,
+                                             quiet=True, remove_os=False)
+                images = [remove_zero_higher_dim_indices(i, remove=True)[0] for i in images]
+                np.asarray(images[0][:])  # a header spec2nii writes but cannot validate fails here
+            except Exception:  # noqa: BLE001  any failure of spec2nii's own layout
+                if stream == "image":
+                    raise
+                continue
+            suffix = "" if stream == "image" else f"_{stream}"
+            out += [(name + suffix, image) for name, image in zip(names, images, strict=True)]
+    return out
+
+
+def _compare_twix(path: Path) -> None:
+    try:
+        expected = _spec2nii_twix(path)
+    except Exception as e:  # noqa: BLE001
+        pytest.skip(f"spec2nii cannot convert it: {type(e).__name__}")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        got = miox.load(path)
+    reconstructed = any(TwixCsi.NOTE in d.provenance.notes for d in got)
+    names = [n.removesuffix("_empty") if reconstructed and n.endswith("_empty") and "_" not in
+             n.removeprefix(path.stem).removesuffix("_empty") else n for n, _ in expected]
+    assert [d.name for d in got] == names
+    alti = _twix_measurement(path)["hdr"]["MeasYaps"].get(("alTI", "0"))
+    for d, (name, image) in zip(got, expected, strict=True):
+        if not (reconstructed and d.name + "_empty" == name):
+            np.testing.assert_array_equal(d.data, np.asarray(image[:]).conj())  # [:] conjugates
+            assert list(d.dim_tags) == list(image.dim_tags), (d.name, d.dim_tags)
+        np.testing.assert_allclose(d.affine, image.getAffine("voxel", "world"), atol=1e-9)
+        assert d.dwelltime == pytest.approx(image.dwelltime, abs=1e-15)
+        header_ext = image.hdr_ext.to_dict()
+        for key in TWIX_KEYS:
+            value, reference = d.meta.get(key), header_ext.get(key)
+            if key in ("DeviceSerialNumber", "PatientDoB") and isinstance(reference, str):
+                reference = reference.removesuffix(".0")
+            elif key in ("RxCoil", "TxCoil") and isinstance(reference, str):
+                reference = reference.strip('"')
+            elif key == "WaterSuppressed" and name.endswith("_ref"):
+                reference = False  # XA product reference scans: unsuppressed water
+            if isinstance(reference, float):
+                assert value == pytest.approx(reference, abs=1e-12), key
+            else:
+                assert value == reference, key
+        inversion = alti * 1e-6 if isinstance(alti, (int, float)) else None
+        assert d.meta.get("InversionTime") == inversion
+
+
+def test_twix_equals_spec2nii(public_data):
+    files = _twixes([public_data])
+    if not files:
+        pytest.skip("no twix fetched")
+    assert _compare_all(files, _compare_twix) == len(files)
+
+
+@pytest.mark.data
+def test_private_twix_equals_spec2nii(private_roots):
+    files = _twixes(private_roots)
+    assert _compare_all(files, _compare_twix) == len(files) > 0
+
+
+def test_xa_reference_scans_are_unsuppressed(public_data):
+    """The reference transients of a water-suppressed XA svs_se scan carry the full water signal
+    (hundreds of times the scan's), those of the same protocol without suppression as much as its
+    own transients."""
+    folder = public_data / "spec2nii_test_data" / "Siemens" / "XAData" / "XA20" / "twix"
+    on, off = (folder / f"meas_MID000{n}_svs_se_30_WS_{s}.dat" for n, s in
+               (("27_FID07653", "on"), ("33_FID07659", "off")))
+    if not on.exists() or not off.exists():
+        pytest.skip("spec2nii test data not fetched")
+    ratios = []
+    for path in (on, off):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            ref, scan = miox.load(path)[:2]
+        assert ref.name.endswith("_ref") and ref.meta["WaterSuppressed"] is False
+        ratios.append(np.abs(ref.data[0, 0, 0, :8]).mean() / np.abs(scan.data[0, 0, 0, :8]).mean())
+    assert ratios[0] > 100 and 0.8 < ratios[1] < 1.25

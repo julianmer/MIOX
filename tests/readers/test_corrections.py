@@ -32,10 +32,10 @@ from miox.readers import (
     DicomMrsReader,
     PhilipsDataListReader,
     PhilipsSparSdatReader,
-    SiemensTwixReader,
     VarianReader,
 )
 from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
+from miox.readers.siemens_twix_mrs import TwixMrs
 
 
 def _dataset(vendor: dict, values: dict[str, tuple]) -> MRSData:
@@ -61,10 +61,23 @@ def test_float_text_and_quotes(tmp_path):
 
 
 def test_twix_inversion_time_from_protocol():
-    d = _dataset({"MeasYaps": {"alTI[0]": 300000.0}}, {"InversionTime": (300000.0, "x")})
-    SiemensTwixReader().correct(d)
-    assert d.meta["InversionTime"] == pytest.approx(0.3)
-    assert d.meta.fields["InversionTime"] == "MeasYaps/alTI[0]"
+    """MeasYaps alTI[0] in µs, in s (spec2nii: µs on XA, none on VB to VE)."""
+    hdr = {
+        "Dicom": {"SoftwareVersions": "syngo MR XA30", "lFrequency": 123.2e6, "Manufacturer": "",
+                  "ManufacturersModelName": "", "DeviceSerialNumber": 1.0,
+                  "InstitutionName": "", "InstitutionAddress": "", "tProtocolName": ""},
+        "Meas": {"tSequenceString": "svs_se", "tPatientPosition": "HFS", "tPatientName": "",
+                 "PatientSex": 3.0, "PatientBirthDay": 1.0, "tICEProgramName": "",
+                 "flUsedPatientWeight": 70.0},
+        "MeasYaps": {("alTI", "0"): 300000.0, ("alTR", "0"): 2e6,
+                     ("adFlipAngleDegree", "0"): 90.0,
+                     ("sTXSPEC", "asNucleusInfo", "0", "tNucleus"): '"1H"'},
+        "Phoenix": {("alTE", "0"): 30000.0},
+        "Config": {"SequenceFileName": ""},
+    }
+    twix = {"hdr": hdr, "image": type("Stream", (), {"filename": "/x/meas.dat"})()}
+    values = TwixMrs(twix, Path("meas.dat")).values("image")
+    assert values["InversionTime"] == (pytest.approx(0.3), "MeasYaps/alTI[0]")
 
 
 def test_siemens_dicom_inversion_time_in_ms():

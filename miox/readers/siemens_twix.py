@@ -6,7 +6,7 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Reader for Siemens twix raw data (.dat, VB to XA). pyMapVBVD parses the file, spec2nii  #
+# Purpose: Reader for Siemens twix raw data (.dat, VB to XA). pyMapVBVD parses the file, MIOX      #
 #          assembles the data; the vendor header keeps all header buffers of the measurement.      #
 #                                                                                                  #
 ####################################################################################################
@@ -22,16 +22,14 @@ import warnings
 
 import numpy as np
 import scipy.fft
-import spec2nii.GSL.gslfunctions as GSL
 from mapvbvd import mapVBVD
-from nifti_mrs.create_nmrs import gen_nifti_mrs_hdr_ext
-from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.Siemens.twixfunctions import id_sequence_type, process_twix, xa_or_vx
 
 # own
 from miox.data import MRSData, RawData
-from miox.readers.base import ReaderError, Spec2niiReader
+from miox.meta import Meta
+from miox.readers.base import Reader, ReaderError
 from miox.readers.dicom_derived import DerivedKeys
+from miox.readers.siemens_twix_mrs import SiemensGsl, TwixMrs, TwixSpectrum
 from miox.readers.siemens_twix_raw import SiemensTwixRaw
 from miox.sniff import Format, Sniff
 
@@ -40,66 +38,23 @@ from miox.sniff import Format, Sniff
 #                                        SiemensTwixReader                                         #
 #**************************************************************************************************#
 #                                                                                                  #
-# A spectroscopy measurement (the protocol states a spectral vector size) is converted by          #
-# spec2nii, every data stream (evalinfo flag): ``image`` holds the scan itself; the others (water  #
-# reference, noise, phase correction, ...) become further datasets named after their flag, and a   #
-# stream spec2nii cannot convert is noted instead of failing the read. Any other measurement is    #
-# imaging raw data: its streams become RawData with their scan headers (SiemensTwixRaw). Header    #
-# keys of the protocol buffers are written in Siemens notation, e.g. ``sTXSPEC.asNucleusInfo[0].   #
-# tNucleus``.                                                                                      #
+# pyMapVBVD parses the file. A spectroscopy measurement (the protocol states a spectral vector     #
+# size) is laid out by TwixMrs, every data stream (evalinfo flag): ``image`` holds the scan        #
+# itself; the others (water reference, noise, phase correction, ...) become further datasets named #
+# after their flag, and a stream that cannot be laid out is noted instead of failing the read.     #
+# Grids are reconstructed where TwixCsi is checked against the scanner, else left empty            #
+# (``_empty``). Any other measurement is imaging raw data: its streams become RawData with their   #
+# scan headers (SiemensTwixRaw). Header keys of the protocol buffers are written in Siemens        #
+# notation, e.g. ``sTXSPEC.asNucleusInfo[0].tNucleus``.                                            #
 #                                                                                                  #
 #**************************************************************************************************#
-class SiemensTwixReader(Spec2niiReader):
+class SiemensTwixReader(Reader):
     FORMATS = (Format.SIEMENS_TWIX,)
-    CONVERTER = "twix"
+    PACKAGES = Reader.PACKAGES + ("pymapvbvd",)
+    SOURCE = "twix header"
     MAIN_STREAM = "image"
-    MULTIRAID = 2  # in a multi-measurement file the second holds the scan (spec2nii default)
-    NO_OVERRIDES = {"dims": (None, None, None), "tags": (None, None, None)}
-
-    # where spec2nii reads each key, the same for XA and for VB to VE
-    SOURCES_COMMON = {
-        "EchoTime": "Phoenix/alTE[0]",
-        "DwellTime": "MeasYaps/sRXSPEC.alDwellTime[0]",
-        "Manufacturer": "Dicom/Manufacturer",
-        "ManufacturersModelName": "Dicom/ManufacturersModelName",
-        "DeviceSerialNumber": "Dicom/DeviceSerialNumber",
-        "SoftwareVersions": "Dicom/SoftwareVersions",
-        "InstitutionName": "Dicom/InstitutionName",
-        "InstitutionAddress": "Dicom/InstitutionAddress",
-        "RxCoil": (
-            "MeasYaps/sCoilSelectMeas.aRxCoilSelectData[0].asList[0].sCoilElementID.tCoilID",
-            "MeasYaps/asCoilSelectMeas[0].asList[0].sCoilElementID.tCoilID",
-        ),
-        "SequenceName": "Meas/tSequenceString",
-        "ProtocolName": "Dicom/tProtocolName",
-        "PatientWeight": "Meas/flUsedPatientWeight",
-        "PatientDoB": "Meas/PatientBirthDay",
-        "PatientSex": "Meas/PatientSex",
-        "PulseSequenceFile": "Config/SequenceFileName",
-        "IceProgramFile": "Meas/tICEProgramName",
-    }
-    SOURCES_XA = SOURCES_COMMON | {
-        "SpectrometerFrequency": "Dicom/lFrequency",
-        "ResonantNucleus": "MeasYaps/sTXSPEC.asNucleusInfo[0].tNucleus",
-        "RepetitionTime": "MeasYaps/alTR[0]",
-        "InversionTime": "MeasYaps/alTI[0]",
-        "ExcitationFlipAngle": "MeasYaps/adFlipAngleDegree[0]",
-        "TxOffset": "MeasYaps/sSpecPara.dDeltaFrequency",
-        "TxCoil": "MeasYaps/sCoilSelectMeas.aTxCoilSelectData[0].asList[0].sCoilElementID.tCoilID",
-        "PatientPosition": "Meas/tPatientPosition",
-        "PatientName": "Meas/tPatientName",
-    }
-    SOURCES_VX = SOURCES_COMMON | {
-        "SpectrometerFrequency": "Meas/Frequency",
-        "ResonantNucleus": "Meas/ResonantNucleus",
-        "RepetitionTime": ("Meas/TR_Time", "Meas/TR"),
-        "InversionTime": "Meas/TI_Time",
-        "ExcitationFlipAngle": "Meas/FlipAngle",
-        "TxOffset": "Meas/dDeltaFrequency",
-        "PatientPosition": "Meas/PatientPosition",
-        "PatientName": "Meas/PatientName",
-    }
-
+    MULTIRAID = 2  # in a multi-measurement file the second holds the scan
+    # standard key: (header fields, the first one found; type)
     HEADER_KEYS = {
         "FieldStrength": (("Dicom/flMagneticFieldStrength",), float),
         "TxRefAmp": (("Phoenix/sTXSPEC.asNucleusInfo[0].flReferenceAmplitude",), float),
@@ -120,14 +75,50 @@ class SiemensTwixReader(Spec2niiReader):
         notes: list[str] = []
         with self.captured(notes):
             twix = self._measurement(sniff)
-        if self.is_spectroscopy(twix):
-            return super().read(sniff)
         streams = [key for key in twix.keys() if key != "hdr"]
         if self.MAIN_STREAM not in streams:
             raise ReaderError(f"no '{self.MAIN_STREAM}' data in {sniff.path.name}: {streams}")
-        provenance = self.provenance(sniff, tuple(notes))
-        raw = SiemensTwixRaw(sniff.path, twix, self._vendor(twix, streams), provenance)
-        return raw.datasets([self.MAIN_STREAM] + [s for s in streams if s != self.MAIN_STREAM])
+        vendor = self._vendor(twix, streams)
+        if not self.is_spectroscopy(twix):
+            provenance = self.provenance(sniff, tuple(notes))
+            raw = SiemensTwixRaw(sniff.path, twix, vendor, provenance)
+            return raw.datasets([self.MAIN_STREAM] + [s for s in streams if s != self.MAIN_STREAM])
+        mrs = TwixMrs(twix, sniff.path)
+        with self.captured(notes):
+            spectra = self._main(mrs, twix)
+            for stream in streams:
+                if stream == self.MAIN_STREAM:
+                    continue
+                try:
+                    spectra += mrs.spectra(stream)
+                except Exception as e:  # noqa: BLE001  a stream the layout does not fit
+                    warnings.warn(f"stream '{stream}' not converted: {type(e).__name__}: {e}",
+                                  stacklevel=2)
+        notes += mrs.notes
+        header = self._header_values(Meta(vendor).vendor_fields())
+        datasets = []
+        for s in spectra:
+            spectrum_notes = notes + s.notes
+            data, tags = self.without_zero_indices(s.data, s.tags, spectrum_notes)
+            d = self.dataset(sniff, data, s.dwelltime, s.values | header, vendor, s.name,
+                             spectrum_notes, self.SOURCE, s.affine, tags)
+            self._protocol_keys(d)
+            datasets.append(d)
+        return datasets
+
+    def _main(self, mrs: TwixMrs, twix) -> list[TwixSpectrum]:
+        """The image stream; a grid reconstructed where TwixCsi is checked."""
+        spectra = mrs.spectra(self.MAIN_STREAM)
+        if mrs.kind != "mrsi":
+            return spectra
+        csi = TwixCsi(twix)
+        if not csi.verified:
+            warnings.warn(TwixCsi.UNVERIFIED, stacklevel=2)
+            return spectra
+        empty = spectra[0]
+        warnings.warn(TwixCsi.NOTE, stacklevel=2)
+        return [TwixSpectrum(empty.name.removesuffix("_empty"), csi.reconstruct().conj(),
+                             empty.dwelltime, empty.affine, empty.values, ("DIM_COIL",))]
 
     def _measurement(self, sniff: Sniff):
         twix = mapVBVD(str(sniff.path), quiet=True)
@@ -141,40 +132,23 @@ class SiemensTwixReader(Spec2niiReader):
         value = twix["hdr"]["Phoenix"].get(("sSpecPara", "lVectorSize"))
         return isinstance(value, (int, float)) and value > 0
 
-    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
-        twix = self._measurement(sniff)
-        streams = [key for key in twix.keys() if key != "hdr"]
-        if self.MAIN_STREAM not in streams:
-            raise ReaderError(f"no '{self.MAIN_STREAM}' data in {sniff.path.name}: {streams}")
-        images, names = self._stream(twix, sniff, self.MAIN_STREAM)
-        for stream in streams:
-            if stream == self.MAIN_STREAM:
+    def _header_values(self, fields: dict) -> dict:
+        """The HEADER_KEYS the header states: (value, field)."""
+        values = {}
+        for key, (alternatives, kind) in self.HEADER_KEYS.items():
+            field = next((f for f in alternatives if fields.get(f) not in (None, "", [])), None)
+            if field is None:
                 continue
-            try:
-                more, more_names = self._stream(twix, sniff, stream)
-            except Exception as e:
-                message = f"stream '{stream}' not converted: {type(e).__name__}: {e}"
-                warnings.warn(message, stacklevel=2)
-                continue
-            images += more
-            names += [f"{name}_{stream}" for name in more_names]
-        return images, names, self._vendor(twix, streams)
-
-    def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
-        return self.SOURCES_XA if xa_or_vx(vendor) == "xa" else self.SOURCES_VX
-
-    def correct(self, d: MRSData) -> None:
-        """spec2nii stores the inversion time unscaled (XA) or not at all (VB to VE)."""
-        super().correct(d)
-        inversion = d.meta.vendor["MeasYaps"].get("alTI[0]")
-        if isinstance(inversion, (int, float)):
-            d.meta.set(
-                "InversionTime",
-                inversion * 1e-6,
-                "MeasYaps/alTI[0] in µs, converted to s",
-                "MeasYaps/alTI[0]",
-            )
-        self._protocol_keys(d)
+            value = fields[field]
+            if kind is str:
+                value = str(value).strip().strip('"')
+            else:
+                try:
+                    value = kind(float(str(value).replace(",", ".")))
+                except ValueError:
+                    continue
+            values[key] = (value, field)
+        return values
 
     def _protocol_keys(self, d: MRSData) -> None:
         """Shim setting and RF pulse names from the protocol."""
@@ -190,25 +164,6 @@ class SiemensTwixReader(Spec2niiReader):
         if pulses:
             d.meta.set("RFPulseName", [pulses[i] for i in sorted(pulses)],
                        "twix header: Phoenix/sTXSPEC.aRFPULSE[n].tName", "Phoenix/sTXSPEC.aRFPULSE")
-
-    def _stream(self, twix, sniff: Sniff, stream: str) -> tuple[list[NIFTI_MRS], list[str]]:
-        images, names = process_twix(
-            twix, None, sniff.path.name, stream, self.NO_OVERRIDES, quiet=True, remove_os=False
-        )
-        images, names = list(images), list(names)
-        if stream == self.MAIN_STREAM and id_sequence_type(twix["hdr"]) == "mrsi":
-            # spec2nii leaves MRSI empty: the data, reconstructed, in its geometry
-            csi = TwixCsi(twix)
-            if not csi.verified:
-                warnings.warn(TwixCsi.UNVERIFIED, stacklevel=2)
-                return images, names
-            empty = images[0]
-            empty.hdr_ext.set_dim_info(0, "DIM_COIL")
-            images[0] = gen_nifti_mrs_hdr_ext(csi.reconstruct(), empty.dwelltime, empty.hdr_ext,
-                                              empty.getAffine("voxel", "world"))
-            names[0] = names[0].removesuffix("_empty")
-            warnings.warn(TwixCsi.NOTE, stacklevel=2)
-        return images, names
 
     def _vendor(self, twix, streams: list[str]) -> dict:
         header = twix["hdr"]
@@ -242,17 +197,17 @@ class SiemensTwixReader(Spec2niiReader):
 # grids do not match yet and stay empty): the phase encodes placed by their counters (Lin phase,   #
 # Seg readout, Par partitions), the middle lVectorSize points after the oversampling is removed, a #
 # Hamming filter over the k-space, zero filling to the final matrix and the spatial Fourier        #
-# transform; then spec2nii's geometry (the readout mirrored for sagittal and transverse slices,    #
-# read and phase swapped for transverse ones). Coils are kept (x, y, z, points, coils), as the     #
-# FIDs stand before NIfTI-MRS conjugation.                                                         #
+# transform; then the grid order of TwixMrs (the readout mirrored for sagittal and transverse      #
+# slices, read and phase swapped for transverse ones). Coils are kept (x, y, z, points, coils), as #
+# the FIDs stand before NIfTI-MRS conjugation.                                                     #
 #                                                                                                  #
 #**************************************************************************************************#
 class TwixCsi:
-    NOTE = ("MRSI reconstructed by MIOX (spec2nii leaves it empty): Hamming filter, zero filling "
-            "to the final matrix, spatial FFT, coils kept")
-    UNVERIFIED = ("MRSI not reconstructed: spec2nii leaves it empty (zeros), and MIOX reconstructs "
-                  "only what it has checked against the scanner (VD and later; 2D, 3D transverse)")
-    SAGITTAL, CORONAL, TRANSVERSE = 0, 1, 2  # spec2nii's main orientations
+    NOTE = ("MRSI reconstructed by MIOX: Hamming filter, zero filling to the final matrix, "
+            "spatial FFT, coils kept")
+    UNVERIFIED = ("MRSI not reconstructed: the grid stays empty (zeros); MIOX reconstructs only "
+                  "what it has checked against the scanner (VD and later; 2D, 3D transverse)")
+    SAGITTAL, CORONAL, TRANSVERSE = SiemensGsl.SAGITTAL, SiemensGsl.CORONAL, SiemensGsl.TRANSVERSE
 
     def __init__(self, twix):
         self.twix = twix
@@ -273,7 +228,7 @@ class TwixCsi:
     def orientation(self) -> int:
         normal = [float(self.protocol.get(("sSpecPara", "sVoI", "sNormal", d), 0.0) or 0.0)
                   for d in ("dSag", "dCor", "dTra")]
-        return GSL.class_ori(*normal, False)
+        return SiemensGsl.orientation(normal)
 
     def kspace(self) -> np.ndarray:
         """(coils, phase, readout, partition, points): Lin, Seg and Par as stored (the encodes

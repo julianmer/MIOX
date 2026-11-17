@@ -182,12 +182,20 @@ class SiemensRdaReader(Reader):
                        for vector in ("RowVector", "ColumnVector") for i in range(3)]
         sizes = [self.number(header[f]) for f in ("PixelSpacingRow", "PixelSpacingCol",
                                                   "SliceThickness")]
+        return self.grid_affine(orientation, position, sizes, shape[2], imaging)
+
+    @staticmethod
+    def grid_affine(orientation, position, sizes, slices: int, half_shift: bool) -> np.ndarray:
+        """NIfTI affine from DICOM direction cosines (row, column), position and sizes (row
+        spacing, column spacing, thickness); across several slices the slice axis turned along
+        its main patient axis, as dcm2niix orders slices; ``half_shift`` moves the position half a
+        voxel in-plane."""
         affine = PhilipsDicomMrs.affine(orientation, position, sizes)
-        if shape[2] > 1:  # the slice axis along its main patient axis, as dcm2niix orders slices
+        if slices > 1:
             slice_axis = affine[:3, 2] * [-1, -1, 1]  # in the DICOM frame
             main = 2 - int(np.argmax(np.abs(slice_axis)[::-1]))  # ties to the later axis
             if slice_axis[main] < 0:
                 affine[:3, 2] *= -1
-        if imaging:  # half a voxel in-plane from PositionVector
+        if half_shift:
             affine[:3, 3] += affine[:3, :3] @ [0.5, 0.5, 0.0]
         return affine
