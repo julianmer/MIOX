@@ -19,6 +19,7 @@
 #*************#
 from __future__ import annotations
 
+import argparse
 import contextlib
 import io
 import warnings
@@ -33,6 +34,7 @@ from mapvbvd import mapVBVD
 import miox
 from miox import Format, Sniffer
 from miox.readers.base import ReaderError
+from miox.readers.bruker import BrukerReader
 from miox.readers.ge_rdb import GeRdbHeader
 from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
@@ -42,6 +44,7 @@ from miox.readers.siemens_twix import SiemensTwixReader, TwixCsi
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
+    from spec2nii.bruker import read_bruker
     from spec2nii.GE import ge_pfile
     from spec2nii.GE.ge_read_pfile import Pfile
     from spec2nii.Philips import philips, philips_data_list, philips_dcm
@@ -744,3 +747,113 @@ def test_private_siemens_dicom_equals_spec2nii(private_roots, tmp_path):
     series = _vendor_dicoms(private_roots, ("siemens", "uih"))
     assert _compare_all_vendor_dicoms(series, tmp_path) == len(series) > 0
 
+
+#**************************************************************************************************#
+#                                             Bruker                                               #
+#**************************************************************************************************#
+#                                                                                                  #
+# Against spec2nii's read_bruker (brukerapi with spec2nii's property files), every spectroscopy    #
+# fid, fid_proc.64, rawdata.job0 and complex 2dseq; a scan whose method file is renamed is given   #
+# to spec2nii as a folder of links with the name it expects. Differences named: OriginalFile from  #
+# the scan folder on (spec2nii: the path as given); rawdata transients of averages x repetitions   #
+# DIM_DYN (spec2nii: DIM_USER_0); complex 2dseq spectra as FIDs (test_bruker checks them against   #
+# the scan's fid), a single voxel's reconstruction in the method's voxel (spec2nii: identity) and  #
+# its echo time from the method where visu_pars states 0. Magnitude reconstructions (MRImage) and  #
+# files neither can read are passed over.                                                          #
+#                                                                                                  #
+#**************************************************************************************************#
+BRUKER_KEYS = ("EchoTime", "RepetitionTime", "SpectrometerFrequency", "ResonantNucleus",
+               "TxOffset", "SoftwareVersions", "PatientName", "Manufacturer", "SequenceName",
+               "kSpace")
+BRUKER_MODES = {"fid": "FID", "fid_proc.64": "FID", "2dseq": "2DSEQ", "rawdata.job0": "RAWDATA"}
+
+
+def _bruker_files(roots: list[Path]) -> list[Path]:
+    sniffer, files = Sniffer(), []
+    for root in roots:
+        for path in sorted(root.rglob("*")):
+            if path.name in BRUKER_MODES and path.is_file() and ".git" not in path.parts:
+                with contextlib.suppress(Exception):
+                    if sniffer.sniff(path).format == Format.BRUKER:
+                        files.append(path)
+    return files
+
+
+def _spec2nii_bruker(path: Path, tmp_path: Path) -> tuple[list, list]:
+    reader = BrukerReader()
+    scan = path.parents[2] if path.name in reader.PROCESSED else path.parent
+    method = reader.method_file(scan)
+    given = path
+    if method is not None and method.name != "method":  # spec2nii reads the method by its name
+        links = tmp_path / f"links_{abs(hash(str(scan)))}" / scan.name
+        links.mkdir(parents=True)
+        for entry in scan.iterdir():
+            (links / entry.name).symlink_to(entry.resolve())
+        (links / "method").symlink_to(method.resolve())
+        given = links / path.relative_to(scan)
+    args = argparse.Namespace(file=str(given), mode=BRUKER_MODES[path.name], query=[],
+                              dump_headers=False, zeropad=False, nospectrum=False, fileout=None)
+    with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        images, names = read_bruker(args)
+    return [remove_zero_higher_dim_indices(i, remove=True)[0] for i in images], list(names)
+
+
+def _compare_bruker(path: Path, tmp_path: Path) -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        try:
+            got = miox.load(path)
+        except ReaderError as e:
+            pytest.skip(f"MIOX cannot read it: {e}")
+    if not all(isinstance(d, miox.MRSData) for d in got):
+        pytest.skip("magnitude reconstruction or imaging: not spec2nii's")
+    try:
+        expected, names = _spec2nii_bruker(path, tmp_path)
+    except Exception as e:  # noqa: BLE001  any failure of spec2nii's own reading
+        pytest.skip(f"spec2nii cannot convert it: {type(e).__name__}")
+    assert [d.name for d in got] == names
+    header = BrukerReader()._header(path)
+    transients = header["method"].get("PVM_NAverages", 0) * header["acqp"].get("NR", 0)
+    reconstruction = path.name == "2dseq"
+    for d, image in zip(got, expected, strict=True):
+        tags = [("DIM_DYN" if t and t.startswith("DIM_USER") and image.shape[4 + i] == transients
+                 else t) for i, t in enumerate(image.dim_tags)]
+        assert list(d.dim_tags) == tags, (d.name, d.dim_tags, tags)
+        if not reconstruction:
+            np.testing.assert_array_equal(d.data, np.asarray(image[:]).conj())  # [:] conjugates
+        if not (reconstruction and d.data.shape[:3] == (1, 1, 1)):
+            np.testing.assert_allclose(d.affine, image.getAffine("voxel", "world"), atol=1e-9)
+        assert d.dwelltime == pytest.approx(image.dwelltime, abs=1e-15)
+        header_ext = image.hdr_ext.to_dict()
+        assert d.meta["OriginalFile"] == [str(path.relative_to(
+            (path.parents[2] if path.name in BrukerReader.PROCESSED else path.parent).parent))]
+        for key in BRUKER_KEYS:
+            value, reference = d.meta.get(key), _stated(header_ext.get(key))
+            if key == "EchoTime" and reconstruction and not reference:
+                reference = header["method"]["PVM_EchoTime"] * 1e-3
+            if isinstance(reference, float):
+                assert value == pytest.approx(reference, abs=1e-12), key
+            else:
+                assert value == reference, key
+
+
+def _compare_all_bruker(files: list[Path], tmp_path: Path) -> int:
+    compared = 0
+    for path in files:
+        with contextlib.suppress(pytest.skip.Exception):
+            _compare_bruker(path, tmp_path)
+            compared += 1
+    return compared
+
+
+def test_bruker_equals_spec2nii(public_data, tmp_path):
+    files = _bruker_files([public_data])
+    if not files:
+        pytest.skip("no Bruker data fetched")
+    assert _compare_all_bruker(files, tmp_path) == 21  # every spectroscopy dataset fetched
+
+
+@pytest.mark.data
+def test_private_bruker_equals_spec2nii(private_roots, tmp_path):
+    assert _compare_all_bruker(_bruker_files(private_roots), tmp_path) > 0

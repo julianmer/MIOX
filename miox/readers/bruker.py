@@ -6,9 +6,9 @@
 #                                                                                                  #
 # Created: 02/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Reader for Bruker ParaVision spectroscopy scans (fid, fid_proc.64, 2dseq, rawdata).     #
-#          spec2nii converts through brukerapi; the vendor header holds every parameter of every   #
-#          parameter file of the scan and its processing folder.                                   #
+# Purpose: Reader for Bruker ParaVision scans (fid, fid_proc.64, 2dseq, rawdata); the vendor       #
+#          header holds every parameter of every parameter file of the scan and its processing     #
+#          folder.                                                                                 #
 #                                                                                                  #
 ####################################################################################################
 
@@ -18,26 +18,19 @@
 #*************#
 from __future__ import annotations
 
-import contextlib
-import tempfile
-import warnings
-from argparse import Namespace
-from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 from brukerapi.jcampdx import JCAMPDX
 from mrs_tools.constants import GYRO_MAG_RATIO
-from nifti_mrs.create_nmrs import gen_nifti_mrs_hdr_ext
-from nifti_mrs.nifti_mrs import NIFTI_MRS
-from spec2nii.bruker import read_bruker
 
 # own
 from miox.data import MRImage, MRSData
 from miox.meta.meta import Meta
-from miox.readers.base import ReaderError, Spec2niiReader
+from miox.readers.base import Reader, ReaderError
 from miox.readers.bruker_2dseq import Bruker2dseq
+from miox.readers.bruker_mrs import BrukerMrs
 from miox.readers.bruker_raw import BrukerRaw
 from miox.readers.dicom_image import DicomImageReader
 from miox.sniff import Format, Kind, Sniff, Sniffer
@@ -50,56 +43,30 @@ from miox.sniff import Format, Kind, Sniff, Sniffer
 # A data file is read in its own mode; a scan folder or a parameter file reads the scan's fid,     #
 # else the 2dseq or rawdata next to it. The fid and rawdata of a CSI scan hold k-space, which is   #
 # not reconstructed here: they say so, and its folder reads the scanner's reconstruction instead   #
-# (pdata/<n>/2dseq, complex spectra first). Spectroscopy goes through spec2nii; the frequency is   #
-# the working frequency (PVM_FrqWork, SFO1) and its chemical shift, PVM_FrqWorkPpm, is             #
-# ReferencePPM. A complex 2dseq spectrum (REAL_IMAGE and IMAGINARY_IMAGE frames) is stored in the  #
-# frequency domain, frequency increasing with the index, like the spectrum of a NIfTI-MRS FID:     #
-# spec2nii keeps it as if it were a FID (single voxel) or flips it before the inverse FFT (CSI),   #
-# so the FID is recomputed here: the reconstruction's FT runs the other way (the spectrum is       #
-# conjugated) and moves the digital filter's PVM_DigShift points to the end (they are left out);   #
-# single-voxel FIDs then equal the processed fid of the same scan. Processed images (2dseq with    #
-# spatial dimensions only) are assembled from visu_pars, one MRImage per slice pack; magnitude     #
-# spectra (MAGNITUDE_IMAGE frames over a spectroscopic dimension) hold no phase and become         #
-# MRImages with a frequency axis. Image geometry and values equal the vendor's own DICOM export.   #
-# Spectroscopy reconstructions take the echo and repetition time from the method file where        #
-# visu_pars states 0 or none (as for STEAM), as the fid of the same scan reads them. A scan folder #
-# without a file named method takes its one file named <name>_method instead, for MIOX and for     #
-# spec2nii, with a note.                                                                           #
+# (pdata/<n>/2dseq, complex spectra first). Spectroscopy is laid out by BrukerMrs; the frequency   #
+# is acqp BF1 (reconstructions: VisuAcqImagingFrequency) and the method's PVM_FrqWorkPpm is        #
+# ReferencePPM. Transients stored one by one (rawdata: averages x repetitions) are DIM_DYN.        #
+# Processed images (2dseq with spatial dimensions only) are assembled from visu_pars, one MRImage  #
+# per slice pack; magnitude spectra (MAGNITUDE_IMAGE frames over a spectroscopic dimension) hold   #
+# no phase and become MRImages with a frequency axis. Image geometry and values equal the vendor's #
+# own DICOM export. Spectroscopy reconstructions take the echo and repetition time from the method #
+# file where visu_pars states 0 or none (as for STEAM), as the fid of the same scan reads them. A  #
+# scan folder without a file named method takes its one file named <name>_method instead, with a   #
+# note.                                                                                            #
 #                                                                                                  #
 #**************************************************************************************************#
-class BrukerReader(Spec2niiReader):
+class BrukerReader(Reader):
     FORMATS = (Format.BRUKER,)
-    CONVERTER = "bruker"
+    PACKAGES = Reader.PACKAGES + ("brukerapi",)
     REFERENCE = "method/PVM_FrqWorkPpm"
-    MODES = {"fid": "FID", "fid_proc.64": "FID", "2dseq": "2DSEQ", "rawdata.job0": "RAWDATA"}
+    MODES = ("fid", "fid_proc.64", "2dseq", "rawdata.job0")
     PROCESSED = ("2dseq", "fid_proc.64")  # stored in <study>/<scan>/pdata/<n>/
     PARAMETER_FILES = ("acqp", "method", "visu_pars", "reco", "subject")
     RENAMED_METHOD = "_method"  # a method file renamed <name>_method
     SOURCE = "Bruker visu_pars"
+    SPECTROSCOPY_SOURCE = "Bruker parameters"
     LPS_TO_RAS = np.diag([-1.0, -1.0, 1.0, 1.0])
     MS = 1e-3
-    SOURCES_FID = {
-        "SpectrometerFrequency": "acqp/BF1",
-        "ResonantNucleus": "acqp/NUCLEUS",
-        "EchoTime": "method/PVM_EchoTime",
-        "RepetitionTime": "method/PVM_RepetitionTime",
-        "TxOffset": "method/PVM_FrqWorkOffsetPpm",
-        "SoftwareVersions": "acqp/ACQ_sw_version",
-        "SequenceName": "method/Method",
-        "PatientName": "subject/SUBJECT_id",
-        "DwellTime": "acqp/SW_h",
-    }
-    SOURCES_2DSEQ = {
-        "SpectrometerFrequency": "visu_pars/VisuAcqImagingFrequency",
-        "ResonantNucleus": "visu_pars/VisuAcqImagedNucleus",
-        "EchoTime": ("visu_pars/VisuAcqEchoTime", "method/PVM_EchoTime"),
-        "RepetitionTime": ("visu_pars/VisuAcqRepetitionTime", "method/PVM_RepetitionTime"),
-        "TxOffset": "method/PVM_FrqWorkOffsetPpm",
-        "SoftwareVersions": "visu_pars/VisuAcqSoftwareVersion",
-        "SequenceName": "visu_pars/VisuAcquisitionProtocol",
-        "PatientName": "visu_pars/VisuSubjectName",
-        "DwellTime": "visu_pars/VisuAcqPixelBandwidth",
-    }
     IMAGE_KEYS = {  # standard key: (visu_pars field, factor or None)
         "Manufacturer": ("VisuManufacturer", None),
         "ManufacturersModelName": ("VisuStation", None),
@@ -160,7 +127,7 @@ class BrukerReader(Spec2niiReader):
                 visu = self._parameters(processed / "visu_pars")
                 geometry = Bruker2dseq(processed / "2dseq", visu)
             return BrukerRaw(path, header, self.provenance(sniff), geometry).datasets()
-        return super().read(sniff)
+        return self._spectroscopy(sniff)
 
     def _imaging_raw(self, path: Path, sniff: Sniff) -> bool:
         """A fid or rawdata.jobN file of an imaging method, or any job beyond the first."""
@@ -172,81 +139,46 @@ class BrukerReader(Spec2niiReader):
         method = header.get("method", {}).get("Method") or sniff.detail.get("method")
         return Sniffer().bruker_scan_kind(method) == Kind.IMAGING
 
-    # --- spectroscopy through spec2nii -----------------------------------------------------------
+    # --- spectroscopy ---------------------------------------------------------------------------
 
-    def convert(self, sniff: Sniff) -> tuple[list[NIFTI_MRS], list[str], dict]:
+    def _spectroscopy(self, sniff: Sniff) -> list[MRSData]:
         path = self._data_file(sniff.path)
         header = self._header(path)
         if "method" not in header:
-            raise ReaderError(f"{path}: the scan folder has no method file, which spec2nii needs")
-        with self._renamed_method(path) as given:
-            args = Namespace(
-                file=str(given),
-                mode=self.MODES[path.name],
-                query=[],
-                dump_headers=False,
-                zeropad=False,
-                nospectrum=False,
-                fileout=None,
-            )
-            if self.raw_csi(path, header):
-                with warnings.catch_warnings():  # replaced by the definite note below
-                    warnings.filterwarnings("ignore", "MRSI .* might not be reconstructed")
-                    images, names = read_bruker(args)
-                warnings.warn(self._kspace_note(path), stacklevel=2)
-            else:
-                images, names = read_bruker(args)
-        if path.name == "2dseq":
-            dataset = Bruker2dseq(path, header["visu_pars"])
-            shift = header.get("method", {}).get("PVM_DigShift", 0)
-            shift = shift if isinstance(shift, int) else 0
-            images = [self._fid_from_spectrum(image, dataset, shift) for image in images]
-        for image in images:
-            self._tag_transients(image, header)
-        return list(images), list(names), header
+            raise ReaderError(f"{path}: the scan folder has no method file")
+        notes: list[str] = []
+        scan = path.parents[2] if path.name in self.PROCESSED else path.parent
+        method = self.method_file(scan)
+        if method is not None and method.name != "method":
+            notes.append(f"method file read from {method.name}")
+        if self.raw_csi(path, header):
+            notes.append(self._kspace_note(path))
+        mrs = BrukerMrs(path, header)
+        with self.captured(notes):
+            spectrum = mrs.spectrum()
+        notes += mrs.notes
+        tags = self._tag_transients(spectrum.data, spectrum.tags, header)
+        data, tags = self.without_zero_indices(spectrum.data, tags, notes)
+        d = self.dataset(sniff, data, spectrum.dwelltime, spectrum.values, header, spectrum.name,
+                         notes, self.SPECTROSCOPY_SOURCE, spectrum.affine, tags)
+        self._reference(d)
+        return [d]
 
     @staticmethod
-    def _tag_transients(image: NIFTI_MRS, header: dict) -> None:
-        """Transients stored one by one (rawdata: averages x repetitions) are DIM_DYN; spec2nii
-        tags DIM_DYN only a dimension as long as the repetitions and leaves these DIM_USER_n."""
+    def _tag_transients(data: np.ndarray, tags: tuple, header: dict) -> tuple:
+        """Transients stored one by one (rawdata: averages x repetitions) are DIM_DYN; a dimension
+        that long is otherwise DIM_USER_n."""
         averages = header.get("method", {}).get("PVM_NAverages")
         repetitions = header.get("acqp", {}).get("NR")
-        if not isinstance(averages, int) or not isinstance(repetitions, int):
-            return
-        for index in range(image.ndim - 4):
-            tag = image.dim_tags[index]
-            if tag and tag.startswith("DIM_USER") and image.shape[4 + index] == (
-                    averages * repetitions) and "DIM_DYN" not in image.dim_tags:
-                image.set_dim_tag(4 + index, "DIM_DYN", info="transients: averages (method "
-                                  "PVM_NAverages) x repetitions (acqp NR), as acquired")
-
-    def _fid_from_spectrum(self, image: NIFTI_MRS, dataset: Bruker2dseq,
-                           shift: int) -> NIFTI_MRS:
-        """The FID of a complex 2dseq spectrum: inverse FFT of the conjugated real and imaginary
-        frames, without the digital filter's ``shift`` points (PVM_DigShift), which the
-        reconstruction moves to the end (spec2nii keeps the spectrum or flips it)."""
-        types = [t.upper() for t in dataset.frame_types]
-        if "REAL_IMAGE" not in types or "IMAGINARY_IMAGE" not in types:
-            return image
-        frames = dataset.frames()
-        spectrum = frames[types.index("REAL_IMAGE")] + 1j * frames[types.index("IMAGINARY_IMAGE")]
-        fid = np.fft.ifft(np.fft.ifftshift(spectrum.conj(), axes=-1), axis=-1)
-        fid = np.roll(fid, -shift, axis=-1)[..., : fid.shape[-1] - shift]
-        if fid.ndim == 1:  # single voxel
-            data = fid.reshape(1, 1, 1, -1)
-        else:  # (y, x, points) -> (x, y, z, points)
-            data = np.moveaxis(fid, -1, 0)
-            data = np.moveaxis(data, 1, -1)
-            data = np.moveaxis(data, 0, -1)[:, :, np.newaxis, :]
-        if data.shape[:-1] != image.shape[:-1]:
-            warnings.warn(f"2dseq frames {data.shape} do not match spec2nii's {image.shape}; "
-                          "spec2nii's data kept", stacklevel=2)
-            return image
-        warnings.warn("complex 2dseq spectrum turned into a FID by inverse FFT, without the "
-                      f"digital filter's {shift} points (spec2nii keeps the spectrum, or flips it "
-                      "for CSI)", stacklevel=2)
-        affine = image.getAffine("voxel", "world")
-        return gen_nifti_mrs_hdr_ext(data, image.dwelltime, image.hdr_ext, affine, no_conj=True)
+        if not isinstance(averages, int) or not isinstance(repetitions, int) or "DIM_DYN" in tags:
+            return tags
+        tags = list(tags)
+        for index, tag in enumerate(tags):
+            if isinstance(tag, str) and tag.startswith("DIM_USER") and \
+                    data.shape[4 + index] == averages * repetitions:
+                tags[index] = ("DIM_DYN", "transients: averages (method PVM_NAverages) x "
+                               "repetitions (acqp NR), as acquired", None)
+        return tuple(tags)
 
     # --- images ----------------------------------------------------------------------------------
 
@@ -486,7 +418,7 @@ class BrukerReader(Spec2niiReader):
         return [MRImage(data.astype(np.float32), affine, meta, provenance, name, dims)]
 
     def _voxel_affine(self, header: dict) -> np.ndarray:
-        """The spectroscopy voxel: PVM_VoxArr* of the method file, as spec2nii reads them."""
+        """The spectroscopy voxel: PVM_VoxArr* of the method file, as the fid reads them."""
         method = header.get("method", {})
         try:
             orientation = np.asarray(method["PVM_VoxArrGradOrient"], float).reshape(3, 3)
@@ -501,9 +433,6 @@ class BrukerReader(Spec2niiReader):
         return affine
 
     # --- files -----------------------------------------------------------------------------------
-
-    def sources(self, vendor: dict) -> dict[str, str | tuple[str, ...]]:
-        return self.SOURCES_2DSEQ if "visu_pars" in vendor else self.SOURCES_FID
 
     def correct(self, d: MRSData) -> None:
         super().correct(d)
@@ -538,7 +467,7 @@ class BrukerReader(Spec2niiReader):
 
     def raw_csi(self, path: Path, header: dict | None = None) -> bool:
         """A fid or rawdata.job0 of a CSI scan (pulse program CSI.ppg, brukerapi's CSI scheme):
-        it holds k-space, which spec2nii lays out as if it were voxels."""
+        it holds k-space: its grid dimensions are phase-encoding steps, not voxels."""
         if path.name not in ("fid", "rawdata.job0"):
             return False
         header = self._header(path) if header is None else header
@@ -587,24 +516,6 @@ class BrukerReader(Spec2niiReader):
         renamed = [p for p in scan.iterdir() if p.is_file() and not p.name.startswith("._")
                    and p.name.endswith(cls.RENAMED_METHOD)]
         return renamed[0] if len(renamed) == 1 else None
-
-    @contextlib.contextmanager
-    def _renamed_method(self, path: Path) -> Iterator[Path]:
-        """The data file to give spec2nii, which reads the method file by its name: for a renamed
-        one, the same file in a temporary scan folder of links, ``method`` linking to it."""
-        scan = path.parents[2] if path.name in self.PROCESSED else path.parent
-        method = self.method_file(scan)
-        if method is None or method.name == "method":
-            yield path
-            return
-        warnings.warn(f"method file read from {method.name}", stacklevel=3)
-        with tempfile.TemporaryDirectory() as folder:
-            links = Path(folder) / scan.name
-            links.mkdir()
-            for entry in scan.iterdir():
-                (links / entry.name).symlink_to(entry)
-            (links / "method").symlink_to(method)
-            yield links / path.relative_to(scan)
 
     def _parameters(self, path: Path) -> dict[str, Any]:
         parameters = {}

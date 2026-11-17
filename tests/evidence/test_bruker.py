@@ -110,13 +110,14 @@ def test_2dseq_spectrum_fid_matches_magnitude_spectrum(scan):
 @pytest.mark.parametrize("scan", ["PV-6.0.1/9", "PV-6.0.1/10"])
 def test_2dseq_single_voxel_fid_equals_the_scan_fid(scan):
     """The reconstruction writes the scan's fid and its spectrum: the FID made from the spectrum
-    equals that fid point for point (up to scale)."""
+    equals that fid point for point (up to scale), in the scan's voxel (spec2nii: identity)."""
     [ours] = load(BRUKER / scan / "pdata/2/2dseq")
     [fid] = load(BRUKER / scan / "fid")
     a, b = np.asarray(fid.data).ravel(), np.asarray(ours.data).ravel()
     head = b[: a.size]
     assert abs(np.vdot(head, a)) / (np.linalg.norm(head) * np.linalg.norm(a)) > 1 - 1e-6
     assert b.size == a.size
+    np.testing.assert_allclose(ours.affine, fid.affine, atol=1e-12)
 
 
 @pytest.mark.data
