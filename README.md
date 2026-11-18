@@ -58,4 +58,3 @@ uv sync --extra dev
 | **Tractograms** | TrackVis .trk; MRtrix .tck and .tsf; TRX; VTK polydata; DSI Studio .tt |
 | **Transforms** | FreeSurfer LTA; ITK/ANTs .tfm and .h5; AFNI affine matrices; FSL FLIRT; BrainVoyager TRF |
 | **Surfaces** | FreeSurfer surfaces, per-vertex values, annotations and labels; GIFTI; BrainVoyager SRF, SMP, MTC, SSM and POI; MZ3 |
-| **Transforms** | FreeSurfer LTA; ITK; AFNI; FSL FLIRT; BrainVoyager TRF |
