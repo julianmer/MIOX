@@ -7,9 +7,8 @@
 # Created: 06/10/26                                                                                #
 #                                                                                                  #
 # Purpose: GE raw-data (rdb) header: a P-file's leading bytes or the pool header a ScanArchive     #
-#          carries. The named fields of spec2nii's layouts, further fields at the offsets pfile-   #
-#          tools gives, the data acquisition table with the corner points of every slice, and the  #
-#          standard keys.                                                                          #
+#          carries. The named fields of the revision's layout (ge_rdb_fields), the data            #
+#          acquisition table with the corner points of every slice, and the standard keys.         #
 #                                                                                                  #
 ####################################################################################################
 
@@ -19,62 +18,32 @@
 #*************#
 from __future__ import annotations
 
-import ctypes
-import io
 import struct
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
-from spec2nii.GE.ge_hdr_fields import get_pfile_hdr_fields
-from spec2nii.GE.ge_read_pfile import Pfile, UnknownPfile
 
 # own
 from miox.meta import Meta
-
-
-#**************************************************************************************************#
-#                                         RdbHeaderStruct                                          #
-#**************************************************************************************************#
-#                                                                                                  #
-# spec2nii's P-file header structure filled from bytes instead of a file: the revision (and the    #
-# byte order of the old SGI files) is taken from the first four bytes, the ctypes layout of that   #
-# revision is built and copied from the bytes.                                                     #
-#                                                                                                  #
-#**************************************************************************************************#
-class RdbHeaderStruct(Pfile):
-    def __init__(self, raw: bytes):
-        self.file_name = ""
-        self.version = 0
-        self.hdr = None
-        self.map = None
-        self.endian = "little"
-        self.encoding = None
-        self.raw = raw
-        self.read_header()
-
-    def read_header(self) -> None:
-        version = self._version(io.BytesIO(self.raw))
-        base = ctypes.BigEndianStructure if self.endian == "big" else ctypes.LittleEndianStructure
-        fields = {"_pack_": 1, "_fields_": get_pfile_hdr_fields(version)}
-        layout = type("RdbHeader", (base,), fields)
-        self.hdr = layout.from_buffer_copy(self.raw.ljust(ctypes.sizeof(layout), b"\0"))
-        self.version = version
+from miox.readers import ge_rdb_fields
+from miox.readers.base import ReaderError
 
 
 #**************************************************************************************************#
 #                                           GeRdbHeader                                            #
 #**************************************************************************************************#
 #                                                                                                  #
-# The header values by their GE names (``values``), the receive coil count, the slice table and    #
-# the geometry of every slice as ge_to_ismrmrd derives it (read direction from the first to the    #
-# second corner point, phase direction from the first to the third, slice direction their cross    #
-# product, the centre between the second and third point; the points are rotated into LPS for the  #
-# patient entry and position and shifted so that the first slice's centre equals the image         #
-# header's centre, which the table's points lack), the patient position as a DICOM code and the    #
-# standard keys. Fields beyond spec2nii's layouts are read at the offsets of pfile-tools' maps for #
-# revisions 16, 20.006, 20.007 (also 24) and 26.002 (also 26 to 31, with the sections shifted as   #
-# spec2nii shifts them).                                                                           #
+# The revision (rdbm.h, the first four bytes; little-endian, or big-endian on the SGI consoles     #
+# before revision 11), the fields of its layout as read (``hdr``: texts as bytes) and as plain     #
+# values by their GE names (``values``: texts decoded to the first NUL), the receive coil count,   #
+# the slice table and the geometry of every slice as ge_to_ismrmrd derives it (read direction from #
+# the first to the second corner point, phase direction from the first to the third, slice         #
+# direction their cross product, the centre between the second and third point; the points are    #
+# rotated into LPS for the patient entry and position and shifted so that the first slice's centre #
+# equals the image header's centre, which the table's points lack), the patient position as a      #
+# DICOM code and the standard keys.                                                                #
 #                                                                                                  #
 #**************************************************************************************************#
 class GeRdbHeader:
@@ -95,57 +64,6 @@ class GeRdbHeader:
     PHASE_DIRECTION = {1: "COL", 2: "ROW"}  # rhi_freq_dir 1: frequency encoding along the rows
     SLICE_ENTRY = "hh9fhh"  # pass, slice in pass (from 1), three corner points, transpose, rotate
     SLICE_STRIDES = (44, 48, 52, 56, 64, 72, 80, 96)  # entry sizes tried for the slice table
-    SECTION_START = 4096  # fields from here on belong to the exam, series and image sections
-    # fields beyond spec2nii's layout: GE name, byte offset, struct format (pfile-tools' maps)
-    EXTRAS_16 = (
-        ("rhr_rh_rc_xres", 106, "h"), ("rhr_rh_rc_yres", 108, "h"), ("rhr_rh_im_size", 110, "h"),
-        ("rhr_rh_rc_zres", 112, "i"), ("rhe_patweight", 140984, "i"), ("rhe_patage", 141064, "h"),
-        ("rhe_ex_desc", 141244, "65s"), ("rhe_ex_typ", 141309, "3s"),
-        ("rhe_service_id", 141406, "16s"), ("rhs_prtcl", 142404, "25s"),
-        ("rhs_start_ras", 142429, "1s"), ("rhs_end_ras", 142430, "1s"),
-        ("rhi_dfov_rect", 143976, "f"), ("rhi_sctime", 143980, "f"), ("rhi_slthick", 143984, "f"),
-        ("rhi_dim_X", 144348, "f"), ("rhi_dim_Y", 144352, "f"), ("rhi_pixsize_X", 144356, "f"),
-        ("rhi_pixsize_Y", 144360, "f"), ("rhi_norm_R", 144376, "f"), ("rhi_norm_A", 144380, "f"),
-        ("rhi_norm_S", 144384, "f"),
-    )
-    EXTRAS_20_006 = (
-        ("rhr_rh_rc_xres", 106, "h"), ("rhr_rh_rc_yres", 108, "h"), ("rhr_rh_im_size", 110, "h"),
-        ("rhr_rh_rc_zres", 112, "i"), ("rhe_patweight", 143396, "i"), ("rhe_patage", 143536, "h"),
-        ("rhe_hist", 143620, "257s"), ("rhe_ex_desc", 144072, "65s"), ("rhe_ex_typ", 144137, "3s"),
-        ("rhe_service_id", 144220, "16s"), ("rhs_start_loc", 145052, "f"),
-        ("rhs_end_loc", 145056, "f"), ("rhs_se_datetime", 145412, "i"),
-        ("rhs_prtcl", 145848, "25s"), ("rhs_start_ras", 145873, "1s"),
-        ("rhs_end_ras", 145874, "1s"), ("rhi_dfov_rect", 147648, "f"), ("rhi_sctime", 147652, "f"),
-        ("rhi_slthick", 147656, "f"), ("rhi_dim_X", 148020, "f"), ("rhi_dim_Y", 148024, "f"),
-        ("rhi_pixsize_X", 148028, "f"), ("rhi_pixsize_Y", 148032, "f"), ("rhi_norm_R", 148048, "f"),
-        ("rhi_norm_A", 148052, "f"), ("rhi_norm_S", 148056, "f"),
-    )
-    EXTRAS_20_007 = (
-        ("rhr_rh_rc_xres", 106, "h"), ("rhr_rh_rc_yres", 108, "h"), ("rhr_rh_im_size", 110, "h"),
-        ("rhr_rh_rc_zres", 112, "i"), ("rhe_patweight", 143396, "i"), ("rhe_patage", 143536, "h"),
-        ("rhe_hist", 143620, "257s"), ("rhe_rad", 143942, "65s"), ("rhe_op", 144007, "65s"),
-        ("rhe_ex_desc", 144072, "65s"), ("rhe_ex_typ", 144137, "3s"),
-        ("rhe_service_id", 144228, "16s"), ("rhs_start_loc", 145052, "f"),
-        ("rhs_end_loc", 145056, "f"), ("rhs_se_datetime", 145412, "i"),
-        ("rhs_prtcl", 145848, "25s"), ("rhs_start_ras", 145873, "1s"),
-        ("rhs_end_ras", 145874, "1s"), ("rhi_dfov_rect", 147648, "f"), ("rhi_sctime", 147652, "f"),
-        ("rhi_slthick", 147656, "f"), ("rhi_dim_X", 148020, "f"), ("rhi_dim_Y", 148024, "f"),
-        ("rhi_pixsize_X", 148028, "f"), ("rhi_pixsize_Y", 148032, "f"), ("rhi_norm_R", 148048, "f"),
-        ("rhi_norm_A", 148052, "f"), ("rhi_norm_S", 148056, "f"),
-    )
-    EXTRAS_26 = (
-        ("rhr_rh_rc_xres", 182, "h"), ("rhr_rh_rc_yres", 184, "h"), ("rhr_rh_im_size", 186, "h"),
-        ("rhr_rh_rc_zres", 188, "i"), ("rhe_patweight", 194236, "i"), ("rhe_patage", 194376, "h"),
-        ("rhe_hist", 194460, "257s"), ("rhe_rad", 194782, "65s"), ("rhe_op", 194847, "65s"),
-        ("rhe_ex_desc", 194912, "65s"), ("rhe_ex_typ", 194977, "3s"),
-        ("rhe_service_id", 195068, "16s"), ("rhs_start_loc", 195892, "f"),
-        ("rhs_end_loc", 195896, "f"), ("rhs_se_datetime", 196252, "i"),
-        ("rhs_prtcl", 196688, "25s"), ("rhs_start_ras", 196713, "1s"),
-        ("rhs_end_ras", 196714, "1s"), ("rhi_dfov_rect", 198488, "f"), ("rhi_sctime", 198492, "f"),
-        ("rhi_slthick", 198496, "f"), ("rhi_dim_X", 198860, "f"), ("rhi_dim_Y", 198864, "f"),
-        ("rhi_pixsize_X", 198868, "f"), ("rhi_pixsize_Y", 198872, "f"), ("rhi_norm_R", 198888, "f"),
-        ("rhi_norm_A", 198892, "f"), ("rhi_norm_S", 198896, "f"),
-    )
     TEXT_KEYS = (  # standard key: field, stored when the text is not empty
         ("PatientName", "rhe_patname"), ("PatientID", "rhe_patid"),
         ("PatientDoB", "rhe_dateofbirth"), ("StudyDescription", "rhe_ex_desc"),
@@ -166,12 +84,12 @@ class GeRdbHeader:
     INTEGER_KEYS = ("SeriesNumber", "PatientAge", "NumberOfAverages")  # whole numbers as int
 
     def __init__(self, raw: bytes):
-        self.struct = RdbHeaderStruct(raw)
         self.raw = raw
-        self.version = self.struct.version
-        self.hdr = self.struct.hdr
-        self.prefix = ">" if self.struct.endian == "big" else "<"
-        self.values = self._values()
+        self.version, self.endian = self.revision(raw)
+        self.prefix = ">" if self.endian == "big" else "<"
+        self.hdr = SimpleNamespace(**self._fields())
+        self.values = {"version": self.version}
+        self.values.update((name, self.plain(value)) for name, value in vars(self.hdr).items())
 
     @classmethod
     def from_file(cls, path: Path) -> GeRdbHeader:
@@ -180,46 +98,32 @@ class GeRdbHeader:
 
     # --- fields ----------------------------------------------------------------------------------
 
-    def _values(self) -> dict[str, Any]:
-        values: dict[str, Any] = {"version": self.version}
-        for info in self.struct._dump_struct(self.hdr):
-            if not info.label.startswith("pad"):
-                values[info.label] = self.plain(info.value)
-        for name, offset, fmt in self.extras_layout():
+    @staticmethod
+    def revision(raw: bytes) -> tuple[float, str]:
+        """(rdbm.h revision, byte order): the first four bytes as a little-endian float, or as a
+        big-endian one when that gives a revision below 11."""
+        for prefix, endian in (("<", "little"), (">", "big")):
+            version = round(struct.unpack_from(prefix + "f", raw, 0)[0], 3)
+            if ge_rdb_fields.layout(version) and (endian == "little" or version < 11):
+                return version, endian
+        (little,) = struct.unpack_from("<f", raw, 0)
+        raise ReaderError(f"no layout for the rdb header revision {little:g}")
+
+    def _fields(self) -> dict[str, Any]:
+        fields = {}
+        for name, offset, fmt in ge_rdb_fields.layout(self.version):
             if offset + struct.calcsize(fmt) <= len(self.raw):
                 (value,) = struct.unpack_from(self.prefix + fmt, self.raw, offset)
-                values[name] = self.plain(value)
-        return values
+                fields[name] = value.split(b"\0")[0] if isinstance(value, bytes) else value
+        return fields
 
-    def extras_layout(self) -> tuple:
-        major = int(self.version)
-        if major == 16:
-            return self.EXTRAS_16
-        if abs(self.version - 20.006) < 5e-4:
-            return self.EXTRAS_20_006
-        if abs(self.version - 20.007) < 5e-4 or major == 24:
-            return self.EXTRAS_20_007
-        if 26 <= major <= 31:
-            shift = 8192 if self.version > 27.0005 else 0
-            shift += 304 if major >= 31 else 0
-            return tuple(
-                (name, offset + shift if offset >= self.SECTION_START else offset, fmt)
-                for name, offset, fmt in self.EXTRAS_26
-            )
-        return ()
-
-    @classmethod
-    def plain(cls, value: Any) -> Any:
-        if isinstance(value, ctypes.Array):
-            return [cls.plain(v) for v in value]
+    @staticmethod
+    def plain(value: Any) -> Any:
         if isinstance(value, bytes):
-            text = value.split(b"\0")[0]
             try:
-                return text.decode("utf-8")
+                return value.decode("utf-8")
             except UnicodeDecodeError:
-                return text.decode("latin-1")
-        if isinstance(value, np.generic):
-            return value.item()
+                return value.decode("latin-1")
         return value
 
     @property
@@ -236,16 +140,6 @@ class GeRdbHeader:
     @property
     def data_offset(self) -> int | None:
         return self.values.get("rhr_rdb_hdr_off_data")
-
-    def spectroscopy_mapper(self) -> bool:
-        """Whether spec2nii has a spectroscopy mapper for the pulse sequence."""
-        if str(self.values.get("rhi_psdname", "")).lower().startswith("hbcd"):
-            return True
-        try:
-            mapper = self.struct.get_mapper
-        except UnknownPfile:
-            return False
-        return mapper is not None
 
     # --- geometry --------------------------------------------------------------------------------
 

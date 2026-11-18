@@ -7,7 +7,7 @@
 # Created: 16/11/26                                                                                #
 #                                                                                                  #
 # Purpose: GE P-file spectroscopy: the data block laid out per sequence, voxel geometry and keys,  #
-#          from the rdb header fields (as spec2nii's header parser reads them).                    #
+#          from the rdb header fields (GeRdbHeader).                                              #
 #                                                                                                  #
 ####################################################################################################
 
@@ -222,6 +222,18 @@ class GePfileReading:
         self.path, self.hdr, self.endian = path, hdr, endian
         self.layout = GePfileLayout(hdr, version)
 
+    @property
+    def data_offset(self) -> int:
+        """Where the data start: stated from revision 11 on; before, the data fill the end of the
+        file."""
+        if hasattr(self.hdr, "rhr_rdb_hdr_off_data"):
+            return self.hdr.rhr_rdb_hdr_off_data
+        layout, hdr = self.layout, self.hdr
+        spectrum = hdr.rhr_rh_frame_size * 2 * hdr.rhr_rh_point_size
+        per_coil = layout.kspace_points * spectrum * layout.time_points
+        per_coil += int(layout.dummy_scans * spectrum / layout.coils)
+        return self.path.stat().st_size - per_coil * layout.coils
+
     def _words(self, count: int, handle) -> np.ndarray:
         dtype = {4: "i4", 2: "i2"}[self.hdr.rhr_rh_point_size]
         words = np.fromfile(handle, dtype=dtype, count=count)
@@ -241,7 +253,7 @@ class GePfileReading:
         chop = -1 if layout.chop else 1
         position = 0
         with open(self.path, "rb") as handle:
-            handle.seek(hdr.rhr_rdb_hdr_off_data)
+            handle.seek(self.data_offset)
             for coil in range(coils):
                 words = self._words(int(per_coil / hdr.rhr_rh_point_size), handle)
                 values = words.astype(np.float32)
@@ -295,7 +307,7 @@ class GePfileReading:
         coils, cv24 = self.layout.coils, hdr.rhi_user24
         total = rows * echoes
         with open(self.path, "rb") as handle:
-            handle.seek(hdr.rhr_rdb_hdr_off_data)
+            handle.seek(self.data_offset)
             words = self._words(int(points * 2 * total * coils), handle)
         values = words.astype(np.float32).view(np.complex64)
         raw = np.swapaxes(values.reshape((1, 1, 1, coils, total, points)), -1, -3)
@@ -383,19 +395,38 @@ class GePfileMrs:
         self.path, self.hdr = path, hdr
         self.reading = GePfileReading(path, hdr, version, endian)
         self.layout = self.reading.layout
-        self.encoding = self._encoding()
+        self.encoding = self.header_encoding(hdr)
         self.psdname = self.text(hdr.rhi_psdname)
-        psd, protocol = self.psdname.lower(), self.text(hdr.rhs_se_desc).lower()
-        self.hbcd_press = psd == "hbcd" and "press" in protocol
-        self.psd = "gaba" if psd.endswith("gaba") else "mrs-press" if self.hbcd_press else psd
-        if self.psd not in self.STANDARD + self.SLASER + self.EDITED:
+        self.psd, self.hbcd_press = self.sequence(hdr)
+        if not self.recognises(hdr):
             raise ReaderError(f"no layout for the pulse sequence {self.psdname}")
 
-    def _encoding(self) -> str:
+    @classmethod
+    def recognises(cls, hdr: Any) -> bool:
+        """Whether the sequence has a layout here: PROBE-P and its kin, the edited sequences,
+        oSLASER and PROBE-sL with any echo count, the other sLASER sequences with one echo, and
+        every HBCD variant."""
+        psd, _ = cls.sequence(hdr)
+        if psd in cls.STANDARD + cls.EDITED or psd in ("oslaser", "probe-sl"):
+            return True
+        return psd in cls.SLASER and hdr.rhi_numecho == 1 or psd.startswith("hbcd")
+
+    @classmethod
+    def sequence(cls, hdr: Any) -> tuple[str, bool]:
+        """(sequence, HBCD PRESS): the psd name in lower case, a path ending in gaba as gaba, HBCD
+        with a PRESS protocol as mrs-press."""
+        encoding = cls.header_encoding(hdr)
+        psd = hdr.rhi_psdname.decode(encoding, errors="replace").lower()
+        protocol = hdr.rhs_se_desc.decode(encoding, errors="replace").lower()
+        hbcd_press = psd == "hbcd" and "press" in protocol
+        return "gaba" if psd.endswith("gaba") else "mrs-press" if hbcd_press else psd, hbcd_press
+
+    @classmethod
+    def header_encoding(cls, hdr: Any) -> str:
         """The first codec that decodes the psd name, protocol and patient name."""
-        for encoding, errors in self.ENCODINGS:
+        for encoding, errors in cls.ENCODINGS:
             try:
-                for value in (self.hdr.rhi_psdname, self.hdr.rhs_se_desc, self.hdr.rhe_patname):
+                for value in (hdr.rhi_psdname, hdr.rhs_se_desc, hdr.rhe_patname):
                     value.decode(encoding, errors)
             except UnicodeDecodeError:
                 continue

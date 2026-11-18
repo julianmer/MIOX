@@ -28,6 +28,8 @@ import pytest
 from spec2nii.GE.ge_hdr_fields import get_pfile_hdr_fields
 
 import miox
+from miox.readers import ge_rdb_fields
+from miox.readers.ge_pfile_mrs import GePfileMrs
 from miox.readers.ge_rdb import GeRdbHeader
 
 VERSION = 26.002
@@ -88,7 +90,7 @@ def _header(slice_table: bool = True, psd: bytes = b"2dfast") -> bytes:
     h.rhi_psdname, h.rhi_cname = psd, b"8HRBRAIN"
     h.rhi_ctr_R, h.rhi_ctr_A, h.rhi_ctr_S = 3.418, -23.888, 13.393
     raw = bytearray(bytes(h)).ljust(HEADER_SIZE, b"\0")
-    offsets = {name: (offset, fmt) for name, offset, fmt in GeRdbHeader.EXTRAS_26}
+    offsets = {name: (offset, fmt) for name, offset, fmt in ge_rdb_fields.layout(VERSION)}
     for name, value in EXTRAS.items():
         offset, fmt = offsets[name]
         struct.pack_into("<" + fmt, raw, offset, value)
@@ -223,13 +225,13 @@ def test_pfile_without_slice_table(tmp_path):
     assert any("no slice geometry" in note for note in image.provenance.notes)
 
 
-def test_spectroscopy_sequences_stay_with_spec2nii(tmp_path):
+def test_spectroscopy_sequences_are_recognised(tmp_path):
     path = tmp_path / "P00002.7"
     _pfile(path, psd=b"probe-p")
-    assert GeRdbHeader.from_file(path).spectroscopy_mapper()
+    assert GePfileMrs.recognises(GeRdbHeader.from_file(path).hdr)
     path = tmp_path / "P00003.7"
     _pfile(path)
-    assert not GeRdbHeader.from_file(path).spectroscopy_mapper()
+    assert not GePfileMrs.recognises(GeRdbHeader.from_file(path).hdr)
 
 
 def test_scanarchive_frames_follow_their_control_packets(tmp_path):

@@ -21,7 +21,9 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import ctypes
 import io
+import struct
 import warnings
 from pathlib import Path
 
@@ -33,8 +35,10 @@ from mapvbvd import mapVBVD
 # own
 import miox
 from miox import Format, Sniffer
+from miox.readers import ge_rdb_fields
 from miox.readers.base import ReaderError
 from miox.readers.bruker import BrukerReader
+from miox.readers.ge_pfile_mrs import GePfileMrs
 from miox.readers.ge_rdb import GeRdbHeader
 from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
@@ -46,6 +50,7 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from spec2nii.bruker import read_bruker
     from spec2nii.GE import ge_pfile
+    from spec2nii.GE.ge_hdr_fields import get_pfile_hdr_fields
     from spec2nii.GE.ge_read_pfile import Pfile
     from spec2nii.jmrui import jmrui_format
     from spec2nii.Philips import philips, philips_data_list, philips_dcm
@@ -386,9 +391,70 @@ def test_private_philips_dicom_equals_spec2nii(private_roots, tmp_path):
 # Against spec2nii's own Pfile and processing (svs or mrsi), every spectroscopy P-file. HBCD PRESS #
 # is split by the header's water (user19) and metabolite (user4) counts in MIOX, at 16 / nex in    #
 # spec2nii: the frames of both splits, references first, are checked equal. Files spec2nii cannot  #
-# read (revisions before 12, protocol names it does not map) are passed over.                      #
+# read (revisions before 12, protocol names it does not map) are passed over. The header layouts   #
+# (ge_rdb_fields) are checked against spec2nii's ctypes structures for every revision it knows,    #
+# and the header values of every P-file, spectroscopy or not, against its reading.                 #
 #                                                                                                  #
 #**************************************************************************************************#
+SPEC2NII_REVISIONS = (7, 8, 9, 10, 11, 14.0, 14.1, 14.2, 14.3, 15.000, 15.001, 16.000, 20.001,
+                      20.002, 20.003, 20.004, 20.005, 20.006, 20.007, 24.000, 25.001, 25.002,
+                      25.003, 25.004, 26.000, 26.001, 26.002, 27.000, 27.001, 28.000, 28.002,
+                      28.003, 29.1, 30.0, 30.1, 31.0)  # Pfile._version's known revisions
+
+
+def test_ge_rdb_layouts_equal_spec2nii():
+    for version in SPEC2NII_REVISIONS:
+        if version == 10:  # spec2nii gives it the 21/22 layout (a fall-through), MIOX none
+            assert ge_rdb_fields.layout(version) is None
+            continue
+        fields = get_pfile_hdr_fields(version)
+        structure = type("Hdr", (ctypes.LittleEndianStructure,), {"_pack_": 1, "_fields_": fields})
+        expected = {name: (getattr(structure, name).offset, ctypes.sizeof(kind), kind)
+                    for name, kind in fields if not name.startswith("pad")}
+        got = {name: (offset, struct.calcsize("<" + fmt), fmt)
+               for name, offset, fmt in ge_rdb_fields.layout(version)}
+        for name, (offset, size, kind) in expected.items():
+            assert got[name][:2] == (offset, size), (version, name)
+            if hasattr(kind, "_length_"):
+                assert got[name][2] == f"{kind._length_}s", (version, name)
+            else:  # the same signedness: a negative value reads back the same
+                assert kind(-1).value < 0 if got[name][2].islower() else kind(-1).value > 0
+
+
+def _all_pfiles(roots: list[Path]) -> list[Path]:
+    return [path for root in roots for path in sorted(root.rglob("*.7"))
+            if path.is_file() and not path.name.startswith("._")]
+
+
+def _compare_ge_header(path: Path) -> None:
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            pfile = Pfile.__new__(Pfile)
+            pfile.file_name, pfile.endian = str(path), "little"
+            pfile.read_header()
+    except Exception as e:  # noqa: BLE001  any failure of spec2nii's own reading
+        pytest.skip(f"spec2nii cannot read the header: {type(e).__name__}")
+    header = GeRdbHeader.from_file(path)
+    assert header.version == pytest.approx(pfile.version, abs=5e-4)
+    assert header.endian == pfile.endian
+    for name, _ in pfile.hdr._fields_:
+        if not name.startswith("pad"):
+            assert getattr(header.hdr, name) == getattr(pfile.hdr, name), name
+
+
+def test_ge_rdb_header_equals_spec2nii(public_data):
+    files = _all_pfiles([public_data])
+    if not files:
+        pytest.skip("no GE P-files fetched")
+    assert _compare_all(files, _compare_ge_header) > 0
+
+
+@pytest.mark.data
+def test_private_ge_rdb_header_equals_spec2nii(private_roots):
+    assert _compare_all(_all_pfiles(private_roots), _compare_ge_header) > 0
+
+
 GE_KEYS = KEYS + ("ExcitationFlipAngle", "InversionTime", "ManufacturersModelName",
                   "DeviceSerialNumber", "InstitutionName", "RxCoil", "SequenceName",
                   "PatientSex")
@@ -400,7 +466,7 @@ def _ge_pfiles(roots: list[Path]) -> list[Path]:
         for path in sorted(root.rglob("*.7")):
             if path.is_file() and not path.name.startswith("._"):
                 with contextlib.suppress(Exception):
-                    if GeRdbHeader.from_file(path).spectroscopy_mapper():
+                    if GePfileMrs.recognises(GeRdbHeader.from_file(path).hdr):
                         files.append(path)
     return files
 

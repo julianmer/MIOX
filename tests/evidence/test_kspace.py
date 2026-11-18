@@ -34,6 +34,7 @@ from spec2nii.GE.ge_read_pfile import Pfile
 
 # own
 from miox import MRImage, RawData, load
+from miox.readers.ge_pfile_mrs import GePfileMrs
 from miox.readers.ge_pfile_raw import GePfileRaw
 from miox.readers.ge_rdb import GeRdbHeader
 from tests.conftest import PUBLIC_DATA
@@ -321,7 +322,7 @@ def test_ge_mrs_pfile_frames_through_the_imaging_layout():
     """The frames of a spectroscopy P-file read with the imaging layout are spec2nii's FIDs."""
     _need(GE_MRS)
     header = GeRdbHeader.from_file(GE_MRS)
-    assert header.spectroscopy_mapper()
+    assert GePfileMrs.recognises(header.hdr)
     provenance = load(GE_MRS)[0].provenance
     image, baseline = GePfileRaw(GE_MRS, header, provenance).datasets()
     theirs = Pfile(str(GE_MRS)).map.raw_data[0, 0, 0]  # frames, coils, points
