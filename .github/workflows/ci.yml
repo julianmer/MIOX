@@ -21,6 +21,20 @@ jobs:
       - run: uv run ruff check .
       - run: uv run pytest -m "not data"
 
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - run: uv venv bare
+      - run: uv pip install --python bare .
+      - run: >
+          bare/bin/python -c "import importlib, pkgutil, miox.readers as r;
+          [importlib.import_module('miox.readers.' + m.name) for m in pkgutil.iter_modules(r.__path__)];
+          import miox.quicklook_pages, miox.viewer, miox.preview"
+
   data:
     runs-on: ubuntu-latest
     steps:

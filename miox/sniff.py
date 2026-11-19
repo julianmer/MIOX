@@ -1659,7 +1659,7 @@ class Sniffer:
             return None
         fmt, paths = max(members.items(), key=lambda item: len(item[1]))
         named = sum(self.is_metabolite(p.name.split(".")[0]) for p in paths)
-        if len(paths) < 2 or named < len(paths) / 2:
+        if len(paths) < 2 or named <= len(paths) / 2:
             return None
         evidence = (f"{len(paths)} {fmt} files, {named} named after metabolites",)
         detail = {"member_format": str(fmt)}
@@ -1678,9 +1678,7 @@ class Sniffer:
         """``name`` starts with a metabolite or macromolecule abbreviation (NAA, Cr391, MM09)."""
         name = name.lower()
         for known in cls.METABOLITES:
-            if name == known or (name.startswith(known) and len(known) >= 3):
-                return True
-            if name.startswith(known) and not name[len(known)].isalpha():
+            if name == known or (name.startswith(known) and not name[len(known)].isalpha()):
                 return True
         return False
 

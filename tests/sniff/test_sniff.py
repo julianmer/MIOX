@@ -308,9 +308,12 @@ def test_basis_folder(tmp_path):
     assert s.detail["member_format"] == Format.LCMODEL_RAW and len(s.companions) == 3
 
 
-def test_dataset_folder_is_not_a_basis_folder(tmp_path):
+@pytest.mark.parametrize("names", [("subject1", "subject2", "subject3"),
+                                   ("series1", "series2"),  # not serine
+                                   ("water_ref", "svs_press")])  # half is not most
+def test_dataset_folder_is_not_a_basis_folder(tmp_path, names):
     raw = " $SEQPAR\n echot= 30.\n $END\n $NMID\n id='x'\n $END\n 1.0 0.0\n"
-    for name in ("subject1", "subject2", "subject3"):
+    for name in names:
         (tmp_path / f"{name}.RAW").write_text(raw)
     assert sniff(tmp_path).format == Format.UNKNOWN
 
