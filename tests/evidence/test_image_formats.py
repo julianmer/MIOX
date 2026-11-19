@@ -150,6 +150,15 @@ def test_mrtrix_image_matches_its_png_export(name, count):
 
 
 @pytest.mark.data
+def test_mrtrix_bit_mask_equals_its_uint8_copy():
+    """mask.mif packs its voxels as bits, the first voxel in the highest bit of a byte;
+    pngmask.mif.gz holds the same mask as UInt8."""
+    mask, copy = image(f"{MRTRIX}mask.mif"), image(f"{MRTRIX}mrconvert/pngmask.mif.gz")
+    assert mask.data.sum() == 151
+    assert np.array_equal(mask.data.astype(bool), copy.data.astype(bool))
+
+
+@pytest.mark.data
 def test_mrtrix_mean_over_volumes_matches_mrmath():
     dwi, mean = image(f"{MRTRIX}dwi.mif"), image(f"{MRTRIX}mrmath/out1.mif")
     assert dwi.shape == (6, 8, 9, 68) and dwi.dims[3] == "volume"

@@ -332,7 +332,9 @@ class Loader:
         return datasets
 
     def _entries(self, path: Path, folder: Path, failed: list[str]) -> list[Dataset]:
-        """The datasets of ``path`` if its format is known, else of the entries of a folder."""
+        """The datasets of ``path`` if its format is known, else of the entries of a folder; a
+        file already read with another entry of the folder (the second of a pair) is not read
+        again."""
         sniff = self.sniffer.sniff(path)
         if sniff.format != Format.UNKNOWN:
             if sniff.format not in self.readers and sniff.format != Format.ZIP_ARCHIVE:
@@ -344,10 +346,12 @@ class Loader:
                 return []
         if not path.is_dir():
             return []
-        datasets = []
+        datasets, read = [], set()
         for child in sorted(path.iterdir()):
-            if not child.name.startswith((".", "__MACOSX")):
-                datasets += self._entries(child, folder, failed)
+            if not child.name.startswith((".", "__MACOSX")) and child not in read:
+                found = self._entries(child, folder, failed)
+                read.update(Path(p) for d in found for p in d.provenance.paths)
+                datasets += found
         return datasets
 
     def _dicom_folder(self, sniff: Sniff) -> list[MRSData | MRImage]:

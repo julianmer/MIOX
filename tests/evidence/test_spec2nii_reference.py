@@ -717,8 +717,11 @@ def test_xa_reference_scans_are_unsuppressed(public_data):
 # Against spec2nii's Siemens (tag DIM_DYN) and UIH multi_file_dicom, one file or one series of     #
 # files. Differences named: OriginalFile holds the file names (spec2nii's Siemens converter: the   #
 # paths as given); no tag on a 5th dimension the data lack (spec2nii tags one on single spectra);  #
-# the CSA inversion time in s (spec2nii: ms). Files spec2nii cannot convert (syngo VA, an          #
-# orientation of fewer than six values) are passed over.                                           #
+# the CSA inversion time in s (spec2nii: ms); the references of svs_slaser_dkd2 (scan mode 2) by   #
+# instance numbers counted from 1 (spec2nii counts them from 0 and moves one transient: only the   #
+# transients as a whole are compared, test_agreement checks the split against the twix files).     #
+# Files spec2nii cannot convert (syngo VA, an orientation of fewer than six values) are passed     #
+# over.                                                                                            #
 #                                                                                                  #
 #**************************************************************************************************#
 SIEMENS_DICOM_KEYS = tuple(k for k in KEYS if k != "OriginalFile") + (
@@ -766,6 +769,12 @@ def _compare_vendor_dicom(paths: list[Path], tmp_path: Path) -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         got = miox.load(target)
+    if any(name.endswith("_vapor_ovs_rfoff") for name in [d.name for d in got] + list(names)):
+        mine = {t.tobytes() for d in got for t in d.data.reshape(d.data.shape[3], -1).T}
+        theirs = {t.tobytes() for image in expected
+                  for t in np.asarray(image[:]).conj().reshape(image.shape[3], -1).T}
+        assert mine == theirs
+        return
     assert [d.name for d in got] == list(names)
     for d, image in zip(got, expected, strict=True):
         np.testing.assert_array_equal(d.data, np.asarray(image[:]).conj())  # [:] conjugates

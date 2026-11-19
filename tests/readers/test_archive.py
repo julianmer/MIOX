@@ -28,6 +28,7 @@ import pytest
 
 # own
 import miox
+from tests.conftest import PUBLIC_DATA
 
 FID = """##TITLE= test
 ##JCAMP-DX= 5.01
@@ -102,3 +103,18 @@ def test_office_documents_are_not_archives(tmp_path):
     path = archive(tmp_path / "table.xlsx", {"[Content_Types].xml": b"<Types/>",
                                              "xl/workbook.xml": b"<workbook/>"})
     assert miox.sniff(path).format != miox.Format.ZIP_ARCHIVE
+
+
+@pytest.mark.data
+def test_a_pair_of_files_inside_a_zip_is_one_dataset(tmp_path):
+    spars = sorted((PUBLIC_DATA / "spec2nii_test_data/philips").rglob("*_raw_act.SPAR"))
+    if not spars:
+        pytest.skip("file not fetched")
+    spar = spars[0]
+    path = tmp_path / "pair.zip"
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for member in (spar, spar.with_suffix(".SDAT")):
+            zf.write(member, f"scan/{member.name}")
+    [inside], [beside] = miox.load(path), miox.load(spar)
+    assert np.array_equal(inside.data, beside.data)
+

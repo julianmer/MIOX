@@ -346,7 +346,7 @@ class SiemensDicomMrs:
             return 0, ""
         if re.search(r"svs_slaser(voi)?_dkd2", name) and mode == 2.0:
             total = transients + refs * 2
-            return (1, "_vapor_ovs_rfoff") if instance < refs or instance >= total - refs \
+            return (1, "_vapor_ovs_rfoff") if instance <= refs or instance > total - refs \
                 else (0, "")
         if re.search(r"dkd_svs_mslaser_msspnav$", name) and mode == 8.0:
             total = transients * 2 + refs * 4  # MEGA on
@@ -357,7 +357,7 @@ class SiemensDicomMrs:
             return (1, "_ws_ovs_off") if instance > total - refs else (0, "")
         if re.search(r"dkd_svs_slaser_moconav$", name) and mode == 8.0:
             total = transients + refs * 2
-            return (1, "_wref") if instance < refs or instance >= total - refs else (0, "")
+            return (1, "_wref") if instance <= refs or instance > total - refs else (0, "")
         return 0, ""
 
     # --- keys ------------------------------------------------------------------------------------

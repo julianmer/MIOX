@@ -29,6 +29,7 @@ from tests.conftest import PUBLIC_DATA
 from tests.records.records import ReadRecords
 
 PHILIPS = PUBLIC_DATA / "spec2nii_test_data/philips/spar_dcm_orientation_tests"
+SLASER = PUBLIC_DATA / "spec2nii_test_data/Siemens/special_cases_slaser_dkd"
 SIEMENS_KEYS = (  # values twix, DICOM and RDA of one Siemens scan must share
     "SpectrometerFrequency",
     "ResonantNucleus",
@@ -106,6 +107,27 @@ def test_siemens_formats_agree(relpaths):
         assert _same(reference, d, keys) == [], f"{formats[0]} vs {fmt}"
         assert d.shape[:3] == reference.shape[:3]
         assert np.allclose(d.affine, reference.affine, atol=0.05), f"{formats[0]} vs {fmt}"
+
+
+@pytest.mark.data
+@pytest.mark.parametrize("scan", ("svs_slaserVOI_dkd2_von_wrsw4_1",
+                                  "svs_slaserVOI_dkd2_von_wrsw4_2"))
+def test_siemens_slaser_references_are_the_water_transients(scan):
+    """The references of a water-suppressed svs_slaser_dkd2 scan (VAPOR off) carry the water: the
+    DICOM series, split by instance number, and the twix, split by position, name the same
+    datasets with the same transient counts, and every reference lies far above the scan."""
+    series = sorted(SLASER.glob(f"DICOM/{scan}_*"))
+    twix = sorted(SLASER.glob(f"twix/*_{scan}.dat"))
+    if not series or not twix:
+        pytest.skip("sLASER special cases not fetched")
+    loaded = [load(series[0]), load(twix[0])]
+    assert [[d.name.split(scan)[-1] for d in datasets] for datasets in loaded] == \
+        [["", "_vapor_ovs_rfoff"]] * 2
+    assert [d.shape[-1] for d in loaded[0]] == [d.shape[-1] for d in loaded[1]]
+    for scan_data, reference in loaded:
+        peaks = [np.abs(d.data).max(axis=tuple(range(d.data.ndim - 1)))
+                 for d in (scan_data, reference)]
+        assert peaks[1].min() > 50 * peaks[0].max()
 
 
 @pytest.mark.data

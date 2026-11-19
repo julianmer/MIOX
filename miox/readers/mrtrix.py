@@ -139,7 +139,7 @@ class MrtrixReader(Reader):
             fh.seek(offset)
             blob = fh.read(count * dtype.itemsize if base != "bit" else (count + 7) // 8)
         if base == "bit":
-            raw = np.unpackbits(np.frombuffer(blob, dtype=np.uint8), bitorder="little")[:count]
+            raw = np.unpackbits(np.frombuffer(blob, dtype=np.uint8))[:count]
         else:
             raw = np.frombuffer(blob, dtype=dtype)
         if raw.size < count:
