@@ -128,7 +128,10 @@ def test_philips_raw_data_storage_equals_the_spar_of_the_scan(scan):
     rounded) and the flip angle against the SPAR the scanner exported for the same scan."""
     from spec2nii.Philips.philips import read_spar
 
-    raw = sorted(ORIENTATION.glob(f"{scan}02-*/RAW*.dcm"))[0]  # the folder holds two copies
+    copies = sorted(ORIENTATION.glob(f"{scan}02-*/RAW*.dcm"))  # the folder holds two copies
+    if not copies:
+        pytest.skip("file not fetched")
+    raw = copies[0]
     [protocol] = load(raw)
     spar = read_spar(ORIENTATION / f"dbiex_{scan}_2_raw_act.spar")
     assert protocol.meta["RepetitionTime"] * 1000 == pytest.approx(spar["repetition_time"], abs=1)

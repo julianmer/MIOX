@@ -100,7 +100,6 @@ class DataFetcher:
         "philips/P1/*",
         "philips/DICOM/SV_phantom_center/*",
         "philips/DICOM/structural/*",
-        "philips/hyper/*.list",
         "philips/hyper/*.SPAR",
         "philips/hyper/*.SDAT",
         "philips/hyper/*.dcm",
@@ -835,13 +834,21 @@ class DataFetcher:
         print(f"NEMA spectroscopy DICOM in {dest}")
 
     def spec2nii(self, dest: Path) -> None:
-        """Clone the LFS pointers once, then pull the objects, waiting out the rate limit."""
+        """Clone the LFS pointers once, then pull the objects, waiting out the rate limit. A
+        fresh clone of the subset checks out the subset's files only, so that no file is left
+        as a pointer; with --all the whole tree is checked out."""
         env = {**os.environ, "GIT_LFS_SKIP_SMUDGE": "1"}
         if not (dest / ".git").is_dir():
             print(f"cloning {self.SPEC2NII_URL} (pointers only)")
             subprocess.run(
                 ["git", "clone", "--depth", "1", self.SPEC2NII_URL, str(dest)], check=True, env=env
             )
+            if not self.everything:
+                subprocess.run(["git", "sparse-checkout", "set", "--no-cone"]
+                               + [f"/{pattern}" for pattern in self.SUBSET],
+                               cwd=dest, check=True, env=env)
+        if self.everything:
+            subprocess.run(["git", "sparse-checkout", "disable"], cwd=dest, check=True, env=env)
         cmd = ["git", "lfs", "pull"]
         if not self.everything:
             cmd += ["--include", ",".join(self.SUBSET)]

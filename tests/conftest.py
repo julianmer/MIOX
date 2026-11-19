@@ -28,6 +28,18 @@ PUBLIC_DATA = Path(__file__).parent / "data"
 RECORDS = Path(__file__).parent / "records"
 
 
+@pytest.hookimpl(wrapper=True)
+def pytest_runtest_call(item):
+    """A test that opens a public test file which is not there is skipped: only a subset of the
+    test data may have been fetched."""
+    try:
+        return (yield)
+    except FileNotFoundError as e:
+        if str(PUBLIC_DATA) not in str(e):
+            raise
+        pytest.skip(f"file not fetched: {Path(str(e.filename or e)).name}")
+
+
 @pytest.fixture(scope="session")
 def public_data() -> Path:
     if not PUBLIC_DATA.is_dir():

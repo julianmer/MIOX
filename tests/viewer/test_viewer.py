@@ -269,8 +269,13 @@ def test_cli_view_without_a_view(tmp_path, capsys, monkeypatch):
 
 def test_spectrum_processed_mode_shows_the_pipelines_peak():
     """A two-coil, two-transient line at 2.01 ppm: the processed mode combines and averages, and
-    its peak lies where the raw spectrum's does; the mode shows in the title."""
-    view = SpectrumView(_spectroscopy(coils=2))
+    its peak lies where the raw spectrum's does; the mode shows in the title. The line carries
+    noise as a measurement does: without any, the coil weights rest on rounding alone."""
+    d = _spectroscopy(coils=2)
+    noise = np.random.default_rng(1)
+    d.data = d.data + 1e-3 * (noise.standard_normal(d.data.shape)
+                              + 1j * noise.standard_normal(d.data.shape))
+    view = SpectrumView(d)
     assert view.page is not None and "raw" in [label.get_text() for label in view.modes.labels]
     raw = _peak(view)
     view.set_mode("processed")
