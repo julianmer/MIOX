@@ -25,7 +25,7 @@ import pytest
 
 # own
 from miox import load
-from miox.quicklook import page
+from miox.quicklook import Page, page
 from miox.quicklook_pages import Panel, RawPage, RelaxationPage, SequencePage
 from tests.conftest import PUBLIC_DATA
 
@@ -277,4 +277,15 @@ def test_relaxation_curves_run_with_time_to_the_right():
     expected = labels[low] + (peak - np.log10(low)) / (np.log10(high) - np.log10(low)) * \
         (labels[high] - labels[low])
     assert curve[curve[:, 1].argmin(), 0] == pytest.approx(expected, abs=2)
+
+
+@pytest.mark.data
+def test_the_suppressed_scan_is_shown_with_the_water_reference_of_the_file():
+    path = PUBLIC_DATA / "spec2nii_test_data/philips/hyper/raw_226.list"
+    if not path.exists():
+        pytest.skip("file not fetched")
+    view = Page(load(path), "hyper")  # noise, short TE, edited, water reference
+    assert view.main.name.endswith("_hyper_short_te")
+    assert view.water.name.endswith("_hyper_water_ref")
+    assert any("not shown: raw_226_NOI, raw_226_hyper_edited" in note for note in view.notes)
 

@@ -152,7 +152,8 @@ class Prepared:
 #                                                                                                  #
 #**************************************************************************************************#
 class Water:
-    NAME = re.compile(r"(^|[_\-. ])(ref|wref|mrsref|h2o|water)$", re.IGNORECASE)
+    NAME = re.compile(r"(^|[_\-. ])(ref|wref|mrsref|h2o|water|rf_?off)$", re.IGNORECASE)
+    NOISE = re.compile(r"(^|[_\-. ])(noi|noise)$", re.IGNORECASE)
     ADDED = ("_H2O", "_ref", "_water", "_wref")
     SWAPPED = (("_act", "_ref"), ("_svs", "_mrsref"))
     DOMINANCE = 10 ** 2.5
@@ -354,11 +355,13 @@ class Plot:
 #                                                                                                  #
 # The page: header, tabs (radio buttons and CSS, no script), panes. Spectra are FSL-MRS's (first   #
 # point halved, orthonormal FFT, zero filled twice) on its ppm axis; 1H shows 0-6 ppm, other       #
-# nuclei the whole range. Water scans take the pipeline's water path; other data use the water     #
-# reference in the file or, given the file's path, next to it; eddy currents are corrected only    #
-# with water. Edit conditions are processed one by one and stacked, two with their difference      #
-# (first minus second, as stored). A file without dwell time or frequency is shown as stored: its  #
-# spectrum on a point (or Hz) axis and its FID.                                                    #
+# nuclei the whole range. Of several datasets the first stated water suppressed is shown (else the #
+# first that is neither water nor noise by its name), with the first water dataset that fits it    #
+# point for point as its reference; the others are named in a note. Water scans take the           #
+# pipeline's water path; other data use the water reference in the file or, given the file's path, #
+# next to it; eddy currents are corrected only with water. Edit conditions are processed one by    #
+# one and stacked, two with their difference (first minus second, as stored). A file without dwell #
+# time or frequency is shown as stored: its spectrum on a point (or Hz) axis and its FID.          #
 #                                                                                                  #
 #**************************************************************************************************#
 class Page:
@@ -368,8 +371,13 @@ class Page:
         if not mrs:
             raise ValueError("no spectroscopy data")
         self.title, self.source, self.notes = title, source, list(notes)
-        self.main = next((d for d in mrs if not Water.named(d)), mrs[0])
-        self.water = next((d for d in mrs if d is not self.main), None)
+        scans = [d for d in mrs if not Water.named(d) and not Water.NOISE.search(d.name or "")]
+        self.main = next((d for d in scans if d.meta.get("WaterSuppressed")), (scans or mrs)[0])
+        self.water = next((d for d in mrs if d is not self.main and Water.named(d)
+                           and self.matches(d)), None)
+        others = [d.name for d in mrs if d is not self.main and d is not self.water]
+        if others:
+            self.notes.append(f"also in the file, not shown: {', '.join(others)}")
         self.prepared = Prepared(self.main)
         d = self.main
         nmr = d.provenance.format in NMR_FORMATS or "Solvent" in d.meta
@@ -387,6 +395,13 @@ class Page:
                                           else 0.0))
         self.results = self.process()
 
+    def matches(self, water: MRSData) -> bool:
+        """Whether a water reference fits the data point for point."""
+        d = self.main
+        return (water.n_points == d.n_points and water.dwelltime is not None
+                and d.dwelltime is not None and bool(np.isclose(water.dwelltime, d.dwelltime))
+                and water.data.shape[:3] == d.data.shape[:3])
+
     def partner(self, source: Path) -> MRSData | None:
         """The water reference next to the file, when it matches the data point for point."""
         path = Water.partner(source)
@@ -398,10 +413,7 @@ class Page:
             water = next((w for w in Loader().load(path) if isinstance(w, MRSData)), None)
         except ReaderError:
             water = None
-        d = self.main
-        if (water is None or water.n_points != d.n_points or water.dwelltime is None
-                or d.dwelltime is None or not np.isclose(water.dwelltime, d.dwelltime)
-                or water.data.shape[:3] != d.data.shape[:3]):
+        if water is None or not self.matches(water):
             self.water_notes.append(f"{path.name} next to the file does not match the data: "
                                     "not used as water reference")
             return None
