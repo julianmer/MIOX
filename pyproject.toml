@@ -22,6 +22,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Medical Science Apps.",
 ]
 dependencies = [
+    "brukerapi>=0.2",
     "f90nml>=1.5",
     "h5py>=3.10",
     "mat-io>=1.0",
@@ -32,7 +33,9 @@ dependencies = [
     "nmrglue>=0.12",
     "numpy>=1.26",
     "pydicom>=3.0",
+    "pymapvbvd>=0.6",
     "python-gdcm>=3.2.6",
+    "scipy>=1.15",
     "zarr>=2.18",
 ]
 
@@ -40,7 +43,6 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
     "ruff>=0.6",
-    "scipy>=1.15",
     "spec2nii>=0.8.15",
 ]
 
