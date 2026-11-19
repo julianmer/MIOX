@@ -1196,7 +1196,7 @@ class RelaxationPage:
     def decay_svg(self, log: bool = False) -> str:
         t, y = self.t, self.y
         box = (self.LEFT, 14, WIDTH - self.LEFT - 12, self.HEIGHT - 58)
-        xlim = (float(t[-1]), 0.0)  # Plot.path draws xlim[0] at the left edge
+        xlim = (0.0, float(t[-1]))  # Plot.path draws xlim[0] at the left edge
         fit = self.fitted(t)
         if log:
             keep = y > 0
@@ -1236,7 +1236,7 @@ class RelaxationPage:
         box = (self.LEFT, 14, WIDTH - self.LEFT - 12, 240 - 58)
         xlim = (float(x.min()), float(x.max()))
         ylim = (0.0, float(a.max()) * 1.08 or 1.0)
-        path = Plot.path(x[::-1], a[::-1], box, (xlim[1], xlim[0]), ylim)
+        path = Plot.path(x, a, box, xlim, ylim)
         ticks = []
         for e in range(int(np.floor(xlim[0])), int(np.ceil(xlim[1])) + 1):
             for m in (1, 2, 5):

@@ -26,7 +26,7 @@ import pytest
 # own
 from miox import load
 from miox.quicklook import page
-from miox.quicklook_pages import Panel, RawPage, SequencePage
+from miox.quicklook_pages import Panel, RawPage, RelaxationPage, SequencePage
 from tests.conftest import PUBLIC_DATA
 
 SURF = "nitest_freesurfer/fsaverage/surf/"
@@ -247,3 +247,34 @@ def test_noise_readouts_get_time_and_spectrum_panes():
     assert "root mean square over all readouts per coil" in html
     headers["flags"][0] = 0
     assert "k-space" in RawPage(raw, "mixed").html()
+
+
+def _polyline(svg: str, group: str = "") -> np.ndarray:
+    """The (x, y) pixels of the first polyline (of a group of that class)."""
+    points = re.search(group + r'.*?points="([^"]+)"', svg, re.S).group(1)
+    return np.array([p.split(",") for p in points.split()], dtype=float)
+
+
+@pytest.mark.data
+def test_relaxation_curves_run_with_time_to_the_right():
+    files = sorted((PUBLIC_DATA / "minispec/New folder").glob("chitosan 5mgL_10_*.dps"))
+    if not files:
+        pytest.skip("file not fetched")
+    [d] = load(files[0])
+    view = RelaxationPage(d, "chitosan")
+    decay = _polyline(view.decay_svg(), 'class="data"')
+    assert decay[0, 0] < decay[-1, 0] and decay[0, 1] < decay[-1, 1]  # starts top left
+    svg, _ = view.distribution_svg()
+    times, amplitude = d.distribution
+    keep = times >= d.times[0]
+    curve = _polyline(svg)
+    peak = np.log10(times[keep][amplitude[keep].argmax()] * 1e3)  # log10 of ms
+    labels = {float(v): float(x) for x, v in re.findall(
+        r'<text x="([\d.]+)" y="[\d.]+" text-anchor="middle">([\d.e+-]+)', svg)}
+    decades = sorted(labels)  # the labelled decades, in ms
+    assert len(decades) >= 2
+    low, high = decades[0], decades[-1]
+    expected = labels[low] + (peak - np.log10(low)) / (np.log10(high) - np.log10(low)) * \
+        (labels[high] - labels[low])
+    assert curve[curve[:, 1].argmin(), 0] == pytest.approx(expected, abs=2)
+
