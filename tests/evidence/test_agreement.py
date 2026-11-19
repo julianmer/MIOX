@@ -131,6 +131,19 @@ def test_siemens_slaser_references_are_the_water_transients(scan):
 
 
 @pytest.mark.data
+@pytest.mark.parametrize("scan", ("svs_slaser_dkd_von_wrs1", "svs_slaserVOI_dkd2_von_wrsw4_1"))
+def test_siemens_slaser_echo_time_is_the_same_from_dicom_and_twix(scan):
+    """alTE holds three entries for these scans (8, 11 and 9 ms); both formats give the first,
+    the echo time the scanner states in its image header."""
+    series = sorted(SLASER.glob(f"DICOM/{scan}_*"))
+    twix = sorted(SLASER.glob(f"twix/*_{scan}.dat"))
+    if not series or not twix:
+        pytest.skip("sLASER special cases not fetched")
+    times = [load(path)[0].meta["EchoTime"] for path in (series[0], twix[0])]
+    assert times == pytest.approx([0.008, 0.008])
+
+
+@pytest.mark.data
 def test_siemens_va_dicom_and_rda_of_one_protocol_agree():
     """Two acquisitions of one protocol on one VA25A scanner: geometry, timing and sign."""
     dicom = PUBLIC_DATA / "tarquin/src/unit_tests/data/siemens_ima_WS.ima"

@@ -44,7 +44,9 @@ from miox.sniff import Format, Sniff
 # count equals the declared one is stored as it is, up to 1.3 every shape is compressed.           #
 # Extensions are a linked list of (id, type, ref, next) entries and one specification per          #
 # extension name with the rows kept as given. The definitions give the keys: Name as the sequence  #
-# name, TE, TR and TotalDuration in seconds, FOV in metres.                                        #
+# name, TE, TR and TotalDuration in seconds, FOV in metres from 1.4 on; up to 1.3 the definitions  #
+# are free text and the unit is the writer's (the "# Created by" line: the MATLAB toolbox and      #
+# PyPulseq write metres, JEMRIS millimetres), so the FOV of another writer is not set as a key.    #
 #                                                                                                  #
 #**************************************************************************************************#
 class PulseqReader(Reader):
@@ -80,6 +82,7 @@ class PulseqReader(Reader):
         "DELAYS": {2: ("id", "delay")},
         "EXTENSIONS": {4: ("id", "type", "ref", "next")},
     }
+    FOV_UNITS = {"matlab": "metres", "pypulseq": "metres", "jemris": "millimetres"}  # up to 1.3
     KEYS = {  # standard key: definition, divisor to the key's unit
         "SequenceName": ("Name", None), "EchoTime": ("TE", None), "RepetitionTime": ("TR", None),
         "InversionTime": ("TI", None), "ScanDuration": ("TotalDuration", None),
@@ -101,7 +104,12 @@ class PulseqReader(Reader):
         extensions = self._extensions(sections.get("EXTENSIONS", []), notes)
         shapes = self._shapes(sections.get("SHAPES", []), self._at_least(version, (1, 4)), notes)
         signature = self._definitions(sections.get("SIGNATURE", []))
-        meta = self._meta(definitions, version, signature)
+        unit = "metres" if self._at_least(version, (1, 4)) else next(
+            (u for name, u in self.FOV_UNITS.items() if name in self._writer(sniff.path)), None)
+        meta = self._meta(definitions, version, signature, unit)
+        if unit is None and "FOV" in definitions:
+            notes.append(f"FOV {definitions['FOV']} of a revision {version} file by an unnamed or "
+                         "unknown writer: unit not stated, not set as EncodedFieldOfView")
         provenance = self.provenance(sniff, tuple(notes))
         return [
             PulseSequence(
@@ -128,6 +136,17 @@ class PulseqReader(Reader):
                 continue
             sections[current].append(line)
         return sections
+
+    @staticmethod
+    def _writer(path: Path) -> str:
+        """The program named by the "# Created by" comment at the head of the file, else ""."""
+        with path.open(errors="replace") as fh:
+            for line in fh:
+                if not line.startswith("#"):
+                    break
+                if "created by" in line.lower():
+                    return line.lower().split("created by", 1)[1].strip()
+        return ""
 
     @staticmethod
     def _scalar(text: str) -> Any:
@@ -254,7 +273,8 @@ class PulseqReader(Reader):
 
     # --- keys ------------------------------------------------------------------------------------
 
-    def _meta(self, definitions: dict, version: str, signature: dict) -> Meta:
+    def _meta(self, definitions: dict, version: str, signature: dict,
+              fov_unit: str | None = "metres") -> Meta:
         meta = Meta({"definitions": definitions, "version": version, "signature": signature})
         for key, (name, divisor) in self.KEYS.items():
             value = definitions.get(name)
@@ -265,8 +285,8 @@ class PulseqReader(Reader):
             meta.set(key, value, f"{self.SOURCE}: {name}", f"definitions/{name}")
         fov = definitions.get("FOV")
         numeric = isinstance(fov, list) and all(isinstance(v, (int, float)) for v in fov)
-        if numeric and len(fov) == 3:
-            fov_mm = [v * 1000 for v in fov]
+        if numeric and len(fov) == 3 and fov_unit:
+            fov_mm = [v * 1000 for v in fov] if fov_unit == "metres" else fov
             field = "definitions/FOV"
-            meta.set("EncodedFieldOfView", fov_mm, f"{self.SOURCE}: FOV in metres", field)
+            meta.set("EncodedFieldOfView", fov_mm, f"{self.SOURCE}: FOV in {fov_unit}", field)
         return meta

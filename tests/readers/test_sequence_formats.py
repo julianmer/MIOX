@@ -180,6 +180,16 @@ def test_pulseq_15(tmp_path):
     assert not seq.provenance.notes
 
 
+@pytest.mark.parametrize("head,expected", [("", None), ("# Created by JEMRIS 2.9.0\n", [32, 32, 1]),
+                                            ("# Created by PyPulseq\n", [32e3, 32e3, 1e3])])
+def test_pulseq_13_field_of_view_takes_the_unit_of_its_writer(tmp_path, head, expected):
+    path = tmp_path / "old.seq"
+    path.write_text(head + SEQ_13.replace("Name old", "Name old\nFOV 32 32 1"))
+    [seq] = miox.load(path)
+    assert seq.meta.get("EncodedFieldOfView") == expected
+    assert any("unit not stated" in n for n in seq.provenance.notes) == (expected is None)
+
+
 def test_pulseq_13_delays(tmp_path):
     path = tmp_path / "old.seq"
     path.write_text(SEQ_13)

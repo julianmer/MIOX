@@ -56,7 +56,8 @@ from miox.sniff import open_dicom
 # reference transients at the start and end of the series (lAutoRefScanMode, lAutoRefScanNo),      #
 # which become their own datasets, and their metabolite-cycled (and MEGA-edited) transients are    #
 # laid out as DIM_METCYCLE (and DIM_EDIT). Keys from the CSA header and protocol (VB to VE: echo   #
-# time the sum of alTE) or the functional groups (XA), times in s; OriginalFile the file names.    #
+# time alTE[0], the one the CSA header states) or the functional groups (XA), times in s;          #
+# OriginalFile the file names.                                                                     #
 #                                                                                                  #
 #**************************************************************************************************#
 class SiemensDicomMrs:
@@ -277,7 +278,7 @@ class SiemensDicomMrs:
                                                               "Thickness")]
         orientation = np.asarray(csa["ImageOrientationPatient"], dtype=float)
         affine = SiemensRdaReader.grid_affine(orientation, position, sizes, 1, False)
-        echo = sum(v for k, v in protocol.items() if len(k) == 2 and k[0] == "alTE")
+        echo = protocol[("alTE", "0")]
         values = {
             "SpectrometerFrequency": ([float(csa["ImagingFrequency"][0])],
                                       "csa_image/ImagingFrequency"),
@@ -363,12 +364,7 @@ class SiemensDicomMrs:
     # --- keys ------------------------------------------------------------------------------------
 
     def _values_vx(self, ds: pydicom.Dataset, csa: dict) -> dict:
-        protocol = self.protocol(ds)
-        echo = 0
-        for index in range(128):
-            if ("alTE", str(index)) not in protocol:
-                break
-            echo += protocol[("alTE", str(index))]
+        echo = self.protocol(ds)[("alTE", "0")]
         values = {
             "SpectrometerFrequency": ([csa["ImagingFrequency"][0]], "csa_image/ImagingFrequency"),
             "ResonantNucleus": ([csa["ImagedNucleus"][0]], "csa_image/ImagedNucleus"),

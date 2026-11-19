@@ -44,6 +44,7 @@ from miox.readers.philips_data_list import PhilipsDataListReader
 from miox.readers.philips_dicom_mrs import PhilipsDicomMrs
 from miox.readers.philips_list_raw import PhilipsListRaw
 from miox.readers.philips_spar_sdat import PhilipsSparSdatReader
+from miox.readers.siemens_dicom_mrs import SiemensDicomMrs
 from miox.readers.siemens_twix import SiemensTwixReader, TwixCsi
 
 with warnings.catch_warnings():
@@ -717,11 +718,12 @@ def test_xa_reference_scans_are_unsuppressed(public_data):
 # Against spec2nii's Siemens (tag DIM_DYN) and UIH multi_file_dicom, one file or one series of     #
 # files. Differences named: OriginalFile holds the file names (spec2nii's Siemens converter: the   #
 # paths as given); no tag on a 5th dimension the data lack (spec2nii tags one on single spectra);  #
-# the CSA inversion time in s (spec2nii: ms); the references of svs_slaser_dkd2 (scan mode 2) by   #
-# instance numbers counted from 1 (spec2nii counts them from 0 and moves one transient: only the   #
-# transients as a whole are compared, test_agreement checks the split against the twix files).     #
-# Files spec2nii cannot convert (syngo VA, an orientation of fewer than six values) are passed     #
-# over.                                                                                            #
+# the CSA inversion time in s (spec2nii: ms); the echo time the CSA header states, alTE[0]         #
+# (spec2nii adds up every alTE entry, stale ones too); the references of svs_slaser_dkd2 (scan     #
+# mode 2) by instance numbers counted from 1 (spec2nii counts them from 0 and moves one transient: #
+# only the transients as a whole are compared, test_agreement checks the split against the twix    #
+# files). Files spec2nii cannot convert (syngo VA, an orientation of fewer than six values) are    #
+# passed over.                                                                                     #
 #                                                                                                  #
 #**************************************************************************************************#
 SIEMENS_DICOM_KEYS = tuple(k for k in KEYS if k != "OriginalFile") + (
@@ -791,6 +793,9 @@ def _compare_vendor_dicom(paths: list[Path], tmp_path: Path) -> None:
             reference = _stated(reference)
             if key == "PatientID" and reference is None:
                 continue  # MIOX adds it from the element (syngo VB to VE: spec2nii does not)
+            if key == "EchoTime" and not uih and value != pytest.approx(reference, abs=1e-12):
+                csa = SiemensDicomMrs.csa(pydicom.dcmread(paths[0]))  # spec2nii: sum of alTE
+                reference = float(csa["EchoTime"][0]) * 1e-3
             if isinstance(reference, float):
                 assert value == pytest.approx(reference, abs=1e-12), key
             elif key == "VOI" and reference is not None:

@@ -38,6 +38,7 @@ KOMA = PUBLIC_DATA / "komamri/KomaMRIFiles/test/test_files/pulseq/read_compariso
 KOMA_FILES = sorted(KOMA.glob("v*/*.seq"))
 GAMMA = 42577468.8  # Hz/T, as the comparison files convert Hz to T
 TOPPE = PUBLIC_DATA / "toppe"
+JEMRIS = PUBLIC_DATA / "komamri/KomaMRIFiles/test/test_files/pulseq/basic_tests/v1.2"
 
 
 @pytest.mark.parametrize("folder", OSI2ONE[:6], ids=lambda p: p.name[:40])
@@ -127,6 +128,21 @@ def test_pulseq_blocks_equal_matlab_pulseq(path):
                 assert np.abs(a).max() * GAMMA == pytest.approx(peak, rel=1e-6)
         if timed:
             start += block["duration"] * raster
+
+
+def test_jemris_field_of_view_is_in_millimetres():
+    """JEMRIS writes "FOV 32 32 1" into a revision 1.2 file: the readout gradient (Hz/m) times the
+    dwell time is the k-space step, whose inverse is 0.032 m."""
+    path = JEMRIS / "radial_JEMRIS.seq"
+    if not path.exists():
+        pytest.skip("file not fetched")
+    [seq] = load(path)
+    [adc] = seq.events["adc"].values()
+    readout = [t for t in seq.events["trap"].values()
+               if t["flat"] == adc["num"] * adc["dwell"] * 1e-3]  # flat top in µs, dwell in ns
+    assert readout
+    step = readout[0]["amp"] * adc["dwell"] * 1e-9  # 1/m
+    assert seq.meta["EncodedFieldOfView"][0] == pytest.approx(1e3 / step) == 32
 
 
 def test_toppe_rf_module():
