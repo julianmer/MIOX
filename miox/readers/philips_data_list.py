@@ -19,11 +19,13 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 
 # own
+from miox import __version__
 from miox.data import MRSData, RawData
 from miox.readers.base import Reader, ReaderError
 from miox.readers.dicom_mrs import DicomMrsReader
@@ -39,23 +41,25 @@ from miox.sniff import Format, Sniff, Sniffer
 #                                                                                                  #
 # Imaging scans (the readout spans the kx range of the .list) are read as raw k-space              #
 # (PhilipsListRaw). For spectroscopy, the auxiliary file is found in the folder: a SPAR ending in  #
-# _act first, then any SPAR, then a Philips spectroscopy DICOM; SPARs that disagree on frequency   #
-# or dwell time make the read fail rather than guess. raw_<n>.data belongs to                      #
-# <name>_<n>_<m>_raw_act.SPAR, as the scanner numbers its exports: of several SPARs of one kind in #
-# the folder the one of that scan is taken; where the names tell none apart, only what they all    #
-# state alike is kept (keys, voxel, vendor header), with a note. Without a SPAR there, the SPAR of #
-# the same scan in a folder beside it is used. Keys, dwell time and voxel come from the SPAR as    #
-# the SPAR/SDAT reader reads them, or from the DICOM's header as PhilipsDicomMrs reads it.         #
-# Every vector of the .list is a complex float32 readout at its offset in the .data. Vectors of    #
-# one type and mix (STD_0, STD_1, ..., NOI) form one dataset of (points, chan, aver, dyn, card,    #
-# echo, loca, extr1, extr2), each counter holding the values it takes in order; counters with one  #
-# value are dropped (more than three left is refused), the data conjugated as the SDAT. Tags: chan #
-# DIM_COIL, aver and dyn DIM_DYN, echo DIM_INDIRECT_0, the others DIM_USER_n. HYPER (protocol name #
-# with hyper): STD_0 splits as the SPAR/SDAT reader splits the act file, STD_1 holds the water     #
-# references, echo time alternating 80 / 35 ms per index. Edited scans (MEGA: extr1 the transient, #
-# extr2 its edit condition) become transient pairs (extr1 // 2, DIM_DYN) by condition (DIM_EDIT,   #
-# ON = extr2 1 first, as the scan's DICOM flags its frames). Spectroscopic imaging (k-space ranges #
-# in the .list) is refused.                                                                        #
+# _act first, then any SPAR, then a Philips spectroscopy DICOM; without one, or with SPARs that    #
+# disagree on frequency or dwell time, the data/list is read by itself: the data and their         #
+# dimensions as acquired, with the scan name and software release the head of the .list states,    #
+# and without frequency, dwell time, voxel and the other scan keys, which it does not state.       #
+# raw_<n>.data belongs to <name>_<n>_<m>_raw_act.SPAR, as the scanner numbers its exports: of      #
+# several SPARs of one kind in the folder the one of that scan is taken; where the names tell none #
+# apart, only what they all state alike is kept (keys, voxel, vendor header), with a note. Without #
+# a SPAR there, the SPAR of the same scan in a folder beside it is used. Keys, dwell time and      #
+# voxel come from the SPAR as the SPAR/SDAT reader reads them, or from the DICOM's header as       #
+# PhilipsDicomMrs reads it. Every vector of the .list is a complex float32 readout at its offset   #
+# in the .data. Vectors of one type and mix (STD_0, STD_1, ..., NOI) form one dataset of (points,  #
+# chan, aver, dyn, card, echo, loca, extr1, extr2), each counter holding the values it takes in    #
+# order; counters with one value are dropped (more than three left is refused), the data           #
+# conjugated as the SDAT. Tags: chan DIM_COIL, aver and dyn DIM_DYN, echo DIM_INDIRECT_0, the      #
+# others DIM_USER_n. HYPER (protocol name with hyper): STD_0 splits as the SPAR/SDAT reader splits #
+# the act file, STD_1 holds the water references, echo time alternating 80 / 35 ms per index.      #
+# Edited scans (MEGA: extr1 the transient, extr2 its edit condition) become transient pairs (extr1 #
+# // 2, DIM_DYN) by condition (DIM_EDIT, ON = extr2 1 first, as the scan's DICOM flags its         #
+# frames). Spectroscopic imaging (k-space ranges in the .list) is refused.                         #
 #                                                                                                  #
 #**************************************************************************************************#
 class PhilipsDataListReader(Reader):
@@ -67,6 +71,7 @@ class PhilipsDataListReader(Reader):
     COUNTERS = ("chan", "aver", "dyn", "card", "echo", "loca", "extr1", "extr2")
     TAGS = {"chan": "DIM_COIL", "aver": "DIM_DYN", "dyn": "DIM_DYN", "echo": "DIM_INDIRECT_0"}
     DICOM_SOURCE = "DICOM"
+    SOURCE = "data/list"
     WATER_REFERENCES = "HYPER water references, echo time alternating 80 / 35 ms"
     VOXEL = ("volume_selection_enable",) + tuple(
         f"{axis}_{field}" for axis in ("lr", "ap", "cc")
@@ -89,9 +94,13 @@ class PhilipsDataListReader(Reader):
                for r in info.get(k, {}).values()):
             raise ReaderError(f"{data.name}: spectroscopic imaging k-space (kx, ky, kz), which is "
                               "not reconstructed here: read the scan's SPAR/SDAT or DICOM")
-        aux, others = self._auxiliary(data.parent, data.stem)
         notes: list[str] = []
-        if aux.suffix.lower() == ".spar":
+        aux, others = self._auxiliary(data.parent, data.stem, notes)
+        if aux is None:
+            values, vendor = self._alone(parsed["list_header"]), {}
+            dwelltime, affine = None, self.spar.NO_VOXEL
+            source = self.SOURCE
+        elif aux.suffix.lower() == ".spar":
             stated = self.spar.read_spar(aux)
             header = self._alike(stated, others)
             values = self.spar._values(stated, aux, notes)
@@ -113,8 +122,9 @@ class PhilipsDataListReader(Reader):
             values, dwelltime, affine, vendor = self._dicom_values(aux, notes)
             source = self.DICOM_SOURCE
         vendor.update(parsed)
-        auxiliaries = [p.name for p in [aux] + others]
-        vendor["auxiliary_file"] = aux.name if not others else auxiliaries
+        auxiliaries = [p.name for p in [aux] + others if p is not None]
+        if auxiliaries:
+            vendor["auxiliary_file"] = aux.name if not others else auxiliaries
         values["OriginalFile"] = ([data.name, list_file.name] + auxiliaries, None)
         hyper = "hyper" in str(values.get("ProtocolName", ("",))[0]).lower()
         blob = np.fromfile(data, dtype="<c8")
@@ -229,13 +239,38 @@ class PhilipsDataListReader(Reader):
             raise ReaderError(f"incomplete .data/.list pair: {sniff.path.name}")
         return data, list_file
 
-    def _auxiliary(self, folder: Path, stem: str) -> tuple[Path, list[Path]]:
-        """The scan's SPAR or DICOM, and the other SPARs that may as well be the scan's."""
+    @staticmethod
+    def _alone(header: dict) -> dict:
+        """The keys of a data/list read by itself: what the head of the .list states."""
+        values = {
+            "Manufacturer": ("Philips", None),
+            "ConversionMethod": (f"miox {__version__}", None),
+            "ConversionTime": (datetime.now().isoformat(timespec="milliseconds"), None),
+            "kSpace": ([False, False, False], None),
+        }
+        for key, name in (("ProtocolName", "Scan name"),
+                          ("SoftwareVersions", "Gyroscan SW release")):
+            if header.get(name):
+                values[key] = (header[name], f"list_header/{name}")
+        return values
+
+    @staticmethod
+    def _entries(folder: Path) -> list[Path]:
+        """The entries of a folder, none where it cannot be listed."""
+        try:
+            return sorted(folder.iterdir())
+        except OSError:
+            return []
+
+    def _auxiliary(self, folder: Path, stem: str,
+                   notes: list[str]) -> tuple[Path | None, list[Path]]:
+        """The scan's SPAR or DICOM, and the other SPARs that may as well be the scan's; none
+        where the folder holds none, or SPARs that disagree on frequency or dwell time."""
         spars = sorted(p for p in folder.iterdir() if self._spar(p))
         scan = self.SCAN.match(stem)
         if not spars and scan:
             beside = [p for sub in sorted(folder.parent.iterdir()) if sub.is_dir() and sub != folder
-                      for p in sorted(sub.iterdir()) if self._spar(p)
+                      for p in self._entries(sub) if self._spar(p)
                       and (m := self.EXPORT.search(p.stem)) and int(m[1]) == int(scan[1])]
             if beside:
                 return beside[0], []
@@ -249,10 +284,16 @@ class PhilipsDataListReader(Reader):
         ]
         candidates = spars + dicoms
         if not candidates:
-            raise ReaderError(f"no SPAR or DICOM of the scan next to the data/list: {folder}")
+            notes.append("no SPAR or DICOM of the scan next to the data/list, which states "
+                         "neither frequency, dwell time, voxel nor scan parameters: the data as "
+                         "acquired (pass the missing keys in given)")
+            return None, []
         settings = {self._settings(p) for p in spars}
         if len(settings) > 1:
-            raise ReaderError(f"SPAR files in {folder} disagree on frequency or dwell time")
+            notes.append("the SPAR files next to the data/list disagree on frequency or dwell "
+                         "time, none is taken as the scan's: the data as acquired (pass the "
+                         "missing keys in given)")
+            return None, []
         if not spars:
             return candidates[0], []
         kind = [p for p in spars if p.stem.lower().endswith("_act")] or spars

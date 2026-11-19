@@ -183,3 +183,35 @@ def test_data_list_takes_the_spar_of_its_scan_number(public_data, tmp_path):
     assert short.meta["EchoTime"] == 0.035 and short.meta["ProtocolName"] == "HYPER"
     assert got[0].meta["OriginalFile"] == ["raw_5.data", "raw_5.list", ACT]
     assert not any("several SPAR" in note for note in got[0].provenance.notes)
+
+
+def test_data_list_is_read_by_itself(public_data, tmp_path):
+    """Without a SPAR or DICOM the data are laid out as with one (the .list names the scan), the
+    keys the .list does not state are missing and can be given; SPARs that disagree are taken
+    as none."""
+    with_spar = _hyper(public_data, tmp_path / "with")
+    for path in (tmp_path / "with").glob("*.SPAR"):
+        path.unlink()
+    alone = miox.load(tmp_path / "with" / "raw_226.data")
+    assert [d.name for d in alone] == [d.name for d in with_spar]  # HYPER by the scan name
+    assert alone[1].meta["ProtocolName"] == "RawExp - HYPER"
+    assert alone[1].meta["SoftwareVersions"] == "5.7-1" and alone[1].meta["EchoTime"] == 0.035
+    assert all(d.missing == ("SpectrometerFrequency", "ResonantNucleus", "DwellTime")
+               for d in alone)
+    assert all(any("no SPAR or DICOM" in n for n in d.provenance.notes) for d in alone)
+    assert alone[0].meta["OriginalFile"] == ["raw_226.data", "raw_226.list"]
+    for d, reference in zip(alone, with_spar, strict=True):
+        np.testing.assert_array_equal(d.data, reference.data)
+        assert d.dim_tags == reference.dim_tags
+    given = {"SpectrometerFrequency": 127.76, "ResonantNucleus": "1H", "DwellTime": 5e-4}
+    [noise, *_] = miox.load(tmp_path / "with" / "raw_226.data", given=given, complete=True)
+    assert noise.dwelltime == 5e-4 and noise.meta.source["DwellTime"] == "given"
+    text = (public_data / "spec2nii_test_data/philips/hyper" / ACT).read_text()
+    assert "\nsample_frequency : 2000\n" in text
+    (tmp_path / "with" / ACT).write_text(text)
+    (tmp_path / "with" / "other_3_2_raw_act.SPAR").write_text(
+        text.replace("\nsample_frequency : 2000\n", "\nsample_frequency : 4000\n"))
+    disagreeing = miox.load(tmp_path / "with" / "raw_226.data")
+    assert all(d.dwelltime is None for d in disagreeing)
+    assert any("disagree on frequency or dwell time" in n for n in disagreeing[0].provenance.notes)
+

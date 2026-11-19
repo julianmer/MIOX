@@ -104,3 +104,42 @@ def test_ants_generic_affine_is_its_composite_linear_stages():
     assert linear.meta.vendor["type"].startswith("AffineTransform")
     assert np.allclose(generic.matrix, translation.matrix @ linear.matrix, atol=1e-12)
     assert np.allclose(generic.ras_matrix, translation.ras_matrix @ linear.ras_matrix, atol=1e-12)
+
+
+# --- ITK rigid transforms -------------------------------------------------------------------------
+
+ITK_POINTS = [[-41.43508328563756, -26.31894934039003, 30.12744652063969],
+              [8.216203606436778, -40.58713577596008, -6.68730597635262]]
+ITK_RIGID = {  # transform, parameters, fixed parameters: the two points as SimpleITK maps them
+    "euler": ("Euler3DTransform", "0.31 -0.52 0.83 4 -5 6", "3 -7 11 0",
+              [[-13.095387675941556, -58.75743180019214, 5.888042196712995],
+               [36.717806212521886, -21.134500514327478, -5.3954941152555715]]),
+    "euler_zyx": ("Euler3DTransform", "0.31 -0.52 0.83 4 -5 6", "3 -7 11 1",
+                  [[-5.274018358430833, -61.32827923580535, 5.614615439549155],
+                   [38.761173668057026, -16.67185995684333, -3.9176201841621]]),
+    "versor": ("VersorRigid3DTransform", "0 0.5956277946225531 0.7941703928300708 0 1 0",
+               "3 -7 11",
+               [[52.587980721721294, 8.641088279591049, 4.657418305653875],
+                [1.8248386266744923, -12.954751187942556, -26.661594417365766]]),
+    "similarity": ("Similarity3DTransform",
+                   "-0.4480176247977079 -0.14933920826590263 0.22400881239885395 -2 0.5 7 1.37",
+                   "3 -7 11",
+                   [[-56.4161645677804, -32.81901853130817, 51.22302884371329],
+                    [29.56180652921796, -42.62774659016086, 43.19069227113235]]),
+}
+
+
+@pytest.mark.parametrize("name", ITK_RIGID)
+def test_itk_rigid_transforms_map_points_as_simpleitk_does(tmp_path, name):
+    """Files as SimpleITK 2.5.8 writes them (Euler angles in both orders, a versor turning by 2.9
+    rad, a similarity with its scale), and the points its TransformPoint gives."""
+    kind, parameters, fixed, mapped = ITK_RIGID[name]
+    path = tmp_path / f"{name}.tfm"
+    path.write_text("#Insight Transform File V1.0\n#Transform 0\n"
+                    f"Transform: {kind}_double_3_3\nParameters: {parameters}\n"
+                    f"FixedParameters: {fixed}\n")
+    [transform] = load(path)
+    points = np.asarray(ITK_POINTS)
+    got = points @ transform.matrix[:3, :3].T + transform.matrix[:3, 3]
+    assert np.allclose(got, mapped, atol=1e-10)
+

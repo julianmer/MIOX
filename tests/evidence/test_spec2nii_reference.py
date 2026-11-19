@@ -189,10 +189,9 @@ def _compare_data_list(data: Path) -> None:
     rows = PhilipsListRaw.vectors(parsed["list_vectors"])
     if PhilipsListRaw.imaging(parsed["list_info"], rows):
         pytest.skip("imaging k-space, read as RawData")
-    try:
-        aux, others = reader._auxiliary(data.parent, data.stem)
-    except ReaderError as e:
-        pytest.skip(str(e))
+    aux, others = reader._auxiliary(data.parent, data.stem, [])
+    if aux is None:
+        pytest.skip("no SPAR or DICOM of the scan: spec2nii needs one, MIOX reads the data alone")
     if others:
         pytest.skip("several SPARs may be the scan's: MIOX keeps what they state alike")
     with warnings.catch_warnings():
