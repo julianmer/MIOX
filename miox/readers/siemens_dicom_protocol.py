@@ -82,7 +82,8 @@ class SiemensDicomProtocolReader(SiemensProtocolReader):
         meta = self.meta(text)
         meta.vendor.update({"texts": texts, "other_elements_bytes": others})
         name = meta.get("ProtocolName") or str(ds.get("SeriesDescription") or sniff.path.stem)
-        return [Protocol(name, (), meta, self.provenance(sniff))]
+        notes = () if meta.vendor["ascconv"] else ("ASCCONV block without readable values",)
+        return [Protocol(name, (), meta, self.provenance(sniff, notes))]
 
     def _report(self, ds: pydicom.Dataset) -> str:
         if self.REPORT_XPROTOCOL in ds:

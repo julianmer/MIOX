@@ -17,8 +17,8 @@
 #*************#
 from __future__ import annotations
 
+import re
 import warnings
-from ast import literal_eval
 from datetime import datetime
 from pathlib import Path
 
@@ -57,6 +57,9 @@ class PhilipsSparSdatReader(Reader):
     FORMATS = (Format.PHILIPS_SPAR_SDAT,)
     SOURCE = "SPAR"
     PLACEHOLDER = "System.Collections."  # what some exports write instead of a value
+    INTEGER = re.compile(r"[-+]?(0|[1-9]\d*)")  # 007 is a text
+    DECIMAL = re.compile(r"[-+]?(\d+\.\d*|\.\d+|\d+(?=[eE]))([eE][-+]?\d+)?")
+    TEXTS = ("examination_name", "scan_id", "patient_name")  # typed by the operator: as written
     NO_VOXEL = np.diag([1e4, 1e4, 1e4, 1.0])  # a 10 m voxel, as spec2nii
     MS = 1e-3
     HYPER_SHORT_TE = 0.035  # s; HYPER acquires its short-TE block at 35 ms, the edited one at 80 ms
@@ -94,8 +97,8 @@ class PhilipsSparSdatReader(Reader):
 
     @classmethod
     def read_spar(cls, path: Path) -> dict:
-        """The SPAR's parameters: ``key : value`` lines, values as Python literals where they are
-        one (numbers, quoted text), else the text."""
+        """The SPAR's parameters: ``key : value`` lines, the values numbers where they are written
+        as one, else the text (see ``value``)."""
         params, unwritten = {}, []
         raw = path.read_bytes()
         try:
@@ -110,21 +113,36 @@ class PhilipsSparSdatReader(Reader):
             if value.startswith(cls.PLACEHOLDER):
                 unwritten.append(key)
                 continue
-            try:
-                params[key] = literal_eval(value)
-            except (ValueError, SyntaxError):
-                params[key] = value or None
+            params[key] = cls.value(key, value)
         if unwritten:
             warnings.warn(f"{path.name}: the export wrote no value for {', '.join(unwritten)}",
                           stacklevel=2)
         return params
+
+    @classmethod
+    def value(cls, key: str, text: str) -> int | float | str | None:
+        """A SPAR value: a plain integer or decimal number as that number, a quoted text without
+        its quotes, any other text as written (1024_2, 2020_01_15, 1,5), the operator's texts
+        always; None for an empty one."""
+        if key not in cls.TEXTS:
+            if cls.INTEGER.fullmatch(text):
+                return int(text)
+            if cls.DECIMAL.fullmatch(text):
+                return float(text)
+        if len(text) > 1 and text[0] == text[-1] == '"':
+            text = text[1:-1]
+        return text or None
 
     @staticmethod
     def read_sdat(path: Path, samples: int, rows: int) -> np.ndarray:
         """(samples, rows) complex from VAX F single floats: per float the bytes hold the fraction's
         middle, sign and exponent, then its low and high bytes; value (0.5 + fraction / 2^24) x
         2^(exponent - 128), zero for exponent 0."""
-        b = np.frombuffer(path.read_bytes(), dtype=np.uint8).reshape(-1, 4).astype(np.int64)
+        raw = np.frombuffer(path.read_bytes(), dtype=np.uint8)
+        if raw.size != 8 * rows * samples:
+            raise ReaderError(f"{path.name}: {raw.size} bytes, but the SPAR states {rows} rows of "
+                              f"{samples} samples ({8 * rows * samples} bytes)")
+        b = raw.reshape(-1, 4).astype(np.int64)
         sign = np.where(b[:, 1] & 0x80, -1.0, 1.0)
         exponent = ((b[:, 1] & 0x7F) << 1) + ((b[:, 0] & 0x80) >> 7)
         fraction = ((b[:, 0] & 0x7F) << 16) + (b[:, 3] << 8) + b[:, 2]
@@ -146,11 +164,12 @@ class PhilipsSparSdatReader(Reader):
     def _geometry(self, data: np.ndarray, header: dict) -> tuple[np.ndarray, np.ndarray, list]:
         """(x, y, z, points[, rows]) and the affine: the spectroscopic imaging grid, else the
         single voxel."""
-        grid = self._grid(data, header)
+        notes: list[str] = []
+        grid = self._grid(data, header, notes)
         if grid is not None:
-            return grid
+            return grid + (notes,)
         shape = (1, 1, 1) + data.shape if data.shape[1] > 1 else (1, 1, 1, data.shape[0])
-        return data.reshape(shape), self.voxel(header), []
+        return data.reshape(shape), self.voxel(header), notes
 
     @classmethod
     def voxel(cls, header: dict) -> np.ndarray:
@@ -171,14 +190,19 @@ class PhilipsSparSdatReader(Reader):
         affine[:3, 3] = [float(c) for c in centre]
         return affine
 
-    def _grid(self, data: np.ndarray, header: dict) -> tuple[np.ndarray, np.ndarray, list] | None:
-        """Spectroscopic imaging rows on their grid, with its geometry."""
+    def _grid(self, data: np.ndarray, header: dict,
+              notes: list[str]) -> tuple[np.ndarray, np.ndarray] | None:
+        """Spectroscopic imaging rows on their grid, with its geometry; rows that are not the grid
+        the SPAR states are left as they are, with a note."""
         if header.get("phase_encoding_enable") != "yes" or data.shape[1] < 2:
             return None
         sizes = {header.get(f"dim{n}_direction"): int(header.get(f"dim{n}_pnts") or 1)
                  for n in (2, 3, 4)}
         nx, ny, nz = (sizes.get(axis, 1) for axis in ("x", "y", "z"))
         if nx * ny * nz != data.shape[1]:
+            notes.append(f"phase encoding on, but the {data.shape[1]} rows are not the {nx} x {ny} "
+                         f"x {nz} grid the SPAR states (dim2-dim4): kept in file order, as the "
+                         "rows of a single voxel")
             return None
         grid = np.transpose(data.T.reshape(nz, ny, nx, -1), (2, 1, 0, 3))
         note = f"{nx * ny * nz} rows put on their {nx} x {ny} x {nz} grid (SPAR dim2-dim4)"
@@ -186,8 +210,8 @@ class PhilipsSparSdatReader(Reader):
                   "si_ap_off_angulation", "si_cc_off_angulation", "si_lr_off_center",
                   "si_ap_off_center", "si_cc_off_center")
         if any(not isinstance(header.get(key), (int, float)) for key in fields):
-            return grid, np.eye(4), [f"{note}; the SPAR states no imaging geometry: voxel "
-                                     "positions unknown"]
+            notes.append(f"{note}; the SPAR states no imaging geometry: voxel positions unknown")
+            return grid, np.eye(4)
         size = float(header["phase_encoding_fov"]) / nx
         angles = [-header["si_lr_off_angulation"], -header["si_ap_off_angulation"],
                   header["si_cc_off_angulation"]]
@@ -196,7 +220,8 @@ class PhilipsSparSdatReader(Reader):
         affine = self.box(angles, [size, size, float(header["slice_thickness"])], centre)
         affine[:3, :2] *= -1  # x from right to left, y from front to back
         affine[:3, 3] -= affine[:3, :3] @ ((np.array([nx, ny, nz]) - 1) / 2)
-        return grid, affine, [note]
+        notes.append(note)
+        return grid, affine
 
     # --- keys ------------------------------------------------------------------------------------
 

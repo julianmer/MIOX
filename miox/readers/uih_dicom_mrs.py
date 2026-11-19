@@ -160,7 +160,7 @@ class UihDicomMrs:
             "kSpace": ([False, False, False], None),
             "DwellTime": (1.0 / ds.SpectralWidth, "dicom/SpectralWidth"),
         }
-        if "InversionTime" in ds:
+        if float(ds.get("InversionTime") or 0.0):  # 0: no inversion
             values["InversionTime"] = (float(ds.InversionTime) * 1e-3, "dicom/InversionTime")
         if ds.get("PatientName"):
             values["PatientName"] = (str(ds.PatientName.family_name), "dicom/PatientName")

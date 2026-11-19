@@ -47,14 +47,21 @@ class Report:
     SETTING = re.compile(r"^([A-Za-z. ]+?)\s*:\s*(.+?)\s*$", re.M)
     SAMPLE = re.compile(r"SampleId:\s*(.*?)\s*\n")
     TITLE = re.compile(r"Title of this Data File:\s*\n(\S.*?)\s*\n")
-    VALUE = re.compile(r"^(Amplitude|T2|T1|Offset)\s*:\s*(-?[\d.]+)\s*(\S*)\s*\n\s*\+/-\s*([\d.]+)",
+    N = r"(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:[eE][-+]?\d+)?(?![\d.,])"  # decimal point or comma
+    VALUE = re.compile(rf"^(Amplitude|T2|T1|Offset)\s*:\s*(-?{N})\s*(\S*)\s*\n\s*\+/-\s*({N})",
                        re.M)
     CONTIN_PATH = re.compile(r"CONTIN Results:\s*\n'([^']*)'")
-    COMPONENT = re.compile(r"^T[12]\[(\d+)\]\s*:\s*(-?[\d.]+)\s*\+/-\s*([\d.]+)\s*(\S+)\s*\n"
-                           r"A \[\1\]\s*:\s*(-?[\d.]+)", re.M)
-    GAUSS = re.compile(r"^(Ampl|Center|Width)\[(\d+)\]\s*:\s*(-?[\d.]+)\s*\+/-\s*([\d.]+)\s*(\S*)",
+    COMPONENT = re.compile(rf"^T[12]\[(\d+)\]\s*:\s*(-?{N})\s*\+/-\s*({N})\s*(\S+)\s*\n"
+                           rf"A \[\1\]\s*:\s*(-?{N})", re.M)
+    GAUSS = re.compile(rf"^(Ampl|Center|Width)\[(\d+)\]\s*:\s*(-?{N})\s*\+/-\s*({N})\s*(\S*)",
                        re.M)
+    INTEGRAL = re.compile(rf"^Integral\s*:\s*(-?{N})", re.M)
+    SEPARATION = re.compile(rf"(-?{N})\s*(ms|us|s)")
     SCALE = {"ms": 1e-3, "us": 1e-6, "s": 1.0}
+
+    @staticmethod
+    def number(text: str) -> float:
+        return float(text.replace(",", "."))
 
     def __init__(self, path: Path):
         self.path = path
@@ -73,25 +80,26 @@ class Report:
                             if k.strip() not in ("SampleId", "CONTIN Results")}
             elif chunk.startswith("SampleId:"):
                 title = self.TITLE.search(chunk)
-                values = {k: (float(v), u, float(e)) for k, v, u, e in self.VALUE.findall(chunk)}
+                values = {k: (self.number(v), u, self.number(e))
+                          for k, v, u, e in self.VALUE.findall(chunk)}
                 if title and ("T2" in values or "T1" in values):
                     blocks.append(dict(kind="fit", sample=self.SAMPLE.match(chunk).group(1),
                                        title=title.group(1), values=values, settings=settings,
                                        date=date, report=self.path.name))
             elif chunk.startswith("CONTIN Results:"):
                 m = self.CONTIN_PATH.match(chunk)
-                components = [(float(t) * self.SCALE.get(u, 1e-3),
-                               float(e) * self.SCALE.get(u, 1e-3), float(a))
+                components = [(self.number(t) * self.SCALE.get(u, 1e-3),
+                               self.number(e) * self.SCALE.get(u, 1e-3), self.number(a))
                               for _, t, e, u, a in self.COMPONENT.findall(chunk)]
                 if m and components:
                     stem = re.split(r"[\\/]", m.group(1))[-1].removesuffix(".dps")
-                    integral = re.search(r"^Integral\s*:\s*(-?[\d.]+)", chunk, re.M)
-                    gauss = {f"{k.lower()}[{i}]": (float(v), float(e), u)
+                    integral = self.INTEGRAL.search(chunk)
+                    gauss = {f"{k.lower()}[{i}]": (self.number(v), self.number(e), u)
                              for k, i, v, e, u in self.GAUSS.findall(chunk)}
                     blocks.append(dict(kind="contin", sample=stem, title=stem,
                                        components=components,
-                                       integral=float(integral.group(1)) if integral else None,
-                                       gauss=gauss, settings=settings, date=date,
+                                       integral=self.number(integral.group(1)) if integral
+                                       else None, gauss=gauss, settings=settings, date=date,
                                        report=self.path.name))
         return blocks
 
@@ -102,8 +110,8 @@ class Report:
     def pulse_separation(settings: dict) -> float | None:
         """The CPMG pulse separation tau in seconds, from "Pulse Separ.  : 1.000 ms"."""
         value = settings.get("Pulse Separ.")
-        m = re.match(r"(-?[\d.]+)\s*(ms|us|s)", value or "")
-        return float(m.group(1)) * {"ms": 1e-3, "us": 1e-6, "s": 1.0}[m.group(2)] if m else None
+        m = Report.SEPARATION.match(value or "")
+        return Report.number(m.group(1)) * Report.SCALE[m.group(2)] if m else None
 
 
 #**************************************************************************************************#
@@ -206,7 +214,7 @@ class MinispecReader(Reader):
 #                                       MinispecReportReader                                       #
 #**************************************************************************************************#
 #                                                                                                  #
-# A report on its own: one Protocol per block, named after the data file it reports on, with the  #
+# A report on its own: one Protocol per block, named after the data file it reports on, with the   #
 # fit numbers as the decay would carry them (CONTIN components as times and amplitudes) and the    #
 # header settings in the vendor header.                                                            #
 #                                                                                                  #

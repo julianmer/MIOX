@@ -44,7 +44,7 @@ from miox.sniff import Format, Sniff
 # becomes rows on DIM_INDIRECT_0 as acquired: with two complex axes each increment gives an even   #
 # row (section 0 + i section 1) and an odd row (section 2 + i section 3), each a direct-dimension  #
 # FID in the same convention (the other pairing mirrors the direct axis); how the pair combines    #
-# in the indirect dimension (States, echo-antiecho) is left to the experiment. With a real        #
+# in the indirect dimension (States, echo-antiecho) is left to the experiment. With a real         #
 # indirect axis each increment is one row. The time of each row comes from the header's axis       #
 # range, which spans the points kept (data_offset_start to data_offset_stop). A processed          #
 # spectrum is placed by the header's axis range in ppm in the same way.                            #

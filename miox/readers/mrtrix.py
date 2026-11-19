@@ -42,8 +42,8 @@ from miox.sniff import Format, Sniff
 # RAS coordinates in mm, the centre of the first voxel at its translation; "vox" the voxel sizes.  #
 # "dw_scheme" rows are gradient directions in scanner coordinates with the b-value,                #
 # "PhaseEncodingDirection", "TotalReadoutTime", "EchoTime" and the like plain BIDS-named values.   #
-# Bit images unpack to 0/1. Checked against the PNG exports and the mean over volumes that MRtrix  #
-# itself wrote for its test data.                                                                  #
+# Bit images unpack to 0/1, the first voxel being the highest bit of a byte. Checked against the   #
+# PNG exports and the mean over volumes that MRtrix itself wrote for its test data.                #
 #                                                                                                  #
 #**************************************************************************************************#
 class MrtrixReader(Reader):

@@ -58,7 +58,8 @@ class SiemensProtocolReader(Reader):
     FORMATS = (Format.SIEMENS_PRO, Format.SIEMENS_EXAR)
     PACKAGES = ("miox",)
     SOURCE = "ASCCONV"
-    ASCCONV = re.compile(r"### ASCCONV BEGIN[^\n]*###\n(.*?)### ASCCONV END ###", re.S)
+    ASCCONV = re.compile(r"### ASCCONV BEGIN[^\r\n]*###[ \t]*(?:\r\n?|\n)(.*?)### ASCCONV END ###",
+                         re.S)  # line ends of any kind (DICOM text keeps its CR LF)
     KEYS = {  # standard key: (ASCCONV field, divisor to the key's unit)
         **{key: (field, divisor) for key, (buffer, field, divisor) in SiemensTwixRaw.KEYS.items()
            if buffer == "Phoenix"},
@@ -248,8 +249,9 @@ class SiemensProtocolReader(Reader):
 # exam tree (\\User\region\exam\program\name) and its cards of parameters, each a label and a      #
 # value with its unit ("TR 427.0 ms"). The cards are kept whole; labels name the standard keys     #
 # without regard to case (the first occurrence counts; "TE 1", "TE 2", ... give a list), values    #
-# with ms are converted to s. A trailing " *" of a name (a marked protocol) is kept only in the    #
-# vendor header.                                                                                   #
+# with ms are converted to s; a value is one number, with a decimal point or comma (as printed     #
+# under a German locale) and possibly an exponent. A trailing " *" of a name (a marked protocol)   #
+# is kept only in the vendor header.                                                               #
 #                                                                                                  #
 #**************************************************************************************************#
 class SiemensPrintedProtocolReader(Reader):
@@ -269,7 +271,7 @@ class SiemensPrintedProtocolReader(Reader):
         "acceleration factor 3d": ("ParallelReductionFactorOutOfPlane", True),
         "ref. lines pe": ("RefLinesPE", True), "reference lines pe": ("RefLinesPE", True),
     }
-    VALUE = re.compile(r"^\s*(-?\d+(?:\.\d+)?)\s*([A-Za-z/%]*)\s*$")
+    VALUE = re.compile(r"^\s*(-?\d+(?:[.,]\d+)?(?:[eE][-+]?\d+)?)\s*([A-Za-z/%]*)\s*$")
     TXT_PARAMETER = re.compile(r"^\s{2,}(\S.*?)(?:\s{2,}(.*?))?\s*$")
 
     def read(self, sniff: Sniff) -> list[Protocol]:
@@ -332,7 +334,7 @@ class SiemensPrintedProtocolReader(Reader):
                 match = self.VALUE.match(value)
                 if match is None:
                     continue
-                number = float(match.group(1))
+                number = float(match.group(1).replace(",", "."))
                 number = round(number / 1000, 9) if match.group(2) == "ms" else number
                 for prefix, found in (("te", echoes), ("ti", inversions)):
                     if re.fullmatch(rf"{prefix} \d+", lower) and (label, number) not in found:

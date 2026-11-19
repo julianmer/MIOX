@@ -68,7 +68,8 @@ def test_lcmodel_raw_text_tight_format_bruker_and_control(tmp_path):
     ]
     fid = -_fid()  # negative numbers run together at width 13
     _raw(f, header, fid, width=13)
-    (tmp_path / "control.file").write_text(" $LCMODL\n HZPPPM=84.47\n DELTAT=5E-04\n $END\n")
+    (tmp_path / "control.file").write_text(
+        " $LCMODL\n FILRAW='test.RAW'\n HZPPPM=84.47\n DELTAT=5E-04\n $END\n")
     [d] = miox.load(f)
     assert d.spectrometer_frequency == pytest.approx(84.47) and d.dwelltime == pytest.approx(5e-4)
     assert np.allclose(d.data[0, 0, 0], fid.conj(), atol=1e-5)  # BRUKER=T: conjugated

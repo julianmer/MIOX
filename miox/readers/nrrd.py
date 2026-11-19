@@ -39,8 +39,9 @@ from miox.sniff import Format, Sniff
 # follow in the same file or in the files the "data file" field names (one, a list, or a printf    #
 # pattern with a range), raw, gzip, bzip2, ascii or hex encoded, after "line skip" lines and       #
 # "byte skip" bytes (-1: the data end the file). The first axis varies fastest. Axes of kind       #
-# "domain"/"space" are spatial; "space directions" give their world steps in the named space       #
-# (left-posterior-superior, right-anterior-superior, ..., turned into RAS here), "space origin"    #
+# "domain"/"space" are spatial (without "kinds": the axes whose space direction is not "none");    #
+# "space directions" give their world steps in the named space (left-posterior-superior,           #
+# right-anterior-superior, ..., with or without "-time"; turned into RAS here), "space origin"     #
 # the centre of the first voxel; "spacings" alone give an axis-aligned grid. Other axes (vectors,  #
 # colours, lists) stay as trailing dimensions. NA-MIC diffusion key/value pairs (DWMRI_b-value,    #
 # DWMRI_gradient_NNNN) give the b-values and gradient directions; the directions are in the        #
@@ -74,8 +75,10 @@ class NrrdReader(Reader):
     }
     SPATIAL_KINDS = ("domain", "space", "")
     DIM_NAMES = {"vector": "vector", "rgb-color": "rgb", "rgba-color": "rgba", "list": "list",
-                 "3-vector": "vector", "3-gradient": "gradient", "time": "time"}
+                 "3-vector": "vector", "3-gradient": "gradient", "time": "time", "none": "volume"}
+    TIMED_SPACES = {"rast": "ras", "last": "las", "lpst": "lps"}
     GRADIENT = re.compile(r"^DWMRI_gradient_(\d+)$")
+    DATA_FILE = re.compile(r"^data ?file:", re.IGNORECASE)
 
     def read(self, sniff: Sniff) -> list[MRImage]:
         fields, keys, data_offset = self._header(sniff.path)
@@ -84,7 +87,7 @@ class NrrdReader(Reader):
         except (ValueError, OSError) as e:
             raise ReaderError(f"{sniff.path.name}: {e}") from e
         sizes = self._ints(fields["sizes"])
-        kinds = self._words(fields.get("kinds", "")) or ["domain"] * len(sizes)
+        kinds = self._words(fields.get("kinds", "")) or self._kinds(fields, len(sizes))
         spatial = [i for i, k in enumerate(kinds) if k.lower() in self.SPATIAL_KINDS]
         others = [i for i in range(len(sizes)) if i not in spatial]
         if len(spatial) > 3:
@@ -131,6 +134,19 @@ class NrrdReader(Reader):
         if "sizes" not in fields or "type" not in fields:
             raise ReaderError(f"{path.name}: header without sizes or type")
         return fields, keys, offset
+
+    def _kinds(self, fields: dict[str, str], naxes: int) -> list[str]:
+        """Kinds of a header without "kinds": an axis whose space direction is "none" is not
+        spatial, every other axis is."""
+        directions = self._vectors(fields.get("space directions", ""))
+        if len(directions) != naxes:
+            return ["domain"] * naxes
+        return ["none" if step is None else "domain" for step in directions]
+
+    def _space(self, fields: dict[str, str]) -> str:
+        """The space in lower case, without its time axis (e.g. left-posterior-superior-time)."""
+        space = fields.get("space", "").lower()
+        return self.TIMED_SPACES.get(space, space.removesuffix("-time"))
 
     @staticmethod
     def _ints(text: str) -> list[int]:
@@ -179,10 +195,10 @@ class NrrdReader(Reader):
     def _data_files(self, path: Path, spec: str, sizes: list[int]) -> list[Path]:
         parts = spec.split()
         if parts[0].upper() == "LIST":
-            with open(path, "rb") as fh:
-                text = fh.read().decode("utf-8", "replace")
-            listed = text.split("\n\n", 1)[1].splitlines() if "\n\n" in text else []
-            return [path.parent / name.strip() for name in listed if name.strip()]
+            with open(path, "rb") as fh:  # the names follow the field, one per line
+                lines = fh.read().decode("utf-8", "replace").splitlines()
+            field = next(i for i, line in enumerate(lines) if self.DATA_FILE.match(line))
+            return [path.parent / name.strip() for name in lines[field + 1:] if name.strip()]
         if len(parts) >= 4 and "%" in parts[0]:
             pattern, start, stop, step = parts[0], int(parts[1]), int(parts[2]), int(parts[3])
             numbers = range(start, stop + (1 if step > 0 else -1), step)
@@ -218,19 +234,19 @@ class NrrdReader(Reader):
         notes = []
         affine = np.eye(4)
         directions = self._vectors(fields.get("space directions", ""))
-        space = fields.get("space", "").lower()
+        space = self._space(fields)
         signs = np.asarray(self.SPACES.get(space, (1, 1, 1)), float)
         if space and space not in self.SPACES:
             notes.append(f"space {space!r} not a patient space; axes taken as RAS")
         if directions:
             steps = [d for d in directions if d is not None]
             for column, step in zip(range(3), steps, strict=False):
-                vector = np.asarray(step, float)
-                affine[: len(vector), column] = vector[:3] * signs[: len(vector)]
+                vector = np.asarray(step, float)[:3]  # a time component is not spatial
+                affine[: len(vector), column] = vector * signs[: len(vector)]
             origin = self._vectors(fields.get("space origin", ""))
             if origin and origin[0] is not None:
-                vector = np.asarray(origin[0], float)
-                affine[: len(vector), 3] = vector[:3] * signs[: len(vector)]
+                vector = np.asarray(origin[0], float)[:3]
+                affine[: len(vector), 3] = vector * signs[: len(vector)]
         else:
             words = fields.get("spacings", "").split()
             spacings = [float(v) if v.lower() != "nan" else 1.0 for v in words]
@@ -258,7 +274,7 @@ class NrrdReader(Reader):
             vectors = [v for v in self._vectors(fields["measurement frame"]) if v is not None]
             if len(vectors) == 3:
                 frame = np.asarray(vectors, float).T
-        signs = np.asarray(self.SPACES.get(fields.get("space", "").lower(), (1, 1, 1)), float)
+        signs = np.asarray(self.SPACES.get(self._space(fields), (1, 1, 1)), float)
         values, directions = [], []
         for _, text in gradients:
             g = np.asarray([float(v) for v in text.split()], float)

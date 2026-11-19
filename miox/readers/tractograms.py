@@ -6,7 +6,7 @@
 #                                                                                                  #
 # Created: 12/10/26                                                                                #
 #                                                                                                  #
-# Purpose: Readers for streamline files: TrackVis .trk and MRtrix .tck (read by nibabel), TRX     #
+# Purpose: Readers for streamline files: TrackVis .trk and MRtrix .tck (read by nibabel), TRX      #
 #          (.trx zip archives or folders), DSI Studio .tt and MRtrix track scalar files (.tsf).    #
 #                                                                                                  #
 ####################################################################################################

@@ -55,6 +55,7 @@ class LcmodelRawReader(Reader):
     SIDE_MARKERS = ("$LCMODL", "&LCMODL", "$SEQPAR", "&SEQPAR")  # namelists stating HZPPPM
     HZPPPM_GROUPS = ("LCMODL", "SEQPAR")
     GROUP = re.compile(r"\$(\w+)(.*?)\$END", re.S | re.I)  # one namelist, data lines skipped
+    FILRAW = re.compile(r"\bFILE?RAW\s*=\s*'([^']*)'", re.I)  # the .RAW files a side file names
 
 
     def __init__(self):
@@ -137,6 +138,8 @@ class LcmodelRawReader(Reader):
             text = candidate.read_text(errors="replace")
             if not any(marker in text.upper() for marker in self.SIDE_MARKERS):
                 continue
+            if not self._belongs(candidate, text, path):
+                continue
             namelists = {}
             for group in self.GROUP.finditer(text):
                 if group[1].upper() not in self.HZPPPM_GROUPS:
@@ -148,6 +151,21 @@ class LcmodelRawReader(Reader):
             if self._find({"namelists": namelists}, "hzpppm")[0] is not None:
                 return candidate
         return None
+
+    def _belongs(self, candidate: Path, text: str, path: Path) -> bool:
+        """Whether a sibling is this .RAW's side file: it has the same stem, or the stem with an
+        addition (X.RAW with X.control, X_nohdr.RAW with X.RAW), or it names the file in a FILRAW
+        (control and MakeBasis files) or FILERAW (basis files, by stem) entry, or it names
+        several other files of the folder (the basis set made of the folder's .RAW files, whose
+        field and sampling are the set's)."""
+        ours, theirs = path.stem.lower(), candidate.stem.lower()
+        short, long = sorted((ours, theirs), key=len)
+        if long.startswith(short) and not long[len(short):len(short) + 1].isalnum():
+            return True
+        named = {Path(name.strip()).name.lower() for name in self.FILRAW.findall(text)}
+        if path.name.lower() in named or ours in named:
+            return True
+        return len(named & {sibling.name.lower() for sibling in path.parent.iterdir()}) > 1
 
     def _side_namelists(self, path: Path) -> dict:
         """Every namelist of a side file, parsed once per file version (data lines skipped)."""

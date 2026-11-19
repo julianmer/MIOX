@@ -36,9 +36,12 @@ from miox.sniff import Format, Sniff
 # "Key = value" lines up to ElementDataFile, which names the data file (LOCAL: the bytes that      #
 # follow; a file name; LIST: one file per slice named on the following lines; a printf pattern     #
 # with a range). DimSize gives the sizes, the first axis fastest; ElementType the MetaIO type;     #
-# TransformMatrix (direction cosines, row-major) and Offset the geometry in ITK's patient space    #
-# (LPS, turned into RAS here); ElementSpacing the voxel size; ElementNumberOfChannels a trailing   #
-# channel dimension. CompressedData marks zlib-compressed bytes. Values are stored as written.     #
+# TransformMatrix (direction cosines, row-major; also written Rotation or Orientation) and Offset  #
+# (also Position or Origin) the geometry in ITK's patient space (LPS, turned into RAS here);       #
+# ElementSpacing the voxel size; ElementNumberOfChannels a trailing channel dimension.             #
+# CompressedData marks zlib-compressed bytes, BinaryData = False numbers written as text;          #
+# BinaryDataByteOrderMSB (or ElementByteOrderMSB) the byte order; HeaderSize the bytes to skip in  #
+# a data file (-1: the data are its last bytes). Values are stored as written.                     #
 #                                                                                                  #
 #**************************************************************************************************#
 class MetaImageReader(Reader):
@@ -50,6 +53,9 @@ class MetaImageReader(Reader):
         "MET_LONG_LONG": "i8", "MET_ULONG_LONG": "u8", "MET_FLOAT": "f4", "MET_DOUBLE": "f8",
     }
     LPS_TO_RAS = np.array([-1.0, -1.0, 1.0])
+    BYTE_ORDER_MSB = ("BinaryDataByteOrderMSB", "ElementByteOrderMSB")  # names of one MetaIO field
+    MATRIX = ("TransformMatrix", "Rotation", "Orientation")
+    OFFSET = ("Offset", "Position", "Origin")
     KEYS = {  # standard key: header key
         "Modality": "Modality",
         "PatientName": "PatientName",
@@ -105,19 +111,32 @@ class MetaImageReader(Reader):
         sizes = [int(v) for v in header["DimSize"].split()]
         dtype = np.dtype(self.TYPES[header["ElementType"].strip()])
         if dtype.itemsize > 1:
-            big = header.get("BinaryDataByteOrderMSB", "False").strip().lower() == "true"
+            big = self._flag(header, *self.BYTE_ORDER_MSB)
             dtype = dtype.newbyteorder(">" if big else "<")
         channels = int(header.get("ElementNumberOfChannels", 1))
         count = int(np.prod(sizes)) * channels
-        compressed = header.get("CompressedData", "False").strip().lower() == "true"
+        compressed = self._flag(header, "CompressedData")
         spec = header["ElementDataFile"].strip()
         skip = int(header.get("HeaderSize", 0) or 0)
         if spec.upper() == "LOCAL":
-            blobs = [self._bytes(path, offset, compressed)]
+            files, skip = [path], offset
         else:
-            blobs = [self._bytes(f, skip, compressed) for f in self._files(path, spec, sizes)]
-        size = dtype.itemsize
-        raw = np.concatenate([np.frombuffer(b[: (len(b) // size) * size], dtype) for b in blobs])
+            files = self._files(path, spec, sizes)
+        tail = None
+        if skip == -1:  # the data are the last bytes of every file
+            if "BinaryData" in header and not self._flag(header, "BinaryData"):
+                raise ValueError("HeaderSize -1 does not locate data written as text")
+            if compressed and "CompressedDataSize" not in header:
+                raise ValueError("HeaderSize -1 with compressed data needs CompressedDataSize")
+            tail = count * dtype.itemsize // len(files)
+            tail = int(header["CompressedDataSize"]) if compressed else tail
+        blobs = [self._bytes(f, skip, compressed, tail) for f in files]
+        if "BinaryData" in header and not self._flag(header, "BinaryData"):
+            raw = np.concatenate([np.array(b.split(), dtype.newbyteorder("=")) for b in blobs])
+        else:
+            size = dtype.itemsize
+            raw = np.concatenate(
+                [np.frombuffer(b[: (len(b) // size) * size], dtype) for b in blobs])
         if raw.size < count:
             raise ValueError(f"{raw.size} values, expected {count}")
         shape = sizes[::-1] + ([channels] if channels > 1 else [])
@@ -126,12 +145,19 @@ class MetaImageReader(Reader):
         return np.transpose(data, order)
 
     @staticmethod
-    def _bytes(path: Path, skip: int, compressed: bool) -> bytes:
+    def _flag(header: dict[str, str], *keys: str) -> bool:
+        """True when the first of the keys the header has says so."""
+        value = next((header[key] for key in keys if key in header), "False")
+        return value.strip().lower() == "true"
+
+    @staticmethod
+    def _bytes(path: Path, skip: int, compressed: bool, tail: int | None = None) -> bytes:
+        """The data bytes of a file after ``skip`` bytes, or its last ``tail`` bytes."""
         with open(path, "rb") as fh:
             fh.seek(skip if skip > 0 else 0)
             blob = fh.read()
-        if skip == -1:
-            return blob  # the caller takes the trailing bytes; sizes are checked afterwards
+        if tail is not None:
+            blob = blob[max(len(blob) - tail, 0):]
         return zlib.decompress(blob) if compressed else blob
 
     @staticmethod
@@ -152,16 +178,15 @@ class MetaImageReader(Reader):
         spacing = [float(v) for v in header.get("ElementSpacing", "1 " * ndims).split()][:n]
         spacing += [1.0] * (3 - len(spacing))
         matrix = np.eye(3)
-        if "TransformMatrix" in header:
-            values = [float(v) for v in header["TransformMatrix"].split()]
+        stated = next((header[key] for key in self.MATRIX if key in header), None)
+        if stated is not None:
+            values = [float(v) for v in stated.split()]
             if len(values) == ndims * ndims:
                 matrix[:n, :n] = np.asarray(values).reshape(ndims, ndims)[:n, :n].T
         offset = np.zeros(3)
-        if "Offset" in header:
-            values = [float(v) for v in header["Offset"].split()]
-            offset[: min(len(values), 3)] = values[:3]
-        elif "Position" in header:
-            values = [float(v) for v in header["Position"].split()]
+        stated = next((header[key] for key in self.OFFSET if key in header), None)
+        if stated is not None:
+            values = [float(v) for v in stated.split()]
             offset[: min(len(values), 3)] = values[:3]
         else:
             notes.append("no Offset: origin at zero")

@@ -74,21 +74,27 @@ class PhilipsExamCardReader(Reader):
         card = next((e for e in root.iter() if e.tag.endswith("}ExamCard")), None)
         card_name = card.findtext("name") if card is not None else stem
         general = self._fields(card, ids) if card is not None else {}
-        protocols = []
+        scans, unresolved = [], []
         for procedure in (e for e in root.iter() if e.tag.endswith("}ScanProcedure")):
             reference = procedure.find("parameterData")
             if reference is None or not reference.get("href"):
                 continue
+            name = procedure.findtext("name") or stem
             data = ids.get(reference.get("href")[1:])
+            if data is None:
+                unresolved.append(f"{name} ({reference.get('href')})")
+                continue
             parameters, choices = self.parameters(base64.b64decode(data.text or ""))
             meta = Meta({"parameters": parameters, "choices": choices,
                          "scan_procedure": self._fields(procedure, ids), "exam_card": general})
             self._keys(meta, parameters, general)
-            name = procedure.findtext("name") or stem
-            protocols.append(Protocol(name, (card_name,), meta, self.provenance(sniff)))
-        if not protocols:
+            scans.append((name, meta))
+        if not scans:
             raise ReaderError(f"{sniff.path.name}: no scans in the ExamCard")
-        return protocols
+        notes = (f"scans whose parameter table is referred to but not in the file, not read: "
+                 f"{', '.join(unresolved)}",) if unresolved else ()
+        return [Protocol(name, (card_name,), meta, self.provenance(sniff, notes))
+                for name, meta in scans]
 
     @staticmethod
     def _fields(node: ET.Element, ids: dict) -> dict:

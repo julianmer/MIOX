@@ -14,7 +14,7 @@
 #          their slice geometry against the image header, and a spectroscopy P-file read through   #
 #          the imaging frame layout against spec2nii, and the Philips raw export against the       #
 #          published reading of Philips' reader and its random phase as a ramp along the readout;  #
-#          a Philips Dixon scan exported as .data/.list against the scanner's DICOM of it; the    #
+#          a Philips Dixon scan exported as .data/.list against the scanner's DICOM of it; the     #
 #          PMU waveforms of two twix scans against the waveform counts siemens_to_ismrmrd's test   #
 #          cases state for their conversions; Quick Look's plain reconstruction against            #
 #          Gadgetron's images and M4Raw's stored rss.                                              #

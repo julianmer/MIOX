@@ -51,7 +51,6 @@ from miox.readers.philips_dicom_mrs import Spectrum
 class BrukerMrs:
     CLASSIC = ("<PV 5.1>", "<PV 6.0>", "<PV 6.0.1>", "<PV-7.0.0>")
     FORMATS = {"GO_32BIT_SGN_INT": "i4", "GO_16BIT_SGN_INT": "i2", "GO_32BIT_FLOAT": "f4"}
-    TWICE = ("cl_STELASER_PA360_b.ppg", "cl_STELASER_PA_35.ppg", "mt_sLASER.ppg", "PRESS.ppg")
     MEGA = "mt_MEGA_sLASER_V35.ppg"
     TAGS = {"repetition": "DIM_DYN", "channel": "DIM_COIL"}
     POSITIONS = {  # VisuSubjectPosition: rotation of the visu_pars frame (BrkRaw's recipe)
@@ -100,9 +99,12 @@ class BrukerMrs:
         values = self._values(self.acqp.get("BF1"), self.acqp.get("NUCLEUS"),
                               self.acqp.get("ACQ_sw_version"), self.method.get("Method"),
                               ("acqp/BF1", "acqp/NUCLEUS", "acqp/ACQ_sw_version", "method/Method"))
-        values["EchoTime"] = (float(self.method["PVM_EchoTime"] * 1e-3), "method/PVM_EchoTime")
-        values["RepetitionTime"] = (float(self.method["PVM_RepetitionTime"] / 1e3),
-                                    "method/PVM_RepetitionTime")
+        if self.method.get("PVM_EchoTime") is not None:  # none stated by pulse-acquire methods
+            values["EchoTime"] = (float(self.method["PVM_EchoTime"] * 1e-3),
+                                  "method/PVM_EchoTime")
+        if self.method.get("PVM_RepetitionTime") is not None:
+            values["RepetitionTime"] = (float(self.method["PVM_RepetitionTime"] / 1e3),
+                                        "method/PVM_RepetitionTime")
         dwelltime, field = self._dwelltime()
         values["DwellTime"] = (dwelltime, field)
         return Spectrum(self.name(), data, dwelltime, self.voxel(), values, tags)
@@ -140,15 +142,11 @@ class BrukerMrs:
         elif csi:
             raise ReaderError(f"{self.path}: CSI fid of {self.version} has no known layout")
         else:
+            if receivers != 1 and not self.pv360:
+                raise ReaderError(f"{self.path}: a fid of {receivers} receivers that is not CSI "
+                                  "has no known layout")
             count = repetitions
-            twice = self.pulprog in self.TWICE or (self.pulprog == "STEAM.ppg"
-                                                   and self.version == "<PV-360.1.1>")
-            if twice or (self.pv360 and self.pulprog != self.MEGA):
-                encoding = [int(size) * 2, repetitions]
-            elif self.pulprog == self.MEGA:
-                encoding = [int(self._first(self.method["PVM_SpecMatrix"])), repetitions]
-            else:
-                encoding = [int(size) // 2, repetitions]
+            encoding = [length // 2, repetitions]  # the block's samples as complex points
         stored = self._stored(dtype, (block, int(count)))
         stored = stored[:length]
         data = stored[0::2] + 1j * stored[1::2]
@@ -292,11 +290,15 @@ class BrukerMrs:
 
     # --- geometry, keys --------------------------------------------------------------------------
 
-    def voxel(self) -> np.ndarray:
-        """The method's voxel: PVM_VoxArrGradOrient, Position and Size, axes taken as 1, 2, 0."""
-        orientation = np.squeeze(np.asarray(self.method["PVM_VoxArrGradOrient"], float))
-        position = np.squeeze(np.asarray(self.method["PVM_VoxArrPosition"], float))
-        size = np.squeeze(np.asarray(self.method["PVM_VoxArrSize"], float))
+    def voxel(self) -> np.ndarray | None:
+        """The method's voxel: PVM_VoxArrGradOrient, Position and Size, axes taken as 1, 2, 0;
+        None for a method without localisation, which states no voxel."""
+        fields = ("PVM_VoxArrGradOrient", "PVM_VoxArrPosition", "PVM_VoxArrSize")
+        if any(self.method.get(field) is None for field in fields):
+            self.notes.append("no voxel in the method file (PVM_VoxArr*): no geometry")
+            return None
+        orientation, position, size = (np.squeeze(np.asarray(self.method[field], float))
+                                       for field in fields)
         reorder = [1, 2, 0]
         affine = np.zeros((4, 4))
         affine[3, 3] = 1
@@ -347,19 +349,25 @@ class BrukerMrs:
         return tuple(tags)
 
     def _values(self, frequency, nucleus, software, sequence, fields) -> dict:
+        """The keys of every spectrum; a value the parameter files do not state is left out."""
         offset = self._first(self.method.get("PVM_FrqWorkOffsetPpm"))
         values = {
-            "SpectrometerFrequency": ([frequency], fields[0]),
-            "ResonantNucleus": ([str(nucleus)[1:-1]], fields[1]),
-            "TxOffset": (float(offset), "method/PVM_FrqWorkOffsetPpm"),
             "Manufacturer": ("Bruker", None),
-            "SoftwareVersions": (software, fields[2]),
-            "SequenceName": (sequence, fields[3]),
             "ConversionMethod": (f"miox {__version__}", None),
             "ConversionTime": (datetime.now().isoformat(timespec="milliseconds"), None),
             "OriginalFile": ([self.original_file()], None),
             "kSpace": ([False, False, False], None),
         }
+        if frequency is not None:
+            values["SpectrometerFrequency"] = ([frequency], fields[0])
+        if nucleus is not None and str(nucleus).strip("<>"):
+            values["ResonantNucleus"] = ([str(nucleus)[1:-1]], fields[1])
+        if offset is not None:
+            values["TxOffset"] = (float(offset), "method/PVM_FrqWorkOffsetPpm")
+        for key, value, field in (("SoftwareVersions", software, fields[2]),
+                                  ("SequenceName", sequence, fields[3])):
+            if value is not None:
+                values[key] = (value, field)
         return values
 
     def original_file(self) -> str:

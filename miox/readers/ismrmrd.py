@@ -37,10 +37,11 @@ from miox.sniff import Format, Sniff
 # Every group of the file with a ``data`` table becomes one RawData (one row per readout:          #
 # AcquisitionHeader, trajectory, interleaved float32 samples), with the ``waveforms`` table        #
 # attached; every ``image_*`` subgroup becomes one MRImage. The group's XML header, if any, is     #
-# kept whole as the vendor header (repeated elements as lists, numbers as numbers); the standard   #
-# keys are read from it and from the first acquisition header. Times of the header are in ms,      #
-# frequencies in Hz, the sample time in µs. Image headers give the image centre and the read,      #
-# phase and slice directions in the DICOM patient frame (LPS); the affine maps to RAS.             #
+# kept whole as the vendor header (repeated elements as lists, numbers as numbers, the elements    #
+# the schema types as text as written); the standard keys are read from it and from the first      #
+# acquisition header. Times of the header are in ms, frequencies in Hz, the sample time in µs.     #
+# Image headers give the image centre and the read, phase and slice directions in the DICOM        #
+# patient frame (LPS); the affine maps to RAS.                                                     #
 #                                                                                                  #
 #**************************************************************************************************#
 class IsmrmrdReader(Reader):
@@ -104,6 +105,18 @@ class IsmrmrdReader(Reader):
         "FrameOfReferenceUID", "Manufacturer", "ManufacturersModelName", "InstitutionName",
         "StationName", "DeviceSerialNumber", "PulseSequenceType", "DiffusionScheme",
     }
+    TEXT_ELEMENTS = {  # elements the header schema types as text (strings, dates, times, enums)
+        "patientName", "patientID", "patientBirthdate", "patientGender", "studyDate", "studyTime",
+        "studyID", "referringPhysicianName", "studyDescription", "studyInstanceUID",
+        "bodyPartExamined", "measurementID", "seriesDate", "seriesTime", "patientPosition",
+        "protocolName", "sequenceName", "seriesDescription", "seriesInstanceUIDRoot",
+        "frameOfReferenceUID", "referencedSOPInstanceUID", "dependencyType", "systemVendor",
+        "systemModel", "institutionName", "stationName", "deviceID", "deviceSerialNumber",
+        "coilName", "trajectory", "identifier", "comment", "calibrationMode",
+        "interleavingDimension", "calibration", "calibration_encoding", "sequence_type",
+        "diffusionDimension", "diffusionScheme", "name", "waveformName", "waveformType",
+    }
+    TEXT_VALUES = ("userParameterString", "userParameterBase64")  # parents of a text <value>
     MULTIBAND_FACTOR = "multiband_factor"
     IMAGE_TYPES = {1: "MAGNITUDE", 2: "PHASE", 3: "REAL", 4: "IMAG", 5: "COMPLEX"}
     NOISE_BIT = 19  # ACQ_IS_NOISE_MEASUREMENT
@@ -154,16 +167,21 @@ class IsmrmrdReader(Reader):
         return self._element(root)
 
     @classmethod
-    def _element(cls, node: ET.Element) -> Any:
+    def _element(cls, node: ET.Element, parent: str = "") -> Any:
         """An element as a dict of its children (a tag that repeats becomes a list), a leaf as
-        its text (numbers as numbers)."""
+        its text. The text of a leaf becomes a number when it reads as one, except in the
+        elements the schema types as text (names, IDs, descriptions, dates, enumerations and the
+        values of string parameters), which stay as written: "1E5" is a patient ID, not 100000."""
+        name = node.tag.rsplit("}", 1)[-1]
         children = list(node)
         if not children:
+            if name in cls.TEXT_ELEMENTS or name == "value" and parent in cls.TEXT_VALUES:
+                return None if node.text is None else node.text.strip()
             return cls._scalar(node.text)
         tags = [child.tag.rsplit("}", 1)[-1] for child in children]
         result: dict[str, Any] = {}
         for tag, child in zip(tags, children, strict=True):
-            value = cls._element(child)
+            value = cls._element(child, name)
             if tags.count(tag) > 1:
                 result.setdefault(tag, []).append(value)
             else:

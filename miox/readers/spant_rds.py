@@ -123,7 +123,7 @@ class RSerial:
     PAIRLISTS = {2: "pairlist", 3: "closure", 5: "promise", 6: "call", 17: "dots",
                  239: "pairlist", 240: "call"}
     SPECIAL = {242: "environment", 241: "environment", 253: "environment", 252: "unbound",
-               251: "missing", 247: "environment"}  # empty, base, global env, base namespace
+               251: "missing", 250: "environment"}  # empty, base, global env, base namespace
 
     def __init__(self, blob: bytes):
         for decompress in (gzip.decompress, bz2.decompress, lzma.decompress):
@@ -161,7 +161,7 @@ class RSerial:
             return RObject(self.SPECIAL[kind])
         if kind == 255:  # reference to an earlier symbol or environment
             return self.references[(flags >> 8 or self.integer()) - 1]
-        if kind in (248, 249, 250):  # persistent name, namespace, package: a string vector
+        if kind in (247, 248, 249):  # persistent name, package, namespace: a string vector
             self.integer()
             item = RObject("namespace", [self.read() for _ in range(self.integer())])
             self.references.append(item)

@@ -68,6 +68,7 @@ class LcmodelOutputReader(Reader):
     }
     PAIR = re.compile(r"([A-Za-z][\w()]*)\s*=\s*('(?:[^']|'')*'|[^,]*)")  # KEY = value
     EXPONENT = re.compile(r"(?<=\d)[dD](?=[+-]?\d)")  # Fortran double exponent: 1.5D+02
+    TOUCHING = re.compile(r"%(?=\S)")  # a %SD directly followed by the next column's value
     INPUTS = {  # standard key: (input, factor)
         "SpectrometerFrequency": ("hzpppm", 1.0),
         "DwellTime": ("deltat", 1.0),
@@ -94,7 +95,7 @@ class LcmodelOutputReader(Reader):
             )
         if "concentration" not in tables:
             raise ReaderError(f"{sniff.path.name} has no concentration table")
-        rows = self._rows(tables["concentration"])
+        rows = self._rows(tables["concentration"], notes)
         diagnostics = self._misc(tables.get("misc", []))
         inputs = self._inputs(tables.get("table", []))
         vendor = {
@@ -182,17 +183,27 @@ class LcmodelOutputReader(Reader):
             i += 1
         return np.asarray(values[:count]), i
 
-    def _rows(self, table: list[str]) -> list[dict]:
+    def _rows(self, table: list[str], notes: list[str]) -> list[dict]:
+        """The table's rows. A value that fills its field touches the %SD before it, and one
+        too wide for its field is printed as asterisks: such a cell, like any other that is no
+        number, has no value (None)."""
         header = table[0].split()[:-1]  # the last column is the metabolite
-        rows = []
+        rows, unread = [], []
         for line in table[1:]:
-            tokens = line.split()
+            tokens = self.TOUCHING.sub("% ", line).split()
             if len(tokens) < 2:
                 continue
             row = {"metabolite": tokens[-1]}
             for column, text in zip(header, tokens[:-1], strict=False):
-                row[self.COLUMNS.get(column, column)] = float(text.rstrip("%"))
+                try:
+                    row[self.COLUMNS.get(column, column)] = float(text.rstrip("%"))
+                except ValueError:
+                    row[self.COLUMNS.get(column, column)] = None
+                    unread.append(f"{tokens[-1]} {column} ({text})")
             rows.append(row)
+        if unread:
+            notes.append(f"cells that are no number (overflow, columns run together) left "
+                         f"without value: {', '.join(unread)}")
         return rows
 
     def _misc(self, misc: list[str]) -> dict:

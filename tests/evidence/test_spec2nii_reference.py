@@ -157,7 +157,8 @@ def _compare_all(pairs: list[Path], compare=_compare) -> int:
 # data/list swaps their pulses); HYPER water references with their echo time per index (spec2nii:  #
 # one, 80 ms); echo and repetition time of a classic DICOM in s (spec2nii: ms). Edited (MEGA)      #
 # scans: spec2nii keeps extr1 x extr2, MIOX pairs the transients; checked transient by transient,  #
-# ON being the transients the .list puts at extr2 1.                                               #
+# ON being the transients the .list puts at extr2 1. A folder with several SPARs that may be the   #
+# scan's is passed over: MIOX keeps what they state alike, spec2nii takes the one it is given.     #
 #                                                                                                  #
 #**************************************************************************************************#
 def _data_lists(root: Path) -> list[Path]:
@@ -189,9 +190,11 @@ def _compare_data_list(data: Path) -> None:
     if PhilipsListRaw.imaging(parsed["list_info"], rows):
         pytest.skip("imaging k-space, read as RawData")
     try:
-        aux = reader._auxiliary(data.parent, data.stem)
+        aux, others = reader._auxiliary(data.parent, data.stem)
     except ReaderError as e:
         pytest.skip(str(e))
+    if others:
+        pytest.skip("several SPARs may be the scan's: MIOX keeps what they state alike")
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         try:
@@ -394,7 +397,9 @@ def test_private_philips_dicom_equals_spec2nii(private_roots, tmp_path):
 # spec2nii: the frames of both splits, references first, are checked equal. Files spec2nii cannot  #
 # read (revisions before 12, protocol names it does not map) are passed over. The header layouts   #
 # (ge_rdb_fields) are checked against spec2nii's ctypes structures for every revision it knows,    #
-# and the header values of every P-file, spectroscopy or not, against its reading.                 #
+# and the header values of every P-file, spectroscopy or not, against its reading. Differences     #
+# named: no InversionTime where the header holds 0 and no PatientSex where none was entered        #
+# (spec2nii: 0.0 and "O").                                                                         #
 #                                                                                                  #
 #**************************************************************************************************#
 SPEC2NII_REVISIONS = (7, 8, 9, 10, 11, 14.0, 14.1, 14.2, 14.3, 15.000, 15.001, 16.000, 20.001,
@@ -502,6 +507,8 @@ def _compare_ge(path: Path) -> None:
         for key in GE_KEYS:
             value, reference = d.meta.get(key), header_ext.get(key)
             reference = _stated(reference)
+            if (key, reference) in (("InversionTime", 0.0), ("PatientSex", "O")):
+                reference = None  # the header states neither: MIOX leaves the key out
             if isinstance(reference, float):
                 assert value == pytest.approx(reference, abs=1e-12), key
             else:
@@ -718,7 +725,8 @@ def test_xa_reference_scans_are_unsuppressed(public_data):
 # Against spec2nii's Siemens (tag DIM_DYN) and UIH multi_file_dicom, one file or one series of     #
 # files. Differences named: OriginalFile holds the file names (spec2nii's Siemens converter: the   #
 # paths as given); no tag on a 5th dimension the data lack (spec2nii tags one on single spectra);  #
-# the CSA inversion time in s (spec2nii: ms); the echo time the CSA header states, alTE[0]         #
+# the CSA inversion time in s (spec2nii: ms), left out where the header states 0 (no inversion;    #
+# spec2nii writes the 0); the echo time the CSA header states, alTE[0]                             #
 # (spec2nii adds up every alTE entry, stale ones too); the references of svs_slaser_dkd2 (scan     #
 # mode 2) by instance numbers counted from 1 (spec2nii counts them from 0 and moves one transient: #
 # only the transients as a whole are compared, test_agreement checks the split against the twix    #
@@ -804,7 +812,7 @@ def _compare_vendor_dicom(paths: list[Path], tmp_path: Path) -> None:
                 assert value == reference, key
         reference = header_ext.get("InversionTime")
         scale = 1 if uih else 1e-3  # the CSA value in ms
-        assert d.meta.get("InversionTime") == (None if reference is None else
+        assert d.meta.get("InversionTime") == (None if not reference else  # 0: no inversion
                                                pytest.approx(reference * scale, abs=1e-12))
 
 

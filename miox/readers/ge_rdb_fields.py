@@ -7,7 +7,7 @@
 # Created: 18/11/26                                                                                #
 #                                                                                                  #
 # Purpose: The named fields of the GE raw-data (rdb) header by revision: the raw section at the    #
-#          start of the file, then the exam, series and image sections, each a table of (GE name, #
+#          start of the file, then the exam, series and image sections, each a table of (GE name,  #
 #          byte offset, struct format) that several revisions share at their own section starts.   #
 #                                                                                                  #
 ####################################################################################################

@@ -40,10 +40,12 @@ from miox.sniff import Format, Sniff, Sniffer
 # Imaging scans (the readout spans the kx range of the .list) are read as raw k-space              #
 # (PhilipsListRaw). For spectroscopy, the auxiliary file is found in the folder: a SPAR ending in  #
 # _act first, then any SPAR, then a Philips spectroscopy DICOM; SPARs that disagree on frequency   #
-# or dwell time make the read fail rather than guess. Without one there, the SPAR of the same scan #
-# in a folder beside it is used: raw_<n>.data belongs to <name>_<n>_<m>_raw_act.SPAR, as the       #
-# scanner numbers its exports. Keys, dwell time and voxel come from the SPAR as the SPAR/SDAT      #
-# reader reads them, or from the DICOM's header as PhilipsDicomMrs reads it.                       #
+# or dwell time make the read fail rather than guess. raw_<n>.data belongs to                      #
+# <name>_<n>_<m>_raw_act.SPAR, as the scanner numbers its exports: of several SPARs of one kind in #
+# the folder the one of that scan is taken; where the names tell none apart, only what they all    #
+# state alike is kept (keys, voxel, vendor header), with a note. Without a SPAR there, the SPAR of #
+# the same scan in a folder beside it is used. Keys, dwell time and voxel come from the SPAR as    #
+# the SPAR/SDAT reader reads them, or from the DICOM's header as PhilipsDicomMrs reads it.         #
 # Every vector of the .list is a complex float32 readout at its offset in the .data. Vectors of    #
 # one type and mix (STD_0, STD_1, ..., NOI) form one dataset of (points, chan, aver, dyn, card,    #
 # echo, loca, extr1, extr2), each counter holding the values it takes in order; counters with one  #
@@ -66,6 +68,9 @@ class PhilipsDataListReader(Reader):
     TAGS = {"chan": "DIM_COIL", "aver": "DIM_DYN", "dyn": "DIM_DYN", "echo": "DIM_INDIRECT_0"}
     DICOM_SOURCE = "DICOM"
     WATER_REFERENCES = "HYPER water references, echo time alternating 80 / 35 ms"
+    VOXEL = ("volume_selection_enable",) + tuple(
+        f"{axis}_{field}" for axis in ("lr", "ap", "cc")
+        for field in ("angulation", "size", "off_center"))
 
     def __init__(self):
         self.spar = PhilipsSparSdatReader()
@@ -84,21 +89,33 @@ class PhilipsDataListReader(Reader):
                for r in info.get(k, {}).values()):
             raise ReaderError(f"{data.name}: spectroscopic imaging k-space (kx, ky, kz), which is "
                               "not reconstructed here: read the scan's SPAR/SDAT or DICOM")
-        aux = self._auxiliary(data.parent, data.stem)
+        aux, others = self._auxiliary(data.parent, data.stem)
         notes: list[str] = []
         if aux.suffix.lower() == ".spar":
-            header = self.spar.read_spar(aux)
-            values = self.spar._values(header, aux, notes)
+            stated = self.spar.read_spar(aux)
+            header = self._alike(stated, others)
+            values = self.spar._values(stated, aux, notes)
+            unknown = [k for k, (_, field) in values.items() if field and field not in header]
+            values = {k: v for k, v in values.items() if k not in unknown}
             dwelltime = 1.0 / float(header["sample_frequency"])
             values["DwellTime"] = (dwelltime, "sample_frequency")
-            affine, source = self.spar.voxel(header), self.spar.SOURCE
+            voxel = all(field in header for field in self.VOXEL)
+            affine = self.spar.voxel(header) if voxel else self.spar.NO_VOXEL
+            source = self.spar.SOURCE
             vendor = {key: self.plain(value) for key, value in header.items()}
+            if others:
+                names = ", ".join(p.name for p in [aux] + others)
+                notes.append(f"several SPAR files may be this scan's ({names}), their names do "
+                             "not tell which: only what they state alike is kept"
+                             + (f"; unknown: {', '.join(unknown)}" if unknown else "")
+                             + ("" if voxel else "; voxel unknown"))
         else:
             values, dwelltime, affine, vendor = self._dicom_values(aux, notes)
             source = self.DICOM_SOURCE
         vendor.update(parsed)
-        vendor["auxiliary_file"] = aux.name
-        values["OriginalFile"] = ([data.name, list_file.name, aux.name], None)
+        auxiliaries = [p.name for p in [aux] + others]
+        vendor["auxiliary_file"] = aux.name if not others else auxiliaries
+        values["OriginalFile"] = ([data.name, list_file.name] + auxiliaries, None)
         hyper = "hyper" in str(values.get("ProtocolName", ("",))[0]).lower()
         blob = np.fromfile(data, dtype="<c8")
         datasets = []
@@ -212,14 +229,16 @@ class PhilipsDataListReader(Reader):
             raise ReaderError(f"incomplete .data/.list pair: {sniff.path.name}")
         return data, list_file
 
-    def _auxiliary(self, folder: Path, stem: str) -> Path:
+    def _auxiliary(self, folder: Path, stem: str) -> tuple[Path, list[Path]]:
+        """The scan's SPAR or DICOM, and the other SPARs that may as well be the scan's."""
         spars = sorted(p for p in folder.iterdir() if self._spar(p))
-        if not spars and (scan := self.SCAN.match(stem)):
+        scan = self.SCAN.match(stem)
+        if not spars and scan:
             beside = [p for sub in sorted(folder.parent.iterdir()) if sub.is_dir() and sub != folder
                       for p in sorted(sub.iterdir()) if self._spar(p)
                       and (m := self.EXPORT.search(p.stem)) and int(m[1]) == int(scan[1])]
             if beside:
-                return beside[0]
+                return beside[0], []
         spars.sort(key=lambda p: not p.stem.lower().endswith("_act"))
         dicoms = [
             p
@@ -234,7 +253,20 @@ class PhilipsDataListReader(Reader):
         settings = {self._settings(p) for p in spars}
         if len(settings) > 1:
             raise ReaderError(f"SPAR files in {folder} disagree on frequency or dwell time")
-        return candidates[0]
+        if not spars:
+            return candidates[0], []
+        kind = [p for p in spars if p.stem.lower().endswith("_act")] or spars
+        if scan:
+            kind = [p for p in kind if (m := self.EXPORT.search(p.stem))
+                    and int(m[1]) == int(scan[1])] or kind
+        return kind[0], kind[1:]
+
+    def _alike(self, header: dict, others: list[Path]) -> dict:
+        """The header's fields that every other SPAR states with the same value."""
+        for other in others:
+            stated = self.spar.read_spar(other)
+            header = {k: v for k, v in header.items() if k in stated and stated[k] == v}
+        return header
 
     @staticmethod
     def _spar(path: Path) -> bool:

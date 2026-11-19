@@ -348,9 +348,9 @@ class DerivedKeys:
             self._set(meta, "PulseSequenceType", kind, "ScanningSequence and SequenceVariant")
         self._spoiling(meta, spoiled)
         transfer = self._text("MagnetizationTransfer").upper()
-        if transfer.startswith("OF"):
+        if transfer.startswith(("ON", "OF")):  # ON_RESONANCE, OFF_RESONANCE: a pulse is applied
             self._set_tag(meta, "MTState", True, "MagnetizationTransfer")
-        elif transfer.startswith(("ON", "NO")):
+        elif transfer.startswith("NO"):
             self._set_tag(meta, "MTState", False, "MagnetizationTransfer")
         elif self._prot_number("sPrepPulses.ucMTC") == 1:
             self._set_protocol(meta, "MTState", True, "sPrepPulses.ucMTC")

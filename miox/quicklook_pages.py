@@ -1154,8 +1154,8 @@ class RFPulsePage:
 #                                                                                                  #
 # A relaxation decay: every stored point against time (ms), with the vendor's fitted curve drawn   #
 # from the reported numbers (no fitting here); the same on a logarithmic amplitude axis, where     #
-# one exponential is a straight line; the relaxation-time distribution when the file has one, on  #
-# a logarithmic time axis from the first stored time (the part below it, which the data cannot    #
+# one exponential is a straight line; the relaxation-time distribution when the file has one, on   #
+# a logarithmic time axis from the first stored time (the part below it, which the data cannot     #
 # resolve, is named in the note); Details.                                                         #
 #                                                                                                  #
 #**************************************************************************************************#

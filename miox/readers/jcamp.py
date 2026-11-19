@@ -95,7 +95,9 @@ class JcampReader(Reader):
 
     def _fid(self, sniff: Sniff, block: dict, name: str, notes: list[str]) -> MRSData:
         rows, pages = self._rows(block)
-        data = np.asarray([r + 1j * i for r, i in rows]).T
+        if any(i is None for _, i in rows):
+            notes.append("FID without imaginary page: real samples, stored as the real part")
+        data = np.asarray([r + 1j * (0 if i is None else i) for r, i in rows]).T
         if (self._first(block, "$REVERSE") or "").lower() != "yes":
             data = np.conj(data)
         symbols = self._columns(block, "SYMBOL")
@@ -195,8 +197,12 @@ class JcampReader(Reader):
                 notes.append(f"NPOINTS {stated} but {values.size} values, which FIRSTX, "
                                    "LASTX and DELTAX span")
             values = values * float(self._first(block, "YFACTOR") or 1)
-            first, last = float(self._first(block, "FIRSTX")), float(self._first(block, "LASTX"))
-            return np.linspace(first, last, values.size), values
+            ends = [self._first(block, label) for label in ("FIRSTX", "LASTX")]
+            if None in ends:
+                missing = [label for label, v in zip(("FIRSTX", "LASTX"), ends, strict=True)
+                           if v is None]
+                raise ReaderError(f"XYDATA without {' and '.join(missing)}")
+            return np.linspace(float(ends[0]), float(ends[1]), values.size), values
         if "PEAKTABLE" in block:  # X and Y pairs; a spectrum when X is evenly spaced
             text = block["PEAKTABLE"][0].split("\n", 1)[1]
             pairs = np.array(re.split(r"[,;\s]+", text.strip()), dtype=float).reshape(-1, 2)

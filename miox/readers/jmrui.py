@@ -41,9 +41,9 @@ from miox.sniff import Format, Sniff, Sniffer
 # parts. Binary: 13 big-endian doubles (512 bytes reserved), the signals as complex big-endian     #
 # doubles, then text. FIDs are conjugated to NIfTI-MRS's convention; several signals in one file   #
 # become a DIM_USER_0 dimension. The nucleus is TypeOfNucleus (a name, or an index: 1 1H, 2 31P, 3 #
-# 13C, 4 19F, 5 23Na), else the one whose gyromagnetic ratio is within 5 MHz/T of frequency /      #
-# field, else 1H; a frequency above 100 GHz is in Hz. No geometry: a 10 m voxel. A text file whose #
-# SignalNames give one name per signal, most of them metabolites, is a BasisSet.                   #
+# 13C, 4 19F, 5 23Na), else the one whose gyromagnetic ratio is closest to frequency / field and   #
+# within 2 % of it, else 1H; a frequency above 100 GHz is in Hz. No geometry: a 10 m voxel. A text #
+# file whose SignalNames give one name per signal, most of them metabolites, is a BasisSet.        #
 #                                                                                                  #
 #**************************************************************************************************#
 class JmruiReader(Reader):
@@ -52,9 +52,10 @@ class JmruiReader(Reader):
     SIGNAL = re.compile(r"Signal (?:number: )?\d+ out of \d+ in file")  # start of the data
     STANDARD_LINE = re.compile(r"(\w*):(.*)")  # a header line whose key holds no spaces
     EXTENSION = re.compile(r"\.txt$", re.I)  # on signal names
-    NUCLEUS_INDEX = [None, "1H", "31P", "13C", "19F", "23NA"]
-    GYROMAGNETIC = {"1H": 42.577, "2H": 6.536, "3H": 45.415, "13C": 10.7084, "23NA": 11.262,
-                    "31P": 17.235, "129XE": -11.777}  # MHz/T
+    NUCLEUS_INDEX = [None, "1H", "31P", "13C", "19F", "23Na"]
+    GYROMAGNETIC = {"1H": 42.577, "2H": 6.536, "3H": 45.415, "13C": 10.7084, "23Na": 11.262,
+                    "31P": 17.235, "129Xe": -11.777}  # MHz/T
+    GYROMAGNETIC_TOLERANCE = 0.02  # relative: 13C, 23Na and 129Xe lie 5 % apart
     BINARY_FIELDS = ("type_of_sig", "number_of_points", "sampling_interval", "begin_time ",
                      "zero_order_phs", "transmitter_frequency", "magnetic_field",
                      "type_of_nucleus", "reference_frequency_hz", "reference_frequency_ppm",
@@ -167,7 +168,7 @@ class JmruiReader(Reader):
         """The nucleus and the header field it comes from."""
         if isinstance(stated, str):
             return stated, "TypeOfNucleus"
-        if isinstance(stated, (int, float)) and int(stated) > -1 and \
+        if isinstance(stated, (int, float)) and 0 <= int(stated) < len(self.NUCLEUS_INDEX) and \
                 self.NUCLEUS_INDEX[int(stated)] is not None:
             return self.NUCLEUS_INDEX[int(stated)], "TypeOfNucleus"
         try:
@@ -176,9 +177,10 @@ class JmruiReader(Reader):
             notes.append("nucleus not stated and no field strength: 1H assumed")
             return "1H", "MagneticField"
         ratio = ratio / 1e6 if ratio > 1e4 else ratio
-        for nucleus, gamma in self.GYROMAGNETIC.items():
-            if np.isclose(gamma, ratio, atol=5.0):
-                return nucleus, "MagneticField"
+        nucleus = min(self.GYROMAGNETIC, key=lambda n: abs(abs(self.GYROMAGNETIC[n]) - ratio))
+        gamma = abs(self.GYROMAGNETIC[nucleus])
+        if abs(gamma - ratio) <= self.GYROMAGNETIC_TOLERANCE * gamma:
+            return nucleus, "MagneticField"
         notes.append("nucleus not identified from frequency / field: 1H assumed")
         return "1H", "MagneticField"
 

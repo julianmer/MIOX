@@ -46,7 +46,9 @@ from miox.sniff import Format, Sniff
 # physiological unit's (MPCU) clocks. The sampling frequency is the one a text section states,     #
 # else the sample count over the MPCU duration rounded to whole hertz when within 1 %. The start   #
 # time is LogStartMDHTime, on the clock of the scanner's DICOM times. ECG files may hold several   #
-# leads; they are read as one channel (no sample was at hand).                                     #
+# leads; they are read as one channel (no sample was at hand). A 6002 without its 5002 closes a    #
+# text section whose start is missing: the samples end before its words, the values after it are   #
+# kept in the vendor header (bidsphysio reads such a file's samples up to there as well).          #
 #                                                                                                  #
 #**************************************************************************************************#
 class SiemensPmuReader(Reader):
@@ -57,6 +59,8 @@ class SiemensPmuReader(Reader):
                 ".ext2": "external2"}
     MARKERS = {5000: "trigger", 6000: "marker_6000"}
     FOOTER = re.compile(r"^\s*([A-Za-z][A-Za-z0-9 /]*?)\s*:\s*(.*)$")
+    SECTION = re.compile(r"(?<!\d)5002(?!\d)(.*?)(?<!\d)6002(?!\d)", re.S)
+    INTEGER = re.compile(r"-?\d+")
 
     def read(self, sniff: Sniff) -> list[PhysioData]:
         text = sniff.path.read_text(errors="replace")
@@ -64,11 +68,12 @@ class SiemensPmuReader(Reader):
         if end is None:
             raise ReaderError(f"{sniff.path.name}: no end marker 5003")
         body, footer = text[: end.start()], text[end.end():]
-        sections = [s.strip() for s in re.findall(r"5002(.*?)6002", body, re.S)]
-        body = re.sub(r"5002.*?6002", " ", body, flags=re.S)
-        tokens = [int(t) for t in body.split() if re.fullmatch(r"-?\d+", t) and t != "6002"]
+        sections = [s.strip() for s in self.SECTION.findall(body)]
+        words = self.SECTION.sub(" ", body).split()
         notes: list[str] = []
-        if any(not re.fullmatch(r"-?\d+", t) for t in body.split()):
+        after = self._unopened(words, sections, notes)
+        tokens = [int(t) for t in words if self.INTEGER.fullmatch(t)]
+        if any(not self.INTEGER.fullmatch(t) for t in words):
             notes.append("words outside the text sections passed over")
         header, values = tokens[:4], tokens[4:]
         samples, events = [], {name: [] for name in self.MARKERS.values()}
@@ -79,6 +84,8 @@ class SiemensPmuReader(Reader):
                 samples.append(value)
         vendor = {"header_values": header, "text_sections": sections,
                   "footer": self._footer(footer)}
+        if after:
+            vendor["values_after_unopened_section"] = after
         meta = Meta(vendor)
         rate = self._rate(len(samples), sections, vendor["footer"], meta, notes)
         start = vendor["footer"].get("LogStartMDHTime")
@@ -92,6 +99,21 @@ class SiemensPmuReader(Reader):
             data, (channel,), rate, start_time, "s since midnight, scanner clock (LogStartMDHTime)",
             events_out, meta, self.provenance(sniff, tuple(notes)), sniff.path.stem,
         )]
+
+    def _unopened(self, words: list[str], sections: list[str], notes: list[str]) -> list:
+        """Cuts ``words`` before a text section that ends (6002) without its start: its words
+        join the sections, what follows it is returned."""
+        if "6002" not in words:
+            return []
+        end = start = words.index("6002")
+        while start > 0 and not self.INTEGER.fullmatch(words[start - 1]):
+            start -= 1
+        after = [int(t) if self.INTEGER.fullmatch(t) else t for t in words[end + 1:]]
+        sections.append(" ".join(words[start:end]))
+        del words[start:]
+        notes.append(f"text section end 6002 without its start 5002: the samples end before "
+                     f"it, the {len(after)} values after it are in the vendor header")
+        return after
 
     def _footer(self, text: str) -> dict:
         footer: dict = {}
@@ -370,7 +392,10 @@ class GePhysioReader(Reader):
         if match is None:
             raise ReaderError(f"{sniff.path.name}: not a GE PPGData, RESPData or ECGData file")
         channel, rate = self.KINDS[match.group(1)]
-        data = np.loadtxt(sniff.path, ndmin=1).astype(np.float64)[:, None]
+        try:
+            data = np.loadtxt(sniff.path, ndmin=1).astype(np.float64)[:, None]
+        except ValueError as e:
+            raise ReaderError(f"{sniff.path.name}: not one number per line ({e})") from e
         notes = [f"sampling frequency {rate:g} Hz and start 30 s before the scan: GE's fixed "
                  f"values, not stated in the file"]
         return [PhysioData(
@@ -397,7 +422,10 @@ class HcpPhysioReader(Reader):
     CHANNELS = ("trigger", "respiratory", "cardiac")
 
     def read(self, sniff: Sniff) -> list[PhysioData]:
-        data = np.loadtxt(sniff.path, ndmin=2).astype(np.float64)
+        try:
+            data = np.loadtxt(sniff.path, ndmin=2).astype(np.float64)
+        except ValueError as e:
+            raise ReaderError(f"{sniff.path.name}: not rows of 3 numbers ({e})") from e
         if data.shape[1] != len(self.CHANNELS):
             raise ReaderError(f"{sniff.path.name}: {data.shape[1]} columns, 3 expected")
         notes = [f"sampling frequency {self.RATE:g} Hz: the HCP's documented value, not stated in "
@@ -429,7 +457,16 @@ class BidsPhysioReader(Reader):
         opener = gzip.open if sniff.path.suffix == ".gz" else open
         with opener(sniff.path, "rt") as fh:
             rows = [line.split() for line in fh if line.strip()]
-        data = np.array([[np.nan if v == "n/a" else float(v) for v in r] for r in rows])
+        if not rows:
+            raise ReaderError(f"{sniff.path.name}: no samples")
+        try:
+            data = np.array([[np.nan if v == "n/a" else float(v) for v in r] for r in rows])
+        except ValueError as e:
+            if not any(self._is_number(v) for v in rows[0]):
+                raise ReaderError(f"{sniff.path.name}: starts with a header line "
+                                  f"({' '.join(rows[0])}); a BIDS physio table has none, its "
+                                  "columns are named in the sidecar") from e
+            raise ReaderError(f"{sniff.path.name}: not a table of numbers ({e})") from e
         columns = tuple(info.get("Columns", [f"column{i}" for i in range(data.shape[1])]))
         notes = []
         if data.ndim != 2 or data.shape[1] != len(columns):
@@ -442,6 +479,14 @@ class BidsPhysioReader(Reader):
             else None, "s relative to the first volume (BIDS StartTime)", {}, meta,
             self.provenance(sniff, tuple(notes)), self.stem(sniff.path),
         )]
+
+    @staticmethod
+    def _is_number(text: str) -> bool:
+        try:
+            float(text)
+        except ValueError:
+            return False
+        return True
 
     @staticmethod
     def stem(path: Path) -> str:

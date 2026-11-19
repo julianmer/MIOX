@@ -60,6 +60,11 @@ class GePfileRaw:
 
     def datasets(self) -> list[RawData]:
         v = self.header.values
+        if "rhr_rh_nframes" not in v:  # not every revision's field table holds it
+            raise ReaderError(
+                f"{self.path.name}: the header layout of revision {self.header.version:g} does "
+                "not state the frame count (rh_nframes), so the k-space frames cannot be laid out"
+            )
         passes, slices = v.get("rhr_rh_npasses") or 1, v.get("rhr_rh_nslices") or 1
         echoes, views = v.get("rhr_rh_nechoes") or 1, v.get("rhr_rh_nframes") or 0
         frames = self._frames(passes, slices, echoes, views)

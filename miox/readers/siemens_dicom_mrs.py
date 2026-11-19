@@ -377,7 +377,7 @@ class SiemensDicomMrs:
                                    "Description": "Sequence binary path."},
                                   "csa_image/SequenceName"),
         }
-        if csa.get("InversionTime"):
+        if csa.get("InversionTime") and float(csa["InversionTime"][0]):  # 0: no inversion
             values["InversionTime"] = (float(csa["InversionTime"][0]) * 1e-3,
                                        "csa_image/InversionTime")
         if csa.get("ReceivingCoil"):

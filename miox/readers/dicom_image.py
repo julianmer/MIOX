@@ -101,8 +101,7 @@ class DicomImageReader(Reader):
     PACKAGES = Reader.PACKAGES + ("pydicom",)
     SOURCE = "DICOM"
     LPS_TO_RAS = np.diag([-1.0, -1.0, 1.0, 1.0])
-    PHILIPS_SCALE = (0x2005, 0x100E)  # MRScaleSlope
-    PHILIPS_FRAMES = (0x2005, 0x140F)  # private per-frame items
+    PHILIPS_SCALE = DerivedKeys.PHILIPS_SCALE_SLOPE  # MRScaleSlope
     KIND_SUFFIXES = (
         ({"ADC"}, "_ADC"),
         ({"P", "PHASE"}, "_ph"),
@@ -250,7 +249,10 @@ class DicomImageReader(Reader):
     def _frame(self, ds: pydicom.Dataset, path: Path, index: int | None) -> Frame:
         orientation = np.asarray(self._value(ds, "ImageOrientationPatient", index), float)
         position = np.asarray(self._value(ds, "ImagePositionPatient", index), float)
-        spacing = tuple(float(v) for v in self._value(ds, "PixelSpacing", index))
+        spacing = self._value(ds, "PixelSpacing", index)
+        if spacing is None:
+            raise ReaderError(f"{path.name}: no PixelSpacing")
+        spacing = tuple(float(v) for v in spacing)
         thickness = float(self._value(ds, "SliceThickness", index) or 0)
         echo = self._value(ds, "EffectiveEchoTime", index)
         echo = self._value(ds, "EchoTime", index) if echo is None else echo
@@ -535,16 +537,18 @@ class DicomImageReader(Reader):
         return values
 
     def _philips_scale(self, frame: Frame) -> float | None:
+        """MRScaleSlope where the derived keys look for it: the frame's functional groups, the
+        shared ones, else the dataset."""
         ds = frame.ds
         if "philips" not in str(ds.get("Manufacturer", "")).lower():
             return None
-        if frame.index is not None and "PerFrameFunctionalGroupsSequence" in ds:  # per frame
-            group = ds.PerFrameFunctionalGroupsSequence[frame.index]
-            item = group[self.PHILIPS_FRAMES].value[0] if self.PHILIPS_FRAMES in group else group
-            value = item.get(self.PHILIPS_SCALE)
-        else:
-            value = ds.get(self.PHILIPS_SCALE)
-        value = None if value is None else float(value.value)
+        value = find_tag(ds, frame.index, self.PHILIPS_SCALE)
+        if isinstance(value, (list, pydicom.multival.MultiValue)):
+            value = value[0] if value else None
+        try:
+            value = None if value in (None, "") else float(value)
+        except (TypeError, ValueError):
+            return None
         return value if value else None
 
     @staticmethod

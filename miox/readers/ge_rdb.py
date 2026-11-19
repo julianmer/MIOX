@@ -40,7 +40,7 @@ from miox.readers.base import ReaderError
 # values by their GE names (``values``: texts decoded to the first NUL), the receive coil count,   #
 # the slice table and the geometry of every slice as ge_to_ismrmrd derives it (read direction from #
 # the first to the second corner point, phase direction from the first to the third, slice         #
-# direction their cross product, the centre between the second and third point; the points are    #
+# direction their cross product, the centre between the second and third point; the points are     #
 # rotated into LPS for the patient entry and position and shifted so that the first slice's centre #
 # equals the image header's centre, which the table's points lack), the patient position as a      #
 # DICOM code and the standard keys.                                                                #

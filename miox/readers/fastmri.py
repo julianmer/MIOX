@@ -34,9 +34,10 @@ from miox.sniff import Format, Sniff
 #                                          FastMriReader                                           #
 #**************************************************************************************************#
 #                                                                                                  #
-# ``kspace`` is stored as (slices, coils, frequency encodes, phase encodes); every phase-encoding  #
-# column of every slice becomes one readout of a RawData, with the slice and the line in its       #
-# header counters. Lines the file holds as all zeros were not acquired; their count is noted.      #
+# ``kspace`` is stored as (slices, coils, frequency encodes, phase encodes), in single-coil files  #
+# as (slices, frequency encodes, phase encodes), read as one coil; every phase-encoding column of  #
+# every slice becomes one readout of a RawData, with the slice and the line in its header          #
+# counters. Lines the file holds as all zeros were not acquired; their count is noted.             #
 # The ``ismrmrd_header`` text gives the standard keys as for ISMRMRD files; the file's root        #
 # attributes join the vendor header. ``reconstruction_rss`` (and any other ``reconstruction_*``    #
 # array) becomes an MRImage of (x, y, slice) without geometry, since the file states none.         #
@@ -59,8 +60,10 @@ class FastMriReader(Reader):
             reconstructions = {
                 name: fh[name][()] for name in fh if name.startswith("reconstruction")
             }
+        if kspace.ndim == 3:  # single-coil files have no coil axis
+            kspace = kspace[:, np.newaxis]
         if kspace.ndim != 4:
-            raise ReaderError(f"{sniff.path.name}: kspace has {kspace.ndim} dimensions, not 4")
+            raise ReaderError(f"{sniff.path.name}: kspace has {kspace.ndim} dimensions, not 3 or 4")
         header = self.ismrmrd._element(ET.fromstring(text))
         header["file_attributes"] = attributes
         datasets: list[RawData | MRImage] = [self._raw(sniff, kspace, header, notes)]

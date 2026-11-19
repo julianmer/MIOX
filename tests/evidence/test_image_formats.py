@@ -131,7 +131,7 @@ def test_nrrd_ascii_and_4d():
     assert im.shape == (3, 9, 1) and im.data.dtype == np.uint16 and im.data.sum() == 378
     assert im.voxel_sizes == pytest.approx((1.0458, 2.0, 1.0))
     im = image(f"{PYNRRD}test_simple4d_raw.nrrd")
-    assert im.dims == ("i", "j", "k", "domain") and im.shape == (1, 1, 1, 1)
+    assert im.dims == ("i", "j", "k", "volume") and im.shape == (1, 1, 1, 1)  # direction none
 
 
 # --- MRtrix ---------------------------------------------------------------------------------------

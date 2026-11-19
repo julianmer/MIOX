@@ -7,8 +7,8 @@
 # Created: 10/11/26                                                                                #
 #                                                                                                  #
 # Purpose: MaRGE .mat files against what they store beside the readouts: the oversampled ADC       #
-#          stream decimated, sorted by sweepOrder and cropped at the echo gives the readouts;     #
-#          their mean times the FOV-shift phase ramp (k in 1/m, dfov in metres) gives kSpace3D;   #
+#          stream decimated, sorted by sweepOrder and cropped at the echo gives the readouts;      #
+#          their mean times the FOV-shift phase ramp (k in 1/m, dfov in metres) gives kSpace3D;    #
 #          its centred inverse FFT gives image3D, which the MRImage holds on the scanner's axes.   #
 #                                                                                                  #
 ####################################################################################################

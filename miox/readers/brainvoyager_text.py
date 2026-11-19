@@ -291,11 +291,11 @@ class BrainVoyagerTransformReader(Reader):
 #                                                                                                  #
 # An FMR is the text header of a functional project: volumes, slices, matrix, TR, voxel sizes,     #
 # the PosInfos of the scan (slice centres and directions in DICOM LPS, as in the VMR), past        #
-# transformations, the left-right convention and the slice timings; the samples sit in the STC    #
+# transformations, the left-right convention and the slice timings; the samples sit in the STC     #
 # file named by Prefix (DataStorageFormat 2: slice by slice, each slice volume by volume, rows,    #
 # columns; 3: volume by volume; 4: time innermost; 1: one file per slice, not read), as int16 or   #
 # float32 (DataType). The volume becomes an MRImage (columns, rows, slices, time); its affine      #
-# comes from the PosInfos when they are verified, else the voxel sizes on the stored axes with    #
+# comes from the PosInfos when they are verified, else the voxel sizes on the stored axes with     #
 # the volume centre at 0.                                                                          #
 #                                                                                                  #
 #**************************************************************************************************#

@@ -143,29 +143,41 @@ class LtaReader(Reader):
 # transforms) holds them as groups of TransformGroup (ITK before 4.5 spelled the parameter names   #
 # "Tranform..."); the MATLAB level-4 format (.mat, as ANTs writes affines) stores the parameters   #
 # under the type's name and the centre as "fixed". Each affine becomes a Transform; ras_matrix is  #
-# the same map in RAS (D M D with D flipping x and y). Non-affine transforms are counted in a      #
-# note.                                                                                            #
+# the same map in RAS (D M D with D flipping x and y). Rigid transforms are affines with the same  #
+# centre: Rigid3DTransform has the affine's parameters; Euler3DTransform three angles (rad, about  #
+# x, y, z) and a translation, A = Rz Rx Ry, or Rz Ry Rx when a fourth fixed parameter (ComputeZYX) #
+# is not 0; VersorRigid3DTransform the vector part of a unit quaternion (its scalar part is not    #
+# negative) and a translation; Similarity3DTransform those and a scale, A = scale R. The other     #
+# transforms (displacement fields, B-splines, ...) are named in a note on every dataset.           #
 #                                                                                                  #
 #**************************************************************************************************#
 class ItkReader(Reader):
     FORMATS = (Format.TRANSFORM_ITK,)
     PACKAGES = ("miox",)
-    AFFINE = re.compile(r"^(AffineTransform|MatrixOffsetTransformBase|TranslationTransform)_"
-                        r"(double|float)_([23])_\3$")
+    AFFINE = re.compile(r"^(AffineTransform|MatrixOffsetTransformBase|TranslationTransform|"
+                        r"Rigid3DTransform|Euler3DTransform|VersorRigid3DTransform|"
+                        r"Similarity3DTransform)_(double|float)_([23])_\3$")
+    ROTATIONS = {"Euler3DTransform": 6, "VersorRigid3DTransform": 6,  # parameter counts
+                 "Similarity3DTransform": 7}
 
     def read(self, sniff: Sniff) -> list[Transform]:
         suffix = sniff.path.suffix.lower()
         items = self._h5(sniff.path) if suffix == ".h5" else self._mat(sniff.path) \
             if suffix == ".mat" else self._text(sniff.path)
-        datasets, skipped = [], []
+        datasets = []
+        skipped = sorted({str(kind) for kind, _, _ in items if not self.AFFINE.match(kind or "")})
         for i, (kind, parameters, fixed) in enumerate(items):
             match = self.AFFINE.match(kind or "")
             if not match:
-                skipped.append(kind)
                 continue
             n = int(match[3])
             if match[1] == "TranslationTransform":
                 parameters = np.eye(n).ravel().tolist() + list(parameters)
+            stated = list(parameters)
+            if match[1] in self.ROTATIONS:
+                if n != 3 or len(parameters) != self.ROTATIONS[match[1]]:
+                    raise ReaderError(f"{sniff.path}: {kind} with {len(parameters)} parameters")
+                parameters = self._rotation(match[1], parameters, fixed)
             if len(parameters) != n * n + n:
                 raise ReaderError(f"{sniff.path}: {kind} with {len(parameters)} parameters")
             linear, centre = np.eye(3), np.zeros(3)
@@ -174,11 +186,12 @@ class ItkReader(Reader):
             translation[:n] = parameters[n * n:]
             centre[:min(n, len(fixed))] = fixed[:n]
             matrix = affine(linear, translation + centre - linear @ centre)
-            notes = (f"not affine, not read: {', '.join(sorted(set(skipped)))}",) if skipped \
-                else ()
+            notes = (f"not affine, not read: {', '.join(skipped)}",) if skipped else ()
             if n == 2:
                 notes += ("2-D transform: z is left unchanged",)
-            meta = Meta({"type": kind, "parameters": list(parameters), "fixed": list(fixed)})
+            if match[1] in self.ROTATIONS:
+                notes += (f"{match[1]}: matrix from its rotation parameters",)
+            meta = Meta({"type": kind, "parameters": stated, "fixed": list(fixed)})
             datasets.append(Transform(
                 "affine", "ITK LPS physical, fixed to moving", matrix, None, None,
                 LPS @ matrix @ LPS, {}, {}, meta, self.provenance(sniff, notes),
@@ -187,6 +200,28 @@ class ItkReader(Reader):
         if not datasets:
             raise ReaderError(f"{sniff.path}: no affine transform ({', '.join(skipped)})")
         return datasets
+
+    @staticmethod
+    def _rotation(kind: str, parameters: list[float], fixed: list[float]) -> list[float]:
+        """The matrix and translation parameters of a transform stated by Euler angles or by a
+        versor (with a scale for a similarity)."""
+        if kind == "Euler3DTransform":
+            (cx, cy, cz), (sx, sy, sz) = np.cos(parameters[:3]), np.sin(parameters[:3])
+            about_x = np.array([[1, 0, 0], [0, cx, -sx], [0, sx, cx]])
+            about_y = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+            about_z = np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]])
+            zyx = len(fixed) > 3 and fixed[3] != 0
+            linear = about_z @ about_y @ about_x if zyx else about_z @ about_x @ about_y
+        else:
+            x, y, z = parameters[:3]
+            w = np.sqrt(max(0.0, 1 - x * x - y * y - z * z))
+            linear = np.array([
+                [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+                [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+                [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]])
+            if kind == "Similarity3DTransform":
+                linear = parameters[6] * linear
+        return linear.ravel().tolist() + list(parameters[3:6])
 
     @staticmethod
     def _text(path: Path) -> list[tuple[str, list[float], list[float]]]:

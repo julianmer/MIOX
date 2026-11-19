@@ -7,7 +7,7 @@
 # Created: 16/11/26                                                                                #
 #                                                                                                  #
 # Purpose: GE P-file spectroscopy: the data block laid out per sequence, voxel geometry and keys,  #
-#          from the rdb header fields (GeRdbHeader).                                              #
+#          from the rdb header fields (GeRdbHeader).                                               #
 #                                                                                                  #
 ####################################################################################################
 
@@ -389,6 +389,7 @@ class GePfileMrs:
                        "C": {"PulseOffset": 4.58, "PulseDuration": 0.02},
                        "D": {"PulseOffset": 4.18, "PulseDuration": 0.02}}
     NUCLEI = ((42.57, "1H"), (10.7, "13C"), (17.2, "31P"))
+    SEX = {1: "M", 2: "F"}
     ENCODINGS = (("utf-8", "strict"), ("ISO-8859-1", "strict"), ("ascii", "replace"))
 
     def __init__(self, path: Path, hdr: Any, version: float, endian: str):
@@ -551,9 +552,9 @@ class GePfileMrs:
         mask[:33] = False
         edited = raw[:, :, :, :, mask, :]
         notes = []
-        if mask.shape[-1] % 4 != 0:
-            complete = mask.shape[-1] // 4 * 4
-            notes.append(f"80 ms HERCULES: {mask.shape[-1]} averages cut to {complete}")
+        if edited.shape[4] % 4 != 0:  # a scan that was stopped: whole sets of four only
+            complete = edited.shape[4] // 4 * 4
+            notes.append(f"80 ms HERCULES: {edited.shape[4]} averages cut to {complete}")
             edited = edited[:, :, :, :, :complete, :]
         shape = list(edited.shape)
         shape[4] //= 4
@@ -605,17 +606,14 @@ class GePfileMrs:
         hdr = self.hdr
         frequency = float(hdr.rhr_rh_ps_mps_freq) / 1e7
         nucleus = self.nucleus()[0]
-        sex = {1: "M", 2: "F"}.get(hdr.rhe_patsex, "O")
         values = {
             "SpectrometerFrequency": ([frequency], "rhr_rh_ps_mps_freq"),
             "ResonantNucleus": ([nucleus], "rhe_magstrength"),
             "EchoTime": (float(hdr.rhi_te) / 1e6, "rhi_te"),
             "RepetitionTime": (float(hdr.rhi_tr) / 1e6, "rhi_tr"),
-            "InversionTime": (float(hdr.rhi_ti) / 1e6, "rhi_ti"),
             "ExcitationFlipAngle": (float(hdr.rhi_mr_flip), "rhi_mr_flip"),
             "WaterSuppressed": (water_suppressed, None),
             "Manufacturer": ("GE", None),
-            "PatientSex": (sex, "rhe_patsex"),
             "DwellTime": (self.dwelltime, "rhr_spectral_width"),
             "ConversionMethod": (f"miox {__version__}", None),
             "ConversionTime": (datetime.now().isoformat(timespec="milliseconds"), None),
@@ -629,4 +627,8 @@ class GePfileMrs:
                           ("SequenceName", "rhi_psdname"), ("ProtocolName", "rhs_se_desc"),
                           ("PatientName", "rhe_patname"), ("PatientDoB", "rhe_dateofbirth")):
             values[key] = (self.text(getattr(hdr, name)), name)
+        if hdr.rhi_ti:  # 0: no inversion
+            values["InversionTime"] = (float(hdr.rhi_ti) / 1e6, "rhi_ti")
+        if hdr.rhe_patsex in self.SEX:  # 0: not entered
+            values["PatientSex"] = (self.SEX[hdr.rhe_patsex], "rhe_patsex")
         return values

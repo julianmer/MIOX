@@ -13,7 +13,7 @@
 #          per-vertex files match their meshes, smoothing lowers curvature spread, VOIs sit on     #
 #          their VMR's grid, a protocol written with tabs equals its space-separated twin and the  #
 #          rigid transformations are rotations. Turbo-BrainVoyager's sample: a V16 equals the VMR  #
-#          made from it, and the first functional volume as STC and as V16 equals the Analyze     #
+#          made from it, and the first functional volume as STC and as V16 equals the Analyze      #
 #          volume it was imported from.                                                            #
 #                                                                                                  #
 ####################################################################################################

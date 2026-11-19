@@ -6,7 +6,7 @@
 #                                                                                                  #
 # Created: 09/11/26                                                                                #
 #                                                                                                  #
-# Purpose: Bruker minispec relaxometry: the .dps decay with the fit of the report that names it   #
+# Purpose: Bruker minispec relaxometry: the .dps decay with the fit of the report that names it    #
 #          and the CONTIN distribution beside it, a CONTIN export and a report on their own, the   #
 #          latest of several reports, and the sniff of synthetic files.                            #
 #                                                                                                  #

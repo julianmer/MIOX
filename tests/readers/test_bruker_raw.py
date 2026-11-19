@@ -8,7 +8,7 @@
 #                                                                                                  #
 # Purpose: Bruker imaging k-space on synthetic scan folders: a ParaVision 6 fid with padded        #
 #          blocks, two channels, an echo train and interleaved objects, and a ParaVision 360       #
-#          rawdata.job0; the counters follow the encoding steps and the object order.             #
+#          rawdata.job0; the counters follow the encoding steps and the object order.              #
 #                                                                                                  #
 ####################################################################################################
 

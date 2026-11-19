@@ -208,6 +208,20 @@ class GeHeader:
             self.variant = "Signa 4.x"
             self._signa4()
 
+    @classmethod
+    def recognised(cls, path: Path) -> bool:
+        """Whether the first bytes of a file carry the marks one of the variants is read by."""
+        plane = 2 * (cls.SERIES_START + 139)
+        with open(path, "rb") as fh:
+            head = fh.read(plane + 16)
+        if len(head) >= 4 and struct.unpack(">i", head[:4])[0] == cls.IMGF:
+            return True
+        if head[7:12] == b"SIGNA":
+            return True
+        return head[2 * cls.STUDY_START :][:5] == b"STUDY" and any(
+            p in head[plane:] for p in (b"AXIAL", b"CORONAL", b"SAGITTAL", b"OBLIQUE")
+        )
+
     # --- Genesis 5.x -----------------------------------------------------------------------------
 
     def _genesis_with_pixel_header(self) -> None:
@@ -363,10 +377,12 @@ class GeHeader:
 #**************************************************************************************************#
 #                                                                                                  #
 # Assembles the files of a folder into one image per series and echo (a single file is read with   #
-# the siblings of its series and echo), slices ordered along the slice axis. Image corners are in  #
-# patient RAS millimetres already; the top-left corner marks the edge of the field of view, so     #
-# the first voxel centre lies half a pixel inside. Checked against ITK's GE readers (whose origin  #
-# is that corner) and their MetaImage baselines.                                                   #
+# the siblings of its series and echo: files of its size, as the slices of a series share header   #
+# layout and matrix), slices ordered along the slice axis. Only files whose first bytes carry the  #
+# marks of a GE Signa header are read whole. Image corners are in patient RAS millimetres          #
+# already; the top-left corner marks the edge of the field of view, so the first voxel centre      #
+# lies half a pixel inside. Checked against ITK's GE readers (whose origin is that corner) and     #
+# their MetaImage baselines.                                                                       #
 #                                                                                                  #
 #**************************************************************************************************#
 class GeSignaReader(Reader):
@@ -380,9 +396,12 @@ class GeSignaReader(Reader):
     def read(self, sniff: Sniff) -> list[MRImage]:
         path = sniff.path
         folder = path if path.is_dir() else path.parent
+        size = None if path.is_dir() else path.stat().st_size
         headers = []
         for f in sorted(folder.iterdir()):
             if not f.is_file() or f.name.startswith("."):
+                continue
+            if size not in (None, f.stat().st_size) or not GeHeader.recognised(f):
                 continue
             try:
                 headers.append(GeHeader(f))

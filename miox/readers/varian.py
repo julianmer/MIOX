@@ -109,13 +109,19 @@ class VarianReader(Reader):
             values["EchoTime"] = echo
         if "temp" in procpar and (procpar.get("vttype") or ["0"])[0] != "0":
             values["SampleTemperature"] = (number("temp") + 273.15, "procpar/temp (°C)")
-        tags = []
-        for count, sw, phase in self.INDIRECT[: data.ndim - 1]:
+        tags, indirect, arrayed = [], 0, ["DIM_DYN", "DIM_USER_0", "DIM_USER_1"]
+        for axis in self._axes(procpar, data.ndim - 1):
+            if axis is None:
+                names = (procpar.get("array") or [""])[0] or "unnamed"
+                tags.append((arrayed.pop(0), f"array elements ({names}) as acquired", None))
+                continue
+            count, sw, phase = axis
             phases = ",".join(procpar.get(phase) or ["1"])
-            tags.append(("DIM_INDIRECT_" + str(len(tags)),
+            tags.append(("DIM_INDIRECT_" + str(indirect),
                          f"{count} {procpar[count][0]} x {phase} {phases}, {sw} "
                          f"{procpar[sw][0]} Hz, rows as acquired; nucleus not stated", None))
-        if tags:
+            indirect += 1
+        if indirect:
             notes.append("procpar does not state the nuclei of the indirect dimensions")
         data = data.reshape((1, 1, 1) + data.shape)
         source = "procpar"
@@ -124,19 +130,49 @@ class VarianReader(Reader):
         d.meta.set("DwellTime", 1 / width, "procpar: 1 / sw", "procpar/sw")
         return d
 
+    def _axes(self, procpar: dict, count: int) -> list[tuple[str, str, str] | None]:
+        """What each of the ``count`` dimensions after the direct one runs over, in nmrglue's
+        order: the innermost arrayed parameter (None; an arrayed phase belongs to its
+        increments), then every increment count procpar states, as (ni, sw1, phase). Where that
+        does not give ``count`` dimensions, the increment counts in turn. An increment count of
+        at most 1, or one without its spectral width, is no indirect dimension: None, the rows
+        being array elements."""
+        def stated(axis: tuple[str, str, str]) -> tuple[str, str, str] | None:
+            increments, width = axis[0], axis[1]
+            try:
+                several = float(procpar[increments][0]) > 1
+            except (KeyError, IndexError, ValueError):
+                return None
+            return axis if several and width in procpar else None
+
+        inner = (procpar.get("array") or [""])[0].split(",")[-1]
+        axes = [None] if inner in procpar and not inner.startswith("phase") else []
+        axes += [stated(axis) for axis in self.INDIRECT if axis[0] in procpar]
+        if len(axes) != count:
+            axes = [stated(axis) for axis in self.INDIRECT[:count]]
+        return axes
+
     def _console(self, sniff: Sniff, folder: Path, header: dict) -> MRSData:
-        """Imaging-console spectroscopy: (points, receivers, transients)."""
+        """Imaging-console spectroscopy: (points, receivers, transients); of an acquisition
+        that was stopped, the transients the file holds."""
         notes: list[str] = []
-        with self.captured(notes):
-            dic, data = ng.varian.read(str(folder))
+        blocks, file_header, _ = VarianRaw(folder, header, self.provenance(sniff))._blocks(notes)
         procpar = header["procpar"]
         receivers = sum(1 for flag in procpar["rcvrs"][0] if flag == "y")
         transients = float(procpar["arraydim"][0]) / receivers
         if not transients.is_integer():
             raise ReaderError(f"{folder}: arraydim {procpar['arraydim'][0]} is not a multiple of "
                               f"{receivers} receivers")
-        shape = (1, 1, 1, int(int(dic["np"]) / 2), receivers, int(transients))
-        data = np.resize(data.transpose(), shape)
+        points, transients = file_header["np"] // 2, int(transients)
+        data = blocks.reshape(-1, points)  # one row per block (and trace)
+        if data.shape[0] % receivers:
+            raise ReaderError(f"{folder}: {data.shape[0]} blocks do not hold {receivers} "
+                              "receivers each")
+        acquired = data.shape[0] // receivers
+        if acquired != transients:
+            notes.append(f"{acquired} transients in the file, arraydim states {transients}")
+        data = np.ascontiguousarray(
+            data.transpose().reshape((1, 1, 1, points, receivers, acquired)))
         if "press" in procpar["seqfil"][0] or "steam" in procpar["seqfil"][0]:
             notes.append("voxel position (pos1-3, vox1-3, vpsi/vtheta/vphi) not read: no checked "
                          "sample")

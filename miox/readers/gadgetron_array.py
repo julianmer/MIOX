@@ -33,7 +33,7 @@ from miox.sniff import Format, Sniff
 #**************************************************************************************************#
 #                                                                                                  #
 # Gadgetron writes an array as the number of dimensions (int32), the dimensions (int32 each) and   #
-# the elements in column-major order; the extension names the element type (.real float32, .cplx  #
+# the elements in column-major order; the extension names the element type (.real float32, .cplx   #
 # complex64, .short int16). Nothing says what the array holds, so it becomes an MRImage without    #
 # geometry with the dimensions as stored, three at least (as for BART arrays); the values may be   #
 # k-space.                                                                                         #

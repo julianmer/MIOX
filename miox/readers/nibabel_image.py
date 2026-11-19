@@ -134,7 +134,9 @@ class NibabelImageReader(Reader):
 
     def diffusion_values(self, img, files: tuple[Path, ...], vendor: dict) -> dict:
         """B-values and gradient directions from .bval/.bvec files next to the image; the
-        directions, given along the voxel axes, are turned into RAS world unit vectors."""
+        directions are turned into RAS world unit vectors. FSL gives them along the voxel axes of
+        a left-handed (radiological) grid: with an affine of positive determinant the first
+        component counts against the first voxel axis."""
         bval = next((f for f in files if f.suffix.lower() == ".bval"), None)
         bvec = next((f for f in files if f.suffix.lower() == ".bvec"), None)
         if bval is None or bvec is None:
@@ -145,6 +147,8 @@ class NibabelImageReader(Reader):
             return {}
         vendor["bval"], vendor["bvec"] = values.tolist(), vectors.tolist()
         axes = img.affine[:3, :3] / np.linalg.norm(img.affine[:3, :3], axis=0)
+        if np.linalg.det(axes) > 0:
+            axes = axes * np.array([-1.0, 1.0, 1.0])
         world = axes @ vectors
         norms = np.linalg.norm(world, axis=0)
         world = np.where(norms > 0, world / np.where(norms > 0, norms, 1), 0.0)
