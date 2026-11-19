@@ -21,12 +21,6 @@ d.meta["EchoTime"], d.meta.source["EchoTime"], d.meta.vendor
 miox.view(d)                     # quick look in a window
 ```
 
-A file holding more than one dataset names each after the scan; what is stored with the scan
-carries a suffix (`d.name` ends in `_ref`, `_ref_ecc`, `_ref_edited`, `_phasecor`, ...), so pick
-datasets by name. The order follows the format: GE P-files and Philips DICOM give the scan first
-and its water reference second; Siemens twix gives a reference stored in the same measurement
-first; Philips data/list gives the noise first.
-
 ## Installation
 
 ```
