@@ -95,7 +95,11 @@ class CLI:
 
     def run(self, argv: list[str] | None = None) -> int:
         args = self.parser.parse_args(argv)
-        return args.func(args)
+        try:
+            return args.func(args)
+        except FileNotFoundError as e:
+            print(f"miox: no such file or folder: {e}", file=sys.stderr)
+            return 1
 
     def info(self, args: argparse.Namespace) -> int:
         """Summary of every dataset in every path; status 1 if any path cannot be read."""

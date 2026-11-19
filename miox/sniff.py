@@ -479,11 +479,16 @@ class Sniffer:
         if store := self._zarr_store(path):
             return Sniff(path, Format.UNKNOWN, evidence=(f"inside the zarr store {store.name}",))
         head = self._head(path)
+        failed = []
         for rule in self.rules:
-            result = rule(path, head)
+            try:
+                result = rule(path, head)
+            except Exception as e:  # noqa: BLE001  a damaged file trips the library a rule calls
+                failed.append(f"{rule.__name__.lstrip('_')} rule: {type(e).__name__}: {e}")
+                continue
             if result is not None:
                 return result
-        return Sniff(path, Format.UNKNOWN)
+        return Sniff(path, Format.UNKNOWN, evidence=tuple(failed))
 
     def _zarr_store(self, path: Path) -> Path | None:
         """The zarr array or group folder ``path`` lies in: its files are chunks and metadata of

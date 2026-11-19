@@ -299,7 +299,19 @@ class Loader:
         reader = self.readers.get(sniff.format)
         if reader is None:
             raise ReaderError(f"no reader for {sniff.format}: {sniff.path}")
-        return reader.read(sniff)
+        return self._run(reader, sniff)
+
+    @staticmethod
+    def _run(reader: Reader, sniff: Sniff) -> list[Dataset]:
+        """The reader's datasets; whatever else a damaged or unusual file makes it raise becomes
+        a ReaderError that names the file, the format and the cause."""
+        try:
+            return reader.read(sniff)
+        except (ReaderError, FileNotFoundError, MemoryError):
+            raise
+        except Exception as e:  # noqa: BLE001
+            raise ReaderError(f"{sniff.path.name}: not readable as {sniff.format} "
+                              f"({type(e).__name__}: {e})") from e
 
     def _archive(self, sniff: Sniff) -> list[Dataset]:
         """Every dataset in a zip archive. Members that would land outside the unpacked folder
@@ -374,7 +386,7 @@ class Loader:
                 companions=tuple(path for path, _ in files),
             )
             try:
-                datasets += self.readers[fmt].read(part)
+                datasets += self._run(self.readers[fmt], part)
             except ReaderError as e:
                 failed.append(f"{fmt} series not read: {e}")
         if not datasets:

@@ -508,7 +508,8 @@ class Page:
         x, height = lines[0][0], 320 if len(lines) == 1 else 110 * (len(lines) + 1)
         return (self.scaled(lambda window: Plot.spectrum(lines, self.xlim(x), "ppm",
                                                          height=height, window=window))
-                + legend + f"<div class=note>{' · '.join(steps)}.</div>" + self.reader_notes())
+                + legend + f"<div class=note>{html.escape(' · '.join(steps))}.</div>"
+                + self.reader_notes())
 
     def reader_notes(self) -> str:
         """What the reader warned about the data (e.g. not reconstructed, untested orientation);
@@ -1019,7 +1020,8 @@ def document(title: str, facts: str, tabs: list[tuple[str, str]], switch: bool =
     Full | Metabolites, hidden on the tabs it has no effect on."""
     radios = "".join(f'<input type=radio name=tab id=t{i}{" checked" if not i else ""}>'
                      for i in range(len(tabs)))
-    labels = "".join(f"<label for=t{i}>{name}</label>" for i, (name, _) in enumerate(tabs))
+    labels = "".join(f"<label for=t{i}>{html.escape(name)}</label>"
+                     for i, (name, _) in enumerate(tabs))
     panes = "".join(f"<section id=p{i}>{body}</section>" for i, (_, body) in enumerate(tabs))
     show = ",".join(f"#t{i}:checked~main #p{i}" for i in range(len(tabs)))
     mark = ",".join(f"#t{i}:checked~nav label[for=t{i}]" for i in range(len(tabs)))
@@ -1139,6 +1141,23 @@ def load(path: Path) -> tuple[list, tuple[str, ...]]:
 
 def page(datasets: list, title: str, source: Path | None = None,
          notes: tuple[str, ...] = ()) -> str:
+    """The page of what the file holds (drawn); when drawing it fails, the details of the first
+    dataset with the failure named, so a file that was read always has a page."""
+    try:
+        return drawn(datasets, title, source, notes)
+    except ValueError as e:
+        if not datasets or "nothing in the file" in str(e):
+            raise
+        failure = e
+    except Exception as e:  # noqa: BLE001  whatever a pane trips over in unusual data
+        failure = e
+    facts = f"this file was read, but its page could not be drawn ({type(failure).__name__}: " \
+            f"{failure})"
+    return document(title, facts, [("Details", details(datasets[0].meta))])
+
+
+def drawn(datasets: list, title: str, source: Path | None = None,
+          notes: tuple[str, ...] = ()) -> str:
     """The page of what the file holds: a basis set, spectroscopy data, a fit, an image, or
     one of the other kinds (quicklook_pages); ValueError when nothing has a page."""
     from miox import quicklook_pages as pages

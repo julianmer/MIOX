@@ -571,7 +571,7 @@ class PhysioPage:
         return Panel.rows(rows, unit, xlim, extra=f'<g class="stem">{marks}</g>')
 
     def legend(self) -> str:
-        marks = ", ".join(f"{name} ({times.size})" for name, times in self.marks)
+        marks = html.escape(", ".join(f"{name} ({times.size})" for name, times in self.marks))
         return ("<div class=note>Every channel on its own scale"
                 + (f"; {marks} as marks below the rows." if marks else ".") + "</div>")
 
@@ -820,7 +820,7 @@ class SurfacePage:
             image = self.render(view)
             picture = Plot.grey(np.where(np.isnan(image), 1.0, image), (0.0, 1.0))
             figures.append(Panel.picture(picture, name, cls="mesh"))
-        note = " ".join(self.notes + ["Lit from the viewer; nothing smoothed."])
+        note = html.escape(" ".join(self.notes + ["Lit from the viewer; nothing smoothed."]))
         return f"<div class=views>{''.join(figures)}</div><div class=note>{note}</div>"
 
     def facts(self) -> str:
@@ -898,7 +898,8 @@ def contours(x: np.ndarray, y: np.ndarray, z: np.ndarray, unit: str, nuclei: lis
             f'{Plot.axis(xlim, unit, WIDTH, height + 4)}</svg>'
             f"<div class=note>{SpectrumPage.LEVELS} contour levels from {first:g} × noise "
             f"(robust SD {noise:.3g}) rising by {SpectrumPage.STEP}, negative in red{raised}; "
-            f"{nuclei[0]} across, {nuclei[1] if len(nuclei) > 1 else ''} up, both {unit} axes "
+            f"{html.escape(str(nuclei[0]))} across, "
+            f"{html.escape(str(nuclei[1])) if len(nuclei) > 1 else ''} up, both {unit} axes "
             f"falling to the right and the top as Sparky and TopSpin draw them.{extra}</div>")
 
 
@@ -1298,10 +1299,10 @@ class RelaxationPage:
 
     def html(self) -> str:
         unit = (self.d.fit or {}).get("unit", "")
-        stored = f"in {unit}" if unit else "as stored"
+        stored = f"in {html.escape(str(unit))}" if unit else "as stored"
         tabs = [("Decay", self.decay_svg()
                  + f"<div class=note>Every stored point: amplitude {stored} against time. "
-                 f"{self.fit_caption()}</div>"),
+                 f"{html.escape(self.fit_caption())}</div>"),
                 ("Log", self.decay_svg(log=True)
                  + "<div class=note>The same on a logarithmic amplitude axis, where one "
                  "exponential is a straight line; points at or below zero are left out.</div>")]
